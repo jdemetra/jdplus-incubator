@@ -12,10 +12,60 @@
     <artifactId>jd3-incubator-desktop</artifactId>
     <packaging>pom</packaging>
 
-    <name>${project.artifactId}</name>
-    <description>${project.parent.artifactId} - ${project.artifactId}</description>
-    <url>${project.parent.url}</url>
+    <name>jd3-incubator-desktop</name>
+
+    <properties>
+        <!-- dependencies -->
+        <netbeans.version>RELEASE150</netbeans.version>
+    </properties>
 
     <modules>
+        <module>jd3-highfreq-desktop-plugin</module>
+        <module>jd3-stl-desktop-plugin</module>
+        <module>jd3-sts-desktop-plugin</module>
     </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Other plugins -->
+                <plugin>
+                    <groupId>org.apache.netbeans.utilities</groupId>
+                    <artifactId>nbm-maven-plugin</artifactId>
+                    <version>4.8</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <!-- Force lookup of annotation processors in classpath by resetting paths -->
+                    <annotationProcessorPaths combine.self="override"/>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <!-- Force use of the nbm generated manifest -->
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.netbeans.utilities</groupId>
+                <artifactId>nbm-maven-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <!-- Set branding for all NBM plugins -->
+                    <useOSGiDependencies>false</useOSGiDependencies>
+                    <!--                    <brandingToken>${brandingToken}</brandingToken>-->
+                    <!--                    <cluster>${brandingToken}</cluster>-->
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
