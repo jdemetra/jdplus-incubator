@@ -90,11 +90,23 @@
             <groupId>eu.europa.ec.joinup.sat</groupId>
             <artifactId>jd3-toolkit-desktop-plugin</artifactId>
             <version>${jd3-main.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.netbeans.api</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
             <artifactId>jd3-sa-desktop-plugin</artifactId>
             <version>${jd3-main.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.netbeans.api</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- 3. JD3 Base -->
