@@ -58,9 +58,7 @@ public class ExtendedAirlineEstimation implements GenericExplorable {
 
         double[] l = new double[y.length];
         DoubleSeqCursor acur = coefficients.cursor();
-        if (model.isMean()) {
-            acur.getAndNext();
-        };
+ 
         for (int j = 0; j < x.getColumnsCount() - outliers.length; ++j) {
             double a = acur.getAndNext();
             if (a != 0) {
@@ -78,9 +76,7 @@ public class ExtendedAirlineEstimation implements GenericExplorable {
 
         double[] l = new double[y.length];
         DoubleSeqCursor acur = coefficients.cursor();
-        if (model.isMean()) {
-            acur.getAndNext();
-        };
+
         for (int i = 1; i < x.getColumnsCount() - outliers.length+1; i++) {
             acur.getAndNext();
         }
@@ -119,9 +115,7 @@ public class ExtendedAirlineEstimation implements GenericExplorable {
 
         double[] l = new double[y.length];
         DoubleSeqCursor acur = coefficients.cursor();
-        if (model.isMean()) {
-            acur.getAndNext();
-        };
+
         for (int i = 1; i < x.getColumnsCount() - outliers.length+1; i++) {
             acur.getAndNext();
         }
