@@ -42,6 +42,34 @@ public class FractionalAirlineProcessorTest {
 //        System.out.println(rslt.getLikelihood());
 //        System.out.println();
     }
+    
+     @Test
+    public void testComponentEstimation() {
+        double[] data = new double[2 * WeeklyData.US_CLAIMS2.length];
+        data[2] = 1;
+        data[WeeklyData.US_CLAIMS2.length] = 1;
+
+        Matrix x = Matrix.of(data, WeeklyData.US_CLAIMS2.length, 2);
+        ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(WeeklyData.US_CLAIMS2, x, true, new double[]{365.25 / 7}, -1, false, new String[]{"ao", "wo", "ls"}, 5, 1e-12, true);
+
+        for (int i = 0; i < rslt.component_ls().length; i++) {
+           boolean comp_out=Math.abs(rslt.component_ls()[i] + rslt.component_ao()[i] + rslt.component_wo()[i] - rslt.component_outliers()[i]) > 0.00000001;
+            if (comp_out) {
+                System.out.println("Fehler");
+                  assertTrue(comp_out, "The outlier componets don't");
+            }
+        }
+    //    System.out.println("Fertig_ Outlier");
+
+        for (int i = 0; i < rslt.component_ls().length; i++) {
+            boolean comp=Math.abs(WeeklyData.US_CLAIMS2[i] -  rslt.component_outliers()[i]- rslt.component_userdef_reg_variables()[i] - rslt.linearized()[i]) > 0.00000001;
+            if (comp) {
+                System.out.println("Fehler: " + i);
+                assertTrue(false, "The componets don't sum up to the lin");
+            }
+        }
+
+    }
 
     @Test
     public void testWeeklySsf() {

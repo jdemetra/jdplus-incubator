@@ -23,13 +23,13 @@ import demetra.information.GenericExplorable;
 public class ExtendedAirlineEstimation implements GenericExplorable {
 
     double[] y;
-    Matrix x;
+    Matrix x; //user-def reg var, outlier
 
     ExtendedAirline model;
 
     OutlierDescriptor[] outliers;
 
-    DoubleSeq coefficients;
+    DoubleSeq coefficients; // user-def-var,outlier
     Matrix coefficientsCovariance;
 
     private DoubleSeq parameters, score;
@@ -53,6 +53,89 @@ public class ExtendedAirlineEstimation implements GenericExplorable {
         }
         return l;
     }
+    
+       public double[] component_userdef_reg_variables() {
+
+        double[] l = new double[y.length];
+        DoubleSeqCursor acur = coefficients.cursor();
+ 
+        for (int j = 0; j < x.getColumnsCount() - outliers.length; ++j) {
+            double a = acur.getAndNext();
+            if (a != 0) {
+                DoubleSeqCursor cursor = x.column(j).cursor();
+                for (int k = 0; k < l.length; ++k) {
+                    l[k] += a * cursor.getAndNext();
+                }
+            }
+        }
+
+        return l;
+    }
+
+    public double[] component_outliers() {
+
+        double[] l = new double[y.length];
+        DoubleSeqCursor acur = coefficients.cursor();
+
+        for (int i = 1; i < x.getColumnsCount() - outliers.length+1; i++) {
+            acur.getAndNext();
+        }
+
+        for (int j = x.getColumnsCount() - outliers.length; j < x.getColumnsCount(); ++j) {
+
+            double a = acur.getAndNext();
+            if (a != 0) {
+                DoubleSeqCursor cursor = x.column(j).cursor();
+                for (int k = 0; k < l.length; ++k) {
+                    l[k] += a * cursor.getAndNext();
+                }
+            }
+        }
+
+        return l;
+    }
+
+    public double[] component_ao() {
+        return component_outlier("AO");
+    }
+
+    public double[] component_wo() {
+        return component_outlier("WO");
+    }
+
+    public double[] component_ls() {
+        return component_outlier("LS");
+    }
+
+    /**
+     * @return sum (coefficients*regression variable) if ao
+     *
+     */
+    private double[] component_outlier(String outlierTyp) {
+
+        double[] l = new double[y.length];
+        DoubleSeqCursor acur = coefficients.cursor();
+
+        for (int i = 1; i < x.getColumnsCount() - outliers.length+1; i++) {
+            acur.getAndNext();
+        }
+
+        for (int j = x.getColumnsCount() - outliers.length; j < x.getColumnsCount(); ++j) {
+                     double a = acur.getAndNext();
+            if (outlierTyp.equalsIgnoreCase(outliers[j - x.getColumnsCount() + outliers.length].getCode())) {
+
+                if (a != 0) {
+                    DoubleSeqCursor cursor = x.column(j).cursor();
+                    for (int k = 0; k < l.length; ++k) {
+                        l[k] += a * cursor.getAndNext();
+                    }
+                }
+            }
+        }
+
+        return l;
+    }
+
 
     public double[] tstats() {
         double[] t = coefficients.toArray();
