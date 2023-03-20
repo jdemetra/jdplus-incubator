@@ -16,7 +16,7 @@
  */
 package jdplus.sts;
 
-import tck.demetra.data.Data;
+import demetra.data.Data;
 import demetra.data.DoubleSeq;
 import demetra.data.Parameter;
 import demetra.sts.BsmEstimationSpec;
@@ -92,9 +92,9 @@ public class BsmKernelTest {
         monitor.setSpecification(bspec);
         monitor.process(Data.RETAIL_MOTORDEALERS, 12);
         long t1=System.currentTimeMillis();
-        System.out.println("Legacy");
-        System.out.println(t1-t0);
-        System.out.println(monitor.getLikelihood().getLogLikelihood());
+//        System.out.println("Legacy");
+//        System.out.println(t1-t0);
+//        System.out.println(monitor.getLikelihood().getLogLikelihood());
     }
     
     public static void main(String[] arg){

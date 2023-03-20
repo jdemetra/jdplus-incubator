@@ -879,24 +879,21 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5310)
-    public static class ModelResSpectrum extends ProcDocumentItemFactory<StlPlusDocument, TsData> {
+    public static class ModelResSpectrum extends ProcDocumentItemFactory<StlPlusDocument, SpectrumUI.Information> {
 
         public ModelResSpectrum() {
             super(StlPlusDocument.class, SaViews.DIAGNOSTICS_SPECTRUM_RES,
                     RESEXTRACTOR.andThen(
-                            (TsData s) -> {
-                                if (s == null) {
-                                    return null;
-                                }
-                                int ny = DemetraSaUI.get().getSpectralLastYears();
-                                if (ny > 0) {
-                                    s = s.drop(Math.max(0, s.length() - s.getAnnualFrequency() * ny), 0);
-                                }
-                                return s;
-                            }
-                    ),
-                    new SpectrumUI(true));
-
+                            res
+                            -> res == null ? null
+                                    : SpectrumUI.Information.builder()
+                                            .series(res)
+                                            .differencingOrder(0)
+                                            .log(false)
+                                            .mean(true)
+                                            .whiteNoise(true)
+                                            .build()),
+                    new SpectrumUI());
         }
 
         @Override
@@ -906,7 +903,7 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5320)
-    public static class DiagnosticsSpectrumIFactory extends ProcDocumentItemFactory<StlPlusDocument, TsData> {
+    public static class DiagnosticsSpectrumIFactory extends ProcDocumentItemFactory<StlPlusDocument, SpectrumUI.Information> {
 
         public DiagnosticsSpectrumIFactory() {
             super(StlPlusDocument.class, SaViews.DIAGNOSTICS_SPECTRUM_I,
@@ -916,17 +913,16 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
                                     return null;
                                 }
                                 TsData s = stl.getIrregular();
-                                if (s == null) {
-                                    return null;
-                                }
-                                int ny = DemetraSaUI.get().getSpectralLastYears();
-                                if (ny > 0) {
-                                    s = s.drop(Math.max(0, s.length() - s.getAnnualFrequency() * ny), 0);
-                                }
-                                return stl.isMultiplicative()? s.log() : s;
-                            }
-                    ),
-                    new SpectrumUI(false));
+                               return s == null ? null
+                                        : SpectrumUI.Information.builder()
+                                                .series(s)
+                                                .differencingOrder(0)
+                                                .log(stl.isMultiplicative())
+                                                .mean(true)
+                                                .whiteNoise(false)
+                                                .build();
+                            }),
+                    new SpectrumUI());
         }
 
         @Override
@@ -936,7 +932,7 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5330)
-    public static class DiagnosticsSpectrumSaFactory extends ProcDocumentItemFactory<StlPlusDocument, TsData> {
+    public static class DiagnosticsSpectrumSaFactory extends ProcDocumentItemFactory<StlPlusDocument, SpectrumUI.Information> {
 
         public DiagnosticsSpectrumSaFactory() {
             super(StlPlusDocument.class, SaViews.DIAGNOSTICS_SPECTRUM_SA,
@@ -946,20 +942,19 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
                                     return null;
                                 }
                                 TsData s = stl.getSa();
-                                if (s == null) {
-                                    return null;
-                                }
-                                s = s.delta(1);
-                                int ny = DemetraSaUI.get().getSpectralLastYears();
-                                if (ny > 0) {
-                                    s = s.drop(Math.max(0, s.length() - s.getAnnualFrequency() * ny), 0);
-                                }
-                                return s;
-                            }
-                    ),
-                    new SpectrumUI(false));
+                                return s == null ? null
+                                        : SpectrumUI.Information.builder()
+                                                .series(s)
+                                                .differencingOrder(1)
+                                                .differencingLag(1)
+                                                .log(stl.isMultiplicative())
+                                                .mean(true)
+                                                .whiteNoise(false)
+                                                .build();
+                            }),
+                    new SpectrumUI());
         }
-
+        
         @Override
         public int getPosition() {
             return 5330;
