@@ -22,7 +22,6 @@ import jdplus.msts.internal.SarimaItem;
 import jdplus.msts.internal.SeasonalComponentItem;
 import jdplus.msts.internal.TdRegressionItem;
 import demetra.timeseries.TsDomain;
-import jdplus.msts.internal.CumulatorItem;
 import jdplus.msts.internal.PeriodicItem;
 import jdplus.msts.internal.VarLocalLevelItem;
 import jdplus.msts.internal.VarLocalLinearTrendItem;
@@ -30,7 +29,11 @@ import jdplus.msts.internal.VarSeasonalComponentItem;
 import jdplus.msts.internal.VarNoiseItem;
 import demetra.math.matrices.Matrix;
 import jdplus.msts.internal.RegularSplineItem;
+import jdplus.msts.internal.SplineItem;
 import jdplus.msts.internal.VarRegressionItem;
+import jdplus.ssf.sts.splines.DailySpline;
+import jdplus.ssf.sts.splines.SplineData;
+import jdplus.ssf.sts.splines.WeeklySpline;
 
 /**
  *
@@ -137,5 +140,13 @@ public class AtomicModels {
 
     public StateItem regularSplineComponent(String name, int[] pos, int startpos, double cvar, boolean fixedvar) {
         return new RegularSplineItem(name, pos, startpos, cvar, fixedvar);
+    }
+    
+    public StateItem dailySplineComponent(String name, int startYear, int endYear, int[] pos, int startpos, double cvar, boolean fixedvar) {
+        return new SplineItem(name, SplineData.of(new DailySpline(startYear, pos), endYear-startYear+1), startpos, cvar, fixedvar);
+    }
+
+    public StateItem weeklySplineComponent(String name, int startYear, int endYear, int[] pos, int startPos, int modelStart, double cvar, boolean fixedvar) {
+        return new SplineItem(name, SplineData.of(new WeeklySpline(startYear, startPos, pos), endYear-startYear+1), modelStart, cvar, fixedvar);
     }
 }
