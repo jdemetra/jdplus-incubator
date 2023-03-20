@@ -16,7 +16,7 @@
  */
 package jdplus.sts;
 
-import demetra.data.Data;
+import tck.demetra.data.Data;
 import demetra.data.DoubleSeq;
 import demetra.data.Parameter;
 import demetra.sts.BsmEstimationSpec;

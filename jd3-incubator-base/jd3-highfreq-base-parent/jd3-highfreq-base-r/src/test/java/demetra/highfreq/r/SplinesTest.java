@@ -17,8 +17,8 @@
 package demetra.highfreq.r;
 
 import demetra.data.DoubleSeq;
-import demetra.data.MatrixSerializer;
-import demetra.data.WeeklyData;
+import tck.demetra.data.MatrixSerializer;
+import tck.demetra.data.WeeklyData;
 import demetra.math.functions.Optimizer;
 import demetra.math.matrices.Matrix;
 import demetra.ssf.SsfInitialization;

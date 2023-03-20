@@ -6,7 +6,7 @@
 package demetra.highfreq.r;
 
 import demetra.data.DoubleSeq;
-import demetra.data.WeeklyData;
+import tck.demetra.data.WeeklyData;
 import jdplus.highfreq.extendedairline.decomposiiton.LightExtendedAirlineDecomposition;
 import jdplus.highfreq.extendedairline.ExtendedAirlineEstimation;
 import demetra.math.matrices.Matrix;

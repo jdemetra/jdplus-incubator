@@ -22,7 +22,6 @@ import jdplus.msts.internal.SarimaItem;
 import jdplus.msts.internal.SeasonalComponentItem;
 import jdplus.msts.internal.TdRegressionItem;
 import demetra.timeseries.TsDomain;
-import jdplus.msts.internal.CumulatorItem;
 import jdplus.msts.internal.PeriodicItem;
 import jdplus.msts.internal.VarLocalLevelItem;
 import jdplus.msts.internal.VarLocalLinearTrendItem;
