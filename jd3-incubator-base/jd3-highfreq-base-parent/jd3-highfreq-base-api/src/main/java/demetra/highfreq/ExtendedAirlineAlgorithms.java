@@ -58,7 +58,7 @@ public class ExtendedAirlineAlgorithms {
     }
 
     @Algorithm
-    @ServiceDefinition(quantifier = Quantifier.SINGLE, mutability = Mutability.CONCURRENT)
+    @ServiceDefinition(quantifier = Quantifier.SINGLE, mutability = Mutability.CONCURRENT, noFallback = true)
     public interface Processor {
 
         ProcResults process(double[] s, ExtendedAirline airline, boolean var);
