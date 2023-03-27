@@ -315,14 +315,14 @@ public final class ModelDescription<S extends IArimaModel, M extends ArimaDescri
         Optional<Variable> search = variables.stream()
                 .filter(var -> var.getName().equals(name))
                 .findFirst();
-        return search.isPresent() ? search.get() : null;
+        return search.orElse(null);
     }
 
     public Variable variable(ITsVariable v) {
         Optional<Variable> search = variables.stream()
                 .filter(var -> var.getCore() == v)
                 .findFirst();
-        return search.isPresent() ? search.get() : null;
+        return search.orElse(null);
     }
 
     public boolean remove(String name) {
@@ -330,7 +330,7 @@ public final class ModelDescription<S extends IArimaModel, M extends ArimaDescri
                 .filter(var -> var.getName().equals(name))
                 .findFirst();
         if (search.isPresent()) {
-            variables.remove(search.get());
+            variables.remove(search.orElseThrow());
             return true;
         } else {
             return false;
@@ -342,7 +342,7 @@ public final class ModelDescription<S extends IArimaModel, M extends ArimaDescri
                 .filter(var -> var.getCore() == v)
                 .findFirst();
         if (search.isPresent()) {
-            variables.remove(search.get());
+            variables.remove(search.orElseThrow());
             return true;
         } else {
             return false;
