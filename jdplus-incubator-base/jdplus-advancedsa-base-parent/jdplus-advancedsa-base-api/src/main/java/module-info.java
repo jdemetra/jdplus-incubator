@@ -8,5 +8,5 @@ module jdplus.advancedsa.base.api {
     requires jdplus.sa.base.api;
     requires jdplus.sts.base.api;
 
-    exports demetra.sa.advanced;
+    exports jdplus.advancedsa.base.api;
 }

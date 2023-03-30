@@ -8,5 +8,5 @@ module jdplus.stl.base.api {
     requires jdplus.toolkit.base.api;
     requires jdplus.sa.base.api;
 
-    exports demetra.stl;
+    exports jdplus.stl.base.api;
 }

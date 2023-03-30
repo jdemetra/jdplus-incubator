@@ -1,3 +1,8 @@
+import jdplus.sa.base.information.SaSpecificationMapping;
+import jdplus.stl.base.io.information.StlPlusSpecMapping;
+import jdplus.stl.base.io.workspace.StlHandlers;
+import jdplus.toolkit.base.workspace.file.spi.FamilyHandler;
+
 module jdplus.stl.base.io {
 
     requires static lombok;
@@ -13,12 +18,12 @@ module jdplus.stl.base.io {
     requires jdplus.sa.base.api;
     requires jdplus.sa.base.information;
 
-    exports jdplus.stl.io.information;
-    exports jdplus.stl.workspace;
+    exports jdplus.stl.base.io.information;
+    exports jdplus.stl.base.io.workspace;
 
-    provides demetra.sa.io.information.SaSpecificationMapping with
-            jdplus.stl.io.information.StlPlusSpecMapping.Serializer;
+    provides SaSpecificationMapping with
+            StlPlusSpecMapping.Serializer;
 
-    provides demetra.workspace.file.spi.FamilyHandler with
-            jdplus.stl.workspace.StlHandlers.DocStlPlus;
+    provides FamilyHandler with
+            StlHandlers.DocStlPlus;
 }

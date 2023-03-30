@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-OpenIDE-Module-Localizing-Bundle: demetra/desktop/stl/Bundle.properties
+OpenIDE-Module-Localizing-Bundle: jdplus/stl/desktop/plugin/Bundle.properties
 OpenIDE-Module-Java-Dependencies: Java > 17
-OpenIDE-Module-Install: demetra/desktop/stl/util/Installer.class
+OpenIDE-Module-Install: jdplus/stl/desktop/plugin/stl/util/Installer.class
 

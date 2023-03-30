@@ -6,5 +6,5 @@ module jdplus.sts.base.api {
     requires static org.checkerframework.checker.qual;
     requires jdplus.toolkit.base.api;
 
-    exports demetra.sts;
+    exports jdplus.sts.base.api;
 }

@@ -1,3 +1,9 @@
+import jdplus.highfreq.base.core.extractors.ExtendedAirlineExtractor;
+import jdplus.highfreq.base.core.extractors.FractionalAirlineDecompositionExtractor;
+import jdplus.highfreq.base.core.extractors.FractionalAirlineEstimationExtractor;
+import jdplus.highfreq.base.core.extractors.HighFreqRegArimaExtractor;
+import jdplus.toolkit.base.api.information.InformationExtractor;
+
 module jdplus.highfreq.base.core {
 
     requires static lombok;
@@ -11,15 +17,15 @@ module jdplus.highfreq.base.core {
     requires jdplus.toolkit.base.core;
     requires jdplus.sa.base.core;
 
-    exports jdplus.highfreq.extendedairline;
-    exports jdplus.highfreq.extractors;
-    exports jdplus.highfreq.regarima;
-    exports jdplus.ssf.extractors;
-    exports jdplus.highfreq.extendedairline.decomposiiton;
+    exports jdplus.highfreq.base.core.extendedairline;
+    exports jdplus.highfreq.base.core.extractors;
+    exports jdplus.highfreq.base.core.regarima;
+    exports jdplus.highfreq.base.core.ssf.extractors;
+    exports jdplus.highfreq.base.core.extendedairline.decomposiiton;
 
-    provides demetra.information.InformationExtractor with
-            jdplus.highfreq.extractors.ExtendedAirlineExtractor,
-            jdplus.highfreq.extractors.FractionalAirlineDecompositionExtractor,
-            jdplus.highfreq.extractors.HighFreqRegArimaExtractor,
-            jdplus.highfreq.extractors.FractionalAirlineEstimationExtractor;
+    provides InformationExtractor with
+            ExtendedAirlineExtractor,
+            FractionalAirlineDecompositionExtractor,
+            HighFreqRegArimaExtractor,
+            FractionalAirlineEstimationExtractor;
 }

@@ -14,5 +14,5 @@ module jdplus.advancedsa.base.core {
     requires jdplus.x13.base.api;
     requires jdplus.tramoseats.base.api;
 
-    exports jdplus.sa.advanced;
+    exports jdplus.advancedsa.base.core;
 }

@@ -10,5 +10,5 @@ module jdplus.stl.base.r {
     requires jdplus.toolkit.base.api;
     requires jdplus.toolkit.base.core;
 
-    exports demetra.stl.r;
+    exports jdplus.stl.base.r;
 }

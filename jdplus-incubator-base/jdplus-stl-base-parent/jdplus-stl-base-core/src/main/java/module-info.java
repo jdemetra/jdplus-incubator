@@ -1,3 +1,12 @@
+import jdplus.sa.base.api.SaProcessingFactory;
+import jdplus.stl.base.core.mstlplus.MStlPlusFactory;
+import jdplus.stl.base.core.stlplus.StlPlusFactory;
+import jdplus.stl.base.core.stlplus.extractors.MStlExtractor;
+import jdplus.stl.base.core.stlplus.extractors.MStlPlusExtractor;
+import jdplus.stl.base.core.stlplus.extractors.StlExtractor;
+import jdplus.stl.base.core.stlplus.extractors.StlPlusExtractor;
+import jdplus.toolkit.base.api.information.InformationExtractor;
+
 module jdplus.stl.base.core {
 
     requires static lombok;
@@ -12,18 +21,18 @@ module jdplus.stl.base.core {
     requires jdplus.sa.base.core;
     requires jdplus.toolkit.base.core;
 
-    exports jdplus.mstlplus;
-    exports jdplus.stl;
-    exports jdplus.stlplus;
-    exports jdplus.stlplus.extractors;
+    exports jdplus.stl.base.core.mstlplus;
+    exports jdplus.stl.base.core.stlplus;
+    exports jdplus.stl.base.core.stlplus.extractors;
+    exports jdplus.stl.base.core;
 
-    provides demetra.information.InformationExtractor with
-            jdplus.stlplus.extractors.StlExtractor,
-            jdplus.stlplus.extractors.StlPlusExtractor,
-            jdplus.stlplus.extractors.MStlPlusExtractor,
-            jdplus.stlplus.extractors.MStlExtractor;
+    provides InformationExtractor with
+            StlExtractor,
+            StlPlusExtractor,
+            MStlPlusExtractor,
+            MStlExtractor;
 
-    provides demetra.sa.SaProcessingFactory with
-            jdplus.stlplus.StlPlusFactory,
-            jdplus.mstlplus.MStlPlusFactory;
+    provides SaProcessingFactory with
+            StlPlusFactory,
+            MStlPlusFactory;
 }

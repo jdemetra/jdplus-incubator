@@ -10,5 +10,5 @@ module jdplus.highfreq.base.r {
     requires jdplus.highfreq.base.core;
     requires jdplus.toolkit.base.core;
 
-    exports demetra.highfreq.r;
+    exports jdplus.highfreq.base.r;
 }

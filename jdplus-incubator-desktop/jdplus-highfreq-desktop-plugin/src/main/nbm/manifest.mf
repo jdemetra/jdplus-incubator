@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-OpenIDE-Module-Localizing-Bundle: demetra/desktop/highfreq/Bundle.properties
+OpenIDE-Module-Localizing-Bundle: jdplus/highfreq/desktop/plugin/Bundle.properties
 OpenIDE-Module-Java-Dependencies: Java > 17
 

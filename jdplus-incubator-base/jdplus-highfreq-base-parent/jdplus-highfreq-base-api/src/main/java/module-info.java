@@ -1,3 +1,5 @@
+import jdplus.highfreq.base.api.ExtendedAirlineAlgorithms;
+
 module jdplus.highfreq.base.api {
 
     requires static lombok;
@@ -7,7 +9,7 @@ module jdplus.highfreq.base.api {
     requires jdplus.toolkit.base.api;
     requires jdplus.sa.base.api;
 
-    exports demetra.highfreq;
+    exports jdplus.highfreq.base.api;
 
-    uses demetra.highfreq.ExtendedAirlineAlgorithms.Processor;
+    uses ExtendedAirlineAlgorithms.Processor;
 }

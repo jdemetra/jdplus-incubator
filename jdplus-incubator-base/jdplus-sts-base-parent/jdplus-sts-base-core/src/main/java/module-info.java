@@ -1,3 +1,5 @@
+import jdplus.toolkit.base.api.information.InformationExtractor;
+
 module jdplus.sts.base.core {
 
     requires static lombok;
@@ -9,12 +11,12 @@ module jdplus.sts.base.core {
     requires jdplus.toolkit.base.core;
     requires jdplus.sa.base.api;
 
-    exports jdplus.msts;
-    exports jdplus.msts.internal;
-    exports jdplus.msts.survey;
-    exports jdplus.sts;
-    exports jdplus.sts.extractors;
+    exports jdplus.sts.base.core.msts;
+    exports jdplus.sts.base.core.msts.internal;
+    exports jdplus.sts.base.core.msts.survey;
+    exports jdplus.sts.base.core.extractors;
+    exports jdplus.sts.base.core;
 
-    provides demetra.information.InformationExtractor with
-            jdplus.sts.extractors.BasicStructuralModelExtractor;
+    provides InformationExtractor with
+            jdplus.sts.base.core.extractors.BasicStructuralModelExtractor;
 }

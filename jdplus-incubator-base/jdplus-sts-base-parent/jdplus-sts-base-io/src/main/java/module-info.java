@@ -11,6 +11,6 @@ module jdplus.sts.base.io {
     requires jdplus.sts.base.core;
     requires jdplus.sa.base.protobuf;
 
-    exports demetra.sts.io.protobuf;
-    exports demetra.sts.outliers.io.protobuf;
+    exports jdplus.sts.base.io.protobuf;
+    exports jdplus.sts.base.io.outliers.protobuf;
 }

@@ -12,6 +12,6 @@ module jdplus.sts.base.r {
     requires jdplus.toolkit.base.core;
     requires jdplus.toolkit.base.protobuf;
 
-    exports demetra.sts.r;
-    exports rssf;
+    exports jdplus.sts.base.r;
+    exports jdplus.sts.base.r.rssf;
 }
