@@ -16,8 +16,8 @@
  */
 package jdplus.highfreq.desktop.plugin.ui;
 
-import demetra.desktop.sa.descriptors.highfreq.AbstractSeriesSpecUI;
-import demetra.desktop.sa.descriptors.highfreq.HighFreqSpecUI;
+import jdplus.sa.desktop.plugin.descriptors.highfreq.AbstractSeriesSpecUI;
+import jdplus.sa.desktop.plugin.descriptors.highfreq.HighFreqSpecUI;
 import jdplus.toolkit.base.api.modelling.highfreq.SeriesSpec;
 
 /**

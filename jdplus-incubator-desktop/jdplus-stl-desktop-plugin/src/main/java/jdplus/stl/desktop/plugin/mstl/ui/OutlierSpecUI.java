@@ -16,8 +16,8 @@
  */
 package jdplus.stl.desktop.plugin.mstl.ui;
 
-import demetra.desktop.sa.descriptors.highfreq.AbstractOutlierSpecUI;
-import demetra.desktop.sa.descriptors.highfreq.HighFreqSpecUI;
+import jdplus.sa.desktop.plugin.descriptors.highfreq.AbstractOutlierSpecUI;
+import jdplus.sa.desktop.plugin.descriptors.highfreq.HighFreqSpecUI;
 import jdplus.toolkit.base.api.modelling.highfreq.OutlierSpec;
 
 /**

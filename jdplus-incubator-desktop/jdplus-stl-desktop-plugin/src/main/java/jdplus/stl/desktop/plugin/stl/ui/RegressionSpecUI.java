@@ -17,8 +17,8 @@
 package jdplus.stl.desktop.plugin.stl.ui;
 
 import demetra.desktop.descriptors.IPropertyDescriptors;
-import demetra.desktop.sa.descriptors.regular.AbstractRegressionSpecUI;
-import demetra.desktop.sa.descriptors.regular.RegularSpecUI;
+import jdplus.sa.desktop.plugin.descriptors.regular.AbstractRegressionSpecUI;
+import jdplus.sa.desktop.plugin.descriptors.regular.RegularSpecUI;
 import jdplus.toolkit.base.api.modelling.regular.RegressionSpec;
 
 /**

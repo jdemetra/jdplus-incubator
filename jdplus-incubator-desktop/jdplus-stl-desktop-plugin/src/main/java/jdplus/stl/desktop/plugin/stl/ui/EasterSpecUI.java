@@ -16,8 +16,8 @@
  */
 package jdplus.stl.desktop.plugin.stl.ui;
 
-import demetra.desktop.sa.descriptors.regular.AbstractEasterSpecUI;
-import demetra.desktop.sa.descriptors.regular.RegularSpecUI;
+import jdplus.sa.desktop.plugin.descriptors.regular.AbstractEasterSpecUI;
+import jdplus.sa.desktop.plugin.descriptors.regular.RegularSpecUI;
 import jdplus.toolkit.base.api.modelling.regular.EasterSpec;
 
 /**

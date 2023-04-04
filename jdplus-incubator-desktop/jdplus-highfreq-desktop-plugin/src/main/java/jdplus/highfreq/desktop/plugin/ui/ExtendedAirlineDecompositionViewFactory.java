@@ -18,7 +18,7 @@ import demetra.desktop.ui.processing.ProcDocumentItemFactory;
 import demetra.desktop.ui.processing.ProcDocumentViewFactory;
 import demetra.desktop.ui.processing.stats.DistributionUI;
 import demetra.desktop.ui.processing.stats.PeriodogramUI;
-import demetra.desktop.sa.ui.SaViews;
+import jdplus.sa.desktop.plugin.ui.SaViews;
 import jdplus.highfreq.base.api.ExtendedAirlineDictionaries;
 import demetra.html.HtmlElement;
 import jdplus.toolkit.base.api.modelling.ModellingDictionary;

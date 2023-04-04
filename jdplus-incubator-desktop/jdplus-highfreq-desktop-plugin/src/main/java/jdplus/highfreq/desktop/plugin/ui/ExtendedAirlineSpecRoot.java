@@ -16,7 +16,7 @@
  */
 package jdplus.highfreq.desktop.plugin.ui;
 
-import demetra.desktop.sa.descriptors.highfreq.HighFreqSpecUI;
+import jdplus.sa.desktop.plugin.descriptors.highfreq.HighFreqSpecUI;
 import jdplus.highfreq.base.api.ExtendedAirlineModellingSpec;
 import jdplus.highfreq.base.api.ExtendedAirlineSpec;
 import jdplus.toolkit.base.api.modelling.highfreq.EasterSpec;

@@ -16,8 +16,8 @@
  */
 package jdplus.stl.desktop.plugin.stl.ui;
 
-import demetra.desktop.sa.descriptors.regular.AbstractSeriesSpecUI;
-import demetra.desktop.sa.descriptors.regular.RegularSpecUI;
+import jdplus.sa.desktop.plugin.descriptors.regular.AbstractSeriesSpecUI;
+import jdplus.sa.desktop.plugin.descriptors.regular.RegularSpecUI;
 import jdplus.toolkit.base.api.modelling.regular.SeriesSpec;
 
 /**

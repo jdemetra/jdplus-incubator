@@ -9,7 +9,7 @@ import demetra.desktop.TsDynamicProvider;
 import jdplus.highfreq.desktop.plugin.ui.HtmlFractionalAirlineModel;
 import demetra.desktop.processing.ui.modelling.InputFactory;
 import demetra.desktop.processing.ui.modelling.RegSarimaViews;
-import demetra.desktop.sa.ui.SaViews;
+import jdplus.sa.desktop.plugin.ui.SaViews;
 import demetra.desktop.ui.processing.GenericChartUI;
 import demetra.desktop.ui.processing.GenericTableUI;
 import demetra.desktop.ui.processing.HtmlItemUI;
