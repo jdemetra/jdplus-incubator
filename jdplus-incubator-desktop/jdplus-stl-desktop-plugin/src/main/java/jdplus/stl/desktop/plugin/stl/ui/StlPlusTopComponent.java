@@ -17,11 +17,11 @@
 package jdplus.stl.desktop.plugin.stl.ui;
 
 import jdplus.stl.desktop.plugin.stl.StlPlusDocumentManager;
-import demetra.desktop.ui.processing.TsProcessingViewer;
-import demetra.desktop.workspace.DocumentUIServices;
-import demetra.desktop.workspace.WorkspaceFactory;
-import demetra.desktop.workspace.WorkspaceItem;
-import demetra.desktop.workspace.ui.WorkspaceTsTopComponent;
+import jdplus.toolkit.desktop.plugin.ui.processing.TsProcessingViewer;
+import jdplus.toolkit.desktop.plugin.workspace.DocumentUIServices;
+import jdplus.toolkit.desktop.plugin.workspace.WorkspaceFactory;
+import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItem;
+import jdplus.toolkit.desktop.plugin.workspace.ui.WorkspaceTsTopComponent;
 import jdplus.stl.base.core.stlplus.StlPlusDocument;
 import org.openide.windows.TopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;

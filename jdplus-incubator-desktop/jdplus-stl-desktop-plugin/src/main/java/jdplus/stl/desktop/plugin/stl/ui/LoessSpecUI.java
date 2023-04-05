@@ -18,8 +18,8 @@ package jdplus.stl.desktop.plugin.stl.ui;
 
 
 import jdplus.toolkit.base.api.data.WeightFunction;
-import demetra.desktop.descriptors.EnhancedPropertyDescriptor;
-import demetra.desktop.descriptors.IPropertyDescriptors;
+import jdplus.toolkit.desktop.plugin.descriptors.EnhancedPropertyDescriptor;
+import jdplus.toolkit.desktop.plugin.descriptors.IPropertyDescriptors;
 import jdplus.stl.base.api.LoessSpec;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;

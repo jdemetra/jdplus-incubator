@@ -6,11 +6,11 @@ package jdplus.highfreq.desktop.plugin.ui;
 
 import jdplus.highfreq.base.core.extendedairline.ExtendedAirlineDocument;
 import jdplus.highfreq.desktop.plugin.ExtendedAirlineDocumentManager;
-import demetra.desktop.workspace.DocumentUIServices;
-import demetra.desktop.ui.processing.TsProcessingViewer;
-import demetra.desktop.workspace.WorkspaceFactory;
-import demetra.desktop.workspace.WorkspaceItem;
-import demetra.desktop.workspace.ui.WorkspaceTsTopComponent;
+import jdplus.toolkit.desktop.plugin.workspace.DocumentUIServices;
+import jdplus.toolkit.desktop.plugin.ui.processing.TsProcessingViewer;
+import jdplus.toolkit.desktop.plugin.workspace.WorkspaceFactory;
+import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItem;
+import jdplus.toolkit.desktop.plugin.workspace.ui.WorkspaceTsTopComponent;
 import org.openide.windows.TopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;

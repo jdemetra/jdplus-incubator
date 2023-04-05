@@ -16,8 +16,8 @@
  */
 package jdplus.stl.desktop.plugin.mstl.ui;
 
-import demetra.desktop.descriptors.EnhancedPropertyDescriptor;
-import demetra.desktop.descriptors.IPropertyDescriptors;
+import jdplus.toolkit.desktop.plugin.descriptors.EnhancedPropertyDescriptor;
+import jdplus.toolkit.desktop.plugin.descriptors.IPropertyDescriptors;
 import jdplus.stl.base.api.MStlSpec;
 import jdplus.stl.base.api.SeasonalSpec;
 import java.beans.IntrospectionException;

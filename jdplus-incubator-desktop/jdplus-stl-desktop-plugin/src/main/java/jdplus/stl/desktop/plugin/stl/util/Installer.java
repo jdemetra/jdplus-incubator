@@ -17,10 +17,10 @@
 package jdplus.stl.desktop.plugin.stl.util;
 
 import jdplus.stl.desktop.plugin.mstl.ui.SeasonalSpecsEditor;
-import demetra.desktop.ui.properties.l2fprod.ArrayRenderer;
-import demetra.desktop.ui.properties.l2fprod.CustomPropertyEditorRegistry;
-import demetra.desktop.ui.properties.l2fprod.CustomPropertyRendererFactory;
-import demetra.desktop.util.InstallerStep;
+import jdplus.toolkit.desktop.plugin.ui.properties.l2fprod.ArrayRenderer;
+import jdplus.toolkit.desktop.plugin.ui.properties.l2fprod.CustomPropertyEditorRegistry;
+import jdplus.toolkit.desktop.plugin.ui.properties.l2fprod.CustomPropertyRendererFactory;
+import jdplus.toolkit.desktop.plugin.util.InstallerStep;
 import jdplus.stl.base.api.SeasonalSpec;
 import org.openide.modules.ModuleInstall;
 

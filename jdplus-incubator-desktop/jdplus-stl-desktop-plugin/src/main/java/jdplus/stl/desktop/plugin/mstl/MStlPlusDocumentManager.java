@@ -16,8 +16,8 @@
  */
 package jdplus.stl.desktop.plugin.mstl;
 
-import demetra.desktop.workspace.AbstractWorkspaceTsItemManager;
-import demetra.desktop.workspace.WorkspaceItemManager;
+import jdplus.toolkit.desktop.plugin.workspace.AbstractWorkspaceTsItemManager;
+import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItemManager;
 import jdplus.stl.base.api.MStlPlusSpec;
 import jdplus.toolkit.base.api.util.Id;
 import jdplus.toolkit.base.api.util.LinearId;

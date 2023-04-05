@@ -5,9 +5,9 @@
 package jdplus.stl.desktop.plugin.stl;
 
 import jdplus.toolkit.base.api.DemetraVersion;
-import demetra.desktop.workspace.AbstractFileItemRepository;
-import demetra.desktop.workspace.WorkspaceItem;
-import demetra.desktop.workspace.WorkspaceItemRepository;
+import jdplus.toolkit.desktop.plugin.workspace.AbstractFileItemRepository;
+import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItem;
+import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItemRepository;
 import jdplus.toolkit.base.tsp.TsMeta;
 import java.time.LocalDateTime;
 import java.util.HashMap;

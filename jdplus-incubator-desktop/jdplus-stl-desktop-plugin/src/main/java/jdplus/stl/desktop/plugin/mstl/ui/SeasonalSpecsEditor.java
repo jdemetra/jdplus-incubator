@@ -18,7 +18,7 @@ package jdplus.stl.desktop.plugin.mstl.ui;
 
 import jdplus.stl.desktop.plugin.stl.ui.SeasonalSpecUI;
 import com.l2fprod.common.beans.editor.AbstractPropertyEditor;
-import demetra.desktop.ui.properties.l2fprod.ArrayEditorDialog;
+import jdplus.toolkit.desktop.plugin.ui.properties.l2fprod.ArrayEditorDialog;
 import jdplus.stl.base.api.SeasonalSpec;
 
 import java.awt.event.ActionEvent;

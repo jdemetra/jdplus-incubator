@@ -5,9 +5,9 @@
 package jdplus.stl.desktop.plugin.stl.ui.actions;
 
 import jdplus.stl.desktop.plugin.mstl.MStlPlusDocumentManager;
-import demetra.desktop.workspace.DocumentUIServices;
-import demetra.desktop.workspace.WorkspaceItem;
-import demetra.desktop.workspace.nodes.WsNode;
+import jdplus.toolkit.desktop.plugin.workspace.DocumentUIServices;
+import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItem;
+import jdplus.toolkit.desktop.plugin.workspace.nodes.WsNode;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import jdplus.stl.base.core.mstlplus.MStlPlusDocument;

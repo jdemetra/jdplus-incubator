@@ -17,8 +17,8 @@
 package jdplus.stl.desktop.plugin.mstl.ui;
 
 import jdplus.toolkit.base.api.data.WeightFunction;
-import demetra.desktop.descriptors.EnhancedPropertyDescriptor;
-import demetra.desktop.descriptors.IPropertyDescriptors;
+import jdplus.toolkit.desktop.plugin.descriptors.EnhancedPropertyDescriptor;
+import jdplus.toolkit.desktop.plugin.descriptors.IPropertyDescriptors;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;

@@ -5,8 +5,8 @@
 package jdplus.highfreq.desktop.plugin;
 
 import jdplus.highfreq.base.core.extendedairline.decomposiiton.ExtendedAirlineDecompositionDocument;
-import demetra.desktop.workspace.AbstractWorkspaceTsItemManager;
-import demetra.desktop.workspace.WorkspaceItemManager;
+import jdplus.toolkit.desktop.plugin.workspace.AbstractWorkspaceTsItemManager;
+import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItemManager;
 import jdplus.highfreq.base.api.ExtendedAirlineDecompositionSpec;
 import jdplus.toolkit.base.api.util.Id;
 import jdplus.toolkit.base.api.util.LinearId;
