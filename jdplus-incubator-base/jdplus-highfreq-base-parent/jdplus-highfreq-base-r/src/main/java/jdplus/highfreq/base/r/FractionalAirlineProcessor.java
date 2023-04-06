@@ -50,14 +50,12 @@ public class FractionalAirlineProcessor {
     }
 
     public ExtendedAirlineEstimation estimate(double[] y, Matrix x, boolean mean, double[] periods, int ndiff, boolean ar, String[] outliers, double cv, double precision, boolean approximateHessian) {
-        ExtendedAirlineSpec spec = ExtendedAirlineSpec.builder()
-                .periodicities(periods)
-                .differencingOrder(ndiff)
-                .phi(ar ? Parameter.undefined() : null)
-                .theta(ar ? null : Parameter.undefined())
-                .adjustToInt(false)
-                .build();
-        return ExtendedAirlineKernel.fastProcess(DoubleSeq.of(y), x, mean, outliers, cv, spec, precision);
+        return estimate(y, x, mean, periods, ndiff, ar, outliers, cv, precision, approximateHessian, 0);
+    }
+
+    public ExtendedAirlineEstimation estimate(double[] y, Matrix x, boolean mean, double[] periods, int ndiff, boolean ar, String[] outliers, double cv, double precision, boolean approximateHessian, int nfcasts) {
+        ExtendedAirlineSpec spec = ExtendedAirlineSpec.builder().periodicities(periods).differencingOrder(ndiff).phi(ar ? Parameter.undefined() : null).theta(ar ? null : Parameter.undefined()).adjustToInt(false).build();
+        return ExtendedAirlineKernel.fastProcess(DoubleSeq.of(y), x, mean, outliers, cv, spec, precision,nfcasts);
     }
 
     public double[] random(double[] periods, double theta, double[] stheta, boolean adjust, int n, double[] initial, double stdev, int warmup) {
