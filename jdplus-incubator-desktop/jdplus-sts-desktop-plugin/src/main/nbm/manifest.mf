@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
 OpenIDE-Module-Localizing-Bundle: /Bundle.properties
+OpenIDE-Module-Display-Category: JD+ Incubator
 OpenIDE-Module-Java-Dependencies: Java > 17
 
