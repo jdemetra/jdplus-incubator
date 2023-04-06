@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.sts.base.r.rssf;
+package jdplus.sts.base.r;
 
 import jdplus.toolkit.base.api.information.InformationMapping;
 import jdplus.toolkit.base.api.math.functions.Optimizer;
