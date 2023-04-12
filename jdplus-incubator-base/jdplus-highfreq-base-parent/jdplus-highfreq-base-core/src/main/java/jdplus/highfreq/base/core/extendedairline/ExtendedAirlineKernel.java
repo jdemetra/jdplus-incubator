@@ -254,7 +254,8 @@ public class ExtendedAirlineKernel {
     public static ExtendedAirlineEstimation fastProcess(DoubleSeq y, Matrix X, boolean mean, String[] outliers, double cv, ExtendedAirlineSpec spec, double eps, int nfcasts) {
 
         Matrix X_withoutFcast;
-        if (nfcasts > 0) {
+
+        if (nfcasts > 0 && X != null) {
             X_withoutFcast = X.extract(0, X.getRowsCount() - nfcasts, 0, X.getColumnsCount());
         } else {
             X_withoutFcast = X;
@@ -317,6 +318,13 @@ public class ExtendedAirlineKernel {
         fcasts.prepare(model.arima(), false); //Jean said mean should not be used
         DoubleSeq y_fcasts = fcasts.forecasts(y, nfcasts); // we should use the lin series for the fcasts
 
+        int xNumberRows = 0;
+        int xNumberColumns = 0;
+        if (X != null) {
+            xNumberColumns = X.getColumnsCount();
+            xNumberRows = X.getRowsCount();
+        }
+
         Matrix regVariables;
         if (nfcasts > 0) {
             double[] data = new double[(regarima.variables().getRowsCount() + nfcasts) * regarima.variables().getColumnsCount()];
@@ -328,19 +336,19 @@ public class ExtendedAirlineKernel {
 
             // Regression Variable in the future
             for (int i = regarima.variables().getRowsCount(); i < regarima.variables().getRowsCount() + nfcasts; i++) {
-                for (int j = 0; j < X.getColumnsCount(); j++) {
+                for (int j = 0; j < xNumberColumns; j++) {
                     data[(i + j * (regarima.variables().getRowsCount() + nfcasts))] = X.get(i, j);
                 }
             }
 
             //zeros for the other variables
             for (int i = regarima.variables().getRowsCount(); i < regarima.variables().getRowsCount() + nfcasts; i++) {
-                for (int j = X.getColumnsCount(); j < regarima.variables().getColumnsCount(); j++) {
+                for (int j = xNumberColumns; j < regarima.variables().getColumnsCount(); j++) {
                     data[(i + j * (regarima.variables().getRowsCount() + nfcasts))] = 0;
                 }
             }
 
-            regVariables = Matrix.of(data, X.getRowsCount(), regarima.variables().getColumnsCount());
+            regVariables = Matrix.of(data, xNumberRows, regarima.variables().getColumnsCount());
 
         } else {
             regVariables = regarima.variables();

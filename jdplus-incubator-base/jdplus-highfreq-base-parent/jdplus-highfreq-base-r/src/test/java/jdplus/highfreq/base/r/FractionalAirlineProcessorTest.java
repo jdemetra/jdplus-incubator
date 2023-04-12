@@ -54,7 +54,7 @@ public class FractionalAirlineProcessorTest {
     }
 
     @Test
-    public void testComponentEstimation() {
+    public void testComponentEstimation_with_fcast_withReg() {
         int n = WeeklyData.US_CLAIMS2.length;
         double[] data = new double[2 * (WeeklyData.US_CLAIMS2.length + 7)];
         for (int i = 0; i < WeeklyData.US_CLAIMS2.length; i++) {
@@ -72,6 +72,26 @@ public class FractionalAirlineProcessorTest {
         Matrix x = Matrix.of(data, WeeklyData.US_CLAIMS2.length + 7, 2);
 
         ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate_with_fcast(WeeklyData.US_CLAIMS2, x, false, new double[]{365.25 / 7},
+                -1, false, new String[]{"ao", "wo", "ls"}, 5, 1e-12, true, 7);
+
+        for (int i = 0; i < rslt.component_ls().length; i++) {
+            boolean comp_out = Math.abs(rslt.component_ls()[i] + rslt.component_ao()[i] + rslt.component_wo()[i] - rslt.component_outliers()[i]) > 0.00000001;
+            assertFalse(comp_out, "The outlier components don't sum up to the outliers, for " + i);
+        }
+
+        for (int i = 0; i < WeeklyData.US_CLAIMS2.length; i++) {
+            boolean comp = Math.abs(WeeklyData.US_CLAIMS2[i] - rslt.component_outliers()[i] - rslt.component_userdef_reg_variables()[i] - rslt.linearized()[i]) > 0.00000001;
+            assertFalse(comp, "The componets don't sum up to the lin " + i);
+        }
+
+        System.out.println("LL: " + rslt.getLikelihood());
+
+    }
+
+    @Test
+    public void testComponentEstimation_with_fcast_withoutReg() {
+
+        ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate_with_fcast(WeeklyData.US_CLAIMS2, null, false, new double[]{365.25 / 7},
                 -1, false, new String[]{"ao", "wo", "ls"}, 5, 1e-12, true, 7);
 
         for (int i = 0; i < rslt.component_ls().length; i++) {
