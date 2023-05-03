@@ -16,10 +16,10 @@
  */
 package jdplus.stl.desktop.plugin.mstl.ui;
 
-import demetra.desktop.descriptors.IObjectDescriptor;
-import demetra.desktop.ui.processing.IProcDocumentView;
-import demetra.desktop.workspace.DocumentUIServices;
-import demetra.desktop.workspace.WorkspaceItem;
+import jdplus.toolkit.desktop.plugin.descriptors.IObjectDescriptor;
+import jdplus.toolkit.desktop.plugin.ui.processing.IProcDocumentView;
+import jdplus.toolkit.desktop.plugin.workspace.DocumentUIServices;
+import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItem;
 import jdplus.stl.base.api.MStlPlusSpec;
 
 import java.awt.Color;
@@ -63,7 +63,7 @@ public class MStlPlusUIFactory implements DocumentUIServices<MStlPlusSpec, MStlP
 
     @Override
     public Icon getIcon() {
-        return ImageUtilities.loadImageIcon("demetra/desktop/stl/tangent_red.png", false);
+        return ImageUtilities.loadImageIcon("jdplus/stl/desktop/plugin/tangent_red.png", false);
     }
 
     @Override

@@ -16,8 +16,8 @@
  */
 package jdplus.highfreq.desktop.plugin.ui;
 
-import demetra.desktop.descriptors.EnhancedPropertyDescriptor;
-import demetra.desktop.descriptors.IPropertyDescriptors;
+import jdplus.toolkit.desktop.plugin.descriptors.EnhancedPropertyDescriptor;
+import jdplus.toolkit.desktop.plugin.descriptors.IPropertyDescriptors;
 import jdplus.highfreq.base.api.DecompositionSpec;
 import jdplus.highfreq.base.api.ExtendedAirlineSpec;
 import jdplus.toolkit.base.api.math.Constants;

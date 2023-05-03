@@ -16,8 +16,8 @@
  */
 package jdplus.stl.desktop.plugin.stl.ui;
 
-import demetra.desktop.descriptors.IPropertyDescriptors;
-import demetra.desktop.sa.descriptors.regular.AbstractCalendarSpecUI;
+import jdplus.toolkit.desktop.plugin.descriptors.IPropertyDescriptors;
+import jdplus.sa.desktop.plugin.descriptors.regular.AbstractCalendarSpecUI;
 
 /**
  *

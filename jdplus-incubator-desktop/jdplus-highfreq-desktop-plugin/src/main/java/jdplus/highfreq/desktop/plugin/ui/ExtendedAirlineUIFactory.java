@@ -4,11 +4,11 @@
  */
 package jdplus.highfreq.desktop.plugin.ui;
 
-import demetra.desktop.descriptors.IObjectDescriptor;
+import jdplus.toolkit.desktop.plugin.descriptors.IObjectDescriptor;
 import jdplus.highfreq.base.core.extendedairline.ExtendedAirlineDocument;
-import demetra.desktop.workspace.DocumentUIServices;
-import demetra.desktop.ui.processing.IProcDocumentView;
-import demetra.desktop.workspace.WorkspaceItem;
+import jdplus.toolkit.desktop.plugin.workspace.DocumentUIServices;
+import jdplus.toolkit.desktop.plugin.ui.processing.IProcDocumentView;
+import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItem;
 import jdplus.highfreq.base.api.ExtendedAirlineModellingSpec;
 import java.awt.Color;
 import javax.swing.Icon;

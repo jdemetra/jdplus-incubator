@@ -16,8 +16,8 @@
  */
 package jdplus.stl.desktop.plugin.stl.ui;
 
-import demetra.desktop.sa.descriptors.regular.AbstractEstimateSpecUI;
-import demetra.desktop.sa.descriptors.regular.RegularSpecUI;
+import jdplus.sa.desktop.plugin.descriptors.regular.AbstractEstimateSpecUI;
+import jdplus.sa.desktop.plugin.descriptors.regular.RegularSpecUI;
 import jdplus.toolkit.base.api.modelling.regular.EstimateSpec;
 
 /**

@@ -4,32 +4,32 @@
  */
 package jdplus.stl.desktop.plugin.stl.ui;
 
-import demetra.desktop.TsDynamicProvider;
-import demetra.desktop.processing.ui.modelling.ForecastsFactory;
-import demetra.desktop.processing.ui.modelling.InputFactory;
-import demetra.desktop.processing.ui.modelling.ModelArimaFactory;
-import demetra.desktop.processing.ui.modelling.ModelRegressorsFactory;
-import demetra.desktop.processing.ui.modelling.NiidTestsFactory;
-import demetra.desktop.processing.ui.modelling.OutOfSampleTestFactory;
-import demetra.desktop.processing.ui.modelling.RegSarimaViews;
-import demetra.desktop.processing.ui.sa.BenchmarkingUI;
-import demetra.desktop.processing.ui.sa.SIFactory;
-import demetra.desktop.sa.ui.DemetraSaUI;
-import demetra.desktop.sa.ui.SaViews;
-import demetra.desktop.ui.processing.GenericChartUI;
-import demetra.desktop.ui.processing.GenericTableUI;
-import demetra.desktop.ui.processing.HtmlItemUI;
-import demetra.desktop.ui.processing.IProcDocumentItemFactory;
-import demetra.desktop.ui.processing.IProcDocumentViewFactory;
-import demetra.desktop.ui.processing.ProcDocumentItemFactory;
-import demetra.desktop.ui.processing.ProcDocumentViewFactory;
-import demetra.desktop.ui.processing.stats.ResidualsDistUI;
-import demetra.desktop.ui.processing.stats.ResidualsUI;
-import demetra.desktop.ui.processing.stats.SpectrumUI;
-import demetra.html.HtmlElement;
-import demetra.html.HtmlElements;
-import demetra.html.HtmlHeader;
-import demetra.html.core.HtmlDiagnosticsSummary;
+import jdplus.toolkit.desktop.plugin.TsDynamicProvider;
+import jdplus.toolkit.desktop.plugin.modelling.ForecastsFactory;
+import jdplus.toolkit.desktop.plugin.modelling.InputFactory;
+import jdplus.toolkit.desktop.plugin.modelling.ModelArimaFactory;
+import jdplus.toolkit.desktop.plugin.modelling.ModelRegressorsFactory;
+import jdplus.toolkit.desktop.plugin.modelling.NiidTestsFactory;
+import jdplus.toolkit.desktop.plugin.modelling.OutOfSampleTestFactory;
+import jdplus.toolkit.desktop.plugin.modelling.RegSarimaViews;
+import jdplus.sa.desktop.plugin.processing.BenchmarkingUI;
+import jdplus.sa.desktop.plugin.processing.SIFactory;
+import jdplus.sa.desktop.plugin.ui.DemetraSaUI;
+import jdplus.sa.desktop.plugin.ui.SaViews;
+import jdplus.toolkit.desktop.plugin.ui.processing.GenericChartUI;
+import jdplus.toolkit.desktop.plugin.ui.processing.GenericTableUI;
+import jdplus.toolkit.desktop.plugin.ui.processing.HtmlItemUI;
+import jdplus.toolkit.desktop.plugin.ui.processing.IProcDocumentItemFactory;
+import jdplus.toolkit.desktop.plugin.ui.processing.IProcDocumentViewFactory;
+import jdplus.toolkit.desktop.plugin.ui.processing.ProcDocumentItemFactory;
+import jdplus.toolkit.desktop.plugin.ui.processing.ProcDocumentViewFactory;
+import jdplus.toolkit.desktop.plugin.ui.processing.stats.ResidualsDistUI;
+import jdplus.toolkit.desktop.plugin.ui.processing.stats.ResidualsUI;
+import jdplus.toolkit.desktop.plugin.ui.processing.stats.SpectrumUI;
+import jdplus.toolkit.desktop.plugin.html.HtmlElement;
+import jdplus.toolkit.desktop.plugin.html.HtmlElements;
+import jdplus.toolkit.desktop.plugin.html.HtmlHeader;
+import jdplus.toolkit.desktop.plugin.html.core.HtmlDiagnosticsSummary;
 import jdplus.toolkit.base.api.information.InformationSet;
 import jdplus.toolkit.base.api.modelling.ModellingDictionary;
 import jdplus.toolkit.base.api.processing.ProcDiagnostic;
@@ -37,8 +37,8 @@ import jdplus.sa.base.api.SaDictionaries;
 import jdplus.sa.base.api.SaManager;
 import jdplus.sa.base.api.SaProcessingFactory;
 import jdplus.sa.base.api.StationaryVarianceDecomposition;
-import demetra.sa.html.HtmlSeasonalityDiagnostics;
-import demetra.sa.html.HtmlStationaryVarianceDecomposition;
+import jdplus.sa.desktop.plugin.html.HtmlSeasonalityDiagnostics;
+import jdplus.sa.desktop.plugin.html.HtmlStationaryVarianceDecomposition;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.api.timeseries.TsDocument;
 import jdplus.toolkit.base.api.dictionaries.RegressionDictionaries;
@@ -56,6 +56,8 @@ import jdplus.stl.base.io.information.StlPlusSpecMapping;
 import jdplus.stl.base.core.stlplus.StlPlusDiagnostics;
 import jdplus.stl.base.core.stlplus.StlPlusDocument;
 import jdplus.stl.base.core.stlplus.StlPlusResults;
+import jdplus.toolkit.desktop.plugin.html.core.HtmlInformationSet;
+import jdplus.toolkit.desktop.plugin.html.modelling.HtmlRegSarima;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -150,7 +152,7 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
             super(StlPlusDocument.class, RegSarimaViews.INPUT_SPEC,
                     (StlPlusDocument doc) -> {
                         InformationSet info = StlPlusSpecMapping.write(doc.getSpecification(), doc.getInput().getData().getDomain(), true);
-                        return new demetra.html.core.HtmlInformationSet(info);
+                        return new HtmlInformationSet(info);
                     },
                     new HtmlItemUI()
             );
@@ -259,7 +261,7 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 
             super(StlPlusDocument.class, SaViews.PREPROCESSING_SUMMARY, MODELEXTRACTOR
                     .andThen(regarima -> regarima == null ? null
-                    : new demetra.html.modelling.HtmlRegSarima(regarima, false)),
+                    : new HtmlRegSarima(regarima, false)),
                     new HtmlItemUI());
         }
 

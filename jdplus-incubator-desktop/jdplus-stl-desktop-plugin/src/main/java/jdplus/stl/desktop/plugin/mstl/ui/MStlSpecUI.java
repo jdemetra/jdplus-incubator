@@ -17,8 +17,8 @@
 package jdplus.stl.desktop.plugin.mstl.ui;
 
 import jdplus.stl.desktop.plugin.stl.ui.LoessSpecUI;
-import demetra.desktop.descriptors.EnhancedPropertyDescriptor;
-import demetra.desktop.descriptors.IPropertyDescriptors;
+import jdplus.toolkit.desktop.plugin.descriptors.EnhancedPropertyDescriptor;
+import jdplus.toolkit.desktop.plugin.descriptors.IPropertyDescriptors;
 import jdplus.stl.base.api.MStlPlusSpec;
 import jdplus.stl.base.api.MStlSpec;
 import java.beans.IntrospectionException;

@@ -5,9 +5,9 @@
 package jdplus.highfreq.desktop.plugin.ui.actions;
 
 import jdplus.highfreq.desktop.plugin.ExtendedAirlineDecompositionDocumentManager;
-import demetra.desktop.workspace.DocumentUIServices;
-import demetra.desktop.workspace.WorkspaceItem;
-import demetra.desktop.workspace.nodes.WsNode;
+import jdplus.toolkit.desktop.plugin.workspace.DocumentUIServices;
+import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItem;
+import jdplus.toolkit.desktop.plugin.workspace.nodes.WsNode;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import jdplus.highfreq.base.core.extendedairline.decomposiiton.ExtendedAirlineDecompositionDocument;

@@ -16,9 +16,9 @@
  */
 package jdplus.stl.desktop.plugin.mstl.ui;
 
-import demetra.desktop.descriptors.EnhancedPropertyDescriptor;
-import demetra.desktop.sa.descriptors.highfreq.AbstractSeriesSpecUI;
-import demetra.desktop.sa.descriptors.highfreq.HighFreqSpecUI;
+import jdplus.toolkit.desktop.plugin.descriptors.EnhancedPropertyDescriptor;
+import jdplus.sa.desktop.plugin.descriptors.highfreq.AbstractSeriesSpecUI;
+import jdplus.sa.desktop.plugin.descriptors.highfreq.HighFreqSpecUI;
 import jdplus.toolkit.base.api.modelling.highfreq.SeriesSpec;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;

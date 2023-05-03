@@ -123,6 +123,12 @@
             <groupId>eu.europa.ec.joinup.sat</groupId>
             <artifactId>jdplus-stl-base-io</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>eu.europa.ec.joinup.sat</groupId>
+                    <artifactId>jdplus-sa-base-information</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>

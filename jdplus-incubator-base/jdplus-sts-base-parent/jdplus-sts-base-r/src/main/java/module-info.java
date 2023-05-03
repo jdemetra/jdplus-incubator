@@ -13,5 +13,4 @@ module jdplus.sts.base.r {
     requires jdplus.toolkit.base.protobuf;
 
     exports jdplus.sts.base.r;
-    exports jdplus.sts.base.r.rssf;
 }

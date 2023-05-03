@@ -5,10 +5,12 @@
 package jdplus.stl.desktop.plugin.stl;
 
 import jdplus.toolkit.base.api.DemetraVersion;
-import demetra.desktop.workspace.AbstractFileItemRepository;
-import demetra.desktop.workspace.WorkspaceItem;
-import demetra.desktop.workspace.WorkspaceItemRepository;
+import jdplus.toolkit.desktop.plugin.workspace.AbstractFileItemRepository;
+import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItem;
+import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItemRepository;
 import jdplus.toolkit.base.tsp.TsMeta;
+
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +37,7 @@ public final class StlDocFileRepository extends AbstractFileItemRepository< StlP
         StlPlusDocument element = doc.getElement();
        
         Map<String, String> meta=new HashMap<>(element.getMetadata());
-        TsMeta.TIMESTAMP.store(meta, LocalDateTime.now());
+        TsMeta.TIMESTAMP.store(meta, LocalDateTime.now(Clock.systemDefaultZone()));
         element.updateMetadata(meta);
         
         return storeFile(doc, element, version, doc::resetDirty);

@@ -16,7 +16,7 @@
  */
 package jdplus.stl.desktop.plugin.stl.ui;
 
-import demetra.desktop.sa.descriptors.regular.RegularSpecUI;
+import jdplus.sa.desktop.plugin.descriptors.regular.RegularSpecUI;
 import jdplus.toolkit.base.api.modelling.regular.ModellingSpec;
 import jdplus.sa.base.api.benchmarking.SaBenchmarkingSpec;
 import jdplus.stl.base.api.StlPlusSpec;

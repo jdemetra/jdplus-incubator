@@ -16,9 +16,9 @@
  */
 package jdplus.stl.desktop.plugin.mstl.ui;
 
-import demetra.desktop.descriptors.IPropertyDescriptors;
-import demetra.desktop.sa.descriptors.highfreq.AbstractRegressionSpecUI;
-import demetra.desktop.sa.descriptors.highfreq.HighFreqSpecUI;
+import jdplus.toolkit.desktop.plugin.descriptors.IPropertyDescriptors;
+import jdplus.sa.desktop.plugin.descriptors.highfreq.AbstractRegressionSpecUI;
+import jdplus.sa.desktop.plugin.descriptors.highfreq.HighFreqSpecUI;
 import jdplus.toolkit.base.api.modelling.highfreq.RegressionSpec;
 
 /**

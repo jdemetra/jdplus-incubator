@@ -16,8 +16,8 @@
  */
 package jdplus.highfreq.desktop.plugin.ui;
 
-import demetra.desktop.descriptors.EnhancedPropertyDescriptor;
-import demetra.desktop.descriptors.IObjectDescriptor;
+import jdplus.toolkit.desktop.plugin.descriptors.EnhancedPropertyDescriptor;
+import jdplus.toolkit.desktop.plugin.descriptors.IObjectDescriptor;
 import jdplus.highfreq.base.api.ExtendedAirlineDecompositionSpec;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
