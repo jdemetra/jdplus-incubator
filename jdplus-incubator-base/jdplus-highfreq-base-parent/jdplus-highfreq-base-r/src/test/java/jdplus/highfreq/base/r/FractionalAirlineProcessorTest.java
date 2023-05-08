@@ -5,6 +5,7 @@
  */
 package jdplus.highfreq.base.r;
 
+import java.util.Arrays;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import tck.demetra.data.WeeklyData;
 import jdplus.highfreq.base.core.extendedairline.decomposiiton.LightExtendedAirlineDecomposition;
@@ -26,7 +27,7 @@ public class FractionalAirlineProcessorTest {
     @Test
     public void testWeeklyDecomp() {
         DoubleSeq y = DoubleSeq.of(WeeklyData.US_CLAIMS2).log();
-        LightExtendedAirlineDecomposition rslt = FractionalAirlineProcessor.decompose(y.toArray(), 365.25/7, false, true, 0,0);
+        LightExtendedAirlineDecomposition rslt = FractionalAirlineProcessor.decompose(y.toArray(), 365.25 / 7, false, true, 0, 0);
 //        System.out.println(rslt.component("t").getData());
 //        System.out.println(rslt.component("s").getData());
 //        System.out.println(rslt.component("i").getData());
@@ -37,37 +38,73 @@ public class FractionalAirlineProcessorTest {
     }
 
     @Test
-    public void testWeeklyEstimation() {
-        ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(WeeklyData.US_CLAIMS2, null, false, new double[]{365.25 / 7}, -1, false, new String[]{"ao", "wo"}, 5, 1e-12, true);
-//        System.out.println(rslt.getLikelihood());
+    public void testWeeklyEstimation_mini() {
+        ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(WeeklyData.US_CLAIMS2, null, false, new double[]{52},
+                2, false, null, 6, 1e-12, false);
+        System.out.println(rslt.getLikelihood());
 //        System.out.println();
     }
-    
-     @Test
-    public void testComponentEstimation() {
-        double[] data = new double[2 * WeeklyData.US_CLAIMS2.length];
-        data[2] = 1;
-        data[WeeklyData.US_CLAIMS2.length] = 1;
 
-        Matrix x = Matrix.of(data, WeeklyData.US_CLAIMS2.length, 2);
-        ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(WeeklyData.US_CLAIMS2, x, true, new double[]{365.25 / 7}, -1, false, new String[]{"ao", "wo", "ls"}, 5, 1e-12, true);
+    @Test
+    public void testWeeklyEstimation() {
+        ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(WeeklyData.US_CLAIMS2, null, false, new double[]{52},
+                -1, false, new String[]{"ao", "ls", "wo"}, 5, 1e-12, true);
+        System.out.println(rslt.getLikelihood());
+//        System.out.println();
+    }
+
+    @Test
+    public void testComponentEstimation_with_fcast_withReg() {
+        int n = WeeklyData.US_CLAIMS2.length;
+        double[] data = new double[2 * (WeeklyData.US_CLAIMS2.length + 7)];
+        for (int i = 0; i < WeeklyData.US_CLAIMS2.length; i++) {
+            data[i] = 0; //1
+            data[i + n + 7] = 0;//3;
+        }
+
+        data[1] = 1;
+        data[WeeklyData.US_CLAIMS2.length + 7] = 1;
+        for (int i = WeeklyData.US_CLAIMS2.length; i < WeeklyData.US_CLAIMS2.length + 7; i++) {
+            data[i] = 2;
+            data[i + n + 7] = 4;
+        }
+
+        Matrix x = Matrix.of(data, WeeklyData.US_CLAIMS2.length + 7, 2);
+
+        ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate_with_fcast(WeeklyData.US_CLAIMS2, x, false, new double[]{365.25 / 7},
+                -1, false, new String[]{"ao", "wo", "ls"}, 5, 1e-12, true, 7);
 
         for (int i = 0; i < rslt.component_ls().length; i++) {
-           boolean comp_out=Math.abs(rslt.component_ls()[i] + rslt.component_ao()[i] + rslt.component_wo()[i] - rslt.component_outliers()[i]) > 0.00000001;
-            if (comp_out) {
-                System.out.println("Fehler");
-                  assertTrue(comp_out, "The outlier componets don't");
-            }
+            boolean comp_out = Math.abs(rslt.component_ls()[i] + rslt.component_ao()[i] + rslt.component_wo()[i] - rslt.component_outliers()[i]) > 0.00000001;
+            assertFalse(comp_out, "The outlier components don't sum up to the outliers, for " + i);
         }
-    //    System.out.println("Fertig_ Outlier");
+
+        for (int i = 0; i < WeeklyData.US_CLAIMS2.length; i++) {
+            boolean comp = Math.abs(WeeklyData.US_CLAIMS2[i] - rslt.component_outliers()[i] - rslt.component_userdef_reg_variables()[i] - rslt.linearized()[i]) > 0.00000001;
+            assertFalse(comp, "The componets don't sum up to the lin " + i);
+        }
+
+        System.out.println("LL: " + rslt.getLikelihood());
+
+    }
+
+    @Test
+    public void testComponentEstimation_with_fcast_withoutReg() {
+
+        ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate_with_fcast(WeeklyData.US_CLAIMS2, null, false, new double[]{365.25 / 7},
+                -1, false, new String[]{"ao", "wo", "ls"}, 5, 1e-12, true, 7);
 
         for (int i = 0; i < rslt.component_ls().length; i++) {
-            boolean comp=Math.abs(WeeklyData.US_CLAIMS2[i] -  rslt.component_outliers()[i]- rslt.component_userdef_reg_variables()[i] - rslt.linearized()[i]) > 0.00000001;
-            if (comp) {
-                System.out.println("Fehler: " + i);
-                assertTrue(false, "The componets don't sum up to the lin");
-            }
+            boolean comp_out = Math.abs(rslt.component_ls()[i] + rslt.component_ao()[i] + rslt.component_wo()[i] - rslt.component_outliers()[i]) > 0.00000001;
+            assertFalse(comp_out, "The outlier components don't sum up to the outliers, for " + i);
         }
+
+        for (int i = 0; i < WeeklyData.US_CLAIMS2.length; i++) {
+            boolean comp = Math.abs(WeeklyData.US_CLAIMS2[i] - rslt.component_outliers()[i] - rslt.component_userdef_reg_variables()[i] - rslt.linearized()[i]) > 0.00000001;
+            assertFalse(comp, "The componets don't sum up to the lin " + i);
+        }
+
+        System.out.println("LL: " + rslt.getLikelihood());
 
     }
 
@@ -77,7 +114,7 @@ public class FractionalAirlineProcessorTest {
         SsfUcarimaEstimation details = FractionalAirlineProcessor.ssfDetails(rslt);
         assertTrue(null != details.getData("smoothing.states", Matrix.class));
     }
-    
+
 //    final static DoubleSeq EDF;
 //
 //    static {
@@ -91,12 +128,12 @@ public class FractionalAirlineProcessorTest {
 //        }
 //        EDF = y;
 //    }
-//    
+//
 //    @Test
 //    public void testRandom() {
 //        DoubleSeq y = EDF;
 //        double[] rnd = FractionalAirlineProcessor.random(new double[]{7, 365.25}, .1, new double[]{.7, .85}, false, 2000, y.range(0,374).log().toArray(), .01, 0);
 //        System.out.println(DoubleSeq.of(rnd));
 //    }
-//    
+//
 }
