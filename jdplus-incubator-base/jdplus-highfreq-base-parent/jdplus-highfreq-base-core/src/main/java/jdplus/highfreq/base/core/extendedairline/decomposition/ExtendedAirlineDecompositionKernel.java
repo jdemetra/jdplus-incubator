@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.highfreq.base.core.extendedairline.decomposiiton;
+package jdplus.highfreq.base.core.extendedairline.decomposition;
 
 import jdplus.highfreq.base.core.extendedairline.ExtendedAirlineKernel;
 import jdplus.highfreq.base.core.extendedairline.ExtendedAirlineResults;

@@ -19,7 +19,7 @@ import jdplus.toolkit.base.api.timeseries.TsDomain;
 import jdplus.toolkit.base.api.dictionaries.Dictionary;
 import jdplus.toolkit.base.api.dictionaries.RegressionDictionaries;
 import java.util.Optional;
-import jdplus.highfreq.base.core.extendedairline.decomposiiton.ExtendedAirlineDecomposition;
+import jdplus.highfreq.base.core.extendedairline.decomposition.ExtendedAirlineDecomposition;
 import jdplus.highfreq.base.core.extendedairline.ExtendedAirlineResults;
 import jdplus.highfreq.base.core.regarima.HighFreqRegArimaModel;
 import static jdplus.toolkit.base.core.regarima.extractors.RegSarimaModelExtractors.NBCAST;

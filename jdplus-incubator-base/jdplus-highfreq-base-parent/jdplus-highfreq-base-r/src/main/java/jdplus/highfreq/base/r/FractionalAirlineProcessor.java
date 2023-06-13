@@ -18,14 +18,14 @@ package jdplus.highfreq.base.r;
 
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.Parameter;
-import jdplus.highfreq.base.core.extendedairline.decomposiiton.LightExtendedAirlineDecomposition;
+import jdplus.highfreq.base.core.extendedairline.decomposition.LightExtendedAirlineDecomposition;
 import jdplus.highfreq.base.core.extendedairline.ExtendedAirlineEstimation;
 import jdplus.highfreq.base.api.ExtendedAirlineSpec;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
 import jdplus.toolkit.base.core.arima.ArimaModel;
 import jdplus.toolkit.base.core.arima.ArimaSeriesGenerator;
 import jdplus.toolkit.base.core.dstats.Normal;
-import jdplus.highfreq.base.core.extendedairline.decomposiiton.ExtendedAirlineDecomposer;
+import jdplus.highfreq.base.core.extendedairline.decomposition.ExtendedAirlineDecomposer;
 import jdplus.highfreq.base.core.extendedairline.ExtendedAirlineKernel;
 import jdplus.highfreq.base.core.extendedairline.ExtendedAirlineMapping;
 import jdplus.highfreq.base.core.ssf.extractors.SsfUcarimaEstimation;
@@ -49,11 +49,7 @@ public class FractionalAirlineProcessor {
         return ExtendedAirlineDecomposer.decompose(DoubleSeq.of(s), periods, ndiff, ar, cov, nb, nf);
     }
 
-    public ExtendedAirlineEstimation estimate(double[] y, Matrix x, boolean mean, double[] periods, int ndiff, boolean ar, String[] outliers, double cv, double precision, boolean approximateHessian) {
-        return estimate_with_fcast(y, x, mean, periods, ndiff, ar, outliers, cv, precision, approximateHessian, 0);
-    }
-
-    public ExtendedAirlineEstimation estimate_with_fcast(double[] y, Matrix x, boolean mean, double[] periods, int ndiff, boolean ar, String[] outliers, double cv, double precision, boolean approximateHessian, int nfcasts) {
+    public ExtendedAirlineEstimation estimate(double[] y, Matrix x, boolean mean, double[] periods, int ndiff, boolean ar, String[] outliers, double cv, double precision, boolean approximateHessian, int nfcasts) {
         ExtendedAirlineSpec spec = ExtendedAirlineSpec.builder().periodicities(periods).differencingOrder(ndiff).phi(ar ? Parameter.undefined() : null).theta(ar ? null : Parameter.undefined()).adjustToInt(false).build();
         return ExtendedAirlineKernel.fastProcess(DoubleSeq.of(y), x, mean, outliers, cv, spec, precision, nfcasts);
     }

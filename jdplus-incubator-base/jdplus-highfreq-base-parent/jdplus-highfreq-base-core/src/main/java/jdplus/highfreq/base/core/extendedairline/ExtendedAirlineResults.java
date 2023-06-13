@@ -9,7 +9,7 @@ import jdplus.toolkit.base.api.information.GenericExplorable;
 import jdplus.toolkit.base.api.processing.HasLog;
 import jdplus.toolkit.base.api.processing.ProcessingLog;
 import jdplus.sa.base.api.SeriesDecomposition;
-import jdplus.highfreq.base.core.extendedairline.decomposiiton.ExtendedAirlineDecomposition;
+import jdplus.highfreq.base.core.extendedairline.decomposition.ExtendedAirlineDecomposition;
 
 /**
  *

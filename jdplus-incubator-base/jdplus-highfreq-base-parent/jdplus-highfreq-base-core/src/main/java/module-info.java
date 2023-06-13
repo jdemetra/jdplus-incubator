@@ -21,7 +21,7 @@ module jdplus.highfreq.base.core {
     exports jdplus.highfreq.base.core.extractors;
     exports jdplus.highfreq.base.core.regarima;
     exports jdplus.highfreq.base.core.ssf.extractors;
-    exports jdplus.highfreq.base.core.extendedairline.decomposiiton;
+    exports jdplus.highfreq.base.core.extendedairline.decomposition;
 
     provides InformationExtractor with
             ExtendedAirlineExtractor,

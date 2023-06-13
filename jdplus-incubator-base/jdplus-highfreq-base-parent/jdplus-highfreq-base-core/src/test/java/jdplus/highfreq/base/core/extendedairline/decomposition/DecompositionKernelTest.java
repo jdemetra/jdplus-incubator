@@ -16,8 +16,6 @@
  */
 package jdplus.highfreq.base.core.extendedairline.decomposition;
 
-import jdplus.highfreq.base.core.extendedairline.decomposiiton.ExtendedAirlineDecomposition;
-import jdplus.highfreq.base.core.extendedairline.decomposiiton.DecompositionKernel;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import tck.demetra.data.Data;
 import tck.demetra.data.MatrixSerializer;

@@ -19,7 +19,6 @@ package jdplus.highfreq.base.core.extendedairline.decomposition;
 import jdplus.highfreq.base.core.extendedairline.ExtendedAirlineKernelTest;
 import jdplus.highfreq.base.core.extendedairline.ExtendedAirlineMapping;
 import jdplus.highfreq.base.core.extendedairline.ExtendedAirlineResults;
-import jdplus.highfreq.base.core.extendedairline.decomposiiton.ExtendedAirlineDecompositionKernel;
 import tck.demetra.data.MatrixSerializer;
 import jdplus.highfreq.base.api.DecompositionSpec;
 import jdplus.highfreq.base.api.ExtendedAirlineDecompositionSpec;

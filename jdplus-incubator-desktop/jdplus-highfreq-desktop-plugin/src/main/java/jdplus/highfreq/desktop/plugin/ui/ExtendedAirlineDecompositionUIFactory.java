@@ -5,7 +5,7 @@
 package jdplus.highfreq.desktop.plugin.ui;
 
 import jdplus.toolkit.desktop.plugin.descriptors.IObjectDescriptor;
-import jdplus.highfreq.base.core.extendedairline.decomposiiton.ExtendedAirlineDecompositionDocument;
+import jdplus.highfreq.base.core.extendedairline.decomposition.ExtendedAirlineDecompositionDocument;
 import jdplus.toolkit.desktop.plugin.ui.processing.IProcDocumentView;
 import jdplus.toolkit.desktop.plugin.workspace.DocumentUIServices;
 import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItem;
