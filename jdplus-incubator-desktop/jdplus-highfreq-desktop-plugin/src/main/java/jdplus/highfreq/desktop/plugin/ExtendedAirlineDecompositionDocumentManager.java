@@ -4,7 +4,7 @@
  */
 package jdplus.highfreq.desktop.plugin;
 
-import jdplus.highfreq.base.core.extendedairline.decomposiiton.ExtendedAirlineDecompositionDocument;
+import jdplus.highfreq.base.core.extendedairline.decomposition.ExtendedAirlineDecompositionDocument;
 import jdplus.toolkit.desktop.plugin.workspace.AbstractWorkspaceTsItemManager;
 import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItemManager;
 import jdplus.highfreq.base.api.ExtendedAirlineDecompositionSpec;

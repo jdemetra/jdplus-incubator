@@ -5,10 +5,9 @@
  */
 package jdplus.highfreq.base.r;
 
-import java.util.Arrays;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import tck.demetra.data.WeeklyData;
-import jdplus.highfreq.base.core.extendedairline.decomposiiton.LightExtendedAirlineDecomposition;
+import jdplus.highfreq.base.core.extendedairline.decomposition.LightExtendedAirlineDecomposition;
 import jdplus.highfreq.base.core.extendedairline.ExtendedAirlineEstimation;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
 import jdplus.highfreq.base.core.ssf.extractors.SsfUcarimaEstimation;
@@ -40,7 +39,7 @@ public class FractionalAirlineProcessorTest {
     @Test
     public void testWeeklyEstimation_mini() {
         ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(WeeklyData.US_CLAIMS2, null, false, new double[]{52},
-                2, false, null, 6, 1e-12, false);
+                2, false, null, 6, 1e-12, false, 0);
         System.out.println(rslt.getLikelihood());
 //        System.out.println();
     }
@@ -48,7 +47,7 @@ public class FractionalAirlineProcessorTest {
     @Test
     public void testWeeklyEstimation() {
         ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(WeeklyData.US_CLAIMS2, null, false, new double[]{52},
-                -1, false, new String[]{"ao", "ls", "wo"}, 5, 1e-12, true);
+                -1, false, new String[]{"ao", "ls", "wo"}, 5, 1e-12, true,0);
         System.out.println(rslt.getLikelihood());
 //        System.out.println();
     }
@@ -71,7 +70,7 @@ public class FractionalAirlineProcessorTest {
 
         Matrix x = Matrix.of(data, WeeklyData.US_CLAIMS2.length + 7, 2);
 
-        ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate_with_fcast(WeeklyData.US_CLAIMS2, x, false, new double[]{365.25 / 7},
+        ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(WeeklyData.US_CLAIMS2, x, false, new double[]{365.25 / 7},
                 -1, false, new String[]{"ao", "wo", "ls"}, 5, 1e-12, true, 7);
 
         for (int i = 0; i < rslt.component_ls().length; i++) {
@@ -90,8 +89,8 @@ public class FractionalAirlineProcessorTest {
 
     @Test
     public void testComponentEstimation_with_fcast_withoutReg() {
-
-        ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate_with_fcast(WeeklyData.US_CLAIMS2, null, false, new double[]{365.25 / 7},
+ 
+        ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(WeeklyData.US_CLAIMS2, null, false, new double[]{365.25 / 7},
                 -1, false, new String[]{"ao", "wo", "ls"}, 5, 1e-12, true, 7);
 
         for (int i = 0; i < rslt.component_ls().length; i++) {

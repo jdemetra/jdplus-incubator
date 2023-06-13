@@ -7,7 +7,7 @@ package jdplus.highfreq.base.core.extractors;
 
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.DoublesMath;
-import jdplus.highfreq.base.core.extendedairline.decomposiiton.LightExtendedAirlineDecomposition;
+import jdplus.highfreq.base.core.extendedairline.decomposition.LightExtendedAirlineDecomposition;
 import jdplus.highfreq.base.api.SeriesComponent;
 import jdplus.toolkit.base.api.information.InformationExtractor;
 import jdplus.toolkit.base.api.information.InformationMapping;

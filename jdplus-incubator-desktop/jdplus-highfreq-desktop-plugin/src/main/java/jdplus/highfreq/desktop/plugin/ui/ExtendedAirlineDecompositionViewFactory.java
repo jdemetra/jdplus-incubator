@@ -6,7 +6,7 @@ package jdplus.highfreq.desktop.plugin.ui;
 
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.desktop.plugin.TsDynamicProvider;
-import jdplus.highfreq.base.core.extendedairline.decomposiiton.ExtendedAirlineDecompositionDocument;
+import jdplus.highfreq.base.core.extendedairline.decomposition.ExtendedAirlineDecompositionDocument;
 import jdplus.toolkit.desktop.plugin.modelling.InputFactory;
 import jdplus.toolkit.desktop.plugin.modelling.RegSarimaViews;
 import jdplus.toolkit.desktop.plugin.ui.processing.GenericChartUI;
