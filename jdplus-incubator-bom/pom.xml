@@ -21,17 +21,17 @@
         <dependencies>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>jdplus-incubator-base-plugin</artifactId>
+                <artifactId>jdplus-incubator-base</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>jdplus-incubator-cli-plugin</artifactId>
+                <artifactId>jdplus-incubator-cli</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>jdplus-incubator-desktop-plugin</artifactId>
+                <artifactId>jdplus-incubator-desktop</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
