@@ -1,7 +1,18 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2023 National Bank of Belgium
+ * 
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved 
+ * by the European Commission - subsequent versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * https://joinup.ec.europa.eu/software/page/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and 
+ * limitations under the Licence.
  */
 package jdplus.x11plus.base.core;
 
@@ -19,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.DoubleSupplier;
+import jdplus.toolkit.base.api.math.linearfilters.AsymmetricFilterOption;
 
 import jdplus.toolkit.base.core.data.DataBlock;
 //import jdplus.experimentalsa.base.core.dfa.MSEDecomposition;
@@ -26,11 +38,11 @@ import jdplus.toolkit.base.core.data.DataBlock;
 //import jdplus.experimentalsa.base.core.filters.FSTFilter;
 //import jdplus.experimentalsa.base.core.filters.FSTFilterFactory;
 //import jdplus.experimentalsa.base.core.filters.FSTFilterSpec;
-import jdplus.toolkit.base.core.math.linearfilters.advanced.IFiltering;
-import jdplus.toolkit.base.core.math.linearfilters.advanced.LocalPolynomialFiltersFactory;
-import jdplus.toolkit.base.core.math.linearfilters.advanced.LocalPolynomialFilterSpec;
+import jdplus.toolkit.base.core.math.linearfilters.IFiltering;
+import jdplus.toolkit.base.core.math.linearfilters.LocalPolynomialFilters;
+import jdplus.toolkit.base.api.math.linearfilters.LocalPolynomialFilterSpec;
 //import jdplus.experimentalsa.base.core.filters.SpectralDensity;
-import jdplus.toolkit.base.core.math.linearfilters.advanced.AsymmetricFiltersFactory;
+import jdplus.toolkit.base.core.math.linearfilters.AsymmetricFiltersFactory;
 import jdplus.toolkit.base.core.math.linearfilters.IFiniteFilter;
 //import jdplus.experimentalsa.base.core.rkhs.RKHSFilterFactory;
 //import jdplus.experimentalsa.base.core.rkhs.RKHSFilterSpec;
@@ -346,51 +358,57 @@ public class X11KernelTest {
 //    }
 
     public static IFiltering lp_c0(int h) {
-        LocalPolynomialFilterSpec fspec = new LocalPolynomialFilterSpec();
-        fspec.setFilterLength(h);
-        fspec.setAsymmetricFilters(AsymmetricFiltersFactory.Option.MMSRE);
-        fspec.setLinearModelCoefficients(new double[0]);
-        return LocalPolynomialFiltersFactory.of(fspec);
+        LocalPolynomialFilterSpec fspec = LocalPolynomialFilterSpec.builder()
+                .filterHorizon(h)
+                .asymmetricFilters(AsymmetricFilterOption.MMSRE)
+                .linearModelCoefficients(new double[0])
+                .build();
+        return LocalPolynomialFilters.of(fspec);
     }
 
     public static IFiltering lp_c1(int h, int tw) {
-        LocalPolynomialFilterSpec fspec = new LocalPolynomialFilterSpec();
-        fspec.setFilterLength(h);
-        fspec.setAsymmetricFilters(AsymmetricFiltersFactory.Option.MMSRE);
-        fspec.setLinearModelCoefficients(new double[0]);
-        fspec.setTimelinessWeight(tw);
-        return LocalPolynomialFiltersFactory.of(fspec);
+        LocalPolynomialFilterSpec fspec = LocalPolynomialFilterSpec.builder()
+                .filterHorizon(h)
+                .asymmetricFilters(AsymmetricFilterOption.MMSRE)
+                .linearModelCoefficients(new double[0])
+                .timelinessWeight(tw)
+                .build();
+        return LocalPolynomialFilters.of(fspec);
     }
 
     public static IFiltering lp_quad(int h, double c, double tw) {
-        LocalPolynomialFilterSpec fspec = new LocalPolynomialFilterSpec();
-        fspec.setFilterLength(H);
-        fspec.setAsymmetricFilters(AsymmetricFiltersFactory.Option.MMSRE);
-        fspec.setAsymmetricPolynomialDegree(1);
-        fspec.setLinearModelCoefficients(new double[]{c});
-        fspec.setTimelinessWeight(tw);
-        return LocalPolynomialFiltersFactory.of(fspec);
+        LocalPolynomialFilterSpec fspec = LocalPolynomialFilterSpec.builder()
+                .filterHorizon(H)
+                .asymmetricFilters(AsymmetricFilterOption.MMSRE)
+                .asymmetricPolynomialDegree(1)
+                .linearModelCoefficients(new double[]{c})
+                .timelinessWeight(tw)
+                .build();
+        return LocalPolynomialFilters.of(fspec);
     }
 
     public static IFiltering musgrave(int h) {
-        LocalPolynomialFilterSpec fspec = new LocalPolynomialFilterSpec();
-        fspec.setFilterLength(h);
-        fspec.setAsymmetricFilters(AsymmetricFiltersFactory.Option.MMSRE);
-        return LocalPolynomialFiltersFactory.of(fspec);
+        LocalPolynomialFilterSpec fspec = LocalPolynomialFilterSpec.builder()
+                .filterHorizon(h)
+                .asymmetricFilters(AsymmetricFilterOption.MMSRE)
+                .build();
+        return LocalPolynomialFilters.of(fspec);
     }
 
     public static IFiltering daf(int h) {
-        LocalPolynomialFilterSpec fspec = new LocalPolynomialFilterSpec();
-        fspec.setFilterLength(h);
-        fspec.setAsymmetricFilters(AsymmetricFiltersFactory.Option.Direct);
-        return LocalPolynomialFiltersFactory.of(fspec);
+        LocalPolynomialFilterSpec fspec = LocalPolynomialFilterSpec.builder()
+                .filterHorizon(h)
+                .asymmetricFilters(AsymmetricFilterOption.Direct)
+                .build();
+        return LocalPolynomialFilters.of(fspec);
     }
 
     public static IFiltering cut(int h) {
-        LocalPolynomialFilterSpec fspec = new LocalPolynomialFilterSpec();
-        fspec.setFilterLength(h);
-        fspec.setAsymmetricFilters(AsymmetricFiltersFactory.Option.CutAndNormalize);
-        return LocalPolynomialFiltersFactory.of(fspec);
+        LocalPolynomialFilterSpec fspec = LocalPolynomialFilterSpec.builder()
+                .filterHorizon(h)
+                .asymmetricFilters(AsymmetricFilterOption.CutAndNormalize)
+                .build();
+        return LocalPolynomialFilters.of(fspec);
     }
 
 //    public static IFiltering rkhs_frf(int h) {

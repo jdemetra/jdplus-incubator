@@ -16,6 +16,9 @@
  */
 package jdplus.highfreq.base.core.extractors;
 
+import java.util.LinkedHashMap;
+import jdplus.highfreq.base.core.extendedairline.ExtendedAirlineEstimation;
+import jdplus.toolkit.base.api.information.InformationExtractors;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -27,8 +30,14 @@ public class ExtendedAirlineExtractorTest {
     public ExtendedAirlineExtractorTest() {
     }
 
-    @Test
-    public void testSomeMethod() {
+    
+    public static void main(String[] args) {
+        LinkedHashMap<String, Class> dic=new LinkedHashMap<>();
+        InformationExtractors.fillDictionary(ExtendedAirlineEstimation.class, null, dic, true);
+        
+        for (String s : dic.keySet()){
+            System.out.println(s);            
+        }
     }
 
 }

@@ -21,6 +21,6 @@
         <module>jdplus-x11plus-base-parent</module>
         <module>jdplus-sts-base-parent</module>
         <module>jdplus-highfreq-base-parent</module>
-        <module>jdplus-advancedsa-base-parent</module>
+        <module>jdplus-filters-base-parent</module>
     </modules>
 </project>

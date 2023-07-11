@@ -1,7 +1,18 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2023 National Bank of Belgium
+ * 
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved 
+ * by the European Commission - subsequent versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * https://joinup.ec.europa.eu/software/page/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and 
+ * limitations under the Licence.
  */
 package jdplus.x11plus.base.core;
 
@@ -11,9 +22,9 @@ import jdplus.toolkit.base.core.math.linearfilters.IFiniteFilter;
 import jdplus.toolkit.base.core.math.linearfilters.SymmetricFilter;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import java.util.function.IntToDoubleFunction;
-import jdplus.toolkit.base.core.math.linearfilters.advanced.AsymmetricFiltersFactory;
-import jdplus.toolkit.base.core.math.linearfilters.advanced.ISymmetricFiltering;
-import jdplus.toolkit.base.core.math.linearfilters.advanced.LocalPolynomialFiltersFactory;
+import jdplus.toolkit.base.core.math.linearfilters.AsymmetricFiltersFactory;
+import jdplus.toolkit.base.core.math.linearfilters.ISymmetricFiltering;
+import jdplus.toolkit.base.core.math.linearfilters.LocalPolynomialFilters;
 
 /**
  *
@@ -23,7 +34,7 @@ import jdplus.toolkit.base.core.math.linearfilters.advanced.LocalPolynomialFilte
 public class X11SeasonalFiltersFactory {
     
     public ISymmetricFiltering filter(int period, int length, IntToDoubleFunction kernel){
-        SymmetricFilter sf = LocalPolynomialFiltersFactory.of(length, 0, kernel);
+        SymmetricFilter sf = LocalPolynomialFilters.of(length, 0, kernel);
         IFiniteFilter[] af = AsymmetricFiltersFactory.mmsreFilters(sf, 0, new double[0], null);
         return new DefaultFilter(period, sf, new AsymmetricEndPoints(af, 0));
     }

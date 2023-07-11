@@ -119,6 +119,17 @@
             <artifactId>jdplus-highfreq-base-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.joinup.sat</groupId>
+            <artifactId>jdplus-highfreq-base-io</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>eu.europa.ec.joinup.sat</groupId>
+                    <artifactId>jdplus-sa-base-information</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <!-- 4. Other libraries -->
     </dependencies>
@@ -130,6 +141,7 @@
                 <artifactId>nbm-maven-plugin</artifactId>
                 <extensions>true</extensions>
                 <configuration>
+                    <requiresRestart>true</requiresRestart>
                     <publicPackages>
                         <publicPackage>demetra.highfreq.*</publicPackage>
                         <publicPackage>jdplus.highfreq.*</publicPackage>

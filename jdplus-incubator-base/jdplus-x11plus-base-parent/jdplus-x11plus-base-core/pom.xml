@@ -32,6 +32,11 @@
             <artifactId>jdplus-highfreq-base-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.joinup.sat</groupId>
+            <artifactId>jdplus-filters-base-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- test only -->
         <dependency>
