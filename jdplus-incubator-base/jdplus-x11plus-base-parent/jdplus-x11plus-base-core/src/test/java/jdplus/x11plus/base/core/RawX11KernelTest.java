@@ -16,6 +16,7 @@
  */
 package jdplus.x11plus.base.core;
 
+import jdplus.x11plus.base.api.SeasonalFilterOption;
 import tck.demetra.data.Data;
 import tck.demetra.data.WeeklyData;
 import jdplus.sa.base.api.DecompositionMode;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.DoubleSupplier;
 import jdplus.toolkit.base.api.math.linearfilters.AsymmetricFilterOption;
+import jdplus.toolkit.base.api.math.linearfilters.FilterSpec;
 
 import jdplus.toolkit.base.core.data.DataBlock;
 //import jdplus.experimentalsa.base.core.dfa.MSEDecomposition;
@@ -44,22 +46,26 @@ import jdplus.toolkit.base.api.math.linearfilters.LocalPolynomialFilterSpec;
 //import jdplus.experimentalsa.base.core.filters.SpectralDensity;
 import jdplus.toolkit.base.core.math.linearfilters.AsymmetricFiltersFactory;
 import jdplus.toolkit.base.core.math.linearfilters.IFiniteFilter;
+import jdplus.x11plus.base.api.X11SeasonalFilterSpec;
+import jdplus.x11plus.base.api.X11plusSpec;
 //import jdplus.experimentalsa.base.core.rkhs.RKHSFilterFactory;
 //import jdplus.experimentalsa.base.core.rkhs.RKHSFilterSpec;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
  * @author Jean Palate <jean.palate@nbb.be>
  */
-public class X11KernelTest {
+public class RawX11KernelTest {
 
     private static final DoubleSeq INPUT = DoubleSeq.of(Data.RETAIL_BOOKSTORES);
 
     private static final int H = 6;
     private static final DecompositionMode mode = DecompositionMode.Multiplicative;
 
-    public X11KernelTest() {
+    public RawX11KernelTest() {
     }
 
     public static void main(String[] cmds) {
@@ -87,12 +93,12 @@ public class X11KernelTest {
         for (int l = 0; l < 3; ++l) {
             System.out.println(l);
             //System.out.println(test_FST_ap_Prod(seq, l));
-            System.out.println(test_LP_c_0(seq, 1 + l * lag));
-            System.out.println(test_LP_c_1(seq, 1 + l * lag));
-            System.out.println(test_Musgrave(seq, 1 + l * lag));
-            System.out.println(test_LP_quad(seq, 1 + l * lag));
-            System.out.println(test_LP_DAF(seq, 1 + l * lag));
-            System.out.println(test_LP_cut(seq, 1 + l * lag));
+//            System.out.println(test_LP_c_0(seq, 1 + l * lag));
+//            System.out.println(test_LP_c_1(seq, 1 + l * lag));
+//            System.out.println(test_Musgrave(seq, 1 + l * lag));
+//            System.out.println(test_LP_quad(seq, 1 + l * lag));
+//            System.out.println(test_LP_DAF(seq, 1 + l * lag));
+//            System.out.println(test_LP_cut(seq, 1 + l * lag));
 //            System.out.println(test_RKHS_frf(seq, 1 + l * lag));
 //            System.out.println(test_RKHS_acc(seq, 1 + l * lag));
 //            System.out.println(test_RKHS_timeliness(seq, 1 + l * lag));
@@ -101,22 +107,13 @@ public class X11KernelTest {
 
     @Test
     public void testWeekly() {
-        X11Kernel kernel = new X11Kernel();
-//        System.out.println("Exact");
-        X11Context context1 = X11Context.builder()
-                .period(365.25 / 7)
-                .initialSeasonalFiltering(X11SeasonalFiltersFactory.filter(365.25 / 7, SeasonalFilterOption.S3X1))
-                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(365.25 / 7, SeasonalFilterOption.S3X9))
-                .build();
-        kernel.process(DoubleSeq.of(WeeklyData.US_CLAIMS2), context1);
+        X11plusSpec spec=X11plusSpec.createDefault(true, 365.25/7, SeasonalFilterOption.S3X5);
+        RawX11Kernel kernel = new RawX11Kernel(spec);
+        kernel.process(DoubleSeq.of(WeeklyData.US_CLAIMS2));
 //        System.out.println(kernel.getDstep().getD11());
-//        System.out.println("Rounded");
-        X11Context context2 = X11Context.builder()
-                .period(52)
-                .initialSeasonalFiltering(X11SeasonalFiltersFactory.filter(52, SeasonalFilterOption.S3X1))
-                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(52, SeasonalFilterOption.S3X9))
-                .build();
-        kernel.process(DoubleSeq.of(WeeklyData.US_CLAIMS2), context2);
+        X11plusSpec spec2=X11plusSpec.createDefault(true, 52, SeasonalFilterOption.S3X5);
+        kernel = new RawX11Kernel(spec2);
+        kernel.process(DoubleSeq.of(WeeklyData.US_CLAIMS2));
 //        System.out.println(kernel.getDstep().getD11());
     }
 
@@ -125,34 +122,30 @@ public class X11KernelTest {
         Random rnd=new Random();
         DataBlock s=DataBlock.make(5000);
         s.set((DoubleSupplier)rnd::nextDouble);
-        X11Kernel kernel = new X11Kernel();
-//        System.out.println("Exact");
-        X11Context context1 = X11Context.builder()
+        X11plusSpec spec = X11plusSpec.builder()
                 .period(365.25)
-                .trendFiltering(daf(367))
-                .initialSeasonalFiltering(X11SeasonalFiltersFactory.filter(365.25, SeasonalFilterOption.S3X1))
-                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(365.25, SeasonalFilterOption.S3X9))
+                .trendFilter(daf(367))
+                .initialSeasonalFilter(new X11SeasonalFilterSpec(365.25, SeasonalFilterOption.S3X1))
+                .finalSeasonalFilter(new X11SeasonalFilterSpec(365.25, SeasonalFilterOption.S3X1))
                 .build();
+        RawX11Kernel kernel = new RawX11Kernel(spec);
         long t0=System.currentTimeMillis();
-        kernel.process(s, context1);
+        kernel.process(s);
         long t1=System.currentTimeMillis();
         System.out.println(t1-t0);
     }
 
     @Test
     public void testMonthly() {
-        X11Kernel kernel = new X11Kernel();
-        X11Context context1 = X11Context.builder()
-                .period(12)
-                .initialSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X3))
-                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X5))
-                .build();
-        kernel.process(DoubleSeq.of(Data.PROD), context1);
+        X11plusSpec nspec= X11plusSpec.createDefault(false, 12, SeasonalFilterOption.S3X5);
+        RawX11Kernel kernel = new RawX11Kernel(nspec);
+        RawX11Results nx11 = kernel.process(DoubleSeq.of(Data.PROD));
 //        System.out.println(kernel.getDstep().getD13());
         ec.satoolkit.x11.X11Specification spec = new ec.satoolkit.x11.X11Specification();
         spec.setMode(ec.satoolkit.DecompositionMode.Additive);
         spec.setForecastHorizon(0);
         spec.setHendersonFilterLength(13);
+        spec.setSeasonalFilter(ec.satoolkit.x11.SeasonalFilterOption.S3X5);
         ec.satoolkit.x11.X11Toolkit toolkit = ec.satoolkit.x11.X11Toolkit.create(spec);
         ec.satoolkit.x11.X11Kernel okernel = new ec.satoolkit.x11.X11Kernel();
         okernel.setToolkit(toolkit);
@@ -161,6 +154,9 @@ public class X11KernelTest {
         X11Results x11 = okernel.process(s);
         ec.tstoolkit.timeseries.simplets.TsData b = x11.getData("d-tables.d13", ec.tstoolkit.timeseries.simplets.TsData.class);
 //        System.out.println(new ec.tstoolkit.data.DataBlock(b));
+        DoubleSeq d13 = nx11.getD13();
+        DoubleSeq od13=DoubleSeq.of(b.internalStorage());
+        assertTrue(d13.distance(od13)<1e-9);
     }
 
     public ec.tstoolkit.modelling.arima.PreprocessingModel sa(TsData ts) {
@@ -203,35 +199,35 @@ public class X11KernelTest {
 //        }
 //    }
 
-    public static double test(X11Context context, DoubleSeq[] input, int k) {
-        X11Kernel kernel = new X11Kernel();
-        double se = 0, se2 = 0;
-        int n = 0;
-        for (int j = 0; j < input.length; ++j) {
-            if (!mode.isMultiplicative() || input[j].allMatch(x -> x > 0)) {
-                kernel.process(input[j], context);
-                DoubleSeq target = kernel.getDstep().getD12();
-//                DoubleSeq target = kernel.getDstep().getD11();
-                int start = 84;
-                for (int i = start; i < target.length() - 24; ++i) {
-                    try {
-                        kernel.process(input[j].range(0, i), context);
-                        DoubleSeq rt = kernel.getDstep().getD12();
-//                        DoubleSeq d11 = kernel.getDstep().getD11();
-                        double e = !mode.isMultiplicative() ? rt.get(i - k) - target.get(i - k)
-                                : (rt.get(i - k) - target.get(i - k)) / target.get(i - k);
-                        ++n;
-//                se += Math.abs(e);
-                        se2 += e * e;
-                    } catch (Exception e) {
-                    }
-                }
-            }
-        }
-        return Math.sqrt(se2 * n - se * se) / n;
-//        return se/n;
-    }
-
+//    public static double test(X11Context context, DoubleSeq[] input, int k) {
+//        RawX11Kernel kernel = new RawX11Kernel();
+//        double se = 0, se2 = 0;
+//        int n = 0;
+//        for (int j = 0; j < input.length; ++j) {
+//            if (!mode.isMultiplicative() || input[j].allMatch(x -> x > 0)) {
+//                kernel.process(input[j], context);
+//                DoubleSeq target = kernel.getDstep().getD12();
+////                DoubleSeq target = kernel.getDstep().getD11();
+//                int start = 84;
+//                for (int i = start; i < target.length() - 24; ++i) {
+//                    try {
+//                        kernel.process(input[j].range(0, i), context);
+//                        DoubleSeq rt = kernel.getDstep().getD12();
+////                        DoubleSeq d11 = kernel.getDstep().getD11();
+//                        double e = !mode.isMultiplicative() ? rt.get(i - k) - target.get(i - k)
+//                                : (rt.get(i - k) - target.get(i - k)) / target.get(i - k);
+//                        ++n;
+////                se += Math.abs(e);
+//                        se2 += e * e;
+//                    } catch (Exception e) {
+//                    }
+//                }
+//            }
+//        }
+//        return Math.sqrt(se2 * n - se * se) / n;
+////        return se/n;
+//    }
+//
 //    public static double test_FST_ap_Prod(DoubleSeq[] input, int k) {
 //        FSTFilterSpec fspec = new FSTFilterSpec();
 //        fspec.setAntiphase(true);
@@ -249,77 +245,77 @@ public class X11KernelTest {
 //        return test(context, input, k);
 //    }
 
-    public static double test_LP_c_0(DoubleSeq[] input, int k) {
-        X11Context context = X11Context.builder()
-                .period(12)
-                .initialSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X3))
-                //                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, 2, DiscreteKernel.trapezoidal(3)))
-                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X5))
-                .trendFiltering(lp_c0(H))
-                .mode(mode)
-                .build();
-        return test(context, input, k);
-    }
-
-    public static double test_LP_c_1(DoubleSeq[] input, int k) {
-        X11Context context = X11Context.builder()
-                .period(12)
-                .initialSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X3))
-                //                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, 2, DiscreteKernel.trapezoidal(3)))
-                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X5))
-                .trendFiltering(lp_c1(H, 10))
-                .mode(mode)
-                .build();
-        return test(context, input, k);
-    }
-
-    public static double test_Musgrave(DoubleSeq[] input, int k) {
-        X11Context context = X11Context.builder()
-                .period(12)
-                .initialSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X3))
-                //                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, 2, DiscreteKernel.trapezoidal(3)))
-                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X5))
-                .trendFiltering(musgrave(H))
-                .mode(mode)
-                .build();
-        return test(context, input, k);
-    }
-
-    public static double test_LP_quad(DoubleSeq[] input, int k) {
-        X11Context context = X11Context.builder()
-                .period(12)
-                .initialSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X3))
-                //                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, 2, DiscreteKernel.trapezoidal(3)))
-                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X5))
-                .trendFiltering(lp_quad(H, 1, 10))
-                .mode(mode)
-                .build();
-        return test(context, input, k);
-    }
-
-    public static double test_LP_DAF(DoubleSeq[] input, int k) {
-        X11Context context = X11Context.builder()
-                .period(12)
-                .initialSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X3))
-                //                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, 2, DiscreteKernel.trapezoidal(3)))
-                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X5))
-                .trendFiltering(daf(H))
-                .mode(mode)
-                .build();
-        return test(context, input, k);
-    }
-
-    public static double test_LP_cut(DoubleSeq[] input, int k) {
-        X11Context context = X11Context.builder()
-                .period(12)
-                .initialSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X3))
-                //                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, 2, DiscreteKernel.trapezoidal(3)))
-                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X5))
-                .trendFiltering(cut(H))
-                .mode(mode)
-                .build();
-        return test(context, input, k);
-    }
+//    public static double test_LP_c_0(DoubleSeq[] input, int k) {
+//        X11Context context = X11Context.builder()
+//                .period(12)
+//                .initialSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X3))
+//                //                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, 2, DiscreteKernel.trapezoidal(3)))
+//                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X5))
+//                .trendFiltering(lp_c0(H))
+//                .mode(mode)
+//                .build();
+//        return test(context, input, k);
+//    }
+//
+//    public static double test_LP_c_1(DoubleSeq[] input, int k) {
+//        X11Context context = X11Context.builder()
+//                .period(12)
+//                .initialSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X3))
+//                //                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, 2, DiscreteKernel.trapezoidal(3)))
+//                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X5))
+//                .trendFiltering(lp_c1(H, 10))
+//                .mode(mode)
+//                .build();
+//        return test(context, input, k);
+//    }
+//
+//    public static double test_Musgrave(DoubleSeq[] input, int k) {
+//        X11Context context = X11Context.builder()
+//                .period(12)
+//                .initialSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X3))
+//                //                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, 2, DiscreteKernel.trapezoidal(3)))
+//                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X5))
+//                .trendFiltering(musgrave(H))
+//                .mode(mode)
+//                .build();
+//        return test(context, input, k);
+//    }
+//
+//    public static double test_LP_quad(DoubleSeq[] input, int k) {
+//        X11Context context = X11Context.builder()
+//                .period(12)
+//                .initialSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X3))
+//                //                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, 2, DiscreteKernel.trapezoidal(3)))
+//                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X5))
+//                .trendFiltering(lp_quad(H, 1, 10))
+//                .mode(mode)
+//                .build();
+//        return test(context, input, k);
+//    }
+//
+//    public static double test_LP_DAF(DoubleSeq[] input, int k) {
+//        X11Context context = X11Context.builder()
+//                .period(12)
+//                .initialSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X3))
+//                //                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, 2, DiscreteKernel.trapezoidal(3)))
+//                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X5))
+//                .trendFiltering(daf(H))
+//                .mode(mode)
+//                .build();
+//        return test(context, input, k);
+//    }
+//
+//    public static double test_LP_cut(DoubleSeq[] input, int k) {
+//        X11Context context = X11Context.builder()
+//                .period(12)
+//                .initialSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X3))
+//                //                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, 2, DiscreteKernel.trapezoidal(3)))
+//                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(12, SeasonalFilterOption.S3X5))
+//                .trendFiltering(cut(H))
+//                .mode(mode)
+//                .build();
+//        return test(context, input, k);
+//    }
 
 //    public static double test_RKHS_frf(DoubleSeq[] input, int k) {
 //        X11Context context = X11Context.builder()
@@ -357,58 +353,53 @@ public class X11KernelTest {
 //        return test(context, input, k);
 //    }
 
-    public static IFiltering lp_c0(int h) {
-        LocalPolynomialFilterSpec fspec = LocalPolynomialFilterSpec.builder()
+    public static FilterSpec lp_c0(int h) {
+        return LocalPolynomialFilterSpec.builder()
                 .filterHorizon(h)
                 .asymmetricFilters(AsymmetricFilterOption.MMSRE)
                 .linearModelCoefficients(new double[0])
                 .build();
-        return LocalPolynomialFilters.of(fspec);
     }
 
-    public static IFiltering lp_c1(int h, int tw) {
-        LocalPolynomialFilterSpec fspec = LocalPolynomialFilterSpec.builder()
+    public static FilterSpec lp_c1(int h, int tw) {
+        return LocalPolynomialFilterSpec.builder()
                 .filterHorizon(h)
                 .asymmetricFilters(AsymmetricFilterOption.MMSRE)
                 .linearModelCoefficients(new double[0])
                 .timelinessWeight(tw)
                 .build();
-        return LocalPolynomialFilters.of(fspec);
     }
 
-    public static IFiltering lp_quad(int h, double c, double tw) {
-        LocalPolynomialFilterSpec fspec = LocalPolynomialFilterSpec.builder()
+    public static FilterSpec lp_quad(int h, double c, double tw) {
+        return LocalPolynomialFilterSpec.builder()
                 .filterHorizon(H)
                 .asymmetricFilters(AsymmetricFilterOption.MMSRE)
                 .asymmetricPolynomialDegree(1)
                 .linearModelCoefficients(new double[]{c})
                 .timelinessWeight(tw)
                 .build();
-        return LocalPolynomialFilters.of(fspec);
-    }
+   }
 
-    public static IFiltering musgrave(int h) {
-        LocalPolynomialFilterSpec fspec = LocalPolynomialFilterSpec.builder()
+    public static FilterSpec musgrave(int h) {
+        return LocalPolynomialFilterSpec.builder()
                 .filterHorizon(h)
                 .asymmetricFilters(AsymmetricFilterOption.MMSRE)
                 .build();
-        return LocalPolynomialFilters.of(fspec);
     }
 
-    public static IFiltering daf(int h) {
-        LocalPolynomialFilterSpec fspec = LocalPolynomialFilterSpec.builder()
+    public static FilterSpec daf(int h) {
+        
+        return LocalPolynomialFilterSpec.builder()
                 .filterHorizon(h)
                 .asymmetricFilters(AsymmetricFilterOption.Direct)
                 .build();
-        return LocalPolynomialFilters.of(fspec);
     }
 
-    public static IFiltering cut(int h) {
-        LocalPolynomialFilterSpec fspec = LocalPolynomialFilterSpec.builder()
+    public static FilterSpec cut(int h) {
+        return LocalPolynomialFilterSpec.builder()
                 .filterHorizon(h)
                 .asymmetricFilters(AsymmetricFilterOption.CutAndNormalize)
                 .build();
-        return LocalPolynomialFilters.of(fspec);
     }
 
 //    public static IFiltering rkhs_frf(int h) {

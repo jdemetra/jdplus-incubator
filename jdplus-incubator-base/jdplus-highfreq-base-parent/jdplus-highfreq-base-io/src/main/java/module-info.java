@@ -1,6 +1,4 @@
-import jdplus.highfreq.base.io.information.ExtendedAirlineModellingSpecMapping;
 import jdplus.highfreq.base.io.workspace.ExtendedAirlineHandlers;
-import jdplus.sa.base.information.SaSpecificationMapping;
 import jdplus.toolkit.base.workspace.file.spi.FamilyHandler;
 
 module jdplus.highfreq.base.io {

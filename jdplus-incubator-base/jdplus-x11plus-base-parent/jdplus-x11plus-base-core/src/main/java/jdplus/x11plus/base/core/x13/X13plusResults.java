@@ -23,7 +23,7 @@ import jdplus.sa.base.api.SeriesDecomposition;
 import jdplus.toolkit.base.core.regsarima.regular.RegSarimaModel;
 import jdplus.sa.base.core.SaBenchmarkingResults;
 import jdplus.sa.base.core.modelling.HasRegSarimaPreprocessing;
-import jdplus.x11plus.base.core.X11Results;
+import jdplus.x11plus.base.core.RawX11Results;
 
 /**
  *
@@ -34,7 +34,7 @@ import jdplus.x11plus.base.core.X11Results;
 public class X13plusResults implements GenericExplorable, HasLog, HasRegSarimaPreprocessing {
 
     private RegSarimaModel preprocessing;
-    private X11Results decomposition;
+    private RawX11Results decomposition;
     private SeriesDecomposition finals;
     private SaBenchmarkingResults benchmarking;
     private X13plusDiagnostics diagnostics;

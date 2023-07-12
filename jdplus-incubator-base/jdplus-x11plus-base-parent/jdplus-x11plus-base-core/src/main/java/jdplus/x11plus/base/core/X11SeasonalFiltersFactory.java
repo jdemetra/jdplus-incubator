@@ -16,15 +16,23 @@
  */
 package jdplus.x11plus.base.core;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+import jdplus.filters.base.core.FiltersToolkit;
+import jdplus.x11plus.base.api.SeasonalFilterOption;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.math.linearfilters.FiniteFilter;
 import jdplus.toolkit.base.core.math.linearfilters.IFiniteFilter;
 import jdplus.toolkit.base.core.math.linearfilters.SymmetricFilter;
 import jdplus.toolkit.base.api.data.DoubleSeq;
-import java.util.function.IntToDoubleFunction;
-import jdplus.toolkit.base.core.math.linearfilters.AsymmetricFiltersFactory;
+import jdplus.toolkit.base.api.math.linearfilters.FilterSpec;
+import jdplus.toolkit.base.core.math.linearfilters.IFiltering;
 import jdplus.toolkit.base.core.math.linearfilters.ISymmetricFiltering;
-import jdplus.toolkit.base.core.math.linearfilters.LocalPolynomialFilters;
+import jdplus.toolkit.base.core.math.linearfilters.LinearFilterException;
+import jdplus.x11plus.base.api.GenericSeasonalFilterSpec;
+import jdplus.x11plus.base.api.SeasonalFilterSpec;
+import jdplus.x11plus.base.api.X11SeasonalFilterSpec;
 
 /**
  *
@@ -32,11 +40,31 @@ import jdplus.toolkit.base.core.math.linearfilters.LocalPolynomialFilters;
  */
 @lombok.experimental.UtilityClass
 public class X11SeasonalFiltersFactory {
-    
-    public ISymmetricFiltering filter(int period, int length, IntToDoubleFunction kernel){
-        SymmetricFilter sf = LocalPolynomialFilters.of(length, 0, kernel);
-        IFiniteFilter[] af = AsymmetricFiltersFactory.mmsreFilters(sf, 0, new double[0], null);
-        return new DefaultFilter(period, sf, new AsymmetricEndPoints(af, 0));
+
+    private final Map< Class, Function<SeasonalFilterSpec, ISymmetricFiltering>> map = new HashMap<>();
+
+    public <S extends SeasonalFilterSpec> void register(Class<S> spec, Function<S, ISymmetricFiltering> fn) {
+        synchronized (map) {
+            if (fn != null) {
+                map.put(spec, (Function<SeasonalFilterSpec, ISymmetricFiltering>) fn);
+            }
+        }
+    }
+
+    public <S extends FilterSpec> void unregister(Class<S> spec) {
+        synchronized (map) {
+            map.remove(spec);
+        }
+    }
+
+    public ISymmetricFiltering of(SeasonalFilterSpec spec) {
+        synchronized (map) {
+            Function<SeasonalFilterSpec, ISymmetricFiltering> fn = map.get(spec.getClass());
+            if (fn == null) {
+                throw new LinearFilterException("Filter spec not registered");
+            }
+            return fn.apply(spec);
+        }
     }
 
     public ISymmetricFiltering filter(Number period, SeasonalFilterOption option) {
@@ -78,7 +106,7 @@ public class X11SeasonalFiltersFactory {
 
         private final SymmetricFilter sfilter;
         private final IEndPointsProcessor endpoints;
-        private int period;
+        private final int period;
 
         DefaultFilter(final int period, final SymmetricFilter sfilter, final IEndPointsProcessor endpoints) {
             this.period = period;
@@ -104,7 +132,7 @@ public class X11SeasonalFiltersFactory {
         }
 
         @Override
-        public SymmetricFilter symmetricFilter(){
+        public SymmetricFilter symmetricFilter() {
             return sfilter;
         }
 
@@ -118,7 +146,7 @@ public class X11SeasonalFiltersFactory {
 
         private final SymmetricFilter sfilter;
         private final IFiniteFilter[] endpoints;
-        private double period;
+        private final double period;
 
         AnyFilter(final double period, final SymmetricFilter sfilter, final IFiniteFilter[] endpoints) {
             this.period = period;
@@ -192,7 +220,7 @@ public class X11SeasonalFiltersFactory {
                     }
                     if (c < m) {
                         int k = c + 1;
-                        x[i] = endpoints[m - k].apply(cin.reverse().range(m-c, n));
+                        x[i] = endpoints[m - k].apply(cin.reverse().range(m - c, n));
                     } else {
                         x[i] = sfilter.apply(cin);
                     }
@@ -222,7 +250,7 @@ public class X11SeasonalFiltersFactory {
                     }
                     if (q < m) {
                         int k = q + 1;
-                        x[i] = endpoints[m - k].apply(cin.range(m-q, n));
+                        x[i] = endpoints[m - k].apply(cin.range(m - q, n));
                     } else {
                         x[i] = sfilter.apply(cin);
                     }
@@ -233,7 +261,7 @@ public class X11SeasonalFiltersFactory {
         }
 
         @Override
-        public SymmetricFilter symmetricFilter(){
+        public SymmetricFilter symmetricFilter() {
             return sfilter;
         }
 
@@ -344,5 +372,18 @@ public class X11SeasonalFiltersFactory {
         M_5X1, M_5X0};
     final FiniteFilter[] FC15 = new FiniteFilter[]{M_8X7, M_8X6,
         M_8X5, M_8X4, M_8X3, M_8X2, M_8X1, M_8X0};
+
+    static {
+        register(X11SeasonalFilterSpec.class, (X11SeasonalFilterSpec spec) -> filter(spec.getPeriod(), spec.getFilter()));
+        register(GenericSeasonalFilterSpec.class, (GenericSeasonalFilterSpec spec) -> {
+            IFiltering f = FiltersToolkit.of(spec.getFilter());
+            if (f instanceof ISymmetricFiltering sf) {
+                return new AnyFilter(spec.getPeriod().doubleValue(), sf.symmetricFilter(), sf.endPointsFilters());
+            } else {
+                return null;
+            }
+        }
+        );
+    }
 
 }

@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.x11plus.base.core;
+package jdplus.x11plus.base.api;
 
 import nbbrd.design.Development;
 

@@ -16,28 +16,25 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import jdplus.toolkit.base.api.data.DoubleSeq;
-import java.util.function.IntToDoubleFunction;
 import jdplus.filters.base.api.AsymmetricCriterion;
 import jdplus.filters.base.api.SpectralDensity;
-import jdplus.filters.base.core.RKHSFilterFactory;
 import jdplus.filters.base.api.RKHSFilterSpec;
 import jdplus.sa.base.api.DecompositionMode;
-import jdplus.toolkit.base.core.data.analysis.DiscreteKernel;
 import jdplus.toolkit.base.api.information.GenericExplorable;
 import jdplus.toolkit.base.api.math.linearfilters.AsymmetricFilterOption;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
-import jdplus.toolkit.base.core.math.linearfilters.Filtering;
-import jdplus.toolkit.base.core.math.linearfilters.ISymmetricFiltering;
 import jdplus.toolkit.base.api.math.linearfilters.KernelOption;
 import jdplus.toolkit.base.api.math.linearfilters.LocalPolynomialFilterSpec;
-import jdplus.toolkit.base.core.math.linearfilters.LocalPolynomialFilters;
+import jdplus.toolkit.base.api.math.linearfilters.UserDefinedSymmetricFilterSpec;
+import jdplus.x11plus.base.api.GenericSeasonalFilterSpec;
 import jdplus.x11plus.base.core.AsymmetricEndPoints;
 import jdplus.x11plus.base.core.MusgraveFilterFactory;
-import jdplus.x11plus.base.core.SeasonalFilterOption;
+import jdplus.x11plus.base.api.SeasonalFilterOption;
+import jdplus.x11plus.base.api.X11SeasonalFilterSpec;
+import jdplus.x11plus.base.api.X11plusSpec;
 import jdplus.x11plus.base.core.SeriesEvolution;
-import jdplus.x11plus.base.core.X11Context;
-import jdplus.x11plus.base.core.X11Kernel;
-import jdplus.x11plus.base.core.X11SeasonalFiltersFactory;
+import jdplus.x11plus.base.core.RawX11Kernel;
+import jdplus.x11plus.base.core.RawX11Results;
 
 /**
  *
@@ -46,36 +43,13 @@ import jdplus.x11plus.base.core.X11SeasonalFiltersFactory;
 @lombok.experimental.UtilityClass
 public class X11Decomposition {
 
-    private static IntToDoubleFunction kernel(String seasKernel, int h) {
-        switch (seasKernel){
-            case "Trapezoidal":
-                return DiscreteKernel.trapezoidal(h);
-            case "Henderson":
-                return DiscreteKernel.henderson(h);
-            case "BiWeight":
-                return DiscreteKernel.biweight(h);
-            case "TriWeight":
-                return DiscreteKernel.triweight(h);
-            case "TriCube":
-                return DiscreteKernel.tricube(h);
-            case "Uniform":
-                return DiscreteKernel.uniform(h);
-            case "Triangular":
-                return DiscreteKernel.triangular(h);
-            case "Epanechnikov":
-                return DiscreteKernel.epanechnikov(h);
-            default:
-                throw new IllegalArgumentException(seasKernel);
-        }
-    }
-
     @lombok.Value
     @lombok.Builder
     public static class Results implements GenericExplorable {
 
         boolean multiplicative;
         DoubleSeq y;
-        X11Kernel kernel;
+        RawX11Results details;
 
         @Override
         public boolean contains(String id) {
@@ -109,49 +83,44 @@ public class X11Decomposition {
 
         static {
             MAPPING.set(Y, double[].class, source -> source.getY().toArray());
-            MAPPING.set("b1", double[].class, source -> source.getKernel().getBstep().getB1().toArray());
-            MAPPING.set("b2", double[].class, source -> source.getKernel().getBstep().getB2().toArray());
-            MAPPING.set("b3", double[].class, source -> source.getKernel().getBstep().getB3().toArray());
-            MAPPING.set("b4", double[].class, source -> source.getKernel().getBstep().getB4().toArray());
-            MAPPING.set("b4a", double[].class, source -> source.getKernel().getBstep().getB4a().toArray());
-            MAPPING.set("b4d", double[].class, source -> source.getKernel().getBstep().getB4d().toArray());
-            MAPPING.set("b5", double[].class, source -> source.getKernel().getBstep().getB5().toArray());
-            MAPPING.set("b6", double[].class, source -> source.getKernel().getBstep().getB6().toArray());
-            MAPPING.set("b7", double[].class, source -> source.getKernel().getBstep().getB7().toArray());
-            MAPPING.set("b8", double[].class, source -> source.getKernel().getBstep().getB8().toArray());
-            MAPPING.set("b9", double[].class, source -> source.getKernel().getBstep().getB9().toArray());
-            MAPPING.set("b10", double[].class, source -> source.getKernel().getBstep().getB10().toArray());
-            MAPPING.set("b11", double[].class, source -> source.getKernel().getBstep().getB11().toArray());
-            MAPPING.set("b13", double[].class, source -> source.getKernel().getBstep().getB13().toArray());
-            MAPPING.set("b17", double[].class, source -> source.getKernel().getBstep().getB17().toArray());
-            MAPPING.set("b20", double[].class, source -> source.getKernel().getBstep().getB20().toArray());
-            MAPPING.set("c1", double[].class, source -> source.getKernel().getCstep().getC1().toArray());
-            MAPPING.set("c2", double[].class, source -> source.getKernel().getCstep().getC2().toArray());
-            MAPPING.set("c4", double[].class, source -> source.getKernel().getCstep().getC4().toArray());
-            MAPPING.set("c5", double[].class, source -> source.getKernel().getCstep().getC5().toArray());
-            MAPPING.set("c6", double[].class, source -> source.getKernel().getCstep().getC6().toArray());
-            MAPPING.set("c7", double[].class, source -> source.getKernel().getCstep().getC7().toArray());
-            MAPPING.set("c9", double[].class, source -> source.getKernel().getCstep().getC9().toArray());
-            MAPPING.set("c10", double[].class, source -> source.getKernel().getCstep().getC10().toArray());
-            MAPPING.set("c11", double[].class, source -> source.getKernel().getCstep().getC11().toArray());
-            MAPPING.set("c12", double[].class, source -> source.getKernel().getCstep().getC12().toArray());
-            MAPPING.set("c13", double[].class, source -> source.getKernel().getCstep().getC13().toArray());
-            MAPPING.set("c17", double[].class, source -> source.getKernel().getCstep().getC17().toArray());
-            MAPPING.set("c20", double[].class, source -> source.getKernel().getCstep().getC20().toArray());
-            MAPPING.set("d1", double[].class, source -> source.getKernel().getDstep().getD1().toArray());
-            MAPPING.set("d2", double[].class, source -> source.getKernel().getDstep().getD2().toArray());
-            MAPPING.set("d4", double[].class, source -> source.getKernel().getDstep().getD4().toArray());
-            MAPPING.set("d5", double[].class, source -> source.getKernel().getDstep().getD5().toArray());
-            MAPPING.set("d6", double[].class, source -> source.getKernel().getDstep().getD6().toArray());
-            MAPPING.set("d7", double[].class, source -> source.getKernel().getDstep().getD7().toArray());
-            MAPPING.set("d8", double[].class, source -> source.getKernel().getDstep().getD8().toArray());
-            MAPPING.set("d9", double[].class, source -> source.getKernel().getDstep().getD9().toArray());
-            MAPPING.set("d10", double[].class, source -> source.getKernel().getDstep().getD10().toArray());
-            MAPPING.set("d11", double[].class, source -> source.getKernel().getDstep().getD11().toArray());
-            MAPPING.set("d12", double[].class, source -> source.getKernel().getDstep().getD12().toArray());
-            MAPPING.set("d13", double[].class, source -> source.getKernel().getDstep().getD13().toArray());
-            MAPPING.set("d10bis", double[].class, source -> source.getKernel().getDstep().getD10bis().toArray());
-            MAPPING.set("d11bis", double[].class, source -> source.getKernel().getDstep().getD11bis().toArray());
+            MAPPING.set("b1", double[].class, source -> source.getDetails().getB1().toArray());
+            MAPPING.set("b2", double[].class, source -> source.getDetails().getB2().toArray());
+            MAPPING.set("b3", double[].class, source -> source.getDetails().getB3().toArray());
+            MAPPING.set("b4", double[].class, source -> source.getDetails().getB4().toArray());
+            MAPPING.set("b5", double[].class, source -> source.getDetails().getB5().toArray());
+            MAPPING.set("b6", double[].class, source -> source.getDetails().getB6().toArray());
+            MAPPING.set("b7", double[].class, source -> source.getDetails().getB7().toArray());
+            MAPPING.set("b8", double[].class, source -> source.getDetails().getB8().toArray());
+            MAPPING.set("b9", double[].class, source -> source.getDetails().getB9().toArray());
+            MAPPING.set("b10", double[].class, source -> source.getDetails().getB10().toArray());
+            MAPPING.set("b11", double[].class, source -> source.getDetails().getB11().toArray());
+            MAPPING.set("b13", double[].class, source -> source.getDetails().getB13().toArray());
+            MAPPING.set("b17", double[].class, source -> source.getDetails().getB17().toArray());
+            MAPPING.set("b20", double[].class, source -> source.getDetails().getB20().toArray());
+            MAPPING.set("c1", double[].class, source -> source.getDetails().getC1().toArray());
+            MAPPING.set("c2", double[].class, source -> source.getDetails().getC2().toArray());
+            MAPPING.set("c4", double[].class, source -> source.getDetails().getC4().toArray());
+            MAPPING.set("c5", double[].class, source -> source.getDetails().getC5().toArray());
+            MAPPING.set("c6", double[].class, source -> source.getDetails().getC6().toArray());
+            MAPPING.set("c7", double[].class, source -> source.getDetails().getC7().toArray());
+            MAPPING.set("c9", double[].class, source -> source.getDetails().getC9().toArray());
+            MAPPING.set("c10", double[].class, source -> source.getDetails().getC10().toArray());
+            MAPPING.set("c11", double[].class, source -> source.getDetails().getC11().toArray());
+            MAPPING.set("c13", double[].class, source -> source.getDetails().getC13().toArray());
+            MAPPING.set("c17", double[].class, source -> source.getDetails().getC17().toArray());
+            MAPPING.set("c20", double[].class, source -> source.getDetails().getC20().toArray());
+            MAPPING.set("d1", double[].class, source -> source.getDetails().getD1().toArray());
+            MAPPING.set("d2", double[].class, source -> source.getDetails().getD2().toArray());
+            MAPPING.set("d4", double[].class, source -> source.getDetails().getD4().toArray());
+            MAPPING.set("d5", double[].class, source -> source.getDetails().getD5().toArray());
+            MAPPING.set("d6", double[].class, source -> source.getDetails().getD6().toArray());
+            MAPPING.set("d7", double[].class, source -> source.getDetails().getD7().toArray());
+            MAPPING.set("d8", double[].class, source -> source.getDetails().getD8().toArray());
+            MAPPING.set("d9", double[].class, source -> source.getDetails().getD9().toArray());
+            MAPPING.set("d10", double[].class, source -> source.getDetails().getD10().toArray());
+            MAPPING.set("d11", double[].class, source -> source.getDetails().getD11().toArray());
+            MAPPING.set("d12", double[].class, source -> source.getDetails().getD12().toArray());
+            MAPPING.set("d13", double[].class, source -> source.getDetails().getD13().toArray());
             MAPPING.set(MUL, Boolean.class, source -> source.isMultiplicative());
         }
     }
@@ -172,22 +141,22 @@ public class X11Decomposition {
                 .asymmetricFilters(AsymmetricFilterOption.valueOf(asymmetric))
                 .build();
         
-        X11Context context = X11Context.builder()
+        X11plusSpec spec = X11plusSpec.builder()
                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
                 .period(P)
-                .trendFiltering(LocalPolynomialFilters.of(tspec))
-                .initialSeasonalFiltering(X11SeasonalFiltersFactory.filter(P, SeasonalFilterOption.valueOf(seas0)))
-                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(P, SeasonalFilterOption.valueOf(seas1)))
+                .trendFilter(tspec)
+                .initialSeasonalFilter(new X11SeasonalFilterSpec(P, SeasonalFilterOption.valueOf(seas0)))
+                .finalSeasonalFilter(new X11SeasonalFilterSpec(P, SeasonalFilterOption.valueOf(seas1)))
                 .lowerSigma(lsig)
                 .upperSigma(usig)
                 .build();
-        X11Kernel kernel = new X11Kernel();
+        RawX11Kernel kernel = new RawX11Kernel(spec);
         DoubleSeq y = DoubleSeq.of(data);
-        kernel.process(y, context);
+        RawX11Results rslts = kernel.process(y);
 
         return Results.builder()
                 .y(y)
-                .kernel(kernel)
+                .details(rslts)
                 .multiplicative(mul)
                 .build();
 
@@ -207,24 +176,25 @@ public class X11Decomposition {
                 .passBand(passBand)
                 .build();
         
-        ISymmetricFiltering sfilter = X11SeasonalFiltersFactory.filter(period, shorizon, kernel(seasKernel, shorizon));
+        GenericSeasonalFilterSpec sfilter=new GenericSeasonalFilterSpec(period,
+            LocalPolynomialFilterSpec.defaultSeasonalSpec(shorizon, KernelOption.valueOf(seasKernel)));
         
-        X11Context context = X11Context.builder()
-                .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
+        X11plusSpec spec = X11plusSpec.builder()
+                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
                 .period(period)
-                .trendFiltering(LocalPolynomialFilters.of(tspec))
-                .initialSeasonalFiltering(sfilter)
-                .finalSeasonalFiltering(sfilter)
+                .trendFilter(tspec)
+                .initialSeasonalFilter(sfilter)
+                .finalSeasonalFilter(sfilter)
                 .lowerSigma(lsig)
                 .upperSigma(usig)
                 .build();
-        X11Kernel kernel = new X11Kernel();
+        RawX11Kernel kernel = new RawX11Kernel(spec);
         DoubleSeq y = DoubleSeq.of(data);
-        kernel.process(y, context);
+        RawX11Results rslts = kernel.process(y);
 
         return Results.builder()
                 .y(y)
-                .kernel(kernel)
+                .details(rslts)
                 .multiplicative(mul)
                 .build();
 
@@ -239,24 +209,26 @@ public class X11Decomposition {
                 .asymmetricFilters(AsymmetricFilterOption.Direct)
                 .build();
         
-        ISymmetricFiltering sfilter = X11SeasonalFiltersFactory.filter(period, shorizon, kernel(seasKernel, shorizon));
+        GenericSeasonalFilterSpec sfilter=new GenericSeasonalFilterSpec(period,
+            LocalPolynomialFilterSpec.defaultSeasonalSpec(shorizon, KernelOption.valueOf(seasKernel)));
         
-        X11Context context = X11Context.builder()
+        
+        X11plusSpec spec = X11plusSpec.builder()
                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
                 .period(period)
-                .trendFiltering(LocalPolynomialFilters.of(tspec))
-                .initialSeasonalFiltering(sfilter)
-                .finalSeasonalFiltering(sfilter)
+                .trendFilter(tspec)
+                .initialSeasonalFilter(sfilter)
+                .finalSeasonalFilter(sfilter)
                 .lowerSigma(lsig)
                 .upperSigma(usig)
                 .build();
-        X11Kernel kernel = new X11Kernel();
+        RawX11Kernel kernel = new RawX11Kernel(spec);
         DoubleSeq y = DoubleSeq.of(data);
-        kernel.process(y, context);
+        RawX11Results rslts = kernel.process(y);
 
         return Results.builder()
                 .y(y)
-                .kernel(kernel)
+                .details(rslts)
                 .multiplicative(mul)
                 .build();
 
@@ -271,24 +243,25 @@ public class X11Decomposition {
                 .asymmetricFilters(AsymmetricFilterOption.CutAndNormalize)
                 .build();
         
-        ISymmetricFiltering sfilter = X11SeasonalFiltersFactory.filter(period, shorizon, kernel(seasKernel, shorizon));
+        GenericSeasonalFilterSpec sfilter=new GenericSeasonalFilterSpec(period,
+            LocalPolynomialFilterSpec.defaultSeasonalSpec(shorizon, KernelOption.valueOf(seasKernel)));
         
-        X11Context context = X11Context.builder()
+        X11plusSpec spec = X11plusSpec.builder()
                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
                 .period(period)
-                .trendFiltering(LocalPolynomialFilters.of(tspec))
-                .initialSeasonalFiltering(sfilter)
-                .finalSeasonalFiltering(sfilter)
+                .trendFilter(tspec)
+                .initialSeasonalFilter(sfilter)
+                .finalSeasonalFilter(sfilter)
                 .lowerSigma(lsig)
                 .upperSigma(usig)
                 .build();
-        X11Kernel kernel = new X11Kernel();
+        RawX11Kernel kernel = new RawX11Kernel(spec);
         DoubleSeq y = DoubleSeq.of(data);
-        kernel.process(y, context);
+        RawX11Results rslts = kernel.process(y);
 
         return Results.builder()
                 .y(y)
-                .kernel(kernel)
+                .details(rslts)
                 .multiplicative(mul)
                 .build();
 
@@ -309,24 +282,26 @@ public class X11Decomposition {
                 .maxBandWidth(3*thorizon)
                 .build();
         
-        ISymmetricFiltering sfilter = X11SeasonalFiltersFactory.filter(period, shorizon, kernel(seasKernel, shorizon));
+        GenericSeasonalFilterSpec sfilter=new GenericSeasonalFilterSpec(period,
+            LocalPolynomialFilterSpec.defaultSeasonalSpec(shorizon, KernelOption.valueOf(seasKernel)));
         
-        X11Context context = X11Context.builder()
+        
+        X11plusSpec spec = X11plusSpec.builder()
                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
                 .period(period)
-                .trendFiltering(RKHSFilterFactory.of(tspec))
-                .initialSeasonalFiltering(sfilter)
-                .finalSeasonalFiltering(sfilter)
+                .trendFilter(tspec)
+                .initialSeasonalFilter(sfilter)
+                .finalSeasonalFilter(sfilter)
                 .lowerSigma(lsig)
                 .upperSigma(usig)
                 .build();
-        X11Kernel kernel = new X11Kernel();
+        RawX11Kernel kernel = new RawX11Kernel(spec);
         DoubleSeq y = DoubleSeq.of(data);
-        kernel.process(y, context);
+        RawX11Results rslts = kernel.process(y);
 
         return Results.builder()
                 .y(y)
-                .kernel(kernel)
+                .details(rslts)
                 .multiplicative(mul)
                 .build();
 
@@ -340,24 +315,24 @@ public class X11Decomposition {
         } else {
             P = period;
         }
-        Filtering trendFilter=Filtering.of(ctrendf, ltrendf);
+        UserDefinedSymmetricFilterSpec tspec=new UserDefinedSymmetricFilterSpec(ctrendf, ltrendf);
         
-        X11Context context = X11Context.builder()
+        X11plusSpec spec = X11plusSpec.builder()
                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
                 .period(P)
-                .trendFiltering(trendFilter)
-                .initialSeasonalFiltering(X11SeasonalFiltersFactory.filter(P, SeasonalFilterOption.valueOf(seas0)))
-                .finalSeasonalFiltering(X11SeasonalFiltersFactory.filter(P, SeasonalFilterOption.valueOf(seas1)))
+                .trendFilter(tspec)
+                .initialSeasonalFilter(new X11SeasonalFilterSpec(P, SeasonalFilterOption.valueOf(seas0)))
+                .finalSeasonalFilter(new X11SeasonalFilterSpec(P, SeasonalFilterOption.valueOf(seas1)))
                 .lowerSigma(lsig)
                 .upperSigma(usig)
                 .build();
-        X11Kernel kernel = new X11Kernel();
+        RawX11Kernel kernel = new RawX11Kernel(spec);
         DoubleSeq y = DoubleSeq.of(data);
-        kernel.process(y, context);
+        RawX11Results rslts = kernel.process(y);
 
         return Results.builder()
                 .y(y)
-                .kernel(kernel)
+                .details(rslts)
                 .multiplicative(mul)
                 .build();
 

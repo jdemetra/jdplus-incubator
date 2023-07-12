@@ -34,6 +34,9 @@ import jdplus.toolkit.base.api.information.GenericExplorable;
 import jdplus.toolkit.base.api.math.linearfilters.FilterSpec;
 import jdplus.toolkit.base.api.math.linearfilters.HendersonSpec;
 import jdplus.toolkit.base.api.math.linearfilters.LocalPolynomialFilterSpec;
+import jdplus.toolkit.base.api.math.linearfilters.UserDefinedFilterSpec;
+import jdplus.toolkit.base.api.math.linearfilters.UserDefinedSymmetricFilterSpec;
+import jdplus.toolkit.base.core.math.linearfilters.Filtering;
 import jdplus.toolkit.base.core.math.linearfilters.HendersonFilters;
 import jdplus.toolkit.base.core.math.linearfilters.IFiltering;
 import jdplus.toolkit.base.core.math.linearfilters.LinearFilterException;
@@ -54,6 +57,18 @@ public class FiltersToolkit {
         map.put(DFAFilterSpec.class, spec -> DFAFilterFactory.of((DFAFilterSpec) spec));
         map.put(FSTFilterSpec.class, spec -> FSTFilterFactory.of((FSTFilterSpec) spec));
         map.put(RKHSFilterSpec.class, spec -> RKHSFilterFactory.of((RKHSFilterSpec) spec));
+        map.put(UserDefinedSymmetricFilterSpec.class, spec ->{
+            if (spec instanceof UserDefinedSymmetricFilterSpec uspec){
+                return Filtering.of(uspec.getCentralFilter(), uspec.getEndPointsFilters());
+            }else
+                return null;
+        } );
+        map.put(UserDefinedFilterSpec.class, spec ->{
+            if (spec instanceof UserDefinedFilterSpec uspec){
+                return Filtering.of(uspec.getCentralFilter(), uspec.getLFilters(), uspec.getUFilters());
+            }else
+                return null;
+        } );
     }
 
     public <S extends FilterSpec> void register(Class<S> spec, Function<S, IFiltering> fn) {

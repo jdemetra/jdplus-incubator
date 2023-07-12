@@ -45,11 +45,12 @@ public class X11Context {
     public static X11Context of(X11plusSpec spec){
         return X11Context.builder()
                 .mode(spec.getMode())
+                .period(spec.getPeriod())
                 .lowerSigma(spec.getLowerSigma())
                 .upperSigma(spec.getUpperSigma())
                 .trendFiltering(FiltersToolkit.of(spec.getTrendFilter()))
-                .initialSeasonalFiltering(FiltersToolkit.of(spec.getInitialSeasonalFilter()))
-                .finalSeasonalFiltering(FiltersToolkit.of(spec.getFinalSeasonalFilter()))
+                .initialSeasonalFiltering(X11SeasonalFiltersFactory.of(spec.getInitialSeasonalFilter()))
+                .finalSeasonalFiltering(X11SeasonalFiltersFactory.of(spec.getFinalSeasonalFilter()))
                 .build();
     }
 

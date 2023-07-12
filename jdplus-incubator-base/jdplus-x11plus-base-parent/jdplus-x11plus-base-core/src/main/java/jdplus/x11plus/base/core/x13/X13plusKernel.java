@@ -34,8 +34,8 @@ import jdplus.sa.base.core.modelling.TwoStepsDecomposition;
 import jdplus.sa.base.core.regarima.FastKernel;
 import jdplus.x11plus.base.api.X11plusSpec;
 import jdplus.x11plus.base.api.X13plusSpec;
-import jdplus.x11plus.base.core.X11Kernel;
-import jdplus.x11plus.base.core.X11Results;
+import jdplus.x11plus.base.core.RawX11Kernel;
+import jdplus.x11plus.base.core.RawX11Results;
 
 @lombok.Value
 public class X13plusKernel {
@@ -75,8 +75,8 @@ public class X13plusKernel {
             if (preprocessor == null) {
                 // Step 0. Preliminary checks
                 TsData sc = preliminary.check(s, log);
-                X11Kernel x11 = new X11Kernel();
-                X11Results rslt = x11.process(sc.getValues(), spec);
+                RawX11Kernel x11 = new RawX11Kernel(spec);
+                RawX11Results rslt = x11.process(sc.getValues());
                 // Step 5. Benchmarking
                 SaBenchmarkingResults bench = null;
                 // Step 6. Diagnostics
@@ -104,7 +104,7 @@ public class X13plusKernel {
 //                } else if (cspec.isMultiplicative() != mul) {
 //                    cspec = spec.toBuilder().multiplicative(mul).build();
 //                }
-                X11Kernel x11 = new X11Kernel();
+                RawX11Kernel x11 = new RawX11Kernel(cspec);
 
                 TsData det = preprocessing.deterministicEffect(s.getDomain(), v -> !SaVariable.isRegressionEffect(v, ComponentType.Undefined));
                 TsData user = RegArimaDecomposer.deterministicEffect(preprocessing, s.getDomain(), ComponentType.Series, true, v -> ModellingUtility.isUser(v));
@@ -117,7 +117,7 @@ public class X13plusKernel {
                     cseries = TsData.subtract(s, det);
                 }
 
-                X11Results rslt = x11.process(cseries.getValues(), cspec);
+                RawX11Results rslt = x11.process(cseries.getValues());
                 // Step 4. Final decomposition
 //                SeriesDecomposition finals = TwoStepsDecomposition.merge(preprocessing, rslt.asDecomposition());
                 // Step 5. Benchmarking

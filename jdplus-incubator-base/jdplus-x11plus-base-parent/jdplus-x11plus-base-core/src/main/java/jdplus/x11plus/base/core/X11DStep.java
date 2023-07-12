@@ -47,7 +47,7 @@ public class X11DStep {
         SymmetricFilter filter = X11FilterFactory.makeSymmetricFilter(context.getPeriod());
         d2drop = filter.length() / 2;
 
-        double[] x = X11Kernel.table(d1.length() - 2 * d2drop, Double.NaN);
+        double[] x = RawX11Kernel.table(d1.length() - 2 * d2drop, Double.NaN);
         DataBlock out = DataBlock.of(x, 0, x.length);
         filter.apply(d1, out);
         d2 = DoubleSeq.of(x);

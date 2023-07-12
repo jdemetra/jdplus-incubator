@@ -17,14 +17,18 @@
 package jdplus.x11plus.base.core;
 
 import java.util.Arrays;
+import jdplus.filters.base.core.FiltersToolkit;
 import jdplus.toolkit.base.api.data.DoubleSeq;
+import jdplus.x11plus.base.api.X11SeasonalFilterSpec;
 import jdplus.x11plus.base.api.X11plusSpec;
 
 /**
  *
  * @author Jean Palate <jean.palate@nbb.be>
  */
-public class X11Kernel {
+public class RawX11Kernel {
+    
+    private final X11plusSpec spec;
 
 //    private X11AStep astep;
     private X11BStep bstep;
@@ -37,8 +41,12 @@ public class X11Kernel {
         Arrays.fill(x, value);
         return x;
     }
+    
+    public RawX11Kernel(X11plusSpec spec){
+        this.spec=spec;
+    }
 
-    public X11Results process(DoubleSeq data, X11plusSpec spec) {
+    public RawX11Results process(DoubleSeq data) {
         clear();
 
         // build the context from the spec
@@ -46,7 +54,7 @@ public class X11Kernel {
         return process(data, context);
     }
 
-    public X11Results process(DoubleSeq data, X11Context context) {
+    public RawX11Results process(DoubleSeq data, X11Context context) {
         clear();
         bstep = new X11BStep();
         bstep.process(data, context);
@@ -55,7 +63,7 @@ public class X11Kernel {
         dstep = new X11DStep();
         dstep.process(data, context.remove(data, cstep.getC20()), context);
 
-        return X11Results.builder()
+        return RawX11Results.builder()
                 .b1(bstep.getB1())
                 .b2(bstep.getB2())
                 .b3(bstep.getB3())

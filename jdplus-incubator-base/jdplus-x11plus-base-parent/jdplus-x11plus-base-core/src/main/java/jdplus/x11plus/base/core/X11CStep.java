@@ -46,7 +46,7 @@ public class X11CStep {
         SymmetricFilter filter = X11FilterFactory.makeSymmetricFilter(context.getPeriod());
         c2drop = filter.length() / 2;
 
-        double[] x = X11Kernel.table(c1.length() - 2 * c2drop, Double.NaN);
+        double[] x = RawX11Kernel.table(c1.length() - 2 * c2drop, Double.NaN);
         DataBlock out = DataBlock.of(x, 0, x.length);
         filter.apply(c1, out);
         c2 = DoubleSeq.of(x);

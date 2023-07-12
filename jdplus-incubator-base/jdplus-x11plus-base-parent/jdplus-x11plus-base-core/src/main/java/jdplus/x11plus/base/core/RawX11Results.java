@@ -15,7 +15,7 @@ import jdplus.toolkit.base.api.information.GenericExplorable;
  */
 @lombok.Value
 @lombok.Builder
-public class X11Results implements GenericExplorable{
+public class RawX11Results implements GenericExplorable{
 
     int nbackcasts, nforecasts;
 

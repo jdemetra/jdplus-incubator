@@ -14,12 +14,15 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.x11plus.base.core;
+package jdplus.x11plus.base.api;
 
 /**
  *
- * @author Jean Palate <jean.palate@nbb.be>
+ * @author palatej
  */
-public class X11SeasonalFilter {
-    
+@lombok.AllArgsConstructor
+@lombok.Value
+public class X11SeasonalFilterSpec implements SeasonalFilterSpec{
+    Number period;
+    SeasonalFilterOption  filter;
 }

@@ -22,7 +22,7 @@ import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.core.regsarima.regular.RegSarimaModel;
 import jdplus.sa.base.core.StationaryVarianceComputer;
 import jdplus.sa.base.core.diagnostics.GenericSaTests;
-import jdplus.x11plus.base.core.X11Results;
+import jdplus.x11plus.base.core.RawX11Results;
 
 @lombok.Value
 @lombok.AllArgsConstructor(access = lombok.AccessLevel.PRIVATE)
