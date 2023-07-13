@@ -5,12 +5,14 @@
  */
 package jdplus.highfreq.base.r;
 
+import java.util.Arrays;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import tck.demetra.data.WeeklyData;
 import jdplus.highfreq.base.core.extendedairline.decomposition.LightExtendedAirlineDecomposition;
 import jdplus.highfreq.base.core.extendedairline.ExtendedAirlineEstimation;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
 import jdplus.highfreq.base.core.ssf.extractors.SsfUcarimaEstimation;
+import org.junit.Assert;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +25,105 @@ public class FractionalAirlineProcessorTest {
     public FractionalAirlineProcessorTest() {
     }
 
+    private final double[] OBS = {2.52, 1.43, 0.77, 3.19, 1.6, 0.35, 0.95, 1.69, 1.91, 1.46, 1.21, 2.48, 1.35, 0.6, 1.09, 1.73, 0.58, 2.56, 1.48, 0.36, 0.12, 1.6, 0.87, 1.31, 2.19, 1.46, 0.45, 2.43, 2.98, 11.93, 0.08, 2.42, 2.99, 0.44, 0.36, 3.83, 0.44, 1.19, 3.25, 2.65, 2.86, 1.18, 0.92, 2.06, 1.28, 2.6, 1.82, 0.53, 1.2, 0.76};
+    private final double[] OBS_minus1 = {2.52, 1.43, 0.77, 3.19, 1.6, 0.35, 0.95, 1.69, 1.91, 1.46, 1.21, 2.48, 1.35, 0.6, 1.09, 1.73, 0.58, 2.56, 1.48, 0.36, 0.12, 1.6, 0.87, 1.31, 2.19, 1.46, 0.45, 2.43, 2.98, 11.93, 0.08, 2.42, 2.99, 0.44, 0.36, 3.83, 0.44, 1.19, 3.25, 2.65, 2.86, 1.18, 0.92, 2.06, 1.28, 2.6, 1.82, 0.53, 1.2};
+    private final double[] logOBS = DoubleSeq.of(OBS).log().toArray();
+    private final double[] logOBS_minus1 = DoubleSeq.of(OBS_minus1).log().toArray();
+
+    private final double[] Reg = {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0};
+    private final Matrix Matrix_Reg = Matrix.of(Reg, Reg.length, 1);
+
+    @Test
+    public void EstimationLogAO() {
+
+        double[] OBS_A = {2.52, 1.43, 0.77, 3.19, 1.6, 1000000, 0.95, 1.69, 1.91, 1.46, 1.21, 2.48, 1.35, 0.6, 1.09, 1.73, 0.58, 2.56, 1.48, 0.36, 0.12, 1.6, 0.87, 1.31, 2.19, 1.46, 0.45, 2.43, 2.98, 11.93, 0.08, 2.42, 2.99, 0.44, 0.36, 3.83, 0.44, 1.19, 3.25, 2.65, 2.86, 1.18, 0.92, 2.06, 1.28, 2.6, 1.82, 0.53, 1.2, 0.76};
+        double[] logOBS_A = DoubleSeq.of(OBS_A).log().toArray();
+        ExtendedAirlineEstimation rslt_level_logOBS = FractionalAirlineProcessor.estimate(logOBS_A, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 3, 1e-12, false, 0, false);
+        ExtendedAirlineEstimation rslt_log_OBS = FractionalAirlineProcessor.estimate(OBS_A, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 0, true);
+        assertEquals(rslt_level_logOBS.getOutliers().length, rslt_log_OBS.getOutliers().length, "Differnce in Number of outliers");
+        assertEquals(Arrays.toString(rslt_level_logOBS.getOutliers()), Arrays.toString(rslt_log_OBS.getOutliers()), "Difference in Outlier");
+    }
+
+    @Test
+    public void EstimationLogMissing() {
+
+        double[] OBS_Na = {2.52, 1.43, 0.77, 3.19, 1.6, Double.NaN, 0.95, 1.69, 1.91, 1.46, 1.21, 2.48, 1.35, 0.6, 1.09, 1.73, 0.58, 2.56, 1.48, 0.36, 0.12, 1.6, 0.87, 1.31, 2.19, 1.46, 0.45, 2.43, 2.98, 11.93, 0.08, 2.42, 2.99, 0.44, 0.36, 3.83, 0.44, 1.19, 3.25, 2.65, 2.86, 1.18, 0.92, 2.06, 1.28, 2.6, 1.82, 0.53, 1.2, 0.76};
+        double[] logOBS_NA = DoubleSeq.of(OBS_Na).log().toArray();
+        ExtendedAirlineEstimation rslt_level_logOBS = FractionalAirlineProcessor.estimate(logOBS_NA, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 3, 1e-12, false, 0, false);
+        ExtendedAirlineEstimation rslt_log_OBS = FractionalAirlineProcessor.estimate(OBS_Na, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 0, true);
+        assertEquals(rslt_level_logOBS.getMissing().length, rslt_log_OBS.getMissing().length, "Differnce in Number of Missing");
+        Assert.assertArrayEquals("Difference in Missing", rslt_level_logOBS.getMissing(), rslt_log_OBS.getMissing());
+        int[] arr = {5};
+        Assert.assertArrayEquals("Difference in Missing", rslt_level_logOBS.getMissing(), arr);
+    }
+
+    @Test
+    public void EstimationLog() {
+
+        ExtendedAirlineEstimation rslt_level_logOBS = FractionalAirlineProcessor.estimate(logOBS, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 0, false);
+        ExtendedAirlineEstimation rslt_log_OBS = FractionalAirlineProcessor.estimate(OBS, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 0, true);
+
+        assertFalse(rslt_level_logOBS.isLog(), "Logs are taken");
+        assertTrue(rslt_log_OBS.isLog(), "Logs are not taken");
+        assertEquals(rslt_level_logOBS.getMissing().length, 0, "Wrong number of missing");
+        assertEquals(rslt_log_OBS.getMissing().length, 0, "Wrong number of missing");
+
+        assertArrayEquals(rslt_level_logOBS.getMissing(), rslt_log_OBS.getMissing(), "Different Missing values");
+        assertEquals(rslt_level_logOBS.getOutliers().length, rslt_log_OBS.getOutliers().length, "Number of outliers");
+
+        //the original Seris
+        assertArrayEquals(rslt_level_logOBS.getY(), logOBS, "Difference in Original Series");
+        assertArrayEquals(rslt_log_OBS.getY(), OBS, 0.0000000001, "Difference in Original Series");
+        assertArrayEquals(rslt_level_logOBS.linearized(), rslt_log_OBS.linearized(), "Difference in linarized Series"); //Not back Transformed
+
+        assertArrayEquals(rslt_level_logOBS.component_userdef_reg_variables(), DoubleSeq.of(rslt_log_OBS.component_userdef_reg_variables()).log().toArray(), 0.000000001, "Difference in User-Defined Reg Variable");
+
+        assertArrayEquals(rslt_level_logOBS.component_ao(), DoubleSeq.of(rslt_log_OBS.component_ao()).log().toArray(), 0.000000001, "Difference in Compnent AO");
+        assertArrayEquals(rslt_level_logOBS.component_ls(), DoubleSeq.of(rslt_log_OBS.component_ls()).log().toArray(), 0.000000001, "Difference in Compnent LS");
+        assertArrayEquals(rslt_level_logOBS.component_outliers(), DoubleSeq.of(rslt_log_OBS.component_outliers()).log().toArray(), 0.000000001, "Difference in Compnent LS");
+        assertArrayEquals(rslt_level_logOBS.component_wo(), DoubleSeq.of(rslt_log_OBS.component_wo()).log().toArray(), 0.000000001, "Difference in Compnent WO");
+
+        assertArrayEquals(rslt_level_logOBS.getCoefficients().toArray(), rslt_log_OBS.getCoefficients().toArray(), "Difference in Coefficents");
+        assertArrayEquals(rslt_level_logOBS.getCoefficientsCovariance().toArray(), rslt_log_OBS.getCoefficientsCovariance().toArray(), "Difference in CoefficentsCovariance");
+        assertArrayEquals(rslt_level_logOBS.tstats(), rslt_log_OBS.tstats(), "Difference in TSTat");
+        assertEquals(rslt_level_logOBS.getLikelihood().getAIC(), rslt_log_OBS.getLikelihood().getAIC(), "Difference in AIC");
+        assertEquals(rslt_level_logOBS.getLikelihood().getAICC(), rslt_log_OBS.getLikelihood().getAICC(), "Difference in AICC");
+        assertEquals(rslt_level_logOBS.getLikelihood().getAdjustedLogLikelihood(), rslt_log_OBS.getLikelihood().getAdjustedLogLikelihood(), "Difference in Adjusted Likelihood");
+        assertEquals(rslt_level_logOBS.getLikelihood().getBIC(), rslt_log_OBS.getLikelihood().getBIC(), "Difference in BIC");
+        assertEquals(rslt_level_logOBS.getLikelihood().getBIC2(), rslt_log_OBS.getLikelihood().getBIC2(), "Difference in BIC2");
+        assertEquals(rslt_level_logOBS.getLikelihood().getBICC(), rslt_log_OBS.getLikelihood().getBICC(), "Difference in BICC");
+        assertEquals(rslt_level_logOBS.getLikelihood().getEffectiveObservationsCount(), rslt_log_OBS.getLikelihood().getEffectiveObservationsCount(), "Difference active Obersvations Count");
+        assertEquals(rslt_level_logOBS.getLikelihood().getEstimatedParametersCount(), rslt_log_OBS.getLikelihood().getEstimatedParametersCount(), "Difference in Estimated Parameters Count");
+        assertEquals(rslt_level_logOBS.getLikelihood().getHannanQuinn(), rslt_log_OBS.getLikelihood().getHannanQuinn(), "Difference in HannanQuinn");
+        assertEquals(rslt_level_logOBS.getLikelihood().getObservationsCount(), rslt_log_OBS.getLikelihood().getObservationsCount(), "Difference in Observations Count");
+        assertEquals(rslt_level_logOBS.getLikelihood().getSsqErr(), rslt_log_OBS.getLikelihood().getSsqErr(), "Difference in SsqErr");
+        assertEquals(rslt_level_logOBS.getLikelihood().getTransformationAdjustment(), rslt_log_OBS.getLikelihood().getTransformationAdjustment(), "Difference in Transformation Adjustment");
+    }
+
+    @Test
+    public void EstimationLogFcast() {
+
+        ExtendedAirlineEstimation rslt_level_logOBS = FractionalAirlineProcessor.estimate(logOBS_minus1, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 1, false);
+        ExtendedAirlineEstimation rslt_log_OBS = FractionalAirlineProcessor.estimate(OBS_minus1, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 1, true);
+        assertEquals(rslt_level_logOBS.getOutliers().length, rslt_log_OBS.getOutliers().length, "Number of outliers");
+
+        assertArrayEquals(rslt_level_logOBS.getY(), DoubleSeq.of(rslt_log_OBS.getY()).log().toArray(), "Difference in Original Series inkl. one fcast");
+        assertArrayEquals(rslt_level_logOBS.linearized(), rslt_log_OBS.linearized(), "Difference in Original Series inkl. one fcast");
+
+    }
+
+    @Test
+    public void EstimationInDetail() {
+        double[] OBS = {2.52, -1.43, -0.77, -3.19, -1.6, 0.35, 0.95, 1.69, 1.91, 1.46, -1.21, -2.48, 1.35, 0.6, 1.09, 1.73, -0.58, -2.56, -1.48, 0.36, 0.12, 1.6, 0.87, -1.31, -2.19, -1.46, -0.45, 2.43, 2.98, 11.93, 0.08, -2.42, -2.99, -0.44, 0.36, 3.83, -0.44, -1.19, -3.25, -2.65, -2.86, -1.18, 0.92, -2.06, -1.28, -2.6, -1.82, 0.53, -1.2, -0.76};
+
+        double[] Reg = {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0};
+
+        Matrix Matrix_Reg = Matrix.of(Reg, Reg.length, 1);
+        ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(OBS, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 0);
+        //  System.out.println(rslt.getLikelihood());
+
+    }
+
     @Test
     public void testWeeklyDecomp() {
         DoubleSeq y = DoubleSeq.of(WeeklyData.US_CLAIMS2).log();
@@ -33,22 +134,23 @@ public class FractionalAirlineProcessorTest {
 //        System.out.println(rslt.component("t").getStde());
 //        System.out.println(rslt.component("s").getStde());
 //        System.out.println(rslt.component("i").getStde());
-        assertTrue(null != rslt.getData("sa", double[].class));
+        assertTrue(null != rslt.getData("sa", double[].class
+        ));
     }
 
     @Test
     public void testWeeklyEstimation_mini() {
         ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(WeeklyData.US_CLAIMS2, null, false, new double[]{52},
                 2, false, null, 6, 1e-12, false, 0);
-        System.out.println(rslt.getLikelihood());
+
 //        System.out.println();
     }
 
     @Test
     public void testWeeklyEstimation() {
         ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(WeeklyData.US_CLAIMS2, null, false, new double[]{52},
-                -1, false, new String[]{"ao", "ls", "wo"}, 5, 1e-12, true,0);
-        System.out.println(rslt.getLikelihood());
+                -1, false, new String[]{"ao", "ls", "wo"}, 5, 1e-12, true, 0);
+//        System.out.println(rslt.getLikelihood());
 //        System.out.println();
     }
 
@@ -83,13 +185,12 @@ public class FractionalAirlineProcessorTest {
             assertFalse(comp, "The componets don't sum up to the lin " + i);
         }
 
-        System.out.println("LL: " + rslt.getLikelihood());
-
+        //   System.out.println("LL: " + rslt.getLikelihood());
     }
 
     @Test
     public void testComponentEstimation_with_fcast_withoutReg() {
- 
+
         ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(WeeklyData.US_CLAIMS2, null, false, new double[]{365.25 / 7},
                 -1, false, new String[]{"ao", "wo", "ls"}, 5, 1e-12, true, 7);
 
@@ -103,15 +204,15 @@ public class FractionalAirlineProcessorTest {
             assertFalse(comp, "The componets don't sum up to the lin " + i);
         }
 
-        System.out.println("LL: " + rslt.getLikelihood());
-
+        //    System.out.println("LL: " + rslt.getLikelihood());
     }
 
     @Test
     public void testWeeklySsf() {
         LightExtendedAirlineDecomposition rslt = FractionalAirlineProcessor.decompose(WeeklyData.US_CLAIMS2, new double[]{365.25 / 7}, -1, false, true, 7, 7);
         SsfUcarimaEstimation details = FractionalAirlineProcessor.ssfDetails(rslt);
-        assertTrue(null != details.getData("smoothing.states", Matrix.class));
+        assertTrue(null != details.getData("smoothing.states", Matrix.class
+        ));
     }
 
 //    final static DoubleSeq EDF;
