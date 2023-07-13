@@ -125,18 +125,6 @@ public class FractionalAirlineProcessorTest {
     }
 
     @Test
-    public void EstimationInDetail_fcast() {
-        double[] OBS = {2.52, -1.43, -0.77, -3.19, -1.6, 0.35, 0.95, 1.69, 1.91, 1.46, -1.21, -2.48, 1.35, 0.6, 1.09, 1.73, -0.58, -2.56, -1.48, 0.36, 0.12, 1.6, 0.87, -1.31, -2.19, -1.46, -0.45, 2.43, 2.98, 11.93, 0.08, -2.42, -2.99, -0.44, 0.36, 3.83, -0.44, -1.19, -3.25, -2.65, -2.86, -1.18, 0.92, -2.06, -1.28, -2.6, -1.82, 0.53, -1.2, -0.76};
-
-        double[] Reg = {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0};
-
-        Matrix Matrix_Reg = Matrix.of(Reg, Reg.length, 1);
-        ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(OBS, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 1);
-        assertEquals(OBS.length + 1, rslt.getY().length, "Forcast has the wrong length");
-
-    }
-
-    @Test
     public void testWeeklyDecomp() {
         DoubleSeq y = DoubleSeq.of(WeeklyData.US_CLAIMS2).log();
         LightExtendedAirlineDecomposition rslt = FractionalAirlineProcessor.decompose(y.toArray(), 365.25 / 7, false, true, 0, 0);

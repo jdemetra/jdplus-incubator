@@ -60,7 +60,6 @@ import jdplus.highfreq.base.core.regarima.HighFreqRegArimaModel;
 import jdplus.highfreq.base.core.regarima.ModelDescription;
 import jdplus.sa.base.api.SaException;
 import static jdplus.sa.base.core.PreliminaryChecks.MAX_MISSING_COUNT;
-import jdplus.toolkit.base.api.data.DoubleSeqCursor;
 import jdplus.toolkit.base.api.util.IntList;
 import jdplus.toolkit.base.core.data.interpolation.AverageInterpolator;
 import jdplus.toolkit.base.core.data.interpolation.DataInterpolator;
@@ -356,52 +355,11 @@ public class ExtendedAirlineKernel {
 
         //Ausgabe anpassen
         RegArimaModel model = rslt.getModel();
+        FastArimaForecasts fcasts = new FastArimaForecasts();
 
-        DoubleSeq y_fcasts = DoubleSeq.empty();
+        fcasts.prepare(model.arima(), false); //Jean said mean should not be used
+        DoubleSeq y_fcasts = fcasts.forecasts(y, nfcasts); // we should use the lin series for the fcasts
 
-        if (nfcasts > 0) {
-            FastArimaForecasts fcasts = new FastArimaForecasts();
-            fcasts.prepare(model.arima(), false); //Jean said mean should not be used
-            double[] detAll = new double[y.length()];
-            DoubleSeqCursor coeff = rslt.getConcentratedLikelihood().coefficients().cursor();
-            FastMatrix variables = regarima.variables();
-            for (int j = 0; j < variables.getColumnsCount(); ++j) {
-                double c = coeff.getAndNext();
-                if (c != 0) {
-                    DoubleSeqCursor cursor = variables.column(j).cursor();
-                    for (int k = 0; k < y.length(); ++k) {
-                        detAll[k] += c * cursor.getAndNext();
-                    }
-                }
-            }
-
-            //lin series is the original series y minus coeff*variables
-            double[] y_lin_a = new double[y.length()];
-            for (int i = 0; i < y.length(); i++) {
-                y_lin_a[i] = y.get(i) - detAll[i];
-            }
-            DoubleSeq y_lin = DoubleSeq.of(y_lin_a);
-            // y minus  \beta X to use as fcast
-            DoubleSeq y_fcasts_lin = fcasts.forecasts(y_lin, nfcasts); // we should use the lin series for the fcasts
-            double[] y_fcast_a;
-            coeff = rslt.getConcentratedLikelihood().coefficients().cursor();
-            y_fcast_a = y_fcasts_lin.toArray().clone();
-            if (X != null && X.getColumnsCount() != 0) {
-                for (int j = 0; j < X.getColumnsCount(); ++j) {
-                    double c = coeff.getAndNext();
-                    if (c != 0) {
-                        DoubleSeqCursor cursor = X.column(j).cursor();
-                        for (int k = y.length(); k < y.length() + nfcasts; ++k) {
-                            y_fcast_a[k - y.length()] -= c * cursor.getAndNext();
-                        }
-                    }
-                }
-            }
-            y_fcasts = DoubleSeq.of(y_fcast_a);
-        } else {
-            y_fcasts = DoubleSeq.empty();
-        }
-        //
         int xNumberRows = 0;
         int xNumberColumns = 0;
         if (X
@@ -440,10 +398,10 @@ public class ExtendedAirlineKernel {
             regVariables = regarima.variables();
         }
 
-        DoubleSeq y_f = regarima.getY().extend(0, nfcasts);
+        DoubleSeq y_f = regarima.getY().extend(0, y_fcasts.length());
         double[] y_inclFcasts = y_f.toArray();
         for (int i = 0;
-                i < nfcasts;
+                i < y_fcasts.length();
                 i++) {
             y_inclFcasts[regarima.getY().length() + i] = y_fcasts.get(i);
         }
