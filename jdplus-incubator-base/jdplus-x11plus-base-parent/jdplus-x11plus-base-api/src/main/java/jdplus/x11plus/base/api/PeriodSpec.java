@@ -32,7 +32,7 @@ public class PeriodSpec {
     private Number period;
 
     private FilterSpec trendFilter;
-    private FilterSpec initialSeasonalFilter, finalSeasonalFilter;
+    private SeasonalFilterSpec initialSeasonalFilter, finalSeasonalFilter;
 
 
     /**

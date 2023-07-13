@@ -14,15 +14,15 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.stl.desktop.plugin.stl.ui;
+package jdplus.x11plus.desktop.plugin.x13.ui;
 
-import jdplus.x11plus.desktop.plugin.x13.StlPlusDocumentManager;
 import jdplus.toolkit.desktop.plugin.ui.processing.TsProcessingViewer;
 import jdplus.toolkit.desktop.plugin.workspace.DocumentUIServices;
 import jdplus.toolkit.desktop.plugin.workspace.WorkspaceFactory;
 import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItem;
 import jdplus.toolkit.desktop.plugin.workspace.ui.WorkspaceTsTopComponent;
-import jdplus.stl.base.core.stlplus.StlPlusDocument;
+import jdplus.x11plus.base.core.x13.X13plusDocument;
+import jdplus.x11plus.desktop.plugin.x13.X13plusDocumentManager;
 import org.openide.windows.TopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -34,36 +34,36 @@ import org.openide.util.NbBundle;
 /**
  * Top component which displays something.
  */
-@ConvertAsProperties(dtd = "-//demetra.desktop.stl//StlPlus//EN",
+@ConvertAsProperties(dtd = "-//demetra.desktop.x13//X13plus//EN",
         autostore = false)
-@TopComponent.Description(preferredID = "StlPlusTopComponent",
+@TopComponent.Description(preferredID = "X13plusTopComponent",
         //iconBase="SET/PATH/TO/ICON/HERE", 
         persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
-@ActionID(category = "Seasonal Adjustment", id = "demetra.desktop.stlplus.StlPlusTopComponent")
+@ActionID(category = "Seasonal Adjustment", id = "demetra.desktop.x13plus.X13plusTopComponent")
 @ActionReference(path = "Menu/Statistical methods/Seasonal Adjustment/Single Analysis", position = 3000)
-@TopComponent.OpenActionRegistration(displayName = "#CTL_StlPlusAction")
+@TopComponent.OpenActionRegistration(displayName = "#CTL_X13plusAction")
 @NbBundle.Messages({
-    "CTL_StlPlusAction=STL+",
-    "CTL_StlPlusTopComponent=STL+ Window",
-    "HINT_StlPlusTopComponent=This is a STL+ window"
+    "CTL_X13plusAction=X13+",
+    "CTL_X13plusTopComponent=X13+ Window",
+    "HINT_X13plusTopComponent=This is a X13+ window"
 })
-public final class StlPlusTopComponent extends WorkspaceTsTopComponent<StlPlusDocument> {
+public final class X13plusTopComponent extends WorkspaceTsTopComponent<X13plusDocument> {
 
     private final ExplorerManager mgr = new ExplorerManager();
 
-    private static StlPlusDocumentManager manager() {
-        return WorkspaceFactory.getInstance().getManager(StlPlusDocumentManager.class);
+    private static X13plusDocumentManager manager() {
+        return WorkspaceFactory.getInstance().getManager(X13plusDocumentManager.class);
     }
 
-    public StlPlusTopComponent() {
+    public X13plusTopComponent() {
         this(null);
     }
 
-    public StlPlusTopComponent(WorkspaceItem<StlPlusDocument> doc) {
+    public X13plusTopComponent(WorkspaceItem<X13plusDocument> doc) {
         super(doc);
         initComponents();
-        setToolTipText(NbBundle.getMessage(StlPlusTopComponent.class, "HINT_StlPlusTopComponent"));
+        setToolTipText(NbBundle.getMessage(X13plusTopComponent.class, "HINT_X13plusTopComponent"));
         associateLookup(ExplorerUtils.createLookup(mgr, getActionMap()));
     }
 
@@ -74,12 +74,12 @@ public final class StlPlusTopComponent extends WorkspaceTsTopComponent<StlPlusDo
 
     @Override
     protected TsProcessingViewer initViewer() {
-        return TsProcessingViewer.create(getElement(), DocumentUIServices.forDocument(StlPlusDocument.class));
+        return TsProcessingViewer.create(getElement(), DocumentUIServices.forDocument(X13plusDocument.class));
     }
 
 
     @Override
-    public WorkspaceItem<StlPlusDocument> newDocument() {
+    public WorkspaceItem<X13plusDocument> newDocument() {
         return manager().create(WorkspaceFactory.getInstance().getActiveWorkspace());
     }
 
@@ -108,6 +108,6 @@ public final class StlPlusTopComponent extends WorkspaceTsTopComponent<StlPlusDo
 
     @Override
     protected String getContextPath() {
-        return StlPlusDocumentManager.CONTEXTPATH;
+        return X13plusDocumentManager.CONTEXTPATH;
     }
 }

@@ -14,32 +14,32 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.stl.desktop.plugin.stl.ui;
+package jdplus.x11plus.desktop.plugin.x13.ui;
 
 import jdplus.toolkit.desktop.plugin.descriptors.EnhancedPropertyDescriptor;
 import jdplus.toolkit.desktop.plugin.descriptors.IObjectDescriptor;
-import jdplus.stl.base.api.StlPlusSpec;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.List;
+import jdplus.x11plus.base.api.X13plusSpec;
 import org.openide.util.NbBundle.Messages;
 
 /**
  *
  * @author Jean Palate
  */
-public class StlPlusSpecUI implements IObjectDescriptor<StlPlusSpec> {
+public class X13plusSpecUI implements IObjectDescriptor<X13plusSpec> {
     
-    private final StlPlusSpecRoot root;
+    private final X13plusSpecRoot root;
     
     @Override
-    public StlPlusSpec getCore(){
+    public X13plusSpec getCore(){
         return root.getCore();
     }
 
-    public StlPlusSpecUI(StlPlusSpec spec, boolean ro) {
-        root=new StlPlusSpecRoot(spec, ro);
+    public X13plusSpecUI(X13plusSpec spec, boolean ro) {
+        root=new X13plusSpecRoot(spec, ro);
     }
 
    public SeriesSpecUI getSeries() {
@@ -103,8 +103,8 @@ public class StlPlusSpecUI implements IObjectDescriptor<StlPlusSpec> {
     ///////////////////////////////////////////////////////////////////////////
     private static final int SERIES_ID=1, TRANSFORM_ID = 2, REGRESSION_ID = 3, STOCHASTIC_ID = 4, OUTLIER_ID = 5, ESTIMATE_ID = 7, DECOMPOSITION_ID=8;
 
-    @Messages({"stlPlusSpecUI.regressionDesc.name=REGRESSION",
-        "stlPlusSpecUI.regressionDesc.desc="
+    @Messages({"x11plusSpecUI.regressionDesc.name=REGRESSION",
+        "x11plusSpecUI.regressionDesc.desc="
     })
     private EnhancedPropertyDescriptor regressionDesc() {
         if (! root.isPreprocessing())
@@ -112,8 +112,8 @@ public class StlPlusSpecUI implements IObjectDescriptor<StlPlusSpec> {
         try {
             PropertyDescriptor desc = new PropertyDescriptor("regression", this.getClass(), "getRegression", null);
             EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, REGRESSION_ID);
-            desc.setDisplayName(Bundle.stlPlusSpecUI_regressionDesc_name());
-            desc.setShortDescription(Bundle.stlPlusSpecUI_regressionDesc_desc());
+            desc.setDisplayName(Bundle.x11plusSpecUI_regressionDesc_name());
+            desc.setShortDescription(Bundle.x11plusSpecUI_regressionDesc_desc());
             //edesc.setReadOnly(true);
             return edesc;
         } catch (IntrospectionException ex) {
@@ -121,15 +121,15 @@ public class StlPlusSpecUI implements IObjectDescriptor<StlPlusSpec> {
         }
     }
 
-    @Messages({"stlPlusSpecUI.seriesDesc.name=SERIES",
-        "stlPlusSpecUI.seriesDesc.desc="
+    @Messages({"x11plusSpecUI.seriesDesc.name=SERIES",
+        "x11plusSpecUI.seriesDesc.desc="
     })
     private EnhancedPropertyDescriptor seriesDesc() {
         try {
             PropertyDescriptor desc = new PropertyDescriptor("transform", this.getClass(), "getSeries", null);
             EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, SERIES_ID);
-            desc.setDisplayName(Bundle.stlPlusSpecUI_seriesDesc_name());
-            desc.setShortDescription(Bundle.stlPlusSpecUI_seriesDesc_desc());
+            desc.setDisplayName(Bundle.x11plusSpecUI_seriesDesc_name());
+            desc.setShortDescription(Bundle.x11plusSpecUI_seriesDesc_desc());
             //edesc.setReadOnly(true);
             return edesc;
         } catch (IntrospectionException ex) {
@@ -137,8 +137,8 @@ public class StlPlusSpecUI implements IObjectDescriptor<StlPlusSpec> {
         }
     }
 
-    @Messages({"stlPlusSpecUI.transformDesc.name=TRANSFORM",
-        "stlPlusSpecUI.transformDesc.desc="
+    @Messages({"x11plusSpecUI.transformDesc.name=TRANSFORM",
+        "x11plusSpecUI.transformDesc.desc="
     })
     private EnhancedPropertyDescriptor transformDesc() {
         if (! root.isPreprocessing())
@@ -146,8 +146,8 @@ public class StlPlusSpecUI implements IObjectDescriptor<StlPlusSpec> {
         try {
             PropertyDescriptor desc = new PropertyDescriptor("transform", this.getClass(), "getTransform", null);
             EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, TRANSFORM_ID);
-            desc.setDisplayName(Bundle.stlPlusSpecUI_transformDesc_name());
-            desc.setShortDescription(Bundle.stlPlusSpecUI_transformDesc_desc());
+            desc.setDisplayName(Bundle.x11plusSpecUI_transformDesc_name());
+            desc.setShortDescription(Bundle.x11plusSpecUI_transformDesc_desc());
             //edesc.setReadOnly(true);
             return edesc;
         } catch (IntrospectionException ex) {
@@ -155,8 +155,8 @@ public class StlPlusSpecUI implements IObjectDescriptor<StlPlusSpec> {
         }
     }
 
-    @Messages({"stlPlusSpecUI.outlierDesc.name=OUTLIERS",
-        "stlPlusSpecUI.outlierDesc.desc="
+    @Messages({"x11plusSpecUI.outlierDesc.name=OUTLIERS",
+        "x11plusSpecUI.outlierDesc.desc="
     })
     private EnhancedPropertyDescriptor outlierDesc() {
         if (! root.isPreprocessing())
@@ -164,8 +164,8 @@ public class StlPlusSpecUI implements IObjectDescriptor<StlPlusSpec> {
         try {
             PropertyDescriptor desc = new PropertyDescriptor("outlier", this.getClass(), "getOutlier", null);
             EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, OUTLIER_ID);
-            desc.setDisplayName(Bundle.stlPlusSpecUI_outlierDesc_name());
-            desc.setShortDescription(Bundle.stlPlusSpecUI_outlierDesc_desc());
+            desc.setDisplayName(Bundle.x11plusSpecUI_outlierDesc_name());
+            desc.setShortDescription(Bundle.x11plusSpecUI_outlierDesc_desc());
             //edesc.setReadOnly(true);
             return edesc;
         } catch (IntrospectionException ex) {
@@ -173,15 +173,15 @@ public class StlPlusSpecUI implements IObjectDescriptor<StlPlusSpec> {
         }
     }
 
-//    @Messages({"stlPlusSpecUI.stochasticDesc.name=MODEL",
-//        "stlPlusSpecUI.stochasticDesc.desc="
+//    @Messages({"x11plusSpecUI.stochasticDesc.name=MODEL",
+//        "x11plusSpecUI.stochasticDesc.desc="
 //    })
 //    private EnhancedPropertyDescriptor stochasticDesc() {
 //        try {
 //            PropertyDescriptor desc = new PropertyDescriptor("stochastic", this.getClass(), "getStochastic", null);
 //            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, STOCHASTIC_ID);
-//            desc.setDisplayName(Bundle.stlPlusSpecUI_stochasticDesc_name());
-//            desc.setShortDescription(Bundle.stlPlusSpecUI_stochasticDesc_desc());
+//            desc.setDisplayName(Bundle.x11plusSpecUI_stochasticDesc_name());
+//            desc.setShortDescription(Bundle.x11plusSpecUI_stochasticDesc_desc());
 //            //edesc.setReadOnly(true);
 //            return edesc;
 //        } catch (IntrospectionException ex) {
@@ -189,8 +189,8 @@ public class StlPlusSpecUI implements IObjectDescriptor<StlPlusSpec> {
 //        }
 //    }
 //
-    @Messages({"stlPlusSpecUI.estimateDesc.name=ESTIMATE",
-        "stlPlusSpecUI.estimateDesc.desc="
+    @Messages({"x11plusSpecUI.estimateDesc.name=ESTIMATE",
+        "x11plusSpecUI.estimateDesc.desc="
     })
     private EnhancedPropertyDescriptor estimateDesc() {
         if (! root.isPreprocessing())
@@ -198,8 +198,8 @@ public class StlPlusSpecUI implements IObjectDescriptor<StlPlusSpec> {
         try {
             PropertyDescriptor desc = new PropertyDescriptor("estimate", this.getClass(), "getEstimate", null);
             EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, ESTIMATE_ID);
-            desc.setDisplayName(Bundle.stlPlusSpecUI_estimateDesc_name());
-            desc.setShortDescription(Bundle.stlPlusSpecUI_estimateDesc_desc());
+            desc.setDisplayName(Bundle.x11plusSpecUI_estimateDesc_name());
+            desc.setShortDescription(Bundle.x11plusSpecUI_estimateDesc_desc());
             //edesc.setReadOnly(true);
             return edesc;
         } catch (IntrospectionException ex) {
@@ -207,25 +207,25 @@ public class StlPlusSpecUI implements IObjectDescriptor<StlPlusSpec> {
         }
     }
 
-    @Messages("stlPlusSpecUI.getDisplayName=Fractional airline decomposition")
+    @Messages("x11plusSpecUI.getDisplayName=Fractional airline decomposition")
     @Override
     public String getDisplayName() {
-        return Bundle.stlPlusSpecUI_getDisplayName();
+        return Bundle.x11plusSpecUI_getDisplayName();
     }
 
-    public StlSpecUI getDecomposition() {
-        return new StlSpecUI(root);
+    public X11plusSpecUI getDecomposition() {
+        return new X11plusSpecUI(root);
     }
 
-    @Messages({"stlPlusSpecUI.decompositionDesc.name=DECOMPOSITION",
-        "stlPlusSpecUI.decompositionDesc.desc=Includes the settings relevant to the decomposition step"
+    @Messages({"x11plusSpecUI.decompositionDesc.name=DECOMPOSITION",
+        "x11plusSpecUI.decompositionDesc.desc=Includes the settings relevant to the decomposition step"
     })
     private EnhancedPropertyDescriptor decompositionDesc() {
         try {
             PropertyDescriptor desc = new PropertyDescriptor("seats", this.getClass(), "getDecomposition", null);
             EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, DECOMPOSITION_ID);
-            desc.setDisplayName(Bundle.stlPlusSpecUI_decompositionDesc_name());
-            desc.setShortDescription(Bundle.stlPlusSpecUI_decompositionDesc_desc());
+            desc.setDisplayName(Bundle.x11plusSpecUI_decompositionDesc_name());
+            desc.setShortDescription(Bundle.x11plusSpecUI_decompositionDesc_desc());
             return edesc;
         } catch (IntrospectionException ex) {
             return null;

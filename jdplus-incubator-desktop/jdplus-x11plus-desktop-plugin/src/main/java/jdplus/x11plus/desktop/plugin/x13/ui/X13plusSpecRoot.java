@@ -14,13 +14,13 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.stl.desktop.plugin.stl.ui;
+package jdplus.x11plus.desktop.plugin.x13.ui;
 
 import jdplus.sa.desktop.plugin.descriptors.regular.RegularSpecUI;
 import jdplus.toolkit.base.api.modelling.regular.ModellingSpec;
 import jdplus.sa.base.api.benchmarking.SaBenchmarkingSpec;
-import jdplus.stl.base.api.StlPlusSpec;
-import jdplus.stl.base.api.StlSpec;
+import jdplus.x11plus.base.api.X11plusSpec;
+import jdplus.x11plus.base.api.X13plusSpec;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -28,26 +28,26 @@ import org.checkerframework.checker.nullness.qual.NonNull;
  * @author Jean Palate
  */
 @lombok.Getter
-public class StlPlusSpecRoot implements RegularSpecUI {
+public class X13plusSpecRoot implements RegularSpecUI {
 
     @NonNull
     ModellingSpec preprocessing;
-    StlSpec stl;
+    X11plusSpec x11;
     @NonNull
     SaBenchmarkingSpec benchmarking;
     boolean ro;
 
-    public StlPlusSpecRoot(StlPlusSpec spec, boolean ro) {
+    public X13plusSpecRoot(X13plusSpec spec, boolean ro) {
         this.preprocessing = spec.getPreprocessing();
-        this.stl = spec.getStl();
+        this.x11 = spec.getX11();
         this.benchmarking = spec.getBenchmarking();
         this.ro = ro;
     }
 
-    public StlPlusSpec getCore() {
-        return StlPlusSpec.builder()
+    public X13plusSpec getCore() {
+        return X13plusSpec.builder()
                 .preprocessing(preprocessing)
-                .stl(stl)
+                .x11(x11)
                 .benchmarking(benchmarking)
                 .build();
     }
@@ -57,8 +57,8 @@ public class StlPlusSpecRoot implements RegularSpecUI {
         preprocessing=spec;
     }
 
-    public void update(StlSpec spec) {
-        stl = spec;
+    public void update(X11plusSpec spec) {
+        x11 = spec;
     }
 
     @Override

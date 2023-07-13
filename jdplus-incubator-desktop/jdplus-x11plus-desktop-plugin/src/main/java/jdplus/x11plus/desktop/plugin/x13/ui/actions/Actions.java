@@ -16,12 +16,11 @@
  */
 package jdplus.x11plus.desktop.plugin.x13.ui.actions;
 
-import jdplus.x11plus.desktop.plugin.mx13.MStlPlusDocumentManager;
-import jdplus.x11plus.desktop.plugin.x13.StlPlusDocumentManager;
 import jdplus.toolkit.desktop.plugin.workspace.nodes.CommentAction;
 import jdplus.toolkit.desktop.plugin.workspace.nodes.DeleteAction;
 import jdplus.toolkit.desktop.plugin.workspace.nodes.NewAction;
 import jdplus.toolkit.desktop.plugin.workspace.nodes.RenameAction;
+import jdplus.x11plus.desktop.plugin.x13.X13plusDocumentManager;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -32,8 +31,8 @@ public class Actions {
     @ActionID(category = "Edit",
             id = "demetra.desktop.workspace.nodes.RenameAction")
     @ActionReferences({
-        @ActionReference(path = StlPlusDocumentManager.ITEMPATH, position = 1050),
-        @ActionReference(path = MStlPlusDocumentManager.ITEMPATH, position = 1050)
+        @ActionReference(path = X13plusDocumentManager.ITEMPATH, position = 1050)
+//      ,  @ActionReference(path = MX13plusDocumentManager.ITEMPATH, position = 1050)
     })
     public static RenameAction renameAction() {
         return new RenameAction();
@@ -42,8 +41,8 @@ public class Actions {
     @ActionID(category = "Edit",
             id = "demetra.desktop.workspace.nodes.CommentAction")
     @ActionReferences({
-        @ActionReference(path = StlPlusDocumentManager.ITEMPATH, position = 1150),
-        @ActionReference(path = MStlPlusDocumentManager.ITEMPATH, position = 1150)
+        @ActionReference(path = X13plusDocumentManager.ITEMPATH, position = 1150)
+//      ,  @ActionReference(path = MX13plusDocumentManager.ITEMPATH, position = 1150)
     })
     public static CommentAction commentAction() {
         return new CommentAction();
@@ -52,8 +51,8 @@ public class Actions {
     @ActionID(category = "Edit",
             id = "demetra.desktop.workspace.nodes.DeleteAction")
     @ActionReferences({
-        @ActionReference(path = StlPlusDocumentManager.ITEMPATH, position = 1100),
-        @ActionReference(path = MStlPlusDocumentManager.ITEMPATH, position = 1100)
+        @ActionReference(path = X13plusDocumentManager.ITEMPATH, position = 1100)
+//       , @ActionReference(path = MX13plusDocumentManager.ITEMPATH, position = 1100)
     })
     public static DeleteAction deleteAction() {
         return new DeleteAction();
@@ -62,8 +61,8 @@ public class Actions {
     @ActionID(category = "Edit",
             id = "demetra.desktop.workspace.nodes.NewAction")
     @ActionReferences({
-        @ActionReference(path = StlPlusDocumentManager.PATH, position = 1000),
-        @ActionReference(path = MStlPlusDocumentManager.PATH, position = 1000)
+        @ActionReference(path = X13plusDocumentManager.PATH, position = 1000)
+//       , @ActionReference(path = MX13plusDocumentManager.PATH, position = 1000)
     })
     public static NewAction newAction() {
         return new NewAction();

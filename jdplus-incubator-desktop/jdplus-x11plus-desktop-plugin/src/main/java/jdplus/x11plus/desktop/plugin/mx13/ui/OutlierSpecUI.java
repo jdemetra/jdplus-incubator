@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.stl.desktop.plugin.mstl.ui;
+package jdplus.x11plus.desktop.plugin.mx13.ui;
 
 import jdplus.sa.desktop.plugin.descriptors.highfreq.AbstractOutlierSpecUI;
 import jdplus.sa.desktop.plugin.descriptors.highfreq.HighFreqSpecUI;
@@ -26,9 +26,9 @@ import jdplus.toolkit.base.api.modelling.highfreq.OutlierSpec;
  */
 public class OutlierSpecUI extends AbstractOutlierSpecUI {
 
-    private final MStlPlusSpecRoot root;
+    private final MX13plusSpecRoot root;
 
-    public OutlierSpecUI(MStlPlusSpecRoot root) {
+    public OutlierSpecUI(MX13plusSpecRoot root) {
         this.root = root;
     }
 

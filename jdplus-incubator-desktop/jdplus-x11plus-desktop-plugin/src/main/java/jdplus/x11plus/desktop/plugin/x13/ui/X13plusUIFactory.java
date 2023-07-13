@@ -14,16 +14,16 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.stl.desktop.plugin.stl.ui;
+package jdplus.x11plus.desktop.plugin.x13.ui;
 
 import jdplus.toolkit.desktop.plugin.descriptors.IObjectDescriptor;
 import jdplus.toolkit.desktop.plugin.ui.processing.IProcDocumentView;
 import jdplus.toolkit.desktop.plugin.workspace.DocumentUIServices;
 import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItem;
-import jdplus.stl.base.api.StlPlusSpec;
 import java.awt.Color;
 import javax.swing.Icon;
-import jdplus.stl.base.core.stlplus.StlPlusDocument;
+import jdplus.x11plus.base.api.X13plusSpec;
+import jdplus.x11plus.base.core.x13.X13plusDocument;
 import org.openide.util.ImageUtilities;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -32,27 +32,27 @@ import org.openide.util.lookup.ServiceProvider;
  * @author PALATEJ
  */
 @ServiceProvider(service = DocumentUIServices.class)
-public class StlPlusUIFactory implements DocumentUIServices<StlPlusSpec, StlPlusDocument> {
+public class X13plusUIFactory implements DocumentUIServices<X13plusSpec, X13plusDocument> {
 
-//    public static StlPlusUIFactory INSTANCE=new StlPlusUIFactory();
+//    public static X13plusUIFactory INSTANCE=new X13plusUIFactory();
     @Override
-    public IProcDocumentView<StlPlusDocument> getDocumentView(StlPlusDocument document) {
-        return StlPlusViewFactory.getDefault().create(document);
+    public IProcDocumentView<X13plusDocument> getDocumentView(X13plusDocument document) {
+        return X13plusViewFactory.getDefault().create(document);
     }
 
     @Override
-    public IObjectDescriptor<StlPlusSpec> getSpecificationDescriptor(StlPlusSpec spec) {
-        return new StlPlusSpecUI(spec, false);
+    public IObjectDescriptor<X13plusSpec> getSpecificationDescriptor(X13plusSpec spec) {
+        return new X13plusSpecUI(spec, false);
     }
 
     @Override
-    public Class<StlPlusDocument> getDocumentType() {
-        return StlPlusDocument.class;
+    public Class<X13plusDocument> getDocumentType() {
+        return X13plusDocument.class;
     }
 
     @Override
-    public Class<StlPlusSpec> getSpecType() {
-        return StlPlusSpec.class;
+    public Class<X13plusSpec> getSpecType() {
+        return X13plusSpec.class;
     }
 
     @Override
@@ -62,15 +62,15 @@ public class StlPlusUIFactory implements DocumentUIServices<StlPlusSpec, StlPlus
 
     @Override
     public Icon getIcon() {
-        return ImageUtilities.loadImageIcon("jdplus/stl/desktop/plugin/tangent_red.png", false);
+        return ImageUtilities.loadImageIcon("jdplus/x11plus/desktop/plugin/tangent_red.png", false);
     }
 
     @Override
-    public void showDocument(WorkspaceItem<StlPlusDocument> item) {
+    public void showDocument(WorkspaceItem<X13plusDocument> item) {
         if (item.isOpen()) {
             item.getView().requestActive();
         } else {
-            StlPlusTopComponent view = new StlPlusTopComponent(item);
+            X13plusTopComponent view = new X13plusTopComponent(item);
             view.open();
             view.requestActive();
         }

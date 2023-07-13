@@ -16,10 +16,10 @@
  */
 package jdplus.x11plus.base.core.x13;
 
-import jdplus.toolkit.base.api.modelling.ComponentInformation;
 import jdplus.toolkit.base.api.modelling.regular.SeriesSpec;
 import jdplus.toolkit.base.api.processing.ProcessingLog;
 import jdplus.sa.base.api.ComponentType;
+import jdplus.sa.base.api.DecompositionMode;
 import jdplus.sa.base.api.SaVariable;
 import jdplus.sa.base.api.SeriesDecomposition;
 import jdplus.toolkit.base.api.timeseries.TsData;
@@ -32,10 +32,14 @@ import jdplus.sa.base.core.SaBenchmarkingResults;
 import jdplus.sa.base.core.modelling.RegArimaDecomposer;
 import jdplus.sa.base.core.modelling.TwoStepsDecomposition;
 import jdplus.sa.base.core.regarima.FastKernel;
+import jdplus.toolkit.base.api.modelling.ComponentInformation;
+import jdplus.x11plus.base.api.SeasonalFilterOption;
 import jdplus.x11plus.base.api.X11plusSpec;
 import jdplus.x11plus.base.api.X13plusSpec;
 import jdplus.x11plus.base.core.RawX11Kernel;
 import jdplus.x11plus.base.core.RawX11Results;
+import jdplus.x11plus.base.core.X11Kernel;
+import jdplus.x11plus.base.core.X11Results;
 
 @lombok.Value
 public class X13plusKernel {
@@ -75,19 +79,19 @@ public class X13plusKernel {
             if (preprocessor == null) {
                 // Step 0. Preliminary checks
                 TsData sc = preliminary.check(s, log);
-                RawX11Kernel x11 = new RawX11Kernel(spec);
-                RawX11Results rslt = x11.process(sc.getValues());
+                X11Kernel x11 = X11Kernel.of(spec);
+                X11Results rslt = x11.process(sc);
                 // Step 5. Benchmarking
                 SaBenchmarkingResults bench = null;
                 // Step 6. Diagnostics
-//                X13plusDiagnostics diagnostics = X13plusDiagnostics.of(null, rslt, rslt.asDecomposition());
+                X13plusDiagnostics diagnostics = X13plusDiagnostics.of(null, rslt, rslt.asDecomposition());
 
                 return X13plusResults.builder()
                         .preprocessing(null)
                         .decomposition(rslt)
-//                        .finals(rslt.asDecomposition())
+                        .finals(rslt.asDecomposition())
                         .benchmarking(bench)
-//                        .diagnostics(diagnostics)
+                        .diagnostics(diagnostics)
                         .log(log)
                         .build();
 
@@ -99,12 +103,12 @@ public class X13plusKernel {
                 // Step 2. Link between regarima and stl
                 X11plusSpec cspec = spec;
                 boolean mul = preprocessing.getDescription().isLogTransformation();
-//                if (cspec == null) {
-//                    cspec = X11plusSpec.createDefault(s.getAnnualFrequency(), mul, true);
-//                } else if (cspec.isMultiplicative() != mul) {
-//                    cspec = spec.toBuilder().multiplicative(mul).build();
-//                }
-                RawX11Kernel x11 = new RawX11Kernel(cspec);
+                if (cspec == null) {
+                    cspec = X11plusSpec.createDefault(mul, s.getAnnualFrequency(), SeasonalFilterOption.S3X5);
+                } else if (cspec.getMode().isMultiplicative() != mul) {
+                    cspec = spec.toBuilder().mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive).build();
+                }
+                X11Kernel x11 = X11Kernel.of(cspec);
 
                 TsData det = preprocessing.deterministicEffect(s.getDomain(), v -> !SaVariable.isRegressionEffect(v, ComponentType.Undefined));
                 TsData user = RegArimaDecomposer.deterministicEffect(preprocessing, s.getDomain(), ComponentType.Series, true, v -> ModellingUtility.isUser(v));
@@ -117,24 +121,24 @@ public class X13plusKernel {
                     cseries = TsData.subtract(s, det);
                 }
 
-                RawX11Results rslt = x11.process(cseries.getValues());
+                X11Results rslt = x11.process(cseries);
                 // Step 4. Final decomposition
-//                SeriesDecomposition finals = TwoStepsDecomposition.merge(preprocessing, rslt.asDecomposition());
+                SeriesDecomposition finals = TwoStepsDecomposition.merge(preprocessing, rslt.asDecomposition());
                 // Step 5. Benchmarking
                 SaBenchmarkingResults bench = null;
-//                if (cholette != null) {
-//                    bench = cholette.process(s, TsData.concatenate(finals.getSeries(ComponentType.SeasonallyAdjusted, ComponentInformation.Value),
-//                            finals.getSeries(ComponentType.SeasonallyAdjusted, ComponentInformation.Forecast)), preprocessing);
-//                }
+                if (cholette != null) {
+                    bench = cholette.process(s, TsData.concatenate(finals.getSeries(ComponentType.SeasonallyAdjusted, ComponentInformation.Value),
+                            finals.getSeries(ComponentType.SeasonallyAdjusted, ComponentInformation.Forecast)), preprocessing);
+                }
                 // Step 6. Diagnostics
-//                X13plusDiagnostics diagnostics = X13plusDiagnostics.of(preprocessing, rslt, finals);
+                X13plusDiagnostics diagnostics = X13plusDiagnostics.of(preprocessing, rslt, finals);
 
                 return X13plusResults.builder()
                         .preprocessing(preprocessing)
                         .decomposition(rslt)
-//                        .finals(finals)
+                        .finals(finals)
                         .benchmarking(bench)
-//                        .diagnostics(diagnostics)
+                        .diagnostics(diagnostics)
                         .log(log)
                         .build();
             }

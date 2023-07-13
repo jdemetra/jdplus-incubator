@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.stl.desktop.plugin.mstl.ui;
+package jdplus.x11plus.desktop.plugin.mx13.ui;
 
 import jdplus.sa.desktop.plugin.descriptors.highfreq.AbstractHolidaysSpecUI;
 import jdplus.sa.desktop.plugin.descriptors.highfreq.HighFreqSpecUI;
@@ -26,9 +26,9 @@ import jdplus.toolkit.base.api.modelling.highfreq.HolidaysSpec;
  */
 public class CalendarSpecUI  extends AbstractHolidaysSpecUI {
 
-   private final MStlPlusSpecRoot root;
+   private final MX13plusSpecRoot root;
    
-   public CalendarSpecUI(MStlPlusSpecRoot root){
+   public CalendarSpecUI(MX13plusSpecRoot root){
        this.root=root;
    }
 

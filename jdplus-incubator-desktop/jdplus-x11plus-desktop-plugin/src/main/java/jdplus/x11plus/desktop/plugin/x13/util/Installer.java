@@ -16,12 +16,10 @@
  */
 package jdplus.x11plus.desktop.plugin.x13.util;
 
-import jdplus.stl.desktop.plugin.mstl.ui.SeasonalSpecsEditor;
 import jdplus.toolkit.desktop.plugin.ui.properties.l2fprod.ArrayRenderer;
 import jdplus.toolkit.desktop.plugin.ui.properties.l2fprod.CustomPropertyEditorRegistry;
 import jdplus.toolkit.desktop.plugin.ui.properties.l2fprod.CustomPropertyRendererFactory;
 import jdplus.toolkit.desktop.plugin.util.InstallerStep;
-import jdplus.stl.base.api.SeasonalSpec;
 import org.openide.modules.ModuleInstall;
 
 
@@ -48,13 +46,13 @@ public final class Installer extends ModuleInstall {
 
         @Override
         public void restore() {
-        CustomPropertyEditorRegistry.INSTANCE.register(SeasonalSpec[].class, new SeasonalSpecsEditor());
-        CustomPropertyRendererFactory.INSTANCE.getRegistry().registerRenderer(SeasonalSpec[].class, new ArrayRenderer());
+//        CustomPropertyEditorRegistry.INSTANCE.register(SeasonalSpec[].class, new SeasonalSpecsEditor());
+//        CustomPropertyRendererFactory.INSTANCE.getRegistry().registerRenderer(SeasonalSpec[].class, new ArrayRenderer());
         }
 
         @Override
         public void close() {
-            CustomPropertyEditorRegistry.INSTANCE.unregister(SeasonalSpec[].class);
+//            CustomPropertyEditorRegistry.INSTANCE.unregister(SeasonalSpec[].class);
         }
     }
 //    private static final class DemetraTramoSeatsDiagnosticsStep extends InstallerStep {

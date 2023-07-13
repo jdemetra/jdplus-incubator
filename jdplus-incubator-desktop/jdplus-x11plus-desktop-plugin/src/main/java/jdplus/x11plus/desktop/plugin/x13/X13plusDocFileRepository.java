@@ -14,7 +14,7 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import jdplus.stl.base.core.stlplus.StlPlusDocument;
+import jdplus.x11plus.base.core.x13.X13plusDocument;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -22,11 +22,11 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Jean Palate
  */
 @ServiceProvider(service = WorkspaceItemRepository.class)
-public final class StlDocFileRepository extends AbstractFileItemRepository< StlPlusDocument > {
+public final class X13plusDocFileRepository extends AbstractFileItemRepository< X13plusDocument > {
 
     @Override
-    public boolean load(WorkspaceItem<StlPlusDocument> item) {
-        return loadFile(item, (StlPlusDocument o) -> {
+    public boolean load(WorkspaceItem<X13plusDocument> item) {
+        return loadFile(item, (X13plusDocument o) -> {
             o.setLocked(true);
             item.setElement(o);
             item.resetDirty();
@@ -34,8 +34,8 @@ public final class StlDocFileRepository extends AbstractFileItemRepository< StlP
     }
 
     @Override
-    public boolean save(WorkspaceItem<StlPlusDocument> doc, DemetraVersion version) {
-        StlPlusDocument element = doc.getElement();
+    public boolean save(WorkspaceItem<X13plusDocument> doc, DemetraVersion version) {
+        X13plusDocument element = doc.getElement();
        
         Map<String, String> meta=new HashMap<>(element.getMetadata());
         TsMeta.TIMESTAMP.store(meta, LocalDateTime.now(Clock.systemDefaultZone()));
@@ -45,13 +45,13 @@ public final class StlDocFileRepository extends AbstractFileItemRepository< StlP
     }
 
     @Override
-    public boolean delete(WorkspaceItem<StlPlusDocument> doc) {
+    public boolean delete(WorkspaceItem<X13plusDocument> doc) {
         return deleteFile(doc);
     }
 
     @Override
-    public Class<StlPlusDocument> getSupportedType() {
-        return StlPlusDocument.class;
+    public Class<X13plusDocument> getSupportedType() {
+        return X13plusDocument.class;
     }
 
 }

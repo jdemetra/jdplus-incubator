@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.stl.desktop.plugin.mstl.ui;
+package jdplus.x11plus.desktop.plugin.mx13.ui;
 
 import jdplus.toolkit.desktop.plugin.descriptors.IPropertyDescriptors;
 import jdplus.sa.desktop.plugin.descriptors.highfreq.AbstractRegressionSpecUI;
@@ -27,9 +27,9 @@ import jdplus.toolkit.base.api.modelling.highfreq.RegressionSpec;
  */
 public class RegressionSpecUI extends AbstractRegressionSpecUI {
 
-    private final MStlPlusSpecRoot root;
+    private final MX13plusSpecRoot root;
 
-    public RegressionSpecUI(MStlPlusSpecRoot root) {
+    public RegressionSpecUI(MX13plusSpecRoot root) {
         this.root = root;
     }
 

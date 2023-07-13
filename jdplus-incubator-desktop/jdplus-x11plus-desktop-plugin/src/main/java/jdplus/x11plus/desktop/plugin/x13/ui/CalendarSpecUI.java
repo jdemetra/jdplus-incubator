@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.stl.desktop.plugin.stl.ui;
+package jdplus.x11plus.desktop.plugin.x13.ui;
 
 import jdplus.toolkit.desktop.plugin.descriptors.IPropertyDescriptors;
 import jdplus.sa.desktop.plugin.descriptors.regular.AbstractCalendarSpecUI;
@@ -25,9 +25,9 @@ import jdplus.sa.desktop.plugin.descriptors.regular.AbstractCalendarSpecUI;
  */
 public class CalendarSpecUI extends AbstractCalendarSpecUI{
 
-     private final StlPlusSpecRoot root;
+     private final X13plusSpecRoot root;
 
-    public CalendarSpecUI(StlPlusSpecRoot root) {
+    public CalendarSpecUI(X13plusSpecRoot root) {
         this.root = root;
     }
 

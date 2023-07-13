@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.stl.desktop.plugin.mstl.ui;
+package jdplus.x11plus.desktop.plugin.mx13.ui;
 
 import jdplus.sa.desktop.plugin.descriptors.highfreq.AbstractEasterSpecUI;
 import jdplus.sa.desktop.plugin.descriptors.highfreq.HighFreqSpecUI;
@@ -26,9 +26,9 @@ import jdplus.toolkit.base.api.modelling.highfreq.EasterSpec;
  */
 public class EasterSpecUI extends AbstractEasterSpecUI {
 
-   private final MStlPlusSpecRoot root;
+   private final MX13plusSpecRoot root;
    
-   public EasterSpecUI(MStlPlusSpecRoot root){
+   public EasterSpecUI(MX13plusSpecRoot root){
        this.root=root;
    }
 

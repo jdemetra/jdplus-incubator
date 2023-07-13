@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.stl.desktop.plugin.mstl.ui;
+package jdplus.x11plus.desktop.plugin.mx13.ui;
 
 import jdplus.sa.desktop.plugin.descriptors.highfreq.AbstractEstimateSpecUI;
 import jdplus.sa.desktop.plugin.descriptors.highfreq.HighFreqSpecUI;
@@ -25,9 +25,9 @@ import jdplus.toolkit.base.api.modelling.highfreq.EstimateSpec;
  * @author PALATEJ
  */
 public class EstimateSpecUI extends AbstractEstimateSpecUI {
-    private final MStlPlusSpecRoot root;
+    private final MX13plusSpecRoot root;
 
-    public EstimateSpecUI(MStlPlusSpecRoot root) {
+    public EstimateSpecUI(MX13plusSpecRoot root) {
         this.root = root;
     }
 

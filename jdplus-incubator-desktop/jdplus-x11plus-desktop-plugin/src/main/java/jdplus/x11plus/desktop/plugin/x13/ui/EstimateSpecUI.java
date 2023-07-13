@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.stl.desktop.plugin.stl.ui;
+package jdplus.x11plus.desktop.plugin.x13.ui;
 
 import jdplus.sa.desktop.plugin.descriptors.regular.AbstractEstimateSpecUI;
 import jdplus.sa.desktop.plugin.descriptors.regular.RegularSpecUI;
@@ -26,9 +26,9 @@ import jdplus.toolkit.base.api.modelling.regular.EstimateSpec;
  */
 public class EstimateSpecUI extends AbstractEstimateSpecUI {
 
-    private final StlPlusSpecRoot root;
+    private final X13plusSpecRoot root;
 
-    public EstimateSpecUI(StlPlusSpecRoot root) {
+    public EstimateSpecUI(X13plusSpecRoot root) {
         this.root = root;
     }
 

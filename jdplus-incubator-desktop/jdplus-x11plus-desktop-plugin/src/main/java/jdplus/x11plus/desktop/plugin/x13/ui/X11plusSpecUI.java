@@ -14,17 +14,18 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.stl.desktop.plugin.stl.ui;
+package jdplus.x11plus.desktop.plugin.x13.ui;
 
 import jdplus.toolkit.desktop.plugin.descriptors.EnhancedPropertyDescriptor;
 import jdplus.toolkit.desktop.plugin.descriptors.IPropertyDescriptors;
 import jdplus.toolkit.desktop.plugin.ui.properties.l2fprod.UserInterfaceContext;
-import jdplus.stl.base.api.StlSpec;
 import jdplus.toolkit.base.api.timeseries.TsDomain;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.List;
+import jdplus.x11plus.base.api.SeasonalFilterOption;
+import jdplus.x11plus.base.api.X11plusSpec;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
 
@@ -32,16 +33,16 @@ import org.openide.util.NbBundle.Messages;
  *
  * @author Jean Palate
  */
-public class StlSpecUI implements IPropertyDescriptors {
+public class X11plusSpecUI implements IPropertyDescriptors {
 
-    private final StlPlusSpecRoot root;
+    private final X13plusSpecRoot root;
 
-    public StlSpecUI(StlPlusSpecRoot root) {
+    public X11plusSpecUI(X13plusSpecRoot root) {
         this.root = root;
     }
 
-    public StlSpec spec() {
-        return root.getStl();
+    public X11plusSpec spec() {
+        return root.getX11();
     }
 
     public boolean isDefault() {
@@ -52,50 +53,42 @@ public class StlSpecUI implements IPropertyDescriptors {
         if (isDefault() == def) {
             return;
         }
-        StlSpec spec = null;
+        X11plusSpec spec = null;
         if (!def) {
             TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
             if (domain != null) {
-                spec = StlSpec.createDefault(domain.getAnnualFrequency(), true, true);
+                spec = X11plusSpec.createDefault(true, domain.getAnnualFrequency(), SeasonalFilterOption.S3X5);
             }
         }
         root.update(spec);
     }
 
-    public LoessSpecUI getTrendFilter() {
-        StlSpec spec = spec();
-        if (spec == null) {
-            return null;
-        }
-        return new LoessSpecUI(spec.getTrendSpec(), root.ro, tspec -> {
-            StlSpec nspec = spec.toBuilder().trendSpec(tspec).build();
-            root.update(nspec);
-        });
-    }
+//    public LoessSpecUI getTrendFilter() {
+//        X11plusSpec spec = spec();
+//        if (spec == null) {
+//            return null;
+//        }
+//        return new LoessSpecUI(spec.getTrendSpec(), root.ro, tspec -> {
+//            X11plusSpec nspec = spec.toBuilder().trendSpec(tspec).build();
+//            root.update(nspec);
+//        });
+//    }
 
-    public AlgorithmUI getAlgorithm() {
-        return new AlgorithmUI(root);
-    }
-
-    public SeasonalSpecUI getSeasonalFilter() {
-        StlSpec spec = spec();
-        if (spec == null) {
-            return null;
-        }
-        return new SeasonalSpecUI(spec.getSeasonalSpec(), root.ro, sspec -> {
-            StlSpec nspec = spec.toBuilder().seasonalSpec(sspec).build();
-            root.update(nspec);
-        });
-    }
+//    public SeasonalSpecUI getSeasonalFilter() {
+//        X11plusSpec spec = spec();
+//        if (spec == null) {
+//            return null;
+//        }
+//        return new SeasonalSpecUI(spec.getSeasonalSpec(), root.ro, sspec -> {
+//            X11plusSpec nspec = spec.toBuilder().seasonalSpec(sspec).build();
+//            root.update(nspec);
+//        });
+//    }
 
     @Override
     public List<EnhancedPropertyDescriptor> getProperties() {
         ArrayList<EnhancedPropertyDescriptor> descs = new ArrayList<>();
         EnhancedPropertyDescriptor desc = defDesc();
-        if (desc != null) {
-            descs.add(desc);
-        }
-        desc = algDesc();
         if (desc != null) {
             descs.add(desc);
         }
@@ -161,25 +154,6 @@ public class StlSpecUI implements IPropertyDescriptors {
             EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, SEAS_ID);
             desc.setDisplayName(Bundle.stlSpecUI_seasDesc_name());
             desc.setShortDescription(Bundle.stlSpecUI_seasDesc_desc());
-            return edesc;
-        } catch (IntrospectionException ex) {
-            return null;
-        }
-    }
-
-    @NbBundle.Messages({
-        "stlSpecUI.algDesc.name=ALGORITHM",
-        "stlSpecUI.algDesc.desc=STL+ Algorithm"
-    })
-    private EnhancedPropertyDescriptor algDesc() {
-        if (isDefault()) {
-            return null;
-        }
-        try {
-            PropertyDescriptor desc = new PropertyDescriptor("Algorithm", this.getClass(), "getAlgorithm", null);
-            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, ALG_ID);
-            desc.setDisplayName(Bundle.stlSpecUI_algDesc_name());
-            desc.setShortDescription(Bundle.stlSpecUI_algDesc_desc());
             return edesc;
         } catch (IntrospectionException ex) {
             return null;

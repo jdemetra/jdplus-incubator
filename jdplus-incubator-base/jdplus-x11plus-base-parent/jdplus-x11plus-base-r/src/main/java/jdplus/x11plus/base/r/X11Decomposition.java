@@ -116,7 +116,6 @@ public class X11Decomposition {
             MAPPING.set("d6", double[].class, source -> source.getDetails().getD6().toArray());
             MAPPING.set("d7", double[].class, source -> source.getDetails().getD7().toArray());
             MAPPING.set("d8", double[].class, source -> source.getDetails().getD8().toArray());
-            MAPPING.set("d9", double[].class, source -> source.getDetails().getD9().toArray());
             MAPPING.set("d10", double[].class, source -> source.getDetails().getD10().toArray());
             MAPPING.set("d11", double[].class, source -> source.getDetails().getD11().toArray());
             MAPPING.set("d12", double[].class, source -> source.getDetails().getD12().toArray());

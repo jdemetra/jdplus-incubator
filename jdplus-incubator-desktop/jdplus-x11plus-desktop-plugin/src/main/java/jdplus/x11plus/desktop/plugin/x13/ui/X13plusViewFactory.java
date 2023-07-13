@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package jdplus.stl.desktop.plugin.stl.ui;
+package jdplus.x11plus.desktop.plugin.x13.ui;
 
 import jdplus.toolkit.desktop.plugin.TsDynamicProvider;
 import jdplus.toolkit.desktop.plugin.modelling.ForecastsFactory;
@@ -51,41 +51,40 @@ import java.util.function.Function;
 import jdplus.toolkit.base.core.regsarima.regular.RegSarimaModel;
 import jdplus.sa.base.core.SaBenchmarkingResults;
 import jdplus.sa.base.core.tests.SeasonalityTests;
-import jdplus.stl.base.core.StlResults;
-import jdplus.stl.base.io.information.StlPlusSpecMapping;
-import jdplus.stl.base.core.stlplus.StlPlusDiagnostics;
-import jdplus.stl.base.core.stlplus.StlPlusDocument;
-import jdplus.stl.base.core.stlplus.StlPlusResults;
 import jdplus.toolkit.desktop.plugin.html.core.HtmlInformationSet;
 import jdplus.toolkit.desktop.plugin.html.modelling.HtmlRegSarima;
+import jdplus.x11plus.base.core.X11Results;
+import jdplus.x11plus.base.core.x13.X13plusDiagnostics;
+import jdplus.x11plus.base.core.x13.X13plusDocument;
+import jdplus.x11plus.base.core.x13.X13plusResults;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
  * @author Jean Palate
  */
-public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument> {
+public class X13plusViewFactory extends ProcDocumentViewFactory<X13plusDocument> {
 
     public static final String STVAR = "Stationary variance decomposition";
     public static final Id DECOMPOSITION_VAR = new LinearId(SaViews.DECOMPOSITION, STVAR);
 
-    private static final AtomicReference<IProcDocumentViewFactory<StlPlusDocument>> INSTANCE = new AtomicReference();
+    private static final AtomicReference<IProcDocumentViewFactory<X13plusDocument>> INSTANCE = new AtomicReference();
 
-    public static IProcDocumentViewFactory<StlPlusDocument> getDefault() {
-        IProcDocumentViewFactory<StlPlusDocument> fac = INSTANCE.get();
+    public static IProcDocumentViewFactory<X13plusDocument> getDefault() {
+        IProcDocumentViewFactory<X13plusDocument> fac = INSTANCE.get();
         if (fac == null) {
-            fac = new StlPlusViewFactory();
+            fac = new X13plusViewFactory();
             INSTANCE.lazySet(fac);
         }
         return fac;
     }
 
-    public static void setDefault(IProcDocumentViewFactory<StlPlusDocument> factory) {
+    public static void setDefault(IProcDocumentViewFactory<X13plusDocument> factory) {
         INSTANCE.set(factory);
     }
 
-    public StlPlusViewFactory() {
-        registerFromLookup(StlPlusDocument.class);
+    public X13plusViewFactory() {
+        registerFromLookup(X13plusDocument.class);
     }
 
     @Override
@@ -93,22 +92,22 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
         return SaViews.MAIN_CHARTS_LOW;
     }
 
-    private final static Function<StlPlusDocument, RegSarimaModel> MODELEXTRACTOR = source -> {
-        StlPlusResults tr = source.getResult();
+    private final static Function<X13plusDocument, RegSarimaModel> MODELEXTRACTOR = source -> {
+        X13plusResults tr = source.getResult();
         return tr == null ? null : tr.getPreprocessing();
     };
 
-    private final static Function<StlPlusDocument, StlResults> DECOMPOSITIONEXTRACTOR = source -> {
-        StlPlusResults tr = source.getResult();
+    private final static Function<X13plusDocument, X11Results> DECOMPOSITIONEXTRACTOR = source -> {
+        X13plusResults tr = source.getResult();
         return tr == null ? null : tr.getDecomposition();
     };
 
-    private final static Function<StlPlusDocument, StlPlusDiagnostics> DIAGSEXTRACTOR = source -> {
-        StlPlusResults tr = source.getResult();
+    private final static Function<X13plusDocument, X13plusDiagnostics> DIAGSEXTRACTOR = source -> {
+        X13plusResults tr = source.getResult();
         return tr == null ? null : tr.getDiagnostics();
     };
 
-    private final static Function<StlPlusDocument, TsData> RESEXTRACTOR = MODELEXTRACTOR
+    private final static Function<X13plusDocument, TsData> RESEXTRACTOR = MODELEXTRACTOR
             .andThen(regarima -> regarima == null ? null : regarima.fullResiduals());
 
     private static String generateId(String name, String id) {
@@ -145,29 +144,29 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
 //<editor-fold defaultstate="collapsed" desc="REGISTER SPEC">
-    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 1010)
-    public static class SpecFactory extends ProcDocumentItemFactory<StlPlusDocument, HtmlElement> {
-
-        public SpecFactory() {
-            super(StlPlusDocument.class, RegSarimaViews.INPUT_SPEC,
-                    (StlPlusDocument doc) -> {
-                        InformationSet info = StlPlusSpecMapping.write(doc.getSpecification(), doc.getInput().getData().getDomain(), true);
-                        return new HtmlInformationSet(info);
-                    },
-                    new HtmlItemUI()
-            );
-        }
-
-        @Override
-        public int getPosition() {
-            return 1010;
-        }
-    }
+//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 1010)
+//    public static class SpecFactory extends ProcDocumentItemFactory<X13plusDocument, HtmlElement> {
+//
+//        public SpecFactory() {
+//            super(X13plusDocument.class, RegSarimaViews.INPUT_SPEC,
+//                    (X13plusDocument doc) -> {
+//                        InformationSet info = X13plusSpecMapping.write(doc.getSpecification(), doc.getInput().getData().getDomain(), true);
+//                        return new HtmlInformationSet(info);
+//                    },
+//                    new HtmlItemUI()
+//            );
+//        }
+//
+//        @Override
+//        public int getPosition() {
+//            return 1010;
+//        }
+//    }
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 1000)
-    public static class Input extends InputFactory<StlPlusDocument> {
+    public static class Input extends InputFactory<X13plusDocument> {
 
         public Input() {
-            super(StlPlusDocument.class, RegSarimaViews.INPUT_SERIES);
+            super(X13plusDocument.class, RegSarimaViews.INPUT_SERIES);
         }
 
         @Override
@@ -180,10 +179,10 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 //
 //<editor-fold defaultstate="collapsed" desc="REGISTER SUMMARY">
 //    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 100000 + 1000)
-//    public static class SummaryFactory extends ProcDocumentItemFactory<StlPlusDocument, HtmlElement> {
+//    public static class SummaryFactory extends ProcDocumentItemFactory<X13plusDocument, HtmlElement> {
 //
 //        public SummaryFactory() {
-//            super(StlPlusDocument.class, RegSarimaViews.MODEL_SUMMARY,
+//            super(X13plusDocument.class, RegSarimaViews.MODEL_SUMMARY,
 //                    source -> new HtmlFractionalAirlineModel(source.getResult(), false),
 //                    new HtmlItemUI());
 //        }
@@ -195,10 +194,10 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 //    }
 //</editor-fold>
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 2000)
-    public static class MainLowChart extends ProcDocumentItemFactory<StlPlusDocument, TsDocument> {
+    public static class MainLowChart extends ProcDocumentItemFactory<X13plusDocument, TsDocument> {
 
         public MainLowChart() {
-            super(StlPlusDocument.class, SaViews.MAIN_CHARTS_LOW, s -> s, new GenericChartUI(false, lowSeries()));
+            super(X13plusDocument.class, SaViews.MAIN_CHARTS_LOW, s -> s, new GenericChartUI(false, lowSeries()));
         }
 
         @Override
@@ -208,10 +207,10 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 2100)
-    public static class MainHighChart extends ProcDocumentItemFactory<StlPlusDocument, TsDocument> {
+    public static class MainHighChart extends ProcDocumentItemFactory<X13plusDocument, TsDocument> {
 
         public MainHighChart() {
-            super(StlPlusDocument.class, SaViews.MAIN_CHARTS_HIGH, s -> s, new GenericChartUI(false, highSeries()));
+            super(X13plusDocument.class, SaViews.MAIN_CHARTS_HIGH, s -> s, new GenericChartUI(false, highSeries()));
         }
 
         @Override
@@ -221,10 +220,10 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 2200)
-    public static class MainTable extends ProcDocumentItemFactory<StlPlusDocument, TsDocument> {
+    public static class MainTable extends ProcDocumentItemFactory<X13plusDocument, TsDocument> {
 
         public MainTable() {
-            super(StlPlusDocument.class, SaViews.MAIN_TABLE, s -> s, new GenericTableUI(false, finalSeries()));
+            super(X13plusDocument.class, SaViews.MAIN_TABLE, s -> s, new GenericTableUI(false, finalSeries()));
         }
 
         @Override
@@ -235,11 +234,11 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 2400)
-    public static class MainSiFactory extends SIFactory<StlPlusDocument> {
+    public static class MainSiFactory extends SIFactory<X13plusDocument> {
 
         public MainSiFactory() {
-            super(StlPlusDocument.class, SaViews.MAIN_SI, (StlPlusDocument source) -> {
-                StlPlusResults result = source.getResult();
+            super(X13plusDocument.class, SaViews.MAIN_SI, (X13plusDocument source) -> {
+                X13plusResults result = source.getResult();
                 if (result == null) {
                     return null;
                 }
@@ -255,11 +254,11 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 
 //<editor-fold defaultstate="collapsed" desc="PREPROCESSING">
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3000)
-    public static class SummaryFactory extends ProcDocumentItemFactory<StlPlusDocument, HtmlElement> {
+    public static class SummaryFactory extends ProcDocumentItemFactory<X13plusDocument, HtmlElement> {
 
         public SummaryFactory() {
 
-            super(StlPlusDocument.class, SaViews.PREPROCESSING_SUMMARY, MODELEXTRACTOR
+            super(X13plusDocument.class, SaViews.PREPROCESSING_SUMMARY, MODELEXTRACTOR
                     .andThen(regarima -> regarima == null ? null
                     : new HtmlRegSarima(regarima, false)),
                     new HtmlItemUI());
@@ -274,10 +273,10 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="PREPROCESSING-FORECASTS">
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3110)
-    public static class ForecastsTable extends ProcDocumentItemFactory<StlPlusDocument, TsDocument> {
+    public static class ForecastsTable extends ProcDocumentItemFactory<X13plusDocument, TsDocument> {
 
         public ForecastsTable() {
-            super(StlPlusDocument.class, SaViews.PREPROCESSING_FCASTS_TABLE, s -> s, new GenericTableUI(false, generateItems()));
+            super(X13plusDocument.class, SaViews.PREPROCESSING_FCASTS_TABLE, s -> s, new GenericTableUI(false, generateItems()));
         }
 
         @Override
@@ -291,10 +290,10 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3100)
-    public static class FCastsFactory extends ForecastsFactory<StlPlusDocument> {
+    public static class FCastsFactory extends ForecastsFactory<X13plusDocument> {
 
         public FCastsFactory() {
-            super(StlPlusDocument.class, SaViews.PREPROCESSING_FCASTS, MODELEXTRACTOR);
+            super(X13plusDocument.class, SaViews.PREPROCESSING_FCASTS, MODELEXTRACTOR);
         }
 
         @Override
@@ -304,10 +303,10 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3120)
-    public static class FCastsOutFactory extends OutOfSampleTestFactory<StlPlusDocument> {
+    public static class FCastsOutFactory extends OutOfSampleTestFactory<X13plusDocument> {
 
         public FCastsOutFactory() {
-            super(StlPlusDocument.class, SaViews.PREPROCESSING_FCASTS_OUTOFSAMPLE, MODELEXTRACTOR);
+            super(X13plusDocument.class, SaViews.PREPROCESSING_FCASTS_OUTOFSAMPLE, MODELEXTRACTOR);
         }
 
         @Override
@@ -319,10 +318,10 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 
 //<editor-fold defaultstate="collapsed" desc="PREPROCESSING-DETAILS">
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3200)
-    public static class ModelRegsFactory extends ModelRegressorsFactory<StlPlusDocument> {
+    public static class ModelRegsFactory extends ModelRegressorsFactory<X13plusDocument> {
 
         public ModelRegsFactory() {
-            super(StlPlusDocument.class, SaViews.PREPROCESSING_REGS, MODELEXTRACTOR);
+            super(X13plusDocument.class, SaViews.PREPROCESSING_REGS, MODELEXTRACTOR);
         }
 
         @Override
@@ -335,7 +334,7 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     public static class ArimaFactory extends ModelArimaFactory {
 
         public ArimaFactory() {
-            super(StlPlusDocument.class, SaViews.PREPROCESSING_ARIMA, MODELEXTRACTOR);
+            super(X13plusDocument.class, SaViews.PREPROCESSING_ARIMA, MODELEXTRACTOR);
         }
 
         @Override
@@ -345,10 +344,10 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3400)
-    public static class PreprocessingDetFactory extends ProcDocumentItemFactory<StlPlusDocument, TsDocument> {
+    public static class PreprocessingDetFactory extends ProcDocumentItemFactory<X13plusDocument, TsDocument> {
 
         public PreprocessingDetFactory() {
-            super(StlPlusDocument.class, SaViews.PREPROCESSING_DET, source -> source, new GenericTableUI(false,
+            super(X13plusDocument.class, SaViews.PREPROCESSING_DET, source -> source, new GenericTableUI(false,
                     SaDictionaries.PREPROCESSING, ModellingDictionary.YCAL,
                     SaDictionaries.PREPROCESSING, ModellingDictionary.Y_LIN,
                     SaDictionaries.PREPROCESSING, ModellingDictionary.DET,
@@ -368,10 +367,10 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 
 //<editor-fold defaultstate="collapsed" desc="PREPROCESSING-RESIDUALS">
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3500)
-    public static class ModelResFactory extends ProcDocumentItemFactory<StlPlusDocument, TsData> {
+    public static class ModelResFactory extends ProcDocumentItemFactory<X13plusDocument, TsData> {
 
         public ModelResFactory() {
-            super(StlPlusDocument.class, SaViews.PREPROCESSING_RES, RESEXTRACTOR,
+            super(X13plusDocument.class, SaViews.PREPROCESSING_RES, RESEXTRACTOR,
                     new ResidualsUI()
             );
         }
@@ -383,10 +382,10 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3510)
-    public static class ModelResStatsFactory extends NiidTestsFactory<StlPlusDocument> {
+    public static class ModelResStatsFactory extends NiidTestsFactory<X13plusDocument> {
 
         public ModelResStatsFactory() {
-            super(StlPlusDocument.class, SaViews.PREPROCESSING_RES_STATS, MODELEXTRACTOR);
+            super(X13plusDocument.class, SaViews.PREPROCESSING_RES_STATS, MODELEXTRACTOR);
         }
 
         @Override
@@ -396,10 +395,10 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3520)
-    public static class ModelResDist extends ProcDocumentItemFactory<StlPlusDocument, TsData> {
+    public static class ModelResDist extends ProcDocumentItemFactory<X13plusDocument, TsData> {
 
         public ModelResDist() {
-            super(StlPlusDocument.class, SaViews.PREPROCESSING_RES_DIST,
+            super(X13plusDocument.class, SaViews.PREPROCESSING_RES_DIST,
                     RESEXTRACTOR,
                     new ResidualsDistUI());
 
@@ -417,7 +416,7 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 //    public static class ForecastsTable extends ProcDocumentItemFactory<FractionalAirlineDocument, TsDocument> {
 //
 //        public ForecastsTable() {
-//            super(StlPlusDocument.class, RegSarimaViews.MODEL_FCASTS_TABLE, s -> s, new GenericTableUI(false, generateItems()));
+//            super(X13plusDocument.class, RegSarimaViews.MODEL_FCASTS_TABLE, s -> s, new GenericTableUI(false, generateItems()));
 //        }
 //
 //        @Override
@@ -434,7 +433,7 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 //    public static class FCastsFactory extends ForecastsFactory<FractionalAirlineDocument> {
 //
 //        public FCastsFactory() {
-//            super(StlPlusDocument.class, RegSarimaViews.MODEL_FCASTS, MODELEXTRACTOR);
+//            super(X13plusDocument.class, RegSarimaViews.MODEL_FCASTS, MODELEXTRACTOR);
 //        }
 //
 //        @Override
@@ -447,7 +446,7 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 //    public static class FCastsOutFactory extends OutOfSampleTestFactory<FractionalAirlineDocument> {
 //
 //        public FCastsOutFactory() {
-//            super(StlPlusDocument.class, RegSarimaViews.MODEL_FCASTS_OUTOFSAMPLE, MODELEXTRACTOR);
+//            super(X13plusDocument.class, RegSarimaViews.MODEL_FCASTS_OUTOFSAMPLE, MODELEXTRACTOR);
 //        }
 //
 //        @Override
@@ -462,7 +461,7 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 //    public static class ModelRegsFactory extends ModelRegressorsFactory<FractionalAirlineDocument> {
 //
 //        public ModelRegsFactory() {
-//            super(StlPlusDocument.class, RegSarimaViews.MODEL_REGS, MODELEXTRACTOR);
+//            super(X13plusDocument.class, RegSarimaViews.MODEL_REGS, MODELEXTRACTOR);
 //        }
 //
 //        @Override
@@ -475,7 +474,7 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 //    public static class ArimaFactory extends ModelArimaFactory {
 //
 //        public ArimaFactory() {
-//            super(StlPlusDocument.class, RegSarimaViews.MODEL_ARIMA, MODELEXTRACTOR);
+//            super(X13plusDocument.class, RegSarimaViews.MODEL_ARIMA, MODELEXTRACTOR);
 //        }
 //
 //        @Override
@@ -485,10 +484,10 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 //    }
 //
 //    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 300000 + 3000)
-//    public static class PreprocessingDetFactory extends ProcDocumentItemFactory<FractionalAirlineDocument, StlPlusDocument> {
+//    public static class PreprocessingDetFactory extends ProcDocumentItemFactory<FractionalAirlineDocument, X13plusDocument> {
 //
 //        public PreprocessingDetFactory() {
-//            super(StlPlusDocument.class, RegSarimaViews.MODEL_DET,
+//            super(X13plusDocument.class, RegSarimaViews.MODEL_DET,
 //                    source -> source, new GenericTableUI(false,
 //                            ModellingDictionary.Y_LIN, ModellingDictionary.DET,
 //                            ModellingDictionary.CAL, ModellingDictionary.TDE, ModellingDictionary.EE,
@@ -506,7 +505,7 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 //    public static class ModelResFactory extends ProcDocumentItemFactory<FractionalAirlineDocument, TsData> {
 //
 //        public ModelResFactory() {
-//            super(StlPlusDocument.class, RegSarimaViews.MODEL_RES, RESEXTRACTOR,
+//            super(X13plusDocument.class, RegSarimaViews.MODEL_RES, RESEXTRACTOR,
 //                    new ResidualsUI()
 //            );
 //        }
@@ -521,7 +520,7 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 //    public static class ModelResStatsFactory extends NiidTestsFactory<FractionalAirlineDocument> {
 //
 //        public ModelResStatsFactory() {
-//            super(StlPlusDocument.class, RegSarimaViews.MODEL_RES_STATS, MODELEXTRACTOR);
+//            super(X13plusDocument.class, RegSarimaViews.MODEL_RES_STATS, MODELEXTRACTOR);
 //        }
 //
 //        @Override
@@ -531,10 +530,10 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 //    }
 //
 //    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 400000 + 3000)
-//    public static class ModelResDist extends ProcDocumentItemFactory<StlPlusDocument, DoubleSeq> {
+//    public static class ModelResDist extends ProcDocumentItemFactory<X13plusDocument, DoubleSeq> {
 //
 //        public ModelResDist() {
-//            super(StlPlusDocument.class, RegSarimaViews.MODEL_RES_DIST, RESEXTRACTOR,
+//            super(X13plusDocument.class, RegSarimaViews.MODEL_RES_DIST, RESEXTRACTOR,
 //                    new DistributionUI());
 //
 //        }
@@ -545,10 +544,10 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 //        }
 //    }
 //    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 400000 + 4000)
-//    public static class ModelResSpectrum extends ProcDocumentItemFactory<StlPlusDocument, DoubleSeq> {
+//    public static class ModelResSpectrum extends ProcDocumentItemFactory<X13plusDocument, DoubleSeq> {
 //
 //        public ModelResSpectrum() {
-//            super(StlPlusDocument.class, RegSarimaViews.MODEL_RES_SPECTRUM, RESEXTRACTOR,
+//            super(X13plusDocument.class, RegSarimaViews.MODEL_RES_SPECTRUM, RESEXTRACTOR,
 //                    new PeriodogramUI());
 //
 //        }
@@ -564,7 +563,7 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 //    public static class LFactory extends LikelihoodFactory<FractionalAirlineDocument> {
 //
 //        public LFactory() {
-//            super(StlPlusDocument.class, RegSarimaViews.MODEL_LIKELIHOOD, MODELEXTRACTOR);
+//            super(X13plusDocument.class, RegSarimaViews.MODEL_LIKELIHOOD, MODELEXTRACTOR);
 //            setAsync(true);
 //        }
 //
@@ -576,11 +575,11 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="BENCHMARKING">
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 4900)
-    public static class BenchmarkingFactory extends ProcDocumentItemFactory<StlPlusDocument, BenchmarkingUI.Input> {
+    public static class BenchmarkingFactory extends ProcDocumentItemFactory<X13plusDocument, BenchmarkingUI.Input> {
 
         public BenchmarkingFactory() {
-            super(StlPlusDocument.class, SaViews.BENCHMARKING_SUMMARY, (StlPlusDocument doc) -> {
-                StlPlusResults rslt = doc.getResult();
+            super(X13plusDocument.class, SaViews.BENCHMARKING_SUMMARY, (X13plusDocument doc) -> {
+                X13plusResults rslt = doc.getResult();
                 if (rslt == null) {
                     return null;
                 }
@@ -602,11 +601,11 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 //</editor-fold>
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 4910)
-    public static class StationaryVarianceDecompositionFactory extends ProcDocumentItemFactory<StlPlusDocument, HtmlElement> {
+    public static class StationaryVarianceDecompositionFactory extends ProcDocumentItemFactory<X13plusDocument, HtmlElement> {
 
         public StationaryVarianceDecompositionFactory() {
-            super(StlPlusDocument.class, DECOMPOSITION_VAR, DIAGSEXTRACTOR.andThen(
-                    (StlPlusDiagnostics diags) -> {
+            super(X13plusDocument.class, DECOMPOSITION_VAR, DIAGSEXTRACTOR.andThen(
+                    (X13plusDiagnostics diags) -> {
                         StationaryVarianceDecomposition decomp = diags.getVarianceDecomposition();
                         if (decomp == null) {
                             return null;
@@ -624,11 +623,11 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 
 //<editor-fold defaultstate="collapsed" desc="DIAGNOSTICS">
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5000)
-    public static class DiagnosticsSummaryFactory extends ProcDocumentItemFactory<StlPlusDocument, HtmlElement> {
+    public static class DiagnosticsSummaryFactory extends ProcDocumentItemFactory<X13plusDocument, HtmlElement> {
 
         public DiagnosticsSummaryFactory() {
-            super(StlPlusDocument.class, SaViews.DIAGNOSTICS_SUMMARY, (StlPlusDocument doc) -> {
-                StlPlusResults rslt = doc.getResult();
+            super(X13plusDocument.class, SaViews.DIAGNOSTICS_SUMMARY, (X13plusDocument doc) -> {
+                X13plusResults rslt = doc.getResult();
                 if (rslt == null) {
                     return null;
                 }
@@ -646,11 +645,11 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5010)
-    public static class OriginalSeasonalityFactory extends ProcDocumentItemFactory<StlPlusDocument, HtmlElement> {
+    public static class OriginalSeasonalityFactory extends ProcDocumentItemFactory<X13plusDocument, HtmlElement> {
 
         public OriginalSeasonalityFactory() {
-            super(StlPlusDocument.class, SaViews.DIAGNOSTICS_OSEASONALITY, (StlPlusDocument doc) -> {
-                StlPlusResults rslt = doc.getResult();
+            super(X13plusDocument.class, SaViews.DIAGNOSTICS_OSEASONALITY, (X13plusDocument doc) -> {
+                X13plusResults rslt = doc.getResult();
                 if (rslt == null) {
                     return null;
                 }
@@ -658,7 +657,7 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
                 if (rslt.getPreprocessing() != null) {
                     s = rslt.getPreprocessing().transformedSeries();
                 } else {
-                    s = rslt.getDecomposition().getSeries();
+                    s = rslt.getDecomposition().getB1();
                 }
                 if (s == null) {
                     return null;
@@ -676,11 +675,11 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5020)
-    public static class LinSeasonalityFactory extends ProcDocumentItemFactory<StlPlusDocument, HtmlElement> {
+    public static class LinSeasonalityFactory extends ProcDocumentItemFactory<X13plusDocument, HtmlElement> {
 
         public LinSeasonalityFactory() {
-            super(StlPlusDocument.class, SaViews.DIAGNOSTICS_LSEASONALITY, (StlPlusDocument doc) -> {
-                StlPlusResults rslt = doc.getResult();
+            super(X13plusDocument.class, SaViews.DIAGNOSTICS_LSEASONALITY, (X13plusDocument doc) -> {
+                X13plusResults rslt = doc.getResult();
                 if (rslt == null || rslt.getPreprocessing() == null) {
                     return null;
                 }
@@ -701,11 +700,11 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5030)
-    public static class ResSeasonalityFactory extends ProcDocumentItemFactory<StlPlusDocument, HtmlElement> {
+    public static class ResSeasonalityFactory extends ProcDocumentItemFactory<X13plusDocument, HtmlElement> {
 
         public ResSeasonalityFactory() {
-            super(StlPlusDocument.class, SaViews.DIAGNOSTICS_RSEASONALITY, (StlPlusDocument doc) -> {
-                StlPlusResults rslt = doc.getResult();
+            super(X13plusDocument.class, SaViews.DIAGNOSTICS_RSEASONALITY, (X13plusDocument doc) -> {
+                X13plusResults rslt = doc.getResult();
                 if (rslt == null || rslt.getPreprocessing() == null) {
                     return null;
                 }
@@ -726,19 +725,19 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5040)
-    public static class SaSeasonalityFactory extends ProcDocumentItemFactory<StlPlusDocument, HtmlElement> {
+    public static class SaSeasonalityFactory extends ProcDocumentItemFactory<X13plusDocument, HtmlElement> {
 
         public SaSeasonalityFactory() {
-            super(StlPlusDocument.class, SaViews.DIAGNOSTICS_SASEASONALITY, (StlPlusDocument doc) -> {
-                StlPlusResults rslt = doc.getResult();
+            super(X13plusDocument.class, SaViews.DIAGNOSTICS_SASEASONALITY, (X13plusDocument doc) -> {
+                X13plusResults rslt = doc.getResult();
                 if (rslt == null) {
                     return null;
                 }
-                TsData s = rslt.getDecomposition().getSa();
+                TsData s = rslt.getDecomposition().getD11();
                 if (s == null) {
                     return null;
                 }
-                if (rslt.getDecomposition().isMultiplicative()) {
+                if (rslt.getDecomposition().getMode().isMultiplicative()) {
                     s = s.log();
                 }
                 return new HtmlElements(new HtmlHeader(1, "[Linearized] seasonally adjusted series", true),
@@ -754,19 +753,19 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5050)
-    public static class IrrSeasonalityFactory extends ProcDocumentItemFactory<StlPlusDocument, HtmlElement> {
+    public static class IrrSeasonalityFactory extends ProcDocumentItemFactory<X13plusDocument, HtmlElement> {
 
         public IrrSeasonalityFactory() {
-            super(StlPlusDocument.class, SaViews.DIAGNOSTICS_ISEASONALITY, (StlPlusDocument doc) -> {
-                StlPlusResults rslt = doc.getResult();
+            super(X13plusDocument.class, SaViews.DIAGNOSTICS_ISEASONALITY, (X13plusDocument doc) -> {
+                X13plusResults rslt = doc.getResult();
                 if (rslt == null) {
                     return null;
                 }
-                TsData s = rslt.getDecomposition().getIrregular();
+                TsData s = rslt.getDecomposition().getD13();
                 if (s == null) {
                     return null;
                 }
-                if (rslt.getDecomposition().isMultiplicative()) {
+                if (rslt.getDecomposition().getMode().isMultiplicative()) {
                     s = s.log();
                 }
                 return new HtmlElements(new HtmlHeader(1, "[Linearized] irregular component", true),
@@ -782,11 +781,11 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5060)
-    public static class LastResSeasonalityFactory extends ProcDocumentItemFactory<StlPlusDocument, HtmlElement> {
+    public static class LastResSeasonalityFactory extends ProcDocumentItemFactory<X13plusDocument, HtmlElement> {
 
         public LastResSeasonalityFactory() {
-            super(StlPlusDocument.class, SaViews.DIAGNOSTICS_LASTRSEASONALITY, (StlPlusDocument doc) -> {
-                StlPlusResults rslt = doc.getResult();
+            super(X13plusDocument.class, SaViews.DIAGNOSTICS_LASTRSEASONALITY, (X13plusDocument doc) -> {
+                X13plusResults rslt = doc.getResult();
                 if (rslt == null || rslt.getPreprocessing() == null) {
                     return null;
                 }
@@ -813,15 +812,15 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5070)
-    public static class LastSaSeasonalityFactory extends ProcDocumentItemFactory<StlPlusDocument, HtmlElement> {
+    public static class LastSaSeasonalityFactory extends ProcDocumentItemFactory<X13plusDocument, HtmlElement> {
 
         public LastSaSeasonalityFactory() {
-            super(StlPlusDocument.class, SaViews.DIAGNOSTICS_LASTSASEASONALITY, (StlPlusDocument doc) -> {
-                StlPlusResults rslt = doc.getResult();
+            super(X13plusDocument.class, SaViews.DIAGNOSTICS_LASTSASEASONALITY, (X13plusDocument doc) -> {
+                X13plusResults rslt = doc.getResult();
                 if (rslt == null) {
                     return null;
                 }
-                TsData s = rslt.getDecomposition().getSa();
+                TsData s = rslt.getDecomposition().getD11();
                 if (s == null) {
                     return null;
                 }
@@ -831,7 +830,7 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
                     s = s.drop(Math.max(0, s.length() - s.getAnnualFrequency() * ny - 1), 0);
                     header.append(" (last ").append(ny).append(" years)");
                 }
-                if (rslt.getDecomposition().isMultiplicative()) {
+                if (rslt.getDecomposition().getMode().isMultiplicative()) {
                     s = s.log();
                 }
                 return new HtmlElements(new HtmlHeader(1, header.toString(), true),
@@ -847,15 +846,15 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5080)
-    public static class LastIrrSeasonalityFactory extends ProcDocumentItemFactory<StlPlusDocument, HtmlElement> {
+    public static class LastIrrSeasonalityFactory extends ProcDocumentItemFactory<X13plusDocument, HtmlElement> {
 
         public LastIrrSeasonalityFactory() {
-            super(StlPlusDocument.class, SaViews.DIAGNOSTICS_LASTISEASONALITY, (StlPlusDocument doc) -> {
-                StlPlusResults rslt = doc.getResult();
+            super(X13plusDocument.class, SaViews.DIAGNOSTICS_LASTISEASONALITY, (X13plusDocument doc) -> {
+                X13plusResults rslt = doc.getResult();
                 if (rslt == null) {
                     return null;
                 }
-                TsData s = rslt.getDecomposition().getIrregular();
+                TsData s = rslt.getDecomposition().getD13();
                 if (s == null) {
                     return null;
                 }
@@ -865,7 +864,7 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
                     s = s.drop(Math.max(0, s.length() - s.getAnnualFrequency() * ny), 0);
                     header.append(" (last ").append(ny).append(" years)");
                 }
-                if (rslt.getDecomposition().isMultiplicative()) {
+                if (rslt.getDecomposition().getMode().isMultiplicative()) {
                     s = s.log();
                 }
                 return new HtmlElements(new HtmlHeader(1, header.toString(), true),
@@ -881,10 +880,10 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5310)
-    public static class ModelResSpectrum extends ProcDocumentItemFactory<StlPlusDocument, SpectrumUI.Information> {
+    public static class ModelResSpectrum extends ProcDocumentItemFactory<X13plusDocument, SpectrumUI.Information> {
 
         public ModelResSpectrum() {
-            super(StlPlusDocument.class, SaViews.DIAGNOSTICS_SPECTRUM_RES,
+            super(X13plusDocument.class, SaViews.DIAGNOSTICS_SPECTRUM_RES,
                     RESEXTRACTOR.andThen(
                             res
                             -> res == null ? null
@@ -905,21 +904,21 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5320)
-    public static class DiagnosticsSpectrumIFactory extends ProcDocumentItemFactory<StlPlusDocument, SpectrumUI.Information> {
+    public static class DiagnosticsSpectrumIFactory extends ProcDocumentItemFactory<X13plusDocument, SpectrumUI.Information> {
 
         public DiagnosticsSpectrumIFactory() {
-            super(StlPlusDocument.class, SaViews.DIAGNOSTICS_SPECTRUM_I,
+            super(X13plusDocument.class, SaViews.DIAGNOSTICS_SPECTRUM_I,
                     DECOMPOSITIONEXTRACTOR.andThen(
-                            (StlResults stl) -> {
-                                if (stl == null) {
+                            (X11Results x11) -> {
+                                if (x11 == null) {
                                     return null;
                                 }
-                                TsData s = stl.getIrregular();
+                                TsData s = x11.getD13();
                                return s == null ? null
                                         : SpectrumUI.Information.builder()
                                                 .series(s)
                                                 .differencingOrder(0)
-                                                .log(stl.isMultiplicative())
+                                                .log(x11.getMode().isMultiplicative())
                                                 .mean(true)
                                                 .whiteNoise(false)
                                                 .build();
@@ -934,22 +933,22 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
     }
 
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5330)
-    public static class DiagnosticsSpectrumSaFactory extends ProcDocumentItemFactory<StlPlusDocument, SpectrumUI.Information> {
+    public static class DiagnosticsSpectrumSaFactory extends ProcDocumentItemFactory<X13plusDocument, SpectrumUI.Information> {
 
         public DiagnosticsSpectrumSaFactory() {
-            super(StlPlusDocument.class, SaViews.DIAGNOSTICS_SPECTRUM_SA,
+            super(X13plusDocument.class, SaViews.DIAGNOSTICS_SPECTRUM_SA,
                     DECOMPOSITIONEXTRACTOR.andThen(
-                            (StlResults stl) -> {
-                                if (stl == null) {
+                            (X11Results x11) -> {
+                                if (x11 == null) {
                                     return null;
                                 }
-                                TsData s = stl.getSa();
+                                TsData s = x11.getD11();
                                 return s == null ? null
                                         : SpectrumUI.Information.builder()
                                                 .series(s)
                                                 .differencingOrder(1)
                                                 .differencingLag(1)
-                                                .log(stl.isMultiplicative())
+                                                .log(x11.getMode().isMultiplicative())
                                                 .mean(true)
                                                 .whiteNoise(false)
                                                 .build();

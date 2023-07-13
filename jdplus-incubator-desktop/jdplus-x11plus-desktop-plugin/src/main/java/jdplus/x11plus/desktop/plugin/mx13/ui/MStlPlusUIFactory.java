@@ -14,67 +14,67 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.stl.desktop.plugin.mstl.ui;
+package jdplus.x11plus.desktop.plugin.mx13.ui;
 
-import jdplus.toolkit.desktop.plugin.descriptors.IObjectDescriptor;
-import jdplus.toolkit.desktop.plugin.ui.processing.IProcDocumentView;
-import jdplus.toolkit.desktop.plugin.workspace.DocumentUIServices;
-import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItem;
-import jdplus.stl.base.api.MStlPlusSpec;
-
-import java.awt.Color;
-import javax.swing.Icon;
-import jdplus.stl.base.core.mstlplus.MStlPlusDocument;
-import org.openide.util.ImageUtilities;
-import org.openide.util.lookup.ServiceProvider;
-
-/**
- *
- * @author PALATEJ
- */
-@ServiceProvider(service = DocumentUIServices.class)
-public class MStlPlusUIFactory implements DocumentUIServices<MStlPlusSpec, MStlPlusDocument> {
-
-//    public static StlPlusUIFactory INSTANCE=new StlPlusUIFactory();
-    @Override
-    public IProcDocumentView<MStlPlusDocument> getDocumentView(MStlPlusDocument document) {
-        return MStlPlusViewFactory.getDefault().create(document);
-    }
-
-    @Override
-    public IObjectDescriptor<MStlPlusSpec> getSpecificationDescriptor(MStlPlusSpec spec) {
-        return new MStlPlusSpecUI(spec, false);
-    }
-
-    @Override
-    public Class<MStlPlusDocument> getDocumentType() {
-        return MStlPlusDocument.class;
-    }
-
-    @Override
-    public Class<MStlPlusSpec> getSpecType() {
-        return MStlPlusSpec.class;
-    }
-
-    @Override
-    public Color getColor() {
-        return Color.RED;
-    }
-
-    @Override
-    public Icon getIcon() {
-        return ImageUtilities.loadImageIcon("jdplus/stl/desktop/plugin/tangent_red.png", false);
-    }
-
-    @Override
-    public void showDocument(WorkspaceItem<MStlPlusDocument> item) {
-        if (item.isOpen()) {
-            item.getView().requestActive();
-        } else {
-            MStlPlusTopComponent view = new MStlPlusTopComponent(item);
-            view.open();
-            view.requestActive();
-        }
-    }
-
-}
+//import jdplus.toolkit.desktop.plugin.descriptors.IObjectDescriptor;
+//import jdplus.toolkit.desktop.plugin.ui.processing.IProcDocumentView;
+//import jdplus.toolkit.desktop.plugin.workspace.DocumentUIServices;
+//import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItem;
+//import jdplus.stl.base.api.MStlPlusSpec;
+//
+//import java.awt.Color;
+//import javax.swing.Icon;
+//import jdplus.stl.base.core.mstlplus.MStlPlusDocument;
+//import org.openide.util.ImageUtilities;
+//import org.openide.util.lookup.ServiceProvider;
+//
+///**
+// *
+// * @author PALATEJ
+// */
+//@ServiceProvider(service = DocumentUIServices.class)
+//public class MStlPlusUIFactory implements DocumentUIServices<MStlPlusSpec, MStlPlusDocument> {
+//
+////    public static StlPlusUIFactory INSTANCE=new StlPlusUIFactory();
+//    @Override
+//    public IProcDocumentView<MStlPlusDocument> getDocumentView(MStlPlusDocument document) {
+//        return MStlPlusViewFactory.getDefault().create(document);
+//    }
+//
+//    @Override
+//    public IObjectDescriptor<MStlPlusSpec> getSpecificationDescriptor(MStlPlusSpec spec) {
+//        return new MStlPlusSpecUI(spec, false);
+//    }
+//
+//    @Override
+//    public Class<MStlPlusDocument> getDocumentType() {
+//        return MStlPlusDocument.class;
+//    }
+//
+//    @Override
+//    public Class<MStlPlusSpec> getSpecType() {
+//        return MStlPlusSpec.class;
+//    }
+//
+//    @Override
+//    public Color getColor() {
+//        return Color.RED;
+//    }
+//
+//    @Override
+//    public Icon getIcon() {
+//        return ImageUtilities.loadImageIcon("jdplus/stl/desktop/plugin/tangent_red.png", false);
+//    }
+//
+//    @Override
+//    public void showDocument(WorkspaceItem<MStlPlusDocument> item) {
+//        if (item.isOpen()) {
+//            item.getView().requestActive();
+//        } else {
+//            MStlPlusTopComponent view = new MStlPlusTopComponent(item);
+//            view.open();
+//            view.requestActive();
+//        }
+//    }
+//
+//}

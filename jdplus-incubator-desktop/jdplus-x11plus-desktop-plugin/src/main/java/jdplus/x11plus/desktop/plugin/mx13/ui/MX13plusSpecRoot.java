@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.stl.desktop.plugin.mstl.ui;
+package jdplus.x11plus.desktop.plugin.mx13.ui;
 
 import jdplus.sa.desktop.plugin.descriptors.highfreq.HighFreqSpecUI;
 import jdplus.highfreq.base.api.ExtendedAirlineModellingSpec;
@@ -26,8 +26,8 @@ import jdplus.toolkit.base.api.modelling.highfreq.OutlierSpec;
 import jdplus.toolkit.base.api.modelling.highfreq.RegressionSpec;
 import jdplus.toolkit.base.api.modelling.highfreq.SeriesSpec;
 import jdplus.toolkit.base.api.modelling.highfreq.TransformSpec;
-import jdplus.stl.base.api.MStlPlusSpec;
-import jdplus.stl.base.api.MStlSpec;
+import jdplus.x11plus.base.api.MX11plusSpec;
+import jdplus.x11plus.base.api.MX13plusSpec;
 
 /**
  *
@@ -35,9 +35,9 @@ import jdplus.stl.base.api.MStlSpec;
  */
 @lombok.Getter
 @lombok.AllArgsConstructor
-public class MStlPlusSpecRoot implements HighFreqSpecUI {
+public class MX13plusSpecRoot implements HighFreqSpecUI {
 
-    MStlPlusSpec core;
+    MX13plusSpec core;
     boolean ro;
 
     public boolean isPreprocessingEnabled() {
@@ -52,12 +52,12 @@ public class MStlPlusSpecRoot implements HighFreqSpecUI {
         return core.getPreprocessing();
     }
     
-    public MStlSpec stl(){
-        return core.getStl();
+    public MX11plusSpec x11(){
+        return core.getX11();
     }
     
-    public void update(MStlSpec stl){
-        core=core.toBuilder().stl(stl).build();
+    public void update(MX11plusSpec x11){
+        core=core.toBuilder().x11(x11).build();
     }
 
     public void update(ExtendedAirlineModellingSpec spec) {

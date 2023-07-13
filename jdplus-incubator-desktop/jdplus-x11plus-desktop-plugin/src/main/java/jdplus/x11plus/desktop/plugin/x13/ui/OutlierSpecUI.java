@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.stl.desktop.plugin.stl.ui;
+package jdplus.x11plus.desktop.plugin.x13.ui;
 
 import jdplus.sa.desktop.plugin.descriptors.regular.AbstractOutlierSpecUI;
 import jdplus.sa.desktop.plugin.descriptors.regular.RegularSpecUI;
@@ -26,9 +26,9 @@ import jdplus.toolkit.base.api.modelling.regular.OutlierSpec;
  */
 public class OutlierSpecUI extends AbstractOutlierSpecUI {
 
-    private final StlPlusSpecRoot root;
+    private final X13plusSpecRoot root;
 
-    public OutlierSpecUI(StlPlusSpecRoot root) {
+    public OutlierSpecUI(X13plusSpecRoot root) {
         this.root = root;
     }
 

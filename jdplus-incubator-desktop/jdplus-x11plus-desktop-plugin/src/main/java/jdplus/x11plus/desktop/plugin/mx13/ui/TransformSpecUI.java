@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.stl.desktop.plugin.mstl.ui;
+package jdplus.x11plus.desktop.plugin.mx13.ui;
 
 import jdplus.sa.desktop.plugin.descriptors.highfreq.AbstractTransformSpecUI;
 import jdplus.sa.desktop.plugin.descriptors.highfreq.HighFreqSpecUI;
@@ -26,9 +26,9 @@ import jdplus.toolkit.base.api.modelling.highfreq.TransformSpec;
  */
 public class TransformSpecUI extends AbstractTransformSpecUI {
 
-    private final MStlPlusSpecRoot root;
+    private final MX13plusSpecRoot root;
 
-    public TransformSpecUI(MStlPlusSpecRoot root) {
+    public TransformSpecUI(MX13plusSpecRoot root) {
         this.root = root;
     }
 

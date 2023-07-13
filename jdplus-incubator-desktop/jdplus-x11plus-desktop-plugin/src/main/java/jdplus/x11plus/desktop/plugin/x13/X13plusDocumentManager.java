@@ -14,34 +14,34 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.x11plus.desktop.plugin.mx13;
+package jdplus.x11plus.desktop.plugin.x13;
 
 import jdplus.toolkit.desktop.plugin.workspace.AbstractWorkspaceTsItemManager;
 import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItemManager;
-import jdplus.stl.base.api.MStlPlusSpec;
 import jdplus.toolkit.base.api.util.Id;
 import jdplus.toolkit.base.api.util.LinearId;
-import jdplus.stl.base.api.MStlSpec;
-import jdplus.stl.base.core.mstlplus.MStlPlusDocument;
+import jdplus.x11plus.base.api.MX11plusSpec;
+import jdplus.x11plus.base.api.X13plusSpec;
+import jdplus.x11plus.base.core.x13.X13plusDocument;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
  *
- * @author Jean Palate
+ * @author palatej
  */
 @ServiceProvider(service = WorkspaceItemManager.class,
         position = 3000)
-public class MStlPlusDocumentManager extends AbstractWorkspaceTsItemManager<MStlPlusSpec, MStlPlusDocument> {
+public class X13plusDocumentManager extends AbstractWorkspaceTsItemManager<X13plusSpec, X13plusDocument> {
 
 
-    public static final LinearId ID = new LinearId(MStlSpec.FAMILY, "documents", MStlSpec.METHOD);
-    public static final String PATH = "mstlplus.doc";
-    public static final String ITEMPATH = "mstlplus.doc.item";
-    public static final String CONTEXTPATH = "mstlplus.doc.context";
+    public static final LinearId ID = new LinearId(MX11plusSpec.FAMILY, "documents", X13plusSpec.METHOD);
+    public static final String PATH = "stlplus.doc";
+    public static final String ITEMPATH = "stlplus.doc.item";
+    public static final String CONTEXTPATH = "stlplus.doc.context";
 
     @Override
     protected String getItemPrefix() {
-        return "MStlPlusDoc";
+        return "X13plusDoc";
     }
 
     @Override
@@ -50,13 +50,13 @@ public class MStlPlusDocumentManager extends AbstractWorkspaceTsItemManager<MStl
     }
 
     @Override
-    public MStlPlusDocument createNewObject() {
-        return new MStlPlusDocument();
+    public X13plusDocument createNewObject() {
+        return new X13plusDocument();
     }
 
     @Override
-    public ItemType getItemType() {
-        return ItemType.Doc;
+    public WorkspaceItemManager.ItemType getItemType() {
+        return WorkspaceItemManager.ItemType.Doc;
     }
 
     @Override
@@ -65,13 +65,13 @@ public class MStlPlusDocumentManager extends AbstractWorkspaceTsItemManager<MStl
     }
 
     @Override
-    public Status getStatus() {
-        return Status.Certified;
+    public WorkspaceItemManager.Status getStatus() {
+        return WorkspaceItemManager.Status.Certified;
     }
 
     @Override
-    public Class<MStlPlusDocument> getItemClass() {
-        return MStlPlusDocument.class;
+    public Class<X13plusDocument> getItemClass() {
+        return X13plusDocument.class;
     }
 
 }

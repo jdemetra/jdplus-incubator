@@ -64,6 +64,7 @@ public class RawX11Kernel {
         dstep.process(data, context.remove(data, cstep.getC20()), context);
 
         return RawX11Results.builder()
+                .mode(context.getMode())
                 .b1(bstep.getB1())
                 .b2(bstep.getB2())
                 .b3(bstep.getB3())
@@ -97,7 +98,6 @@ public class RawX11Kernel {
                 .d6(dstep.getD6())
                 .d7(dstep.getD7())
                 .d8(dstep.getD8())
-                .d9(dstep.getD9())
                 .d10(dstep.getD10())
                 .d11(dstep.getD11())
                 .d12(dstep.getD12())

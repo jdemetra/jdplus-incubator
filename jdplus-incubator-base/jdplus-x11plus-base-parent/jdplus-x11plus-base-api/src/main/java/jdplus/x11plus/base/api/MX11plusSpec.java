@@ -17,11 +17,11 @@
 package jdplus.x11plus.base.api;
 
 import java.util.List;
+import java.util.Optional;
 import jdplus.sa.base.api.DecompositionMode;
 import jdplus.sa.base.api.SaSpecification;
 import static jdplus.sa.base.api.SaSpecification.FAMILY;
 import jdplus.toolkit.base.api.processing.AlgorithmDescriptor;
-import jdplus.toolkit.base.api.timeseries.TsUnit;
 import static jdplus.x11plus.base.api.X11plusSpec.DEFAULT_BACKCAST_HORIZON;
 import static jdplus.x11plus.base.api.X11plusSpec.DEFAULT_FORECAST_HORIZON;
 import nbbrd.design.LombokWorkaround;
@@ -91,6 +91,22 @@ public class MX11plusSpec implements SaSpecification {
         return SMETHOD;
     }
 
-    private static final String SMETHOD = "X11+";
+    private static final String SMETHOD = "MX11+";
+    
+    public X11plusSpec step(Number period){
+        
+        Optional<PeriodSpec> periodSpec = periodSpecs.stream().filter(ps->ps.getPeriod().equals(period)).findAny();
+        PeriodSpec cur = periodSpec.orElseThrow();
+        return X11plusSpec.builder()
+                .mode(mode)
+                .backcastHorizon(backcastHorizon)
+                .forecastHorizon(forecastHorizon)
+                .trendFilter(cur.getTrendFilter())
+                .initialSeasonalFilter(cur.getInitialSeasonalFilter())
+                .finalSeasonalFilter(cur.getFinalSeasonalFilter())
+                .lowerSigma(cur.getLowerSigma())
+                .upperSigma(cur.getUpperSigma())
+                .build();
+    }
 
 }

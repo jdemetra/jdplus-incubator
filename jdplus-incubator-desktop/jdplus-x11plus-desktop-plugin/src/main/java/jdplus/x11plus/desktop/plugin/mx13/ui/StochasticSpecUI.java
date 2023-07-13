@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.stl.desktop.plugin.mstl.ui;
+package jdplus.x11plus.desktop.plugin.mx13.ui;
 
 import jdplus.toolkit.base.api.data.Parameter;
 import jdplus.toolkit.desktop.plugin.descriptors.EnhancedPropertyDescriptor;
@@ -33,9 +33,9 @@ import org.openide.util.NbBundle;
  */
 public class StochasticSpecUI implements IPropertyDescriptors {
 
-    private final MStlPlusSpecRoot root;
+    private final MX13plusSpecRoot root;
 
-    public StochasticSpecUI(MStlPlusSpecRoot root) {
+    public StochasticSpecUI(MX13plusSpecRoot root) {
         this.root = root;
     }
    @Override

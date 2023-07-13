@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.stl.desktop.plugin.mstl.ui;
+package jdplus.x11plus.desktop.plugin.mx13.ui;
 
 import jdplus.toolkit.desktop.plugin.descriptors.EnhancedPropertyDescriptor;
 import jdplus.sa.desktop.plugin.descriptors.highfreq.AbstractSeriesSpecUI;
@@ -31,9 +31,9 @@ import org.openide.util.NbBundle;
  */
 public class SeriesSpecUI extends AbstractSeriesSpecUI {
 
-    private final MStlPlusSpecRoot root;
+    private final MX13plusSpecRoot root;
 
-    public SeriesSpecUI(MStlPlusSpecRoot root) {
+    public SeriesSpecUI(MX13plusSpecRoot root) {
         this.root = root;
     }
 
