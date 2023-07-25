@@ -60,6 +60,7 @@ import jdplus.highfreq.base.core.regarima.HighFreqRegArimaModel;
 import jdplus.highfreq.base.core.regarima.ModelDescription;
 import jdplus.sa.base.api.SaException;
 import static jdplus.sa.base.core.PreliminaryChecks.MAX_MISSING_COUNT;
+import jdplus.toolkit.base.api.data.DoubleSeqCursor;
 import jdplus.toolkit.base.api.util.IntList;
 import jdplus.toolkit.base.core.data.interpolation.AverageInterpolator;
 import jdplus.toolkit.base.core.data.interpolation.DataInterpolator;
@@ -358,8 +359,49 @@ public class ExtendedAirlineKernel {
         FastArimaForecasts fcasts = new FastArimaForecasts();
 
         fcasts.prepare(model.arima(), false); //Jean said mean should not be used
-        DoubleSeq y_fcasts = fcasts.forecasts(y, nfcasts); // we should use the lin series for the fcasts
 
+        double[] detAll = new double[y.length()];
+        DoubleSeqCursor coeff = rslt.getConcentratedLikelihood().coefficients().cursor();
+        FastMatrix variables = regarima.variables();
+        for (int j = 0; j < variables.getColumnsCount(); ++j) {
+            double c = coeff.getAndNext();
+            if (c != 0) {
+                DoubleSeqCursor cursor = variables.column(j).cursor();
+                for (int k = 0; k < y.length(); ++k) {
+                    detAll[k] += c * cursor.getAndNext();
+                }
+            }
+        }
+
+        //lin series is the original series y minus coeff*variables
+        double[] y_lin_a = new double[y.length()];
+        for (int i = 0; i < y.length(); i++) {
+            y_lin_a[i] = y.get(i) - detAll[i];
+        }
+        DoubleSeq y_lin = DoubleSeq.of(y_lin_a);
+        // y minus  \beta X to use as fcast to do CH und wieder zurück
+        DoubleSeq y_fcasts_lin = fcasts.forecasts(y_lin, nfcasts); // we should use the lin series for the fcasts
+        DoubleSeq y_fcasts;
+        double[] y_fcast_a = new double[nfcasts];
+//remove the lin component from the fcast
+//coeff are the same, but only the predefined variables from x are different from zero
+        if (nfcasts > 0) {
+            coeff = rslt.getConcentratedLikelihood().coefficients().cursor();
+            y_fcast_a = y_fcasts_lin.toArray().clone();
+            if (X != null && X.getColumnsCount() != 0) {
+                for (int j = 0; j < X.getColumnsCount(); ++j) {
+                    double c = coeff.getAndNext();
+                    if (c != 0) {
+                        DoubleSeqCursor cursor = X.column(j).cursor();
+                        for (int k = y.length(); k < y.length() + nfcasts; ++k) {
+                            y_fcast_a[k - y.length()] -= c * cursor.getAndNext();
+                        }
+                    }
+                }
+            }
+
+        }
+        y_fcasts = DoubleSeq.of(y_fcast_a);
         int xNumberRows = 0;
         int xNumberColumns = 0;
         if (X
