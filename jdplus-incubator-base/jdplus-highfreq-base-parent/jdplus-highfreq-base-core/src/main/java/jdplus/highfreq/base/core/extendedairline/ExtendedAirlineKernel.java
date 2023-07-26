@@ -356,36 +356,34 @@ public class ExtendedAirlineKernel {
 
         //Ausgabe anpassen
         RegArimaModel model = rslt.getModel();
-        FastArimaForecasts fcasts = new FastArimaForecasts();
 
-        fcasts.prepare(model.arima(), false); //Jean said mean should not be used
+        DoubleSeq y_fcasts = DoubleSeq.empty();
 
-        double[] detAll = new double[y.length()];
-        DoubleSeqCursor coeff = rslt.getConcentratedLikelihood().coefficients().cursor();
-        FastMatrix variables = regarima.variables();
-        for (int j = 0; j < variables.getColumnsCount(); ++j) {
-            double c = coeff.getAndNext();
-            if (c != 0) {
-                DoubleSeqCursor cursor = variables.column(j).cursor();
-                for (int k = 0; k < y.length(); ++k) {
-                    detAll[k] += c * cursor.getAndNext();
+        if (nfcasts > 0) {
+            FastArimaForecasts fcasts = new FastArimaForecasts();
+            fcasts.prepare(model.arima(), false); //Jean said mean should not be used
+            double[] detAll = new double[y.length()];
+            DoubleSeqCursor coeff = rslt.getConcentratedLikelihood().coefficients().cursor();
+            FastMatrix variables = regarima.variables();
+            for (int j = 0; j < variables.getColumnsCount(); ++j) {
+                double c = coeff.getAndNext();
+                if (c != 0) {
+                    DoubleSeqCursor cursor = variables.column(j).cursor();
+                    for (int k = 0; k < y.length(); ++k) {
+                        detAll[k] += c * cursor.getAndNext();
+                    }
                 }
             }
-        }
 
-        //lin series is the original series y minus coeff*variables
-        double[] y_lin_a = new double[y.length()];
-        for (int i = 0; i < y.length(); i++) {
-            y_lin_a[i] = y.get(i) - detAll[i];
-        }
-        DoubleSeq y_lin = DoubleSeq.of(y_lin_a);
-        // y minus  \beta X to use as fcast to do CH und wieder zurück
-        DoubleSeq y_fcasts_lin = fcasts.forecasts(y_lin, nfcasts); // we should use the lin series for the fcasts
-        DoubleSeq y_fcasts;
-        double[] y_fcast_a = new double[nfcasts];
-//remove the lin component from the fcast
-//coeff are the same, but only the predefined variables from x are different from zero
-        if (nfcasts > 0) {
+            //lin series is the original series y minus coeff*variables
+            double[] y_lin_a = new double[y.length()];
+            for (int i = 0; i < y.length(); i++) {
+                y_lin_a[i] = y.get(i) - detAll[i];
+            }
+            DoubleSeq y_lin = DoubleSeq.of(y_lin_a);
+            // y minus  \beta X to use as fcast
+            DoubleSeq y_fcasts_lin = fcasts.forecasts(y_lin, nfcasts); // we should use the lin series for the fcasts
+            double[] y_fcast_a;
             coeff = rslt.getConcentratedLikelihood().coefficients().cursor();
             y_fcast_a = y_fcasts_lin.toArray().clone();
             if (X != null && X.getColumnsCount() != 0) {
@@ -399,9 +397,11 @@ public class ExtendedAirlineKernel {
                     }
                 }
             }
-
+            y_fcasts = DoubleSeq.of(y_fcast_a);
+        } else {
+            y_fcasts = DoubleSeq.empty();
         }
-        y_fcasts = DoubleSeq.of(y_fcast_a);
+        //
         int xNumberRows = 0;
         int xNumberColumns = 0;
         if (X
@@ -440,10 +440,10 @@ public class ExtendedAirlineKernel {
             regVariables = regarima.variables();
         }
 
-        DoubleSeq y_f = regarima.getY().extend(0, y_fcasts.length());
+        DoubleSeq y_f = regarima.getY().extend(0, nfcasts);
         double[] y_inclFcasts = y_f.toArray();
         for (int i = 0;
-                i < y_fcasts.length();
+                i < nfcasts;
                 i++) {
             y_inclFcasts[regarima.getY().length() + i] = y_fcasts.get(i);
         }
