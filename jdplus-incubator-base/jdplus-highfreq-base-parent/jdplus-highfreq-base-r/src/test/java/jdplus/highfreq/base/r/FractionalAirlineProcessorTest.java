@@ -132,7 +132,7 @@ public class FractionalAirlineProcessorTest {
 
         Matrix Matrix_Reg = Matrix.of(Reg, Reg.length, 1);
         ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(OBS, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 1);
-        System.out.println(Arrays.toString(rslt.getY()));
+        assertEquals(OBS.length + 1, rslt.getY().length, "Forcast has the wrong length");
 
     }
 
