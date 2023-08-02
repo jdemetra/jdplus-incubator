@@ -22,8 +22,8 @@ import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.core.regsarima.regular.RegSarimaModel;
 import jdplus.sa.base.core.StationaryVarianceComputer;
 import jdplus.sa.base.core.diagnostics.GenericSaTests;
-import jdplus.x11plus.base.core.RawX11Results;
-import jdplus.x11plus.base.core.X11Results;
+import jdplus.toolkit.base.api.timeseries.TsDomain;
+import jdplus.x11plus.base.core.X11plusResults;
 
 @lombok.Value
 @lombok.AllArgsConstructor(access = lombok.AccessLevel.PRIVATE)
@@ -32,50 +32,34 @@ public class X13plusDiagnostics {
     private StationaryVarianceDecomposition varianceDecomposition;
     private GenericSaTests genericDiagnostics;
 
-    public static X13plusDiagnostics of(RegSarimaModel preprocessing, X11Results srslts, SeriesDecomposition finals) {
-        boolean mul = finals.getMode().isMultiplicative();
-        TsData y = srslts.getB1();
-        TsData sa = srslts.getD11();
-        TsData i = srslts.getD13();
-        TsData s = srslts.getD10();
-        TsData si = srslts.getD8();
-        GenericSaTests gsadiags;
+    public static X13plusDiagnostics of(RegSarimaModel preprocessing, X13plusPreadjustment preadj, X11plusResults xrslts, X13plusFinals finals) {
+        boolean mul = xrslts.getMode().isMultiplicative();
+        TsDomain dom = xrslts.getActualDomain();
+        TsData sa = TsData.fitToDomain(xrslts.getD11(), dom);
+        TsData i = TsData.fitToDomain(xrslts.getD13(), dom);
+        TsData t = TsData.fitToDomain(xrslts.getD12(), dom);
+        TsData si = TsData.fitToDomain(xrslts.getD8(), dom);
+        TsData y = TsData.fitToDomain(xrslts.getB1(), dom);
         TsData lsa = mul ? sa.log() : sa;
         TsData li = mul ? i.log() : i;
-        if (preprocessing != null) {
-            TsData lin = preprocessing.linearizedSeries();
+        TsData lin = preprocessing != null ? preprocessing.linearizedSeries() : mul ? preadj.getA1().log() : preadj.getA1();
 
-            gsadiags = GenericSaTests.builder()
-                    .mul(mul)
-                    .regarima(preprocessing)
-                    .lin(lin)
-                    .res(preprocessing.fullResiduals())
-                    .y(y)
-                    .sa(sa)
-                    .irr(i)
-                    .si(si)
-                    .lsa(lsa)
-                    .lirr(li)
-                    .build();
-        } else {
-            gsadiags = GenericSaTests.builder()
-                    .mul(mul)
-                    .regarima(preprocessing)
-                    .res(null)
-                    .lin(y)
-                    .y(y)
-                    .sa(sa)
-                    .irr(i)
-                    .si(si)
-                    .lsa(lsa)
-                    .lirr(li)
-                    .build();
-
-        }
-        return new X13plusDiagnostics(varDecomposition(preprocessing, srslts), gsadiags);
+        GenericSaTests gsadiags = GenericSaTests.builder()
+                .mul(mul)
+                .regarima(preprocessing)
+                .lin(lin)
+                .res(preprocessing == null ? null : preprocessing.fullResiduals())
+                .y(y)
+                .sa(sa)
+                .irr(i)
+                .si(si)
+                .lsa(lsa)
+                .lirr(li)
+                .build();
+        return new X13plusDiagnostics(varDecomposition(preprocessing, xrslts), gsadiags);
     }
 
-    private static StationaryVarianceDecomposition varDecomposition(RegSarimaModel preprocessing, X11Results srslts) {
+    private static StationaryVarianceDecomposition varDecomposition(RegSarimaModel preprocessing, X11plusResults srslts) {
         StationaryVarianceComputer var = new StationaryVarianceComputer(StationaryVarianceComputer.HP);
         boolean mul = srslts.getMode().isMultiplicative();
         if (preprocessing != null) {

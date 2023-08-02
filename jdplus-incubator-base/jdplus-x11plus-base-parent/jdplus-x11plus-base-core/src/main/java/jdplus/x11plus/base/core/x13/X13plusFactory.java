@@ -76,7 +76,7 @@ public class X13plusFactory implements SaProcessingFactory<X13plusSpec, X13plusR
         CoherenceDiagnosticsFactory<X13plusResults> coherence
                 = new CoherenceDiagnosticsFactory<>(CoherenceDiagnosticsConfiguration.getDefault(),
                         (X13plusResults r) -> {
-                            return new CoherenceDiagnostics.Input(r.getFinals().getMode(), r);
+                            return new CoherenceDiagnostics.Input(r.getDecomposition().getMode(), r);
                         }
                 );
         SaOutOfSampleDiagnosticsFactory<X13plusResults> outofsample

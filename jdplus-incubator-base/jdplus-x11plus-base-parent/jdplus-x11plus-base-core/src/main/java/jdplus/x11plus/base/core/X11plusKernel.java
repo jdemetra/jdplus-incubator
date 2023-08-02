@@ -24,19 +24,19 @@ import jdplus.x11plus.base.api.X11plusSpec;
  *
  * @author palatej
  */
-public class X11Kernel {
+public class X11plusKernel {
 
     private final X11plusSpec spec;
 
-    private X11Kernel(X11plusSpec spec) {
+    private X11plusKernel(X11plusSpec spec) {
         this.spec = spec;
     }
 
-    public static X11Kernel of(X11plusSpec spec) {
-        return new X11Kernel(spec);
+    public static X11plusKernel of(X11plusSpec spec) {
+        return new X11plusKernel(spec);
     }
 
-    public X11Results process(TsData s) {
+    public X11plusResults process(TsData s) {
         if (spec == null) {
             boolean pos = s.getValues().allMatch(x->x>0);
             X11plusSpec nspec = X11plusSpec.createDefault(pos,s.getAnnualFrequency(), SeasonalFilterOption.S3X5);

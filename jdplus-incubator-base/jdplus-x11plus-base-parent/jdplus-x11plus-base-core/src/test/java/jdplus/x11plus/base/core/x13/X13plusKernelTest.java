@@ -18,6 +18,7 @@ package jdplus.x11plus.base.core.x13;
 
 import java.util.Arrays;
 import jdplus.sa.base.api.ComponentType;
+import jdplus.sa.base.api.SeriesDecomposition;
 import jdplus.sa.base.api.benchmarking.SaBenchmarkingSpec;
 import jdplus.toolkit.base.api.modelling.ComponentInformation;
 import jdplus.toolkit.base.api.modelling.regular.ModellingSpec;
@@ -41,16 +42,13 @@ public class X13plusKernelTest {
     @Test
     public void testPreprocessing() {
 
-        X13plusKernel kernel = X13plusKernel.of(X13plusSpec.FULL, null);
+        X13plusSpec spec = X13plusSpec.builder()
+                .preprocessing(ModellingSpec.FULL)
+                .x11(null)
+                .benchmarking(SaBenchmarkingSpec.DEFAULT_DISABLED)
+                .build();
+        X13plusKernel kernel = X13plusKernel.of(spec, null);
         X13plusResults rslt = kernel.process(Data.TS_ABS_RETAIL, null);
-        TsDataTable table = TsDataTable.of(Arrays.asList(
-                rslt.getFinals().getSeries(ComponentType.Trend, ComponentInformation.Value),
-                rslt.getFinals().getSeries(ComponentType.SeasonallyAdjusted, ComponentInformation.Value),
-                rslt.getFinals().getSeries(ComponentType.Seasonal, ComponentInformation.Value),
-                rslt.getFinals().getSeries(ComponentType.Irregular, ComponentInformation.Value)
-        ));
-
-        System.out.println(table);
     }
 
     @Test
@@ -63,15 +61,7 @@ public class X13plusKernelTest {
 
         X13plusKernel kernel = X13plusKernel.of(spec, null);
         X13plusResults rslt = kernel.process(Data.TS_ABS_RETAIL, null);
-        TsDataTable table = TsDataTable.of(Arrays.asList(
-                rslt.getFinals().getSeries(ComponentType.Trend, ComponentInformation.Value),
-                rslt.getFinals().getSeries(ComponentType.SeasonallyAdjusted, ComponentInformation.Value),
-                rslt.getFinals().getSeries(ComponentType.Seasonal, ComponentInformation.Value),
-                rslt.getFinals().getSeries(ComponentType.Irregular, ComponentInformation.Value)
-        ));
-
-        System.out.println(table);
-    }
+     }
 
     public static void main(String[] args) {
         X13plusSpec spec = X13plusSpec.builder()

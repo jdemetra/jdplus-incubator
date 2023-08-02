@@ -44,6 +44,7 @@ public class X11plusSpec implements SaSpecification {
      */
     private DecompositionMode mode;
     
+    @lombok.With
     private Number period;
     
     private boolean seasonal;
@@ -114,6 +115,7 @@ public class X11plusSpec implements SaSpecification {
                 .initialSeasonalFilter(new X11SeasonalFilterSpec(period, seas))
                 .finalSeasonalFilter(new X11SeasonalFilterSpec(period, seas))
                 .trendFilter(new HendersonSpec(iperiod, 3.5))
+                .forecastHorizon(-1)
                 .build();
     }
     

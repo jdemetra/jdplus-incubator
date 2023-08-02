@@ -8,9 +8,9 @@ package jdplus.x11plus.base.core;
 import jdplus.sa.base.api.ComponentType;
 import jdplus.sa.base.api.DecompositionMode;
 import jdplus.sa.base.api.SeriesDecomposition;
-import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.information.GenericExplorable;
 import jdplus.toolkit.base.api.timeseries.TsData;
+import jdplus.toolkit.base.api.timeseries.TsDomain;
 
 /**
  *
@@ -18,7 +18,7 @@ import jdplus.toolkit.base.api.timeseries.TsData;
  */
 @lombok.Value
 @lombok.Builder
-public class X11Results implements GenericExplorable{
+public class X11plusResults implements GenericExplorable{
 
     int nbackcasts, nforecasts;
 
@@ -37,4 +37,24 @@ public class X11Results implements GenericExplorable{
                 .add(d10, ComponentType.Seasonal)
                 .build();
     }
+    
+    public TsDomain getFullDomain() {
+        return b1.getDomain();
+    }
+
+    public TsDomain getBackcastDomain() {
+        return b1.getDomain().range(0, nbackcasts);
+    }
+
+    public TsDomain getForecastDomain() {
+        TsDomain domain = b1.getDomain();
+        int n = domain.getLength();
+        return domain.range(n - nforecasts, n);
+    }
+
+    public TsDomain getActualDomain() {
+        TsDomain domain = b1.getDomain();
+        return domain.range(nbackcasts, domain.getLength() - nforecasts);
+    }
+    
 }

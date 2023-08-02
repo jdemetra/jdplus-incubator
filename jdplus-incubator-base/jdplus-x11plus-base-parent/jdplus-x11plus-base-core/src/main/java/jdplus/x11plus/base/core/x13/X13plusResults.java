@@ -19,11 +19,10 @@ package jdplus.x11plus.base.core.x13;
 import jdplus.toolkit.base.api.information.GenericExplorable;
 import jdplus.toolkit.base.api.processing.HasLog;
 import jdplus.toolkit.base.api.processing.ProcessingLog;
-import jdplus.sa.base.api.SeriesDecomposition;
 import jdplus.toolkit.base.core.regsarima.regular.RegSarimaModel;
 import jdplus.sa.base.core.SaBenchmarkingResults;
 import jdplus.sa.base.core.modelling.HasRegSarimaPreprocessing;
-import jdplus.x11plus.base.core.X11Results;
+import jdplus.x11plus.base.core.X11plusResults;
 
 /**
  *
@@ -34,8 +33,9 @@ import jdplus.x11plus.base.core.X11Results;
 public class X13plusResults implements GenericExplorable, HasLog, HasRegSarimaPreprocessing {
 
     private RegSarimaModel preprocessing;
-    private X11Results decomposition;
-    private SeriesDecomposition finals;
+    private X13plusPreadjustment preadjustment;
+    private X11plusResults decomposition;
+    private X13plusFinals finals;
     private SaBenchmarkingResults benchmarking;
     private X13plusDiagnostics diagnostics;
     private ProcessingLog log;

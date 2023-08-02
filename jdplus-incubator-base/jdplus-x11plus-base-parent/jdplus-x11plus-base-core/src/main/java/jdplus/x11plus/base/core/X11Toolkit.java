@@ -29,13 +29,13 @@ import jdplus.x11plus.base.api.X11plusSpec;
 @lombok.experimental.UtilityClass
 public class X11Toolkit {
 
-    public X11Results process(TsData data, X11plusSpec spec) {
+    public X11plusResults process(TsData data, X11plusSpec spec) {
         RawX11Kernel x11 = new RawX11Kernel(spec);
         RawX11Results decomp = x11.process(data.getValues());
 
         TsPeriod start = data.getStart();
 
-        return X11Results.builder()
+        return X11plusResults.builder()
                 .mode(decomp.getMode())
                 .b1(TsData.of(start, decomp.getB1()))
                 .b2(TsData.of(start, decomp.getB2()))
