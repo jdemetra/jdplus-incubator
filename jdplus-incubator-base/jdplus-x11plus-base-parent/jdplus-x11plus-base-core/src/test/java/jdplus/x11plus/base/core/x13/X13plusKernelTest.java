@@ -16,19 +16,13 @@
  */
 package jdplus.x11plus.base.core.x13;
 
-import java.util.Arrays;
-import jdplus.sa.base.api.ComponentType;
-import jdplus.sa.base.api.SeriesDecomposition;
 import jdplus.sa.base.api.benchmarking.SaBenchmarkingSpec;
-import jdplus.toolkit.base.api.modelling.ComponentInformation;
 import jdplus.toolkit.base.api.modelling.regular.ModellingSpec;
-import jdplus.toolkit.base.api.timeseries.TsDataTable;
 import jdplus.x11plus.base.api.SeasonalFilterOption;
 import jdplus.x11plus.base.api.X11plusSpec;
 import tck.demetra.data.Data;
 import jdplus.x11plus.base.api.X13plusSpec;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
