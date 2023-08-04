@@ -6,7 +6,7 @@
     <parent>
         <groupId>eu.europa.ec.joinup.sat</groupId>
         <artifactId>jdplus-incubator</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>jdplus-incubator-desktop</artifactId>
@@ -23,6 +23,7 @@
         <module>jdplus-highfreq-desktop-plugin</module>
         <module>jdplus-stl-desktop-plugin</module>
         <module>jdplus-sts-desktop-plugin</module>
+        <module>jdplus-x11plus-desktop-plugin</module>
     </modules>
 
     <build>

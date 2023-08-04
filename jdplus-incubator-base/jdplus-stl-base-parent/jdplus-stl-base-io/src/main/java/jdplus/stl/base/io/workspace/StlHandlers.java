@@ -38,12 +38,14 @@ import nbbrd.service.ServiceProvider;
 public class StlHandlers {
 
     public final WorkspaceFamily SA_DOC_STLPLUS = parse("Seasonal adjustment@documents@stlplus");
+    public final WorkspaceFamily SA_DOC_MSTLPLUS = parse("Seasonal adjustment@documents@mstlplus");
+    public final WorkspaceFamily SA_DOC_ISTLPLUS = parse("Seasonal adjustment@documents@istlplus");
 
     @ServiceProvider(FamilyHandler.class)
     public static final class DocStlPlus implements FamilyHandler {
 
         @lombok.experimental.Delegate
-        private final FamilyHandler delegate = informationSet(SA_DOC_STLPLUS,
+        private final FamilyHandler delegate = informationSet(SA_DOC_MSTLPLUS,
                 new InformationSetSerializer<StlPlusDocument>() {
             @Override
             public InformationSet write(StlPlusDocument object, boolean verbose) {

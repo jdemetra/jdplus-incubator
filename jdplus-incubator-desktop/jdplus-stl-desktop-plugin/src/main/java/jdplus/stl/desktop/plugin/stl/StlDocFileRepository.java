@@ -27,6 +27,7 @@ public final class StlDocFileRepository extends AbstractFileItemRepository< StlP
     @Override
     public boolean load(WorkspaceItem<StlPlusDocument> item) {
         return loadFile(item, (StlPlusDocument o) -> {
+            o.setLocked(true);
             item.setElement(o);
             item.resetDirty();
         });
