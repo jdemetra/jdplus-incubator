@@ -25,11 +25,14 @@ public class FractionalAirlineEstimationExtractor extends InformationMapping<Ext
         return ExtendedAirlineEstimation.class;
     }
 
-    private static final String PARAMETERS = "parameters", LL = "likelihood", PCOV = "pcov", SCORE = "score",
-            B = "b", T = "t", BVAR = "bvar", OUTLIERS = "outliers", LIN = "lin", REGRESSORS = "regressors", Y = "y", BNAMES = "variables" ,COMPONENT_AO="component_ao",COMPONENT_LS="component_ls",COMPONENT_WO="component_wo",COMPONENT_OUTLIERS="component_outliers",COMPONENT_USERDEF_REG_VARIABLES="component_userdef_reg_variables";
+    private static final String PARAMETERS = "parameters", LL = "likelihood", RESIDUALS = "residuals", PCOV = "pcov", SCORE = "score", LOG = "log", MISSING = "missing",
+            B = "b", T = "t", BVAR = "bvar", OUTLIERS = "outliers", LIN = "lin", REGRESSORS = "regressors", Y = "y", BNAMES = "variables", COMPONENT_AO = "component_ao", COMPONENT_LS = "component_ls", COMPONENT_WO = "component_wo", COMPONENT_OUTLIERS = "component_outliers", COMPONENT_USERDEF_REG_VARIABLES = "component_userdef_reg_variables";
 
     public FractionalAirlineEstimationExtractor() {
         delegate(LL, LikelihoodStatistics.class, r -> r.getLikelihood());
+        set(LOG, Boolean.class, source -> source.isLog());
+        set(MISSING, int[].class, source -> source.getMissing());
+        set(RESIDUALS, double[].class, source -> source.getResiduals().toArray());
         set(PCOV, Matrix.class, source -> source.getParametersCovariance());
         set(PARAMETERS, double[].class, source -> source.getParameters().toArray());
         set(SCORE, double[].class, source -> source.getScore().toArray());

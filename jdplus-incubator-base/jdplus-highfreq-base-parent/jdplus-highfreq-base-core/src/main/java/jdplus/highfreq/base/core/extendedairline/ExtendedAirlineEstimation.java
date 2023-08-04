@@ -24,8 +24,9 @@ public class ExtendedAirlineEstimation implements GenericExplorable {
 
     double[] y;
     Matrix x; //user-def reg var, outlier
-
+    boolean log; //true if logs are taken from y
     ExtendedAirline model;
+    int[] missing;// positions where missing values are replaced, null based
 
     OutlierDescriptor[] outliers;
 
@@ -37,6 +38,15 @@ public class ExtendedAirlineEstimation implements GenericExplorable {
 
     LikelihoodStatistics likelihood;
     DoubleSeq residuals;
+
+    private double[] exp(double[] a) {
+        DoubleSeq exp = DoubleSeq.of(a).exp();
+        return exp.toArray();
+    }
+
+    public double[] getY() {
+        return log ? exp(y) : y;
+    }
 
     public double[] linearized() {
 
@@ -53,12 +63,12 @@ public class ExtendedAirlineEstimation implements GenericExplorable {
         }
         return l;
     }
-    
-       public double[] component_userdef_reg_variables() {
+
+    public double[] component_userdef_reg_variables() {
 
         double[] l = new double[y.length];
         DoubleSeqCursor acur = coefficients.cursor();
- 
+
         for (int j = 0; j < x.getColumnsCount() - outliers.length; ++j) {
             double a = acur.getAndNext();
             if (a != 0) {
@@ -69,7 +79,7 @@ public class ExtendedAirlineEstimation implements GenericExplorable {
             }
         }
 
-        return l;
+        return log ? exp(l) : l;
     }
 
     public double[] component_outliers() {
@@ -77,7 +87,7 @@ public class ExtendedAirlineEstimation implements GenericExplorable {
         double[] l = new double[y.length];
         DoubleSeqCursor acur = coefficients.cursor();
 
-        for (int i = 1; i < x.getColumnsCount() - outliers.length+1; i++) {
+        for (int i = 1; i < x.getColumnsCount() - outliers.length + 1; i++) {
             acur.getAndNext();
         }
 
@@ -92,7 +102,7 @@ public class ExtendedAirlineEstimation implements GenericExplorable {
             }
         }
 
-        return l;
+        return log ? exp(l) : l;
     }
 
     public double[] component_ao() {
@@ -116,12 +126,12 @@ public class ExtendedAirlineEstimation implements GenericExplorable {
         double[] l = new double[y.length];
         DoubleSeqCursor acur = coefficients.cursor();
 
-        for (int i = 1; i < x.getColumnsCount() - outliers.length+1; i++) {
+        for (int i = 1; i < x.getColumnsCount() - outliers.length + 1; i++) {
             acur.getAndNext();
         }
 
         for (int j = x.getColumnsCount() - outliers.length; j < x.getColumnsCount(); ++j) {
-                     double a = acur.getAndNext();
+            double a = acur.getAndNext();
             if (outlierTyp.equalsIgnoreCase(outliers[j - x.getColumnsCount() + outliers.length].getCode())) {
 
                 if (a != 0) {
@@ -133,9 +143,8 @@ public class ExtendedAirlineEstimation implements GenericExplorable {
             }
         }
 
-        return l;
+        return log ? exp(l) : l;
     }
-
 
     public double[] tstats() {
         double[] t = coefficients.toArray();
