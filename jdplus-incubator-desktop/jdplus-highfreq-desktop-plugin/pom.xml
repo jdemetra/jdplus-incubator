@@ -118,11 +118,23 @@
             <groupId>eu.europa.ec.joinup.sat</groupId>
             <artifactId>jdplus-highfreq-base-api</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>eu.europa.ec.joinup.sat</groupId>
+                    <artifactId>jdplus-sa-base-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
             <artifactId>jdplus-highfreq-base-core</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>eu.europa.ec.joinup.sat</groupId>
+                    <artifactId>jdplus-sa-base-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
@@ -135,10 +147,11 @@
                 </exclusion>
                 <exclusion>
                     <groupId>eu.europa.ec.joinup.sat</groupId>
-                    <artifactId>jdplus-sa-base-workspace</artifactId>
+                    <artifactId>jdplus-toolkit-base-workspace</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency
+        >
 
         <!-- 4. Other libraries -->
     </dependencies>

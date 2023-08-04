@@ -22,7 +22,7 @@ public class HighfreqRuntimeDependenciesTest {
         assertThat(getRuntimeDependencies(HighfreqRuntimeDependenciesTest.class))
                 .describedAs("Check runtime dependencies")
                 .satisfies(HighfreqRuntimeDependenciesTest::checkHighfreq)
-                .hasSize(2);
+                .hasSize(3);
     }
 
     private static void checkHighfreq(List<? extends GAV> coordinates) {
@@ -30,7 +30,7 @@ public class HighfreqRuntimeDependenciesTest {
                 .has(sameVersion())
                 .extracting(GAV::getArtifactId)
                 .are(matchingPattern(compile("^jdplus-highfreq-base-\\w+$")))
-                .hasSize(2);
+                .hasSize(3);
     }
 
     @MightBePromoted

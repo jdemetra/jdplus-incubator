@@ -119,7 +119,7 @@
         </dependency>
 
         <!-- 3. JD3 Base -->
-        <dependency>
+        <!--dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
             <artifactId>jdplus-x11plus-base-io</artifactId>
             <version>${project.version}</version>
@@ -129,11 +129,50 @@
                     <artifactId>jdplus-sa-base-information</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency-->
+       <dependency>
+            <groupId>eu.europa.ec.joinup.sat</groupId>
+            <artifactId>jdplus-filters-base-api</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>eu.europa.ec.joinup.sat</groupId>
+                    <artifactId>jdplus-toolkit-base-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+       <dependency>
+            <groupId>eu.europa.ec.joinup.sat</groupId>
+            <artifactId>jdplus-filters-base-core</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>eu.europa.ec.joinup.sat</groupId>
+                    <artifactId>jdplus-toolkit-base-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+       <dependency>
+            <groupId>eu.europa.ec.joinup.sat</groupId>
+            <artifactId>jdplus-x11plus-base-api</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>eu.europa.ec.joinup.sat</groupId>
+                    <artifactId>jdplus-sa-base-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
             <artifactId>jdplus-x11plus-base-core</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>eu.europa.ec.joinup.sat</groupId>
+                    <artifactId>jdplus-sa-base-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- 4. Other libraries -->
