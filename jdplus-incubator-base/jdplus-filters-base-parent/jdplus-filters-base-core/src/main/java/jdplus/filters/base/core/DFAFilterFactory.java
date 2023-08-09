@@ -73,7 +73,7 @@ public class DFAFilterFactory {
         }
 
         @Override
-        public SymmetricFilter symmetricFilter() {
+        public SymmetricFilter centralFilter() {
             return symmetricFilter;
         }
 

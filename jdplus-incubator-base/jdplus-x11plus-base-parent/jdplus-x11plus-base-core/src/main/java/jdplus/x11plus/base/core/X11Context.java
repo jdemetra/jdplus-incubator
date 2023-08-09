@@ -20,9 +20,10 @@ import jdplus.filters.base.core.FiltersToolkit;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.sa.base.api.DecompositionMode;
 import jdplus.toolkit.base.api.data.DoubleSeq;
-import jdplus.toolkit.base.core.math.linearfilters.IFiltering;
 import jdplus.toolkit.base.core.math.linearfilters.LocalPolynomialFilters;
 import jdplus.toolkit.base.api.math.linearfilters.LocalPolynomialFilterSpec;
+import jdplus.toolkit.base.core.math.linearfilters.IQuasiSymmetricFiltering;
+import jdplus.toolkit.base.core.math.linearfilters.ISymmetricFiltering;
 import jdplus.x11plus.base.api.X11plusSpec;
 
 /**
@@ -39,8 +40,8 @@ public class X11Context {
     Number period;
     double lowerSigma, upperSigma;
     
-    IFiltering trendFiltering;
-    IFiltering initialSeasonalFiltering, finalSeasonalFiltering;
+    IQuasiSymmetricFiltering trendFiltering;
+    ISymmetricFiltering initialSeasonalFiltering, finalSeasonalFiltering;
     
     public static X11Context of(X11plusSpec spec){
         return X11Context.builder()
@@ -48,7 +49,7 @@ public class X11Context {
                 .period(spec.getPeriod())
                 .lowerSigma(spec.getLowerSigma())
                 .upperSigma(spec.getUpperSigma())
-                .trendFiltering(FiltersToolkit.of(spec.getTrendFilter()))
+                .trendFiltering((IQuasiSymmetricFiltering) FiltersToolkit.of(spec.getTrendFilter()))
                 .initialSeasonalFiltering(X11SeasonalFiltersFactory.of(spec.getInitialSeasonalFilter()))
                 .finalSeasonalFiltering(X11SeasonalFiltersFactory.of(spec.getFinalSeasonalFilter()))
                 .build();

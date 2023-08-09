@@ -132,7 +132,7 @@ public class X11SeasonalFiltersFactory {
         }
 
         @Override
-        public SymmetricFilter symmetricFilter() {
+        public SymmetricFilter centralFilter() {
             return sfilter;
         }
 
@@ -261,7 +261,7 @@ public class X11SeasonalFiltersFactory {
         }
 
         @Override
-        public SymmetricFilter symmetricFilter() {
+        public SymmetricFilter centralFilter() {
             return sfilter;
         }
 
@@ -378,7 +378,7 @@ public class X11SeasonalFiltersFactory {
         register(GenericSeasonalFilterSpec.class, (GenericSeasonalFilterSpec spec) -> {
             IFiltering f = FiltersToolkit.of(spec.getFilter());
             if (f instanceof ISymmetricFiltering sf) {
-                return new AnyFilter(spec.getPeriod().doubleValue(), sf.symmetricFilter(), sf.endPointsFilters());
+                return new AnyFilter(spec.getPeriod().doubleValue(), sf.centralFilter(), sf.endPointsFilters());
             } else {
                 return null;
             }

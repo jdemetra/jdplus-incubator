@@ -114,7 +114,7 @@ public class X11plusSpec implements SaSpecification {
                 .period(period)
                 .initialSeasonalFilter(new X11SeasonalFilterSpec(period, seas))
                 .finalSeasonalFilter(new X11SeasonalFilterSpec(period, seas))
-                .trendFilter(new HendersonSpec(iperiod, 3.5))
+                .trendFilter(new HendersonSpec(iperiod, 3.5, 3.5))
                 .forecastHorizon(-1)
                 .build();
     }

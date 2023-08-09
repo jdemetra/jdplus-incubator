@@ -60,7 +60,7 @@ public class RKHSFilters {
                 .build();
         ISymmetricFiltering rkhsfilter= RKHSFilterFactory.of(tspec);
        
-        return new FiltersToolkit.FiniteFilters(rkhsfilter.symmetricFilter(),
+        return new FiltersToolkit.FiniteFilters(rkhsfilter.centralFilter(),
         		rkhsfilter.endPointsFilters());
     }
     public FiltersToolkit.FiniteFilters filterProperties(int horizon, int degree, String kernel, 
@@ -81,7 +81,7 @@ public class RKHSFilters {
                 .build();
         ISymmetricFiltering rkhsfilter= RKHSFilterFactory.of(tspec);
        
-        return new FiltersToolkit.FiniteFilters(rkhsfilter.symmetricFilter(),
+        return new FiltersToolkit.FiniteFilters(rkhsfilter.centralFilter(),
         		rkhsfilter.endPointsFilters());
     }
     

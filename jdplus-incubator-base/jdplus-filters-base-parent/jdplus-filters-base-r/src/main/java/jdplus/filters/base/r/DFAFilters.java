@@ -43,7 +43,7 @@ public class DFAFilters {
 
         ISymmetricFiltering dfafilter= DFAFilterFactory.of(tspec);
        
-        return new FiltersToolkit.FiniteFilters(dfafilter.symmetricFilter(),
+        return new FiltersToolkit.FiniteFilters(dfafilter.centralFilter(),
         		dfafilter.endPointsFilters());
     }
 }

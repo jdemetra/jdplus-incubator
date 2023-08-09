@@ -121,7 +121,7 @@ public class RKHSFilterFactory {
         }
         
         @Override
-        public SymmetricFilter symmetricFilter(){
+        public SymmetricFilter centralFilter(){
             return symmetricFilter;
         }
         

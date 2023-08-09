@@ -136,7 +136,7 @@ public class ArInterpreter implements ParameterInterpreter {
 
     static class Domain implements IParametersDomain {
         
-        private final double EPS=1e-6;
+        private final double EPS=1e-3;
 
         private final int degree;
 

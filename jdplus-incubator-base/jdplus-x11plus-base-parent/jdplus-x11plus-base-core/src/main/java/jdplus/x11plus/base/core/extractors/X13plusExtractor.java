@@ -5,7 +5,6 @@
  */
 package jdplus.x11plus.base.core.extractors;
 
-import jdplus.sa.base.api.ComponentType;
 import jdplus.toolkit.base.api.information.InformationExtractor;
 import jdplus.toolkit.base.api.information.InformationMapping;
 import jdplus.toolkit.base.api.modelling.SeriesInfo;
@@ -16,7 +15,6 @@ import jdplus.toolkit.base.core.regsarima.regular.RegSarimaModel;
 import jdplus.sa.base.core.SaBenchmarkingResults;
 import jdplus.toolkit.base.api.modelling.ModellingDictionary;
 import jdplus.x11plus.base.api.X13plusDictionaries;
-import static jdplus.x11plus.base.api.X13plusDictionaries.FINAL;
 import jdplus.x11plus.base.core.X11plusResults;
 import jdplus.x11plus.base.core.x13.X13plusResults;
 import nbbrd.design.Development;
@@ -29,7 +27,6 @@ import nbbrd.service.ServiceProvider;
 @Development(status = Development.Status.Release)
 @ServiceProvider(InformationExtractor.class)
 public class X13plusExtractor extends InformationMapping<X13plusResults> {
-
 
     private String decompositionItem(String key) {
         return Dictionary.concatenate(SaDictionaries.DECOMPOSITION, key);
@@ -152,12 +149,15 @@ public class X13plusExtractor extends InformationMapping<X13plusResults> {
                 -> source.getPreadjustment().getA1a());
 
         set(ModellingDictionary.CAL, TsData.class, source
-                -> source.getPreprocessing().getCalendarEffect(source.getDecomposition().getActualDomain()));
+                -> source.getPreprocessing() == null ? null
+                : source.getPreprocessing().getCalendarEffect(source.getDecomposition().getActualDomain()));
         set(ModellingDictionary.CAL + SaDictionaries.BACKCAST, TsData.class, source
-                -> source.getPreprocessing().getCalendarEffect(source.getDecomposition().getBackcastDomain()));
+                -> source.getPreprocessing() == null ? null
+                : source.getPreprocessing().getCalendarEffect(source.getDecomposition().getBackcastDomain()));
         set(ModellingDictionary.CAL + SaDictionaries.FORECAST, TsData.class, source
-                -> source.getPreprocessing().getCalendarEffect(source.getDecomposition().getForecastDomain()));
-        
+                -> source.getPreprocessing() == null ? null
+                : source.getPreprocessing().getCalendarEffect(source.getDecomposition().getForecastDomain()));
+
         set(finalItem(X13plusDictionaries.D11), TsData.class, source
                 -> source.getFinals().getD11final());
         set(finalItem(X13plusDictionaries.D12), TsData.class, source
@@ -185,13 +185,11 @@ public class X13plusExtractor extends InformationMapping<X13plusResults> {
         set(finalItem(X13plusDictionaries.D18B), TsData.class, source
                 -> source.getFinals().getD18b());
 
-
         delegate(null, RegSarimaModel.class, source -> source.getPreprocessing());
 
         delegate(SaDictionaries.DECOMPOSITION, X11plusResults.class, source -> source.getDecomposition());
 
 //        delegate(null, X13Diagnostics.class, source -> source.getDiagnostics());
-
         delegate(SaDictionaries.BENCHMARKING, SaBenchmarkingResults.class, source -> source.getBenchmarking());
 
     }

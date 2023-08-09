@@ -365,7 +365,7 @@ public class RawX11KernelTest {
         return LocalPolynomialFilterSpec.builder()
                 .filterHorizon(h)
                 .asymmetricFilters(AsymmetricFilterOption.MMSRE)
-                .linearModelCoefficients(new double[0])
+                .linearModelCoefficients(0)
                 .timelinessWeight(tw)
                 .build();
     }
