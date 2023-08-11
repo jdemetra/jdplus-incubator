@@ -172,6 +172,12 @@ public class HendersonSpecUI implements IPropertyDescriptors {
     public String getDisplayName() {
         return Bundle.hendersonSpecUI_getDisplayName();
     }
+    
+    @Override
+    public String toString(){
+        StringBuilder builder=new StringBuilder();
+        return builder.append("H-").append(henderson().getFilterHorizon()*2+1).toString();
+    }
 
 
 }

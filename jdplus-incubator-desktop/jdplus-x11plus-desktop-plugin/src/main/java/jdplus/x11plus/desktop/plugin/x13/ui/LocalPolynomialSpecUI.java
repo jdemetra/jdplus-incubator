@@ -21,10 +21,11 @@ import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import jdplus.toolkit.base.api.data.Doubles;
+import jdplus.toolkit.base.api.math.linearfilters.KernelOption;
 import jdplus.toolkit.base.api.math.linearfilters.LocalPolynomialFilterSpec;
 import jdplus.toolkit.desktop.plugin.descriptors.EnhancedPropertyDescriptor;
 import jdplus.toolkit.desktop.plugin.descriptors.IPropertyDescriptors;
-import jdplus.x11plus.base.api.X11plusSpec;
 import org.openide.util.NbBundle;
 
 /**
@@ -35,11 +36,13 @@ public class LocalPolynomialSpecUI implements IPropertyDescriptors {
 
     private LocalPolynomialFilterSpec core;
     private final boolean ro;
+    private final boolean seas;
     private final Consumer<LocalPolynomialFilterSpec> callback;
 
-    public LocalPolynomialSpecUI(LocalPolynomialFilterSpec core, boolean ro, Consumer<LocalPolynomialFilterSpec> callback) {
+    public LocalPolynomialSpecUI(LocalPolynomialFilterSpec core, boolean ro, boolean seas, Consumer<LocalPolynomialFilterSpec> callback) {
         this.core = core;
         this.ro = ro;
+        this.seas = seas;
         this.callback = callback;
     }
 
@@ -51,12 +54,38 @@ public class LocalPolynomialSpecUI implements IPropertyDescriptors {
         return core.getPolynomialDegree();
     }
 
-    public int getLeftAsymmetricDegree() {
-        return core.getLeftAsymmetricPolynomialDegree();
+    public KernelOption getKernel() {
+        return core.getKernel();
     }
 
-    public int getRightAsymmetricDegree() {
-        return core.getRightAsymmetricPolynomialDegree();
+    public int getAsymmetricDegree() {
+        return core.getAsymmetricPolynomialDegree();
+    }
+
+    public int getLeftModelDegree() {
+        return core.getLeftLinearModelCoefficients().length;
+    }
+
+    public double getLeftModelSlope() {
+        double[] c = core.getLeftLinearModelCoefficients();
+        if (c.length == 0) {
+            return Double.NaN;
+        } else {
+            return c[0];
+        }
+    }
+
+    public int getRightModelDegree() {
+        return core.getRightLinearModelCoefficients().length;
+    }
+
+    public double getRightModelSlope() {
+        double[] c = core.getRightLinearModelCoefficients();
+        if (c.length == 0) {
+            return Double.NaN;
+        } else {
+            return c[0];
+        }
     }
 
     public void setHorizon(int h) {
@@ -79,22 +108,69 @@ public class LocalPolynomialSpecUI implements IPropertyDescriptors {
         callback.accept(core);
     }
 
-    public void setLeftAsymmetricDegree(int d) {
-        if (core.getLeftAsymmetricPolynomialDegree() == d) {
+    public void setKernel(KernelOption k) {
+        if (core.getKernel() == k) {
             return;
         }
         core = core.toBuilder()
-                .leftAsymmetricPolynomialDegree(d)
+                .kernel(k)
                 .build();
         callback.accept(core);
     }
 
-    public void setRightAsymmetricDegree(int d) {
-        if (core.getRightAsymmetricPolynomialDegree() == d) {
+    public void setLeftModelDegree(int d) {
+        double[] oldc = core.getLeftLinearModelCoefficients();
+        if (oldc.length == d) {
             return;
         }
+        if (d > 1 || d < 0) {
+            throw new IllegalArgumentException("Should be 0 or 1");
+        }
+        double[] c = d == 0 ? Doubles.EMPTYARRAY : new double[]{LocalPolynomialFilterSpec.DEF_SLOPE};
         core = core.toBuilder()
-                .rightAsymmetricPolynomialDegree(d)
+                .leftLinearModelCoefficients(c)
+                .build();
+        callback.accept(core);
+    }
+
+    public void setRightModelDegree(int d) {
+        double[] oldc = core.getRightLinearModelCoefficients();
+        if (oldc.length == d) {
+            return;
+        }
+        if (d > 1 || d < 0) {
+            throw new IllegalArgumentException("Should be 0 or 1");
+        }
+        double[] c = d == 0 ? Doubles.EMPTYARRAY : new double[]{LocalPolynomialFilterSpec.DEF_SLOPE};
+        core = core.toBuilder()
+                .rightLinearModelCoefficients(c)
+                .build();
+        callback.accept(core);
+    }
+
+    public void setAsymmetricDegree(int d) {
+        if (core.getAsymmetricPolynomialDegree() == d) {
+            return;
+        }
+        if (d > 2 || d < 0) {
+            throw new IllegalArgumentException("Should be 0 or 1");
+        }
+        core = core.toBuilder()
+                .asymmetricPolynomialDegree(d)
+                .build();
+        callback.accept(core);
+    }
+
+    public void setLeftModelSlope(double s) {
+        core = core.toBuilder()
+                .leftLinearModelCoefficients(s)
+                .build();
+        callback.accept(core);
+    }
+
+    public void setRightModelSlope(double s) {
+        core = core.toBuilder()
+                .rightLinearModelCoefficients(s)
                 .build();
         callback.accept(core);
     }
@@ -110,6 +186,24 @@ public class LocalPolynomialSpecUI implements IPropertyDescriptors {
             edesc.setRefreshMode(EnhancedPropertyDescriptor.Refresh.All);
             desc.setDisplayName(Bundle.localPolynomialSpecUI_horizon_name());
             desc.setShortDescription(Bundle.localPolynomialSpecUI_horizon_desc());
+            edesc.setReadOnly(ro);
+            return edesc;
+        } catch (IntrospectionException ex) {
+            return null;
+        }
+    }
+
+    @NbBundle.Messages({
+        "localPolynomialSpecUI.kernel.name=Kernel",
+        "localPolynomialSpecUI.kernel.desc= Kernel of the filter"
+    })
+    private EnhancedPropertyDescriptor kernelDesc() {
+        try {
+            PropertyDescriptor desc = new PropertyDescriptor("Kernel", this.getClass());
+            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, KERNEL_ID);
+            edesc.setRefreshMode(EnhancedPropertyDescriptor.Refresh.All);
+            desc.setDisplayName(Bundle.localPolynomialSpecUI_kernel_name());
+            desc.setShortDescription(Bundle.localPolynomialSpecUI_kernel_desc());
             edesc.setReadOnly(ro);
             return edesc;
         } catch (IntrospectionException ex) {
@@ -136,16 +230,16 @@ public class LocalPolynomialSpecUI implements IPropertyDescriptors {
     }
 
     @NbBundle.Messages({
-        "localPolynomialSpecUI.ladegree.name=Left Asymmetric deg",
-        "localPolynomialSpecUI.ladegree.desc= Degree of the polynomials preserved by the asymmetric filters at the beginnig of the series"
+        "localPolynomialSpecUI.adegree.name=Asymmetric preserv deg",
+        "localPolynomialSpecUI.adegree.desc= Degree of the polynomials preserved by the asymmetric filters"
     })
-    private EnhancedPropertyDescriptor ladegDesc() {
+    private EnhancedPropertyDescriptor adegDesc() {
         try {
-            PropertyDescriptor desc = new PropertyDescriptor("LeftAsymmetricDegree", this.getClass());
-            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, LADEG_ID);
+            PropertyDescriptor desc = new PropertyDescriptor("AsymmetricDegree", this.getClass());
+            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, ADEG_ID);
             edesc.setRefreshMode(EnhancedPropertyDescriptor.Refresh.All);
-            desc.setDisplayName(Bundle.localPolynomialSpecUI_ladegree_name());
-            desc.setShortDescription(Bundle.localPolynomialSpecUI_ladegree_desc());
+            desc.setDisplayName(Bundle.localPolynomialSpecUI_adegree_name());
+            desc.setShortDescription(Bundle.localPolynomialSpecUI_adegree_desc());
             edesc.setReadOnly(ro);
             return edesc;
         } catch (IntrospectionException ex) {
@@ -154,16 +248,16 @@ public class LocalPolynomialSpecUI implements IPropertyDescriptors {
     }
 
     @NbBundle.Messages({
-        "localPolynomialSpecUI.radegree.name=Right Asymmetric deg",
-        "localPolynomialSpecUI.radegree.desc= Degree of the polynomials preserved by the asymmetric filters at the end of the series"
+        "localPolynomialSpecUI.lmdegree.name=Left model deg",
+        "localPolynomialSpecUI.lmdegree.desc= Degree of the model at the beginning of the series"
     })
-    private EnhancedPropertyDescriptor radegDesc() {
+    private EnhancedPropertyDescriptor lmdegDesc() {
         try {
-            PropertyDescriptor desc = new PropertyDescriptor("RightAsymmetricDegree", this.getClass());
-            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, RADEG_ID);
+            PropertyDescriptor desc = new PropertyDescriptor("LeftModelDegree", this.getClass());
+            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, LMDEG_ID);
             edesc.setRefreshMode(EnhancedPropertyDescriptor.Refresh.All);
-            desc.setDisplayName(Bundle.localPolynomialSpecUI_radegree_name());
-            desc.setShortDescription(Bundle.localPolynomialSpecUI_radegree_desc());
+            desc.setDisplayName(Bundle.localPolynomialSpecUI_lmdegree_name());
+            desc.setShortDescription(Bundle.localPolynomialSpecUI_lmdegree_desc());
             edesc.setReadOnly(ro);
             return edesc;
         } catch (IntrospectionException ex) {
@@ -171,7 +265,62 @@ public class LocalPolynomialSpecUI implements IPropertyDescriptors {
         }
     }
 
-    public static final int LENGTH_ID = 0, DEG_ID = 1, LIC_ID = 2, RIC_ID = 3, LADEG_ID = 4, RADEG_ID = 5;
+    @NbBundle.Messages({
+        "localPolynomialSpecUI.lmslope.name=Left slope",
+        "localPolynomialSpecUI.lmslope.desc= Slope of the linear model at the beginning of the series"
+    })
+    private EnhancedPropertyDescriptor lmslopeDesc() {
+        try {
+            PropertyDescriptor desc = new PropertyDescriptor("LeftModelSlope", this.getClass());
+            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, LMSLOPE_ID);
+            edesc.setRefreshMode(EnhancedPropertyDescriptor.Refresh.All);
+            desc.setDisplayName(Bundle.localPolynomialSpecUI_lmslope_name());
+            desc.setShortDescription(Bundle.localPolynomialSpecUI_lmslope_desc());
+            edesc.setReadOnly(ro);
+            return edesc;
+        } catch (IntrospectionException ex) {
+            return null;
+        }
+    }
+
+    @NbBundle.Messages({
+        "localPolynomialSpecUI.rmdegree.name=Right model deg",
+        "localPolynomialSpecUI.rmdegree.desc= Degree of the model at the end of the series"
+    })
+    private EnhancedPropertyDescriptor rmdegDesc() {
+        try {
+            PropertyDescriptor desc = new PropertyDescriptor("RightModelDegree", this.getClass());
+            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, RMDEG_ID);
+            edesc.setRefreshMode(EnhancedPropertyDescriptor.Refresh.All);
+            desc.setDisplayName(Bundle.localPolynomialSpecUI_rmdegree_name());
+            desc.setShortDescription(Bundle.localPolynomialSpecUI_rmdegree_desc());
+            edesc.setReadOnly(ro);
+            return edesc;
+        } catch (IntrospectionException ex) {
+            return null;
+        }
+    }
+
+    @NbBundle.Messages({
+        "localPolynomialSpecUI.rmslope.name=Right slope",
+        "localPolynomialSpecUI.rmslope.desc= Slope of the linear model at the end of the series"
+    })
+    private EnhancedPropertyDescriptor rmslopeDesc() {
+        try {
+            PropertyDescriptor desc = new PropertyDescriptor("RightModelSlope", this.getClass());
+            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, RMSLOPE_ID);
+            edesc.setRefreshMode(EnhancedPropertyDescriptor.Refresh.All);
+            desc.setDisplayName(Bundle.localPolynomialSpecUI_rmslope_name());
+            desc.setShortDescription(Bundle.localPolynomialSpecUI_rmslope_desc());
+            edesc.setReadOnly(ro);
+            return edesc;
+        } catch (IntrospectionException ex) {
+            return null;
+        }
+    }
+
+    public static final int LENGTH_ID = 0, DEG_ID = 1, LIC_ID = 2, RIC_ID = 3, KERNEL_ID = 4, ADEG_ID = 8,
+            LMDEG_ID = 10, RMDEG_ID = 11, LMSLOPE_ID = 10, RMSLOPE_ID = 11;
 
     @Override
     public List<EnhancedPropertyDescriptor> getProperties() {
@@ -180,26 +329,38 @@ public class LocalPolynomialSpecUI implements IPropertyDescriptors {
         if (desc != null) {
             descs.add(desc);
         }
-        desc = degDesc();
+        if (!seas) {
+            desc = degDesc();
+            if (desc != null) {
+                descs.add(desc);
+            }
+        }
+        desc = kernelDesc();
         if (desc != null) {
             descs.add(desc);
         }
-        desc = ladegDesc();
-        if (desc != null) {
-            descs.add(desc);
+        if (!seas) {
+            desc = adegDesc();
+            if (desc != null) {
+                descs.add(desc);
+            }
+            desc = lmdegDesc();
+            if (desc != null) {
+                descs.add(desc);
+            }
+            desc = lmslopeDesc();
+            if (desc != null) {
+                descs.add(desc);
+            }
+            desc = rmdegDesc();
+            if (desc != null) {
+                descs.add(desc);
+            }
+            desc = rmslopeDesc();
+            if (desc != null) {
+                descs.add(desc);
+            }
         }
-        desc = radegDesc();
-        if (desc != null) {
-            descs.add(desc);
-        }
-//        desc = licDesc();
-//        if (desc != null) {
-//            descs.add(desc);
-//        }
-//        desc = ricDesc();
-//        if (desc != null) {
-//            descs.add(desc);
-//        }
         return descs;
     }
 
@@ -209,4 +370,9 @@ public class LocalPolynomialSpecUI implements IPropertyDescriptors {
         return Bundle.localPolynomialSpecUI_getDisplayName();
     }
 
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        return builder.append("LP-").append(core.getFilterHorizon() * 2 + 1).toString();
+    }
 }

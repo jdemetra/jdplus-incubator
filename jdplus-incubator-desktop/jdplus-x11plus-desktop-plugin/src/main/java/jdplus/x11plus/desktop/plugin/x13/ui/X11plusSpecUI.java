@@ -28,7 +28,10 @@ import jdplus.sa.base.api.DecompositionMode;
 import jdplus.toolkit.base.api.math.linearfilters.FilterSpec;
 import jdplus.toolkit.base.api.math.linearfilters.HendersonSpec;
 import jdplus.toolkit.base.api.math.linearfilters.LocalPolynomialFilterSpec;
+import jdplus.x11plus.base.api.GenericSeasonalFilterSpec;
 import jdplus.x11plus.base.api.SeasonalFilterOption;
+import jdplus.x11plus.base.api.SeasonalFilterSpec;
+import jdplus.x11plus.base.api.X11SeasonalFilterSpec;
 import jdplus.x11plus.base.api.X11plusSpec;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
@@ -41,6 +44,11 @@ public class X11plusSpecUI implements IPropertyDescriptors {
 
     public enum TrendType {
         Henderson,
+        LocalPolynomial
+    }
+
+    public enum SeasonalType {
+        X11,
         LocalPolynomial
     }
 
@@ -254,7 +262,7 @@ public class X11plusSpecUI implements IPropertyDescriptors {
     public IPropertyDescriptors getTrendFilter() {
         FilterSpec tspec = spec().getTrendFilter();
         if (tspec instanceof LocalPolynomialFilterSpec lpspec) {
-            return new LocalPolynomialSpecUI(lpspec, isRo(), nspec
+            return new LocalPolynomialSpecUI(lpspec, isRo(), false, nspec
                     -> {
                 update(spec().toBuilder()
                         .trendFilter(nspec)
@@ -276,7 +284,7 @@ public class X11plusSpecUI implements IPropertyDescriptors {
         }
         switch (type) {
             case Henderson ->
-                nspec = new HendersonSpec(domain.getAnnualFrequency(), 3.5);
+                nspec = new HendersonSpec(domain.getAnnualFrequency() / 2, 3.5);
             case LocalPolynomial ->
                 nspec = LocalPolynomialFilterSpec.DEF_TREND_SPEC
                         .toBuilder()
@@ -301,10 +309,10 @@ public class X11plusSpecUI implements IPropertyDescriptors {
         if (desc != null) {
             descs.add(desc);
         }
-        desc = seasDesc();
-        if (desc != null) {
-            descs.add(desc);
-        }
+//        desc = seasDesc();
+//        if (desc != null) {
+//            descs.add(desc);
+//        }
         desc = forecastDesc();
         if (desc != null) {
             descs.add(desc);
@@ -321,11 +329,7 @@ public class X11plusSpecUI implements IPropertyDescriptors {
         if (desc != null) {
             descs.add(desc);
         }
-        desc = iseasDesc();
-        if (desc != null) {
-            descs.add(desc);
-        }
-        desc = fseasDesc();
+        desc = trendTypeDesc();
         if (desc != null) {
             descs.add(desc);
         }
@@ -333,15 +337,128 @@ public class X11plusSpecUI implements IPropertyDescriptors {
         if (desc != null) {
             descs.add(desc);
         }
-        desc = trendTypeDesc();
+        desc = seasTypeDesc();
+        if (desc != null) {
+            descs.add(desc);
+        }
+        desc = initialSeasDesc();
+        if (desc != null) {
+            descs.add(desc);
+        }
+        desc = finalSeasDesc();
         if (desc != null) {
             descs.add(desc);
         }
         return descs;
     }
+
+    public SeasonalType getSeasonalType() {
+        SeasonalFilterSpec sspec = spec().getFinalSeasonalFilter();
+        if (sspec instanceof X11SeasonalFilterSpec) {
+            return SeasonalType.X11;
+        } else if (sspec instanceof GenericSeasonalFilterSpec gspec) {
+            if (gspec.getFilter() instanceof LocalPolynomialFilterSpec) {
+                return SeasonalType.LocalPolynomial;
+            }
+        }
+        return null;
+
+    }
+
+    public IPropertyDescriptors getInitialSeasonalFilter() {
+        SeasonalFilterSpec sspec = spec().getInitialSeasonalFilter();
+        if (sspec instanceof GenericSeasonalFilterSpec gspec) {
+            if (gspec.getFilter() instanceof LocalPolynomialFilterSpec lpspec) {
+                TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
+
+                return new LocalPolynomialSpecUI(lpspec, isRo(), true, nspec
+                        -> {
+                    GenericSeasonalFilterSpec ngspec = new GenericSeasonalFilterSpec(domain.getAnnualFrequency(), nspec);
+                    update(spec().toBuilder()
+                            .initialSeasonalFilter(ngspec)
+                            .build());
+                });
+            }
+        }
+        return null;
+    }
+
+    public IPropertyDescriptors getFinalSeasonalFilter() {
+        SeasonalFilterSpec sspec = spec().getFinalSeasonalFilter();
+        if (sspec instanceof GenericSeasonalFilterSpec gspec) {
+            if (gspec.getFilter() instanceof LocalPolynomialFilterSpec lpspec) {
+                TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
+
+                return new LocalPolynomialSpecUI(lpspec, isRo(), true, nspec
+                        -> {
+                    GenericSeasonalFilterSpec ngspec = new GenericSeasonalFilterSpec(domain.getAnnualFrequency(), nspec);
+                    update(spec().toBuilder()
+                            .finalSeasonalFilter(ngspec)
+                            .build());
+                });
+            }
+        }
+        return null;
+    }
+
+    public void setSeasonalType(SeasonalType type) {
+        SeasonalFilterSpec nspec = null;
+        TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
+        if (domain == null) {
+            return;
+        }
+        switch (type) {
+            case X11 ->
+                nspec = new X11SeasonalFilterSpec(domain.getAnnualFrequency(), SeasonalFilterOption.S3X5);
+            case LocalPolynomial ->
+                nspec = new GenericSeasonalFilterSpec(domain.getAnnualFrequency(), LocalPolynomialFilterSpec.DEF_SEAS_SPEC);
+        }
+
+        if (nspec != null) {
+            update(spec().toBuilder()
+                    .initialSeasonalFilter(nspec)
+                    .finalSeasonalFilter(nspec)
+                    .build());
+        }
+    }
+
+    public SeasonalFilterOption getX11InitialSeasonalFilter() {
+        SeasonalFilterSpec sspec = spec().getInitialSeasonalFilter();
+        if (sspec instanceof X11SeasonalFilterSpec xspec) {
+            return xspec.getFilter();
+        } else {
+            return null;
+        }
+    }
+
+    public SeasonalFilterOption getX11FinalSeasonalFilter() {
+        SeasonalFilterSpec sspec = spec().getFinalSeasonalFilter();
+        if (sspec instanceof X11SeasonalFilterSpec xspec) {
+            return xspec.getFilter();
+        } else {
+            return null;
+        }
+    }
+
+    public void setX11InitialSeasonalFilter(SeasonalFilterOption option) {
+        TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
+        SeasonalFilterSpec nspec = new X11SeasonalFilterSpec(domain.getAnnualFrequency(), option);
+        update(spec().toBuilder()
+                .initialSeasonalFilter(nspec)
+                .build());
+    }
+
+    public void setX11FinalSeasonalFilter(SeasonalFilterOption option) {
+        TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
+        SeasonalFilterSpec nspec = new X11SeasonalFilterSpec(domain.getAnnualFrequency(), option);
+        update(spec().toBuilder()
+                .finalSeasonalFilter(nspec)
+                .build());
+    }
+
 //    ///////////////////////////////////////////////////////////////////////////
     private static final int DEF_ID = -1, MODE_ID = 0, SEAS_ID = 1, FORECAST_ID = 2, BACKCAST_ID = 12, LSIGMA_ID = 3, USIGMA_ID = 4, AUTOTREND_ID = 5,
-            TREND_ID = 6, ISEAS_ID = 7, FSEAS_ID = 8, TRENDTYPE_ID=10;
+            TREND_ID = 6, ISEAS_ID = 7, FSEAS_ID = 8, TRENDTYPE_ID = 10, SEASTYPE_ID = 11;
 
     @NbBundle.Messages({
         "x11plusSpecUI.defDesc.name=Default",
@@ -398,19 +515,47 @@ public class X11plusSpecUI implements IPropertyDescriptors {
     }
 
     @NbBundle.Messages({
-        "x11plusSpecUI.iseasDesc.name=Initial seasonal filter",
-        "x11plusSpecUI.iseasDesc.desc=Initial seasonal filter"
+        "x11plusSpecUI.seasTypeDesc.name=Seasonal type",
+        "x11plusSpecUI.seasTypeDesc.desc=Seasonal specification."
     })
-    private EnhancedPropertyDescriptor iseasDesc() {
+    private EnhancedPropertyDescriptor seasTypeDesc() {
         if (isDefault()) {
             return null;
         }
         try {
-            PropertyDescriptor desc = new PropertyDescriptor("SeasonalFilter", this.getClass(), "getInitialSeasonalFilter", null);
-            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, ISEAS_ID);
-            desc.setDisplayName(Bundle.x11plusSpecUI_iseasDesc_name());
-            desc.setShortDescription(Bundle.x11plusSpecUI_iseasDesc_desc());
+            PropertyDescriptor desc = new PropertyDescriptor("SeasonalType", this.getClass());
+            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, SEASTYPE_ID);
+            desc.setDisplayName(Bundle.x11plusSpecUI_seasTypeDesc_name());
+            desc.setShortDescription(Bundle.x11plusSpecUI_seasTypeDesc_desc());
             return edesc;
+        } catch (IntrospectionException ex) {
+            return null;
+        }
+    }
+
+    @NbBundle.Messages({
+        "x11plusSpecUI.iseasDesc.name=Initial seasonal filter",
+        "x11plusSpecUI.iseasDesc.desc=Initial seasonal filter"
+    })
+    private EnhancedPropertyDescriptor initialSeasDesc() {
+        if (isDefault()) {
+            return null;
+        }
+        try {
+            SeasonalFilterSpec sspec = spec().getFinalSeasonalFilter();
+            if (sspec instanceof X11SeasonalFilterSpec) {
+                PropertyDescriptor desc = new PropertyDescriptor("X11InitialSeasonalFilter", this.getClass());
+                EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, ISEAS_ID);
+                desc.setDisplayName(Bundle.x11plusSpecUI_iseasDesc_name());
+                desc.setShortDescription(Bundle.x11plusSpecUI_iseasDesc_desc());
+                return edesc;
+            } else {
+                PropertyDescriptor desc = new PropertyDescriptor("InitialSeasonalFilter", this.getClass(), "getInitialSeasonalFilter", null);
+                EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, ISEAS_ID);
+                desc.setDisplayName(Bundle.x11plusSpecUI_iseasDesc_name());
+                desc.setShortDescription(Bundle.x11plusSpecUI_iseasDesc_desc());
+                return edesc;
+            }
         } catch (IntrospectionException ex) {
             return null;
         }
@@ -420,39 +565,48 @@ public class X11plusSpecUI implements IPropertyDescriptors {
         "x11plusSpecUI.fseasDesc.name=Final seasonal filter",
         "x11plusSpecUI.fseasDesc.desc=Final seasonal filter"
     })
-    private EnhancedPropertyDescriptor fseasDesc() {
+    private EnhancedPropertyDescriptor finalSeasDesc() {
         if (isDefault()) {
             return null;
         }
         try {
-            PropertyDescriptor desc = new PropertyDescriptor("SeasonalFilter", this.getClass(), "getFinalSeasonalFilter", null);
-            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, FSEAS_ID);
-            desc.setDisplayName(Bundle.x11plusSpecUI_fseasDesc_name());
-            desc.setShortDescription(Bundle.x11plusSpecUI_fseasDesc_desc());
-            return edesc;
+            SeasonalFilterSpec sspec = spec().getFinalSeasonalFilter();
+            if (sspec instanceof X11SeasonalFilterSpec) {
+                PropertyDescriptor desc = new PropertyDescriptor("X11FinalSeasonalFilter", this.getClass());
+                EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, FSEAS_ID);
+                desc.setDisplayName(Bundle.x11plusSpecUI_fseasDesc_name());
+                desc.setShortDescription(Bundle.x11plusSpecUI_fseasDesc_desc());
+                return edesc;
+            } else {
+                PropertyDescriptor desc = new PropertyDescriptor("FinalSeasonalFilter", this.getClass(), "getFinalSeasonalFilter", null);
+                EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, FSEAS_ID);
+                desc.setDisplayName(Bundle.x11plusSpecUI_fseasDesc_name());
+                desc.setShortDescription(Bundle.x11plusSpecUI_fseasDesc_desc());
+                return edesc;
+            }
         } catch (IntrospectionException ex) {
             return null;
         }
     }
 
-    @NbBundle.Messages({
-        "x11plusSpecUI.seasDesc.name=Initial seasonal filter",
-        "x11plusSpecUI.seasDesc.desc=Initial seasonal filter"
-    })
-    private EnhancedPropertyDescriptor seasDesc() {
-        if (isDefault()) {
-            return null;
-        }
-        try {
-            PropertyDescriptor desc = new PropertyDescriptor("SeasonalFilter", this.getClass(), "getInitialSeasonalFilter", null);
-            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, ISEAS_ID);
-            desc.setDisplayName(Bundle.x11plusSpecUI_seasDesc_name());
-            desc.setShortDescription(Bundle.x11plusSpecUI_seasDesc_desc());
-            return edesc;
-        } catch (IntrospectionException ex) {
-            return null;
-        }
-    }
+//    @NbBundle.Messages({
+//        "x11plusSpecUI.seasDesc.name=Initial seasonal filter",
+//        "x11plusSpecUI.seasDesc.desc=Initial seasonal filter"
+//    })
+//    private EnhancedPropertyDescriptor seasDesc() {
+//        if (isDefault()) {
+//            return null;
+//        }
+//        try {
+//            PropertyDescriptor desc = new PropertyDescriptor("SeasonalFilter", this.getClass(), "getInitialSeasonalFilter", null);
+//            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, ISEAS_ID);
+//            desc.setDisplayName(Bundle.x11plusSpecUI_seasDesc_name());
+//            desc.setShortDescription(Bundle.x11plusSpecUI_seasDesc_desc());
+//            return edesc;
+//        } catch (IntrospectionException ex) {
+//            return null;
+//        }
+//    }
 
     @Messages("x11plusSpecUI.getDisplayName=X11+")
     @Override

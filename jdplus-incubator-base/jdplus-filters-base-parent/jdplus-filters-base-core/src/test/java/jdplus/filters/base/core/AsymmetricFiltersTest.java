@@ -32,9 +32,11 @@ public class AsymmetricFiltersTest {
         int h = 6;
         SymmetricFilter lp = LocalPolynomialFilters.ofDefault(h, 2, DiscreteKernel.henderson(h));
         double[] c = new double[]{2 / Math.sqrt(Math.PI) / 3.5};
-        IFiniteFilter f1 = AsymmetricFiltersFactory.mmsreFilter(lp, 0, 0, c, null);
-        IFiniteFilter f2 = AsymmetricFiltersFactory.musgraveFilter(lp, 0, 3.5);
-        assertTrue(DoubleSeq.of(f1.weightsToArray()).distance(DoubleSeq.of(f2.weightsToArray())) < 1e-9);
+        for (int i = 0; i < 6; ++i) {
+            IFiniteFilter f1 = AsymmetricFiltersFactory.mmsreFilter(lp, i, 0, c, null);
+            IFiniteFilter f2 = AsymmetricFiltersFactory.musgraveFilter(lp, i, 3.5);
+            assertTrue(DoubleSeq.of(f1.weightsToArray()).distance(DoubleSeq.of(f2.weightsToArray())) < 1e-9);
+        }
     }
 
     public static void displayMusgrave(int h) {
@@ -50,10 +52,10 @@ public class AsymmetricFiltersTest {
 //            displayFilters(f4, i);
 //        }
 //        
-        double[] c=new double[0];
-        IFiniteFilter[] m1 = AsymmetricFiltersFactory.mmsreFilters(lp, 0, c, null, Math.PI/18, 1 );
-        IFiniteFilter[] m2 = AsymmetricFiltersFactory.mmsreFilters(lp, 0, c, null, Math.PI/18, 10);
-        IFiniteFilter[] m3 = AsymmetricFiltersFactory.mmsreFilters(lp, 0, c, null, Math.PI/18, 100);
+        double[] c = new double[0];
+        IFiniteFilter[] m1 = AsymmetricFiltersFactory.mmsreFilters(lp, 0, c, null, Math.PI / 18, 1);
+        IFiniteFilter[] m2 = AsymmetricFiltersFactory.mmsreFilters(lp, 0, c, null, Math.PI / 18, 10);
+        IFiniteFilter[] m3 = AsymmetricFiltersFactory.mmsreFilters(lp, 0, c, null, Math.PI / 18, 100);
         for (int i = 0; i < 3; ++i) {
             displayFilters(m1, i);
             displayFilters(m2, i);
@@ -83,6 +85,7 @@ public class AsymmetricFiltersTest {
                 break;
         }
     }
+
     public static void frDistance(DoubleUnaryOperator sd, int M, int output) {
         for (int q = 0; q < M; ++q) {
             double bandWidth = CutAndNormalizeFilters.optimalBandWidth(M, q,

@@ -20,6 +20,8 @@ import jdplus.toolkit.desktop.plugin.ui.properties.l2fprod.ArrayRenderer;
 import jdplus.toolkit.desktop.plugin.ui.properties.l2fprod.CustomPropertyEditorRegistry;
 import jdplus.toolkit.desktop.plugin.ui.properties.l2fprod.CustomPropertyRendererFactory;
 import jdplus.toolkit.desktop.plugin.util.InstallerStep;
+import jdplus.x11plus.desktop.plugin.x13.ui.HendersonSpecUI;
+import jdplus.x11plus.desktop.plugin.x13.ui.LocalPolynomialSpecUI;
 import org.openide.modules.ModuleInstall;
 
 
@@ -47,12 +49,13 @@ public final class Installer extends ModuleInstall {
         @Override
         public void restore() {
 //        CustomPropertyEditorRegistry.INSTANCE.register(SeasonalSpec[].class, new SeasonalSpecsEditor());
-//        CustomPropertyRendererFactory.INSTANCE.getRegistry().registerRenderer(SeasonalSpec[].class, new ArrayRenderer());
+//        CustomPropertyRendererFactory.INSTANCE.getRegistry().registerRenderer(HendersonSpecUI.class, new ArrayRenderer());
         }
 
         @Override
         public void close() {
-//            CustomPropertyEditorRegistry.INSTANCE.unregister(SeasonalSpec[].class);
+//            CustomPropertyEditorRegistry.INSTANCE.unregister(HendersonSpecUI.class);
+//            CustomPropertyEditorRegistry.INSTANCE.unregister(LocalPolynomialSpecUI.class);
         }
     }
 //    private static final class DemetraTramoSeatsDiagnosticsStep extends InstallerStep {
