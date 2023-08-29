@@ -16,7 +16,7 @@
  */
 package jdplus.filters.base.r;
 
-import jdplus.filters.base.core.FiltersToolkit;
+import jdplus.toolkit.base.core.math.linearfilters.FiltersToolkit;
 import jdplus.toolkit.base.core.data.analysis.DiscreteKernel;
 import java.util.function.IntToDoubleFunction;
 import jdplus.toolkit.base.api.data.DoubleSeq;

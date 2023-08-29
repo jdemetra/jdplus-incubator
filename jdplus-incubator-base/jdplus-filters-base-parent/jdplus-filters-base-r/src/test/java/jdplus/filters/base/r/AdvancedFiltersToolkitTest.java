@@ -5,7 +5,8 @@
  */
 package jdplus.filters.base.r;
 
-import jdplus.filters.base.core.FiltersToolkit;
+import jdplus.filters.base.core.AdvancedFiltersToolkit;
+import jdplus.toolkit.base.core.math.linearfilters.FiltersToolkit;
 import jdplus.toolkit.base.core.math.linearfilters.FiniteFilter;
 import org.junit.jupiter.api.Test;
 
@@ -15,16 +16,16 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author PALATEJ
  */
-public class FiltersToolkitTest {
+public class AdvancedFiltersToolkitTest {
     
-    public FiltersToolkitTest() {
+    public AdvancedFiltersToolkitTest() {
     }
 
     @Test
     public void testFST() {
-        FiltersToolkit.FSTResult rslt = FiltersToolkit.fstfilter(12, 0, 2, 0.001, 3, 0.999, Math.PI/6, true);
+        AdvancedFiltersToolkit.FSTResult rslt = AdvancedFiltersToolkit.fstfilter(12, 0, 2, 0.001, 3, 0.999, Math.PI/6, true);
         FiniteFilter filter = rslt.getFilter();
-        FiltersToolkit.FSTResult fst=FiltersToolkit.fst(filter.weightsToArray(), -12, Math.PI/6);
+        AdvancedFiltersToolkit.FSTResult fst=AdvancedFiltersToolkit.fst(filter.weightsToArray(), -12, Math.PI/6);
         
         assertEquals(fst.getCriterions()[0], rslt.getCriterions()[0], 1e-6);
         assertEquals(fst.getCriterions()[1], rslt.getCriterions()[1], 1e-6);

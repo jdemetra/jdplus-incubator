@@ -66,8 +66,8 @@ public class BsmKernel {
     private boolean converged = false;
 
     private DiffuseConcentratedLikelihood likelihood;
-    private SsfFunction<BsmData, SsfBsm2> fn_;
-    private SsfFunctionPoint<BsmData, SsfBsm2> fnmax_;
+    private SsfFunction<BsmData, SsfBsm2> fn;
+    private SsfFunctionPoint<BsmData, SsfBsm2> fnmax;
 
     private void clear() {
         z = null;
@@ -79,8 +79,8 @@ public class BsmKernel {
         converged = false;
         fixedVar = Component.Undefined;
         likelihood = null;
-        fn_ = null;
-        fnmax_ = null;
+        fn = null;
+        fnmax = null;
         factor = 1;
     }
 
@@ -100,19 +100,19 @@ public class BsmKernel {
             modelSpec = specOf(bsm);
         }
 
-        fn_ = null;
-        fnmax_ = null;
+        fn = null;
+        fnmax = null;
 
         if (isScaling()) {
             FunctionMinimizer fmin = minimizer(estimationSpec.getPrecision(), 10);
             for (int i = 0; i < 3; ++i) {
                 BsmMapping mapping = new BsmMapping(modelSpec, period, fixedVar);
-                fn_ = buildFunction(mapping, true);
+                fn = buildFunction(mapping, true);
                 DoubleSeq parameters = mapping.map(bsm);
-                converged = fmin.minimize(fn_.evaluate(parameters));
-                fnmax_ = (SsfFunctionPoint<BsmData, SsfBsm2>) fmin.getResult();
-                bsm = fnmax_.getCore();
-                likelihood = fnmax_.getLikelihood();
+                converged = fmin.minimize(fn.evaluate(parameters));
+                fnmax = (SsfFunctionPoint<BsmData, SsfBsm2>) fmin.getResult();
+                bsm = fnmax.getCore();
+                likelihood = fnmax.getLikelihood();
 
                 BsmData.ComponentVariance max = bsm.maxVariance();
                 bsm = bsm.scaleVariances(1 / max.getVariance());
@@ -128,12 +128,12 @@ public class BsmKernel {
         if (!isScaling() || !converged) {
             FunctionMinimizer fmin = minimizer(estimationSpec.getPrecision(), 100);
             BsmMapping mapping = new BsmMapping(modelSpec, period, isScaling() ? fixedVar : null);
-            fn_ = buildFunction(mapping, isScaling());
+            fn = buildFunction(mapping, isScaling());
             DoubleSeq parameters = mapping.map(bsm);
-            converged = fmin.minimize(fn_.evaluate(parameters));
-            fnmax_ = (SsfFunctionPoint<BsmData, SsfBsm2>) fmin.getResult();
-            bsm = fnmax_.getCore();
-            likelihood = fnmax_.getLikelihood();
+            converged = fmin.minimize(fn.evaluate(parameters));
+            fnmax = (SsfFunctionPoint<BsmData, SsfBsm2>) fmin.getResult();
+            bsm = fnmax.getCore();
+            likelihood = fnmax.getLikelihood();
             if (isScaling()) {
                 BsmData.ComponentVariance max = bsm.maxVariance();
                 bsm = bsm.scaleVariances(1 / max.getVariance());
@@ -148,11 +148,11 @@ public class BsmKernel {
         if (fixSmallVariance(bsm)) {
             // update the bsm and the likelihood !
             BsmMapping mapping = new BsmMapping(modelSpec, period, isScaling() ? fixedVar : null);
-            fn_ = buildFunction(mapping, isScaling());
+            fn = buildFunction(mapping, isScaling());
             DoubleSeq parameters = mapping.map(bsm);
-            fnmax_ = (SsfFunctionPoint<BsmData, SsfBsm2>) fn_.evaluate(parameters);
-            likelihood = fnmax_.getLikelihood();
-            bsm = fnmax_.getCore();
+            fnmax = (SsfFunctionPoint<BsmData, SsfBsm2>) fn.evaluate(parameters);
+            likelihood = fnmax.getLikelihood();
+            bsm = fnmax.getCore();
             modelSpec = specOf(bsm);
             ok = false;
         }

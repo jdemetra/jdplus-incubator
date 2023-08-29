@@ -18,8 +18,9 @@
     <dependencies>
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
-            <artifactId>jdplus-toolkit-base-api</artifactId>
-            <version>${jdplus-main.version}</version>
+            <artifactId>jdplus-sa-base-api</artifactId>
+            <version>3.0.3-SNAPSHOT</version>
+            <type>jar</type>
         </dependency>
     </dependencies>
 </project>

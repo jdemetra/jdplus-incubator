@@ -17,7 +17,7 @@
 package jdplus.x11plus.base.core;
 
 import java.util.Arrays;
-import jdplus.filters.base.core.FiltersToolkit;
+import jdplus.toolkit.base.core.math.linearfilters.FiltersToolkit;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.x11plus.base.api.X11SeasonalFilterSpec;
 import jdplus.x11plus.base.api.X11plusSpec;

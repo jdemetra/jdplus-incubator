@@ -16,7 +16,7 @@
  */
 package jdplus.filters.base.r;
 
-import jdplus.filters.base.core.FiltersToolkit;
+import jdplus.toolkit.base.core.math.linearfilters.FiltersToolkit;
 import jdplus.filters.base.api.SpectralDensity;
 import jdplus.filters.base.core.DFAFilterFactory;
 import jdplus.filters.base.api.DFAFilterSpec;

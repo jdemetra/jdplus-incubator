@@ -16,7 +16,7 @@
  */
 package jdplus.filters.base.r;
 
-import jdplus.filters.base.core.FiltersToolkit;
+import jdplus.toolkit.base.core.math.linearfilters.FiltersToolkit;
 import jdplus.toolkit.base.core.stats.Kernels;
 import jdplus.toolkit.base.core.math.linearfilters.AsymmetricFiltersFactory;
 import jdplus.toolkit.base.core.math.linearfilters.SymmetricFilter;

@@ -19,7 +19,7 @@ package jdplus.x11plus.base.core;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import jdplus.filters.base.core.FiltersToolkit;
+import jdplus.toolkit.base.core.math.linearfilters.FiltersToolkit;
 import jdplus.x11plus.base.api.SeasonalFilterOption;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.math.linearfilters.FiniteFilter;

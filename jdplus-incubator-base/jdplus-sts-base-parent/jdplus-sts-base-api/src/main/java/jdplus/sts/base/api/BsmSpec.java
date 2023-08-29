@@ -27,7 +27,7 @@ import nbbrd.design.Development;
 @lombok.Value
 @lombok.AllArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public final class BsmSpec {
-    
+
     public static final BsmSpec DEFAULT = BsmSpec.builder().build();
 
     public static Builder builder() {
@@ -194,12 +194,12 @@ public final class BsmSpec {
                 }
         }
     }
-    
-    private boolean isScalable(Parameter p){
+
+    private boolean isScalable(Parameter p) {
         return p == null || p.getValue() == 0 || p.isFree();
     }
-    
-    public boolean isScalable(){
+
+    public boolean isScalable() {
         return isScalable(levelVar) && isScalable(slopeVar) && isScalable(seasonalVar) && isScalable(noiseVar) && isScalable(cycleVar);
     }
 
@@ -353,7 +353,6 @@ public final class BsmSpec {
 //                return new BsmSpec(levelVar, slopeVar, Parameter.undefined(), seasonalVar, cycleVar, cycleDumpingFactor, cycleLength, seasonalModel);
 //        }
 //    }
-
     public int getFreeVariancesCount() {
         int n = 0;
         if (isFree(levelVar)) {
@@ -400,14 +399,16 @@ public final class BsmSpec {
     }
 
     public static double valueOf(Parameter p, double defValue) {
-        if(p == null)
+        if (p == null) {
             return -1;
-        if (p.isDefined())
+        }
+        if (p.isDefined()) {
             return p.getValue();
-        else
+        } else {
             return defValue;
+        }
     }
-    
-    public static final double DEF_VAR=1, DEF_CDUMP=.9, DEF_CLENGTH=6;
+
+    public static final double DEF_VAR = 1, DEF_CDUMP = .9, DEF_CLENGTH = 6;
 
 }

@@ -16,7 +16,7 @@
  */
 package jdplus.x11plus.base.core;
 
-import jdplus.filters.base.core.FiltersToolkit;
+import jdplus.toolkit.base.core.math.linearfilters.FiltersToolkit;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.sa.base.api.DecompositionMode;
 import jdplus.toolkit.base.api.data.DoubleSeq;

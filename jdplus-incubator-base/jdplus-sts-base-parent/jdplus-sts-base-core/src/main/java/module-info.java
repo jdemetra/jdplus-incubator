@@ -10,6 +10,7 @@ module jdplus.sts.base.core {
     requires jdplus.sts.base.api;
     requires jdplus.toolkit.base.core;
     requires jdplus.sa.base.api;
+    requires jdplus.sa.base.core;
 
     exports jdplus.sts.base.core.msts;
     exports jdplus.sts.base.core.msts.internal;

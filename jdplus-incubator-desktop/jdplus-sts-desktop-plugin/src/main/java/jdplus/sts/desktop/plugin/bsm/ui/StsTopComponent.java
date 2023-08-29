@@ -14,15 +14,15 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.stl.desktop.plugin.stl.ui;
+package jdplus.sts.desktop.plugin.bsm.ui;
 
+import jdplus.sts.base.core.StsDocument;
+import jdplus.sts.desktop.plugin.bsm.StsDocumentManager;
 import jdplus.toolkit.desktop.plugin.ui.processing.TsProcessingViewer;
 import jdplus.toolkit.desktop.plugin.workspace.DocumentUIServices;
 import jdplus.toolkit.desktop.plugin.workspace.WorkspaceFactory;
 import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItem;
 import jdplus.toolkit.desktop.plugin.workspace.ui.WorkspaceTsTopComponent;
-import jdplus.stl.base.core.stlplus.StlPlusDocument;
-import jdplus.stl.desktop.plugin.stl.StlPlusDocumentManager;
 import org.openide.windows.TopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -34,36 +34,36 @@ import org.openide.util.NbBundle;
 /**
  * Top component which displays something.
  */
-@ConvertAsProperties(dtd = "-//demetra.desktop.stl//StlPlus//EN",
+@ConvertAsProperties(dtd = "-//demetra.desktop.sts//Sts//EN",
         autostore = false)
-@TopComponent.Description(preferredID = "StlPlusTopComponent",
+@TopComponent.Description(preferredID = "StsTopComponent",
         //iconBase="SET/PATH/TO/ICON/HERE", 
         persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
-@ActionID(category = "Seasonal Adjustment", id = "demetra.desktop.stlplus.StlPlusTopComponent")
+@ActionID(category = "Seasonal Adjustment", id = "demetra.desktop.sts.StsTopComponent")
 @ActionReference(path = "Menu/Statistical methods/Seasonal Adjustment/Single Analysis", position = 3000)
-@TopComponent.OpenActionRegistration(displayName = "#CTL_StlPlusAction")
+@TopComponent.OpenActionRegistration(displayName = "#CTL_StsAction")
 @NbBundle.Messages({
-    "CTL_StlPlusAction=STL+",
-    "CTL_StlPlusTopComponent=STL+ Window",
-    "HINT_StlPlusTopComponent=This is a STL+ window"
+    "CTL_StsAction=STS",
+    "CTL_StsTopComponent=STS Window",
+    "HINT_StsTopComponent=This is a STS window"
 })
-public final class StlPlusTopComponent extends WorkspaceTsTopComponent<StlPlusDocument> {
+public final class StsTopComponent extends WorkspaceTsTopComponent<StsDocument> {
 
     private final ExplorerManager mgr = new ExplorerManager();
 
-    private static StlPlusDocumentManager manager() {
-        return WorkspaceFactory.getInstance().getManager(StlPlusDocumentManager.class);
+    private static StsDocumentManager manager() {
+        return WorkspaceFactory.getInstance().getManager(StsDocumentManager.class);
     }
 
-    public StlPlusTopComponent() {
+    public StsTopComponent() {
         this(null);
     }
 
-    public StlPlusTopComponent(WorkspaceItem<StlPlusDocument> doc) {
+    public StsTopComponent(WorkspaceItem<StsDocument> doc) {
         super(doc);
         initComponents();
-        setToolTipText(NbBundle.getMessage(StlPlusTopComponent.class, "HINT_StlPlusTopComponent"));
+        setToolTipText(NbBundle.getMessage(StsTopComponent.class, "HINT_StlPlusTopComponent"));
         associateLookup(ExplorerUtils.createLookup(mgr, getActionMap()));
     }
 
@@ -74,12 +74,12 @@ public final class StlPlusTopComponent extends WorkspaceTsTopComponent<StlPlusDo
 
     @Override
     protected TsProcessingViewer initViewer() {
-        return TsProcessingViewer.create(getElement(), DocumentUIServices.forDocument(StlPlusDocument.class));
+        return TsProcessingViewer.create(getElement(), DocumentUIServices.forDocument(StsDocument.class));
     }
 
 
     @Override
-    public WorkspaceItem<StlPlusDocument> newDocument() {
+    public WorkspaceItem<StsDocument> newDocument() {
         return manager().create(WorkspaceFactory.getInstance().getActiveWorkspace());
     }
 
@@ -108,6 +108,6 @@ public final class StlPlusTopComponent extends WorkspaceTsTopComponent<StlPlusDo
 
     @Override
     protected String getContextPath() {
-        return StlPlusDocumentManager.CONTEXTPATH;
+        return StsDocumentManager.CONTEXTPATH;
     }
 }
