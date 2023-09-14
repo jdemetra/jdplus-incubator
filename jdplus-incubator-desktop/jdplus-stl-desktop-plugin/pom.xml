@@ -114,11 +114,37 @@
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
+            <artifactId>jdplus-advancedsa-desktop-plugin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.joinup.sat</groupId>
             <artifactId>jdplus-highfreq-desktop-plugin</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <!-- 3. JD3 Base -->
+        <dependency>
+            <groupId>eu.europa.ec.joinup.sat</groupId>
+            <artifactId>jdplus-stl-base-api</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>eu.europa.ec.joinup.sat</groupId>
+                    <artifactId>jdplus-highfreq-base-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.joinup.sat</groupId>
+            <artifactId>jdplus-stl-base-core</artifactId>
+            <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>eu.europa.ec.joinup.sat</groupId>
+                    <artifactId>jdplus-highfreq-base-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
             <artifactId>jdplus-stl-base-io</artifactId>
@@ -134,11 +160,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>eu.europa.ec.joinup.sat</groupId>
-            <artifactId>jdplus-stl-base-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <!-- 4. Other libraries -->
     </dependencies>
@@ -152,9 +173,7 @@
                 <configuration>
                     <requiresRestart>true</requiresRestart>
                     <publicPackages>
-                        <publicPackage>demetra.stl.*</publicPackage>
                         <publicPackage>jdplus.stl.*</publicPackage>
-                        <publicPackage>demetra.desktop.stl.*</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>

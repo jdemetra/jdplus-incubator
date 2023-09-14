@@ -18,8 +18,7 @@ package jdplus.sts.base.core;
 
 import jdplus.sa.base.core.CholetteProcessor;
 import jdplus.sa.base.core.PreliminaryChecks;
-import jdplus.sa.base.core.SaBenchmarkingResults;
-import jdplus.sa.base.core.regarima.FastKernel;
+import jdplus.advancedsa.base.core.regarima.FastKernel;
 import jdplus.sts.base.api.BsmSpec;
 import jdplus.sts.base.api.StsSpec;
 import jdplus.toolkit.base.api.modelling.regular.SeriesSpec;

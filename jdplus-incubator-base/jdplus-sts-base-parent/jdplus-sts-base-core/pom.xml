@@ -24,8 +24,8 @@
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
-            <artifactId>jdplus-sa-base-core</artifactId>
-            <version>${jdplus-main.version}</version>
+            <artifactId>jdplus-advancedsa-base-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- test only -->

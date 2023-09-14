@@ -115,11 +115,6 @@
         </dependency>
 
         <!-- 3. JD3 Base -->
-        <dependency>
-            <groupId>eu.europa.ec.joinup.sat</groupId>
-            <artifactId>jdplus-sts-base-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
         <!-- 4. Other libraries -->
     </dependencies>
