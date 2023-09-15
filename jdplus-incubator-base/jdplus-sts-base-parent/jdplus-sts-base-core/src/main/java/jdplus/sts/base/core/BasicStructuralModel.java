@@ -6,7 +6,7 @@
 package jdplus.sts.base.core;
 
 import jdplus.sa.base.api.SeriesDecomposition;
-import jdplus.sts.base.api.BsmDecomposition;
+import jdplus.sts.base.api.RawBsmDecomposition;
 import jdplus.sts.base.api.BsmDescription;
 
 /**
@@ -17,6 +17,6 @@ public interface BasicStructuralModel {
     
     BsmDescription getDescription();
     BsmEstimation getEstimation();
-    BsmDecomposition getBsmDecomposition();
+    RawBsmDecomposition getBsmDecomposition();
     SeriesDecomposition getFinalDecomposition();
  }

@@ -114,7 +114,7 @@
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
-            <artifactId>jdplus-highfreq-desktop-plugin</artifactId>
+            <artifactId>jdplus-advancedsa-desktop-plugin</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -130,7 +130,7 @@
                 </exclusion>
             </exclusions>
         </dependency-->
-       <dependency>
+        <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
             <artifactId>jdplus-filters-base-api</artifactId>
             <version>${project.version}</version>
@@ -141,7 +141,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-       <dependency>
+        <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
             <artifactId>jdplus-filters-base-core</artifactId>
             <version>${project.version}</version>
@@ -152,25 +152,33 @@
                 </exclusion>
             </exclusions>
         </dependency>
-       <dependency>
+        <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
-            <artifactId>jdplus-x11plus-base-api</artifactId>
+            <artifactId>jdplus-x12plus-base-api</artifactId>
             <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>eu.europa.ec.joinup.sat</groupId>
-                    <artifactId>jdplus-sa-base-api</artifactId>
+                    <artifactId>jdplus-highfreq-base-api</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>eu.europa.ec.joinup.sat</groupId>
+                    <artifactId>jdplus-filters-base-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
-            <artifactId>jdplus-x11plus-base-core</artifactId>
+            <artifactId>jdplus-x12plus-base-core</artifactId>
             <version>${project.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>eu.europa.ec.joinup.sat</groupId>
-                    <artifactId>jdplus-sa-base-core</artifactId>
+                    <artifactId>jdplus-highfreq-base-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>eu.europa.ec.joinup.sat</groupId>
+                    <artifactId>jdplus-filters-base-core</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -187,9 +195,7 @@
                 <configuration>
                     <requiresRestart>true</requiresRestart>
                     <publicPackages>
-                        <publicPackage>demetra.x11plus.*</publicPackage>
-                        <publicPackage>jdplus.x11plus.*</publicPackage>
-                        <publicPackage>demetra.desktop.x11plus.*</publicPackage>
+                        <publicPackage>jdplus.x12plus.*</publicPackage>
                     </publicPackages>
                 </configuration>
             </plugin>

@@ -17,6 +17,7 @@
 package jdplus.sts.base.core;
 
 import jdplus.sts.base.api.StsSpec;
+import jdplus.toolkit.base.api.processing.ProcessingLog;
 import jdplus.toolkit.base.api.timeseries.AbstractTsDocument;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.api.timeseries.regression.ModellingContext;
@@ -41,8 +42,7 @@ public class StsDocument extends AbstractTsDocument<StsSpec, StsResults> {
 
     @Override
     protected StsResults internalProcess(StsSpec spec, TsData data) {
-//        return StsKernel.of(spec, context).process(data, ProcessingLog.dummy());
-        return null;
+        return StsKernel.of(spec, context).process(data, ProcessingLog.dummy());
     }
 
 }

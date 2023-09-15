@@ -27,6 +27,7 @@ import jdplus.sts.base.api.BsmDescription;
 import jdplus.sts.base.core.BsmEstimation;
 import jdplus.sts.base.api.BsmSpec;
 import jdplus.sts.base.api.Component;
+import jdplus.sts.base.api.RawBsmDecomposition;
 import jdplus.sts.base.api.SeasonalModel;
 import jdplus.toolkit.base.api.timeseries.TsDomain;
 import jdplus.toolkit.base.api.timeseries.regression.ITsVariable;
@@ -130,7 +131,7 @@ public class StsProtosUtility {
         return builder.build();
     }
 
-    public ModellingProtos.Component componentOf(BsmDecomposition decomposition, Component cmp) {
+    public ModellingProtos.Component componentOf(RawBsmDecomposition decomposition, Component cmp) {
         DoubleSeq s = decomposition.getSeries(cmp, false);
         if (s == null) {
             return null;
@@ -142,7 +143,7 @@ public class StsProtosUtility {
         }
     }
 
-    public StsProtos.Bsm.Components convert(BsmDecomposition decomposition) {
+    public StsProtos.Bsm.Components convert(RawBsmDecomposition decomposition) {
         StsProtos.Bsm.Components.Builder builder = StsProtos.Bsm.Components.newBuilder();
         ModellingProtos.Component cmp = componentOf(decomposition, Component.Series);
         if (cmp != null) {

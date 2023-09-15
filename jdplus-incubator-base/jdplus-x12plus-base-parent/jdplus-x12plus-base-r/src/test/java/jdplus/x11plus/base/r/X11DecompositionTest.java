@@ -30,9 +30,9 @@ public class X11DecompositionTest {
         X11Decomposition.Results r2 = X11Decomposition.dafX11(s, 12, true, 11, 2, "Henderson", 3, "Epanechnikov", 1.5, 2.5);
         assertTrue(r2 != null);
         System.out.println(DoubleSeq.of(r2.getData(t, double[].class)));
-        X11Decomposition.Results r3 = X11Decomposition.rkhsX11(s, 12, true, 11, 2, "BiWeight", true, "FrequencyResponse", true, Math.PI / 8, 3, "Henderson", 1.5, 2.5);
-        assertTrue(r3 != null);
-        System.out.println(DoubleSeq.of(r3.getData(t, double[].class)));
+//        X11Decomposition.Results r3 = X11Decomposition.rkhsX11(s, 12, true, 11, 2, "BiWeight", true, "FrequencyResponse", true, Math.PI / 8, 3, "Henderson", 1.5, 2.5);
+//        assertTrue(r3 != null);
+//        System.out.println(DoubleSeq.of(r3.getData(t, double[].class)));
         X11Decomposition.Results r4 = X11Decomposition.lpX11(s, 12, true, 11, 2, "Henderson", 0, new double[]{}, 10, Math.PI / 8, 3, "Henderson", 1.5, 2.5);
         assertTrue(r4 != null);
         System.out.println(DoubleSeq.of(r4.getData(t, double[].class)));

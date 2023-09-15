@@ -45,7 +45,7 @@ public class StlHandlers {
     public static final class DocStlPlus implements FamilyHandler {
 
         @lombok.experimental.Delegate
-        private final FamilyHandler delegate = informationSet(SA_DOC_MSTLPLUS,
+        private final FamilyHandler delegate = informationSet(SA_DOC_STLPLUS,
                 new InformationSetSerializer<StlPlusDocument>() {
             @Override
             public InformationSet write(StlPlusDocument object, boolean verbose) {
@@ -64,9 +64,7 @@ public class StlHandlers {
             public boolean match(DemetraVersion version) {
                 return version == DemetraVersion.JD3;
             }
-
         }, "StlPlusDoc");
 
     }
-
 }

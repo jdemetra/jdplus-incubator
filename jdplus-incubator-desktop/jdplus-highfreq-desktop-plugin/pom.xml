@@ -146,6 +146,7 @@
                 <configuration>
                     <requiresRestart>true</requiresRestart>
                     <publicPackages>
+                        jdplus.highfreq.desktop.*
                     </publicPackages>
                 </configuration>
             </plugin>

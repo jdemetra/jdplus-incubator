@@ -20,8 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import jdplus.toolkit.base.api.ssf.SsfInitialization;
 import jdplus.toolkit.base.api.timeseries.TsData;
@@ -45,7 +43,6 @@ public class CompositeModelTest {
             URI uri = CompositeModels.class.getResource("/mssf1").toURI();
             tmp = MatrixSerializer.read(new File(uri), "\t|,");
         } catch (URISyntaxException | IOException ex) {
-            Logger.getLogger(CompositeModelTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         data = tmp;
     }

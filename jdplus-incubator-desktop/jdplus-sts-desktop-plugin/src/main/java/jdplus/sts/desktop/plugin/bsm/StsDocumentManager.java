@@ -34,13 +34,13 @@ public class StsDocumentManager extends AbstractWorkspaceTsItemManager<StsSpec, 
 
 
     public static final LinearId ID = new LinearId(StsSpec.FAMILY, "documents", StsSpec.METHOD);
-    public static final String PATH = "stlplus.doc";
-    public static final String ITEMPATH = "stlplus.doc.item";
-    public static final String CONTEXTPATH = "stlplus.doc.context";
+    public static final String PATH = "sts.doc";
+    public static final String ITEMPATH = "sts.doc.item";
+    public static final String CONTEXTPATH = "sts.doc.context";
 
     @Override
     protected String getItemPrefix() {
-        return "StlPlusDoc";
+        return "StsDoc";
     }
 
     @Override

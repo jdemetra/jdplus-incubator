@@ -51,8 +51,12 @@ import java.util.function.Function;
 import jdplus.toolkit.base.core.regsarima.regular.RegSarimaModel;
 import jdplus.sa.base.core.SaBenchmarkingResults;
 import jdplus.sa.base.core.tests.SeasonalityTests;
+import jdplus.sts.base.core.BsmResults;
+import jdplus.sts.base.core.StsDiagnostics;
 import jdplus.sts.base.core.StsDocument;
 import jdplus.sts.base.core.StsResults;
+import jdplus.sts.base.core.extractors.StsResultsExtractor;
+import jdplus.toolkit.base.api.dictionaries.Dictionary;
 import jdplus.toolkit.desktop.plugin.html.core.HtmlInformationSet;
 import jdplus.toolkit.desktop.plugin.html.modelling.HtmlRegSarima;
 import org.openide.util.lookup.ServiceProvider;
@@ -63,8 +67,25 @@ import org.openide.util.lookup.ServiceProvider;
  */
 public class StsViewFactory extends ProcDocumentViewFactory<StsDocument> {
 
-    public static final String STVAR = "Stationary variance decomposition";
-    public static final Id DECOMPOSITION_VAR = new LinearId(SaViews.DECOMPOSITION, STVAR);
+    public static final String SELECTION = "Selection",
+            STOCHASTIC = "Stochastic series",
+            COMPONENTS = "Components",
+            STM = "Structural model components",
+            MODELBASED = "Model-based tests",
+            WKANALYSIS = "WK analysis",
+            WK_COMPONENTS = "Components",
+            WK_FINALS = "Final estimators",
+            WK_PRELIMINARY = "Preliminary estimators",
+            WK_ERRORS = "Errors analysis";
+    public static final Id DECOMPOSITION_SUMMARY = new LinearId(SaViews.DECOMPOSITION);
+    public static final Id DECOMPOSITION_SERIES = new LinearId(SaViews.DECOMPOSITION, STOCHASTIC);
+    public static final Id DECOMPOSITION_CMPSERIES = new LinearId(SaViews.DECOMPOSITION, COMPONENTS);
+    public static final Id DECOMPOSITION_WK_COMPONENTS = new LinearId(SaViews.DECOMPOSITION, WKANALYSIS, WK_COMPONENTS);
+    public static final Id DECOMPOSITION_WK_FINALS = new LinearId(SaViews.DECOMPOSITION, WKANALYSIS, WK_FINALS);
+    public static final Id DECOMPOSITION_TESTS = new LinearId(SaViews.DECOMPOSITION, MODELBASED);
+    public static final Id MODEL_SELECTION = new LinearId(SaViews.MODEL, SELECTION);
+    public static final Id MODEL_LIKELIHOOD = new LinearId(SaViews.MODEL, SaViews.LIKELIHOOD);
+    public static final Id MODEL_CMPS = new LinearId(SaViews.MODEL, STM);
 
     private static final AtomicReference<IProcDocumentViewFactory<StsDocument>> INSTANCE = new AtomicReference();
 
@@ -87,60 +108,64 @@ public class StsViewFactory extends ProcDocumentViewFactory<StsDocument> {
 
     @Override
     public Id getPreferredView() {
-        return SaViews.MAIN_CHARTS_LOW;
+        return MODEL_SELECTION;
     }
 
-//    private final static Function<StsDocument, RegSarimaModel> MODELEXTRACTOR = source -> {
-//        StsResults tr = source.getResult();
-//        return tr == null ? null : tr.getPreprocessing();
-//    };
-//
-//    private final static Function<StsDocument, StlResults> DECOMPOSITIONEXTRACTOR = source -> {
-//        StsResults tr = source.getResult();
-//        return tr == null ? null : tr.getDecomposition();
-//    };
-//
-//    private final static Function<StsDocument, StsDiagnostics> DIAGSEXTRACTOR = source -> {
-//        StsResults tr = source.getResult();
-//        return tr == null ? null : tr.getDiagnostics();
-//    };
-//
-//    private final static Function<StsDocument, TsData> RESEXTRACTOR = MODELEXTRACTOR
-//            .andThen(regarima -> regarima == null ? null : regarima.fullResiduals());
-//
-//    private static String generateId(String name, String id) {
-//        return TsDynamicProvider.CompositeTs.builder()
-//                .name(name)
-//                .now(id)
-//                .build().toString();
-//    }
-//
-//    public static String[] lowSeries() {
-//        return new String[]{
-//            generateId("Series", SaDictionaries.Y),
-//            generateId("Seasonally adjusted", SaDictionaries.SA),
-//            generateId("Trend", SaDictionaries.T)
-//        };
-//    }
-//
-//    public static String[] highSeries() {
-//        return new String[]{
-//            generateId("Seasonal", SaDictionaries.S),
-//            generateId("Calendar effects", ModellingDictionary.CAL),
-//            generateId("Irregular", SaDictionaries.I)
-//        };
-//    }
-//
-//    public static String[] finalSeries() {
-//        return new String[]{
-//            generateId("Series", SaDictionaries.Y),
-//            generateId("Seasonally adjusted", SaDictionaries.SA),
-//            generateId("Trend", SaDictionaries.T),
-//            generateId("Seasonal", SaDictionaries.S),
-//            generateId("Irregular", SaDictionaries.I)
-//        };
-//    }
-//
+    private final static Function<StsDocument, RegSarimaModel> MODELEXTRACTOR = source -> {
+        StsResults tr = source.getResult();
+        return tr == null ? null : tr.getPreprocessing();
+    };
+
+    private final static Function<StsDocument, StsResults> DECOMPOSITIONEXTRACTOR = source -> {
+        return source.getResult();
+    };
+
+    private final static Function<StsDocument, StsDiagnostics> DIAGSEXTRACTOR = source -> {
+        StsResults tr = source.getResult();
+        return tr == null ? null : tr.getDiagnostics();
+    };
+
+   private final static Function<StsDocument, BsmResults> BSMEXTRACTOR = source -> {
+        StsResults tr = source.getResult();
+        return tr == null ? null : tr.getSts();
+    };
+
+   private final static Function<StsDocument, TsData> RESEXTRACTOR = MODELEXTRACTOR
+            .andThen(regarima -> regarima == null ? null : regarima.fullResiduals());
+
+    private static String generateId(String name, String id) {
+        return TsDynamicProvider.CompositeTs.builder()
+                .name(name)
+                .now(id)
+                .build().toString();
+    }
+
+    public static String[] lowSeries() {
+        return new String[]{
+            generateId("Series", SaDictionaries.Y),
+            generateId("Seasonally adjusted", SaDictionaries.SA),
+            generateId("Trend", SaDictionaries.T)
+        };
+    }
+
+    public static String[] highSeries() {
+        return new String[]{
+            generateId("Seasonal", SaDictionaries.S),
+            generateId("Calendar effects", ModellingDictionary.CAL),
+            generateId("Irregular", SaDictionaries.I)
+        };
+    }
+
+    public static String[] finalSeries() {
+        return new String[]{
+            generateId("Series", SaDictionaries.Y),
+            generateId("Seasonally adjusted", SaDictionaries.SA),
+            generateId("Trend", SaDictionaries.T),
+            generateId("Seasonal", SaDictionaries.S),
+            generateId("Irregular", SaDictionaries.I)
+        };
+    }
+
 ////<editor-fold defaultstate="collapsed" desc="REGISTER SPEC">
 //    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 1010)
 //    public static class SpecFactory extends ProcDocumentItemFactory<StsDocument, HtmlElement> {
@@ -160,19 +185,19 @@ public class StsViewFactory extends ProcDocumentViewFactory<StsDocument> {
 //            return 1010;
 //        }
 //    }
-//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 1000)
-//    public static class Input extends InputFactory<StsDocument> {
-//
-//        public Input() {
-//            super(StsDocument.class, RegSarimaViews.INPUT_SERIES);
-//        }
-//
-//        @Override
-//        public int getPosition() {
-//            return 1000;
-//        }
-//    }
-//
+    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 1000)
+    public static class Input extends InputFactory<StsDocument> {
+
+        public Input() {
+            super(StsDocument.class, RegSarimaViews.INPUT_SERIES);
+        }
+
+        @Override
+        public int getPosition() {
+            return 1000;
+        }
+    }
+
 ////</editor-fold>
 ////
 ////<editor-fold defaultstate="collapsed" desc="REGISTER SUMMARY">
@@ -250,26 +275,26 @@ public class StsViewFactory extends ProcDocumentViewFactory<StsDocument> {
 //        }
 //    }
 //
-////<editor-fold defaultstate="collapsed" desc="PREPROCESSING">
-//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3000)
-//    public static class SummaryFactory extends ProcDocumentItemFactory<StsDocument, HtmlElement> {
-//
-//        public SummaryFactory() {
-//
-//            super(StsDocument.class, SaViews.PREPROCESSING_SUMMARY, MODELEXTRACTOR
-//                    .andThen(regarima -> regarima == null ? null
-//                    : new HtmlRegSarima(regarima, false)),
-//                    new HtmlItemUI());
-//        }
-//
-//        @Override
-//        public int getPosition() {
-//            return 3000;
-//        }
-//    }
-//
-////</editor-fold>
-////<editor-fold defaultstate="collapsed" desc="PREPROCESSING-FORECASTS">
+//<editor-fold defaultstate="collapsed" desc="PREPROCESSING">
+    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3000)
+    public static class SummaryFactory extends ProcDocumentItemFactory<StsDocument, HtmlElement> {
+
+        public SummaryFactory() {
+
+            super(StsDocument.class, SaViews.PREPROCESSING_SUMMARY, MODELEXTRACTOR
+                    .andThen(regarima -> regarima == null ? null
+                    : new HtmlRegSarima(regarima, false)),
+                    new HtmlItemUI());
+        }
+
+        @Override
+        public int getPosition() {
+            return 3000;
+        }
+    }
+
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="PREPROCESSING-FORECASTS">
 //    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3110)
 //    public static class ForecastsTable extends ProcDocumentItemFactory<StsDocument, TsDocument> {
 //
@@ -312,265 +337,300 @@ public class StsViewFactory extends ProcDocumentViewFactory<StsDocument> {
 //            return 3120;
 //        }
 //    }
-////</editor-fold>
+//</editor-fold>
+
+//<editor-fold defaultstate="collapsed" desc="PREPROCESSING-DETAILS">
+    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3200)
+    public static class ModelRegsFactory extends ModelRegressorsFactory<StsDocument> {
+
+        public ModelRegsFactory() {
+            super(StsDocument.class, SaViews.PREPROCESSING_REGS, MODELEXTRACTOR);
+        }
+
+        @Override
+        public int getPosition() {
+            return 3200;
+        }
+    }
+
+    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3300)
+    public static class ArimaFactory extends ModelArimaFactory {
+
+        public ArimaFactory() {
+            super(StsDocument.class, SaViews.PREPROCESSING_ARIMA, MODELEXTRACTOR);
+        }
+
+        @Override
+        public int getPosition() {
+            return 3300;
+        }
+    }
+
+    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3400)
+    public static class PreprocessingDetFactory extends ProcDocumentItemFactory<StsDocument, TsDocument> {
+
+        public PreprocessingDetFactory() {
+            super(StsDocument.class, SaViews.PREPROCESSING_DET, source -> source, new GenericTableUI(false,
+                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, ModellingDictionary.YCAL),
+                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, ModellingDictionary.Y_LIN),
+                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, ModellingDictionary.DET),
+                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, ModellingDictionary.CAL),
+                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, ModellingDictionary.TDE),
+                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, ModellingDictionary.EE),
+                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, ModellingDictionary.OUT)));
+        }
+
+        @Override
+        public int getPosition() {
+            return 3400;
+        }
+    }
+//</editor-fold>
+
+//<editor-fold defaultstate="collapsed" desc="PREPROCESSING-RESIDUALS">
+    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3500)
+    public static class ModelResFactory extends ProcDocumentItemFactory<StsDocument, TsData> {
+
+        public ModelResFactory() {
+            super(StsDocument.class, SaViews.PREPROCESSING_RES, RESEXTRACTOR,
+                    new ResidualsUI()
+            );
+        }
+
+        @Override
+        public int getPosition() {
+            return 3500;
+        }
+    }
+
+    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3510)
+    public static class ModelResStatsFactory extends NiidTestsFactory<StsDocument> {
+
+        public ModelResStatsFactory() {
+            super(StsDocument.class, SaViews.PREPROCESSING_RES_STATS, MODELEXTRACTOR);
+        }
+
+        @Override
+        public int getPosition() {
+            return 3510;
+        }
+    }
+
+    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3520)
+    public static class ModelResDist extends ProcDocumentItemFactory<StsDocument, TsData> {
+
+        public ModelResDist() {
+            super(StsDocument.class, SaViews.PREPROCESSING_RES_DIST,
+                    RESEXTRACTOR,
+                    new ResidualsDistUI());
+
+        }
+
+        @Override
+        public int getPosition() {
+            return 3520;
+        }
+    }
+//</editor-fold>
+    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 4000)
+    public static class StsSummaryFactory extends ProcDocumentItemFactory<StsDocument, HtmlElement> {
+
+        public StsSummaryFactory() {
+
+            super(StsDocument.class, MODEL_SELECTION, DECOMPOSITIONEXTRACTOR
+                    .andThen(sts -> sts == null ? null
+                    : new HtmlBsm(sts.getBsm(), false)),
+                    new HtmlItemUI());
+        }
+
+        @Override
+        public int getPosition() {
+            return 3000;
+        }
+    }
+    
+     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 4400)
+    public static class StsSeriesFactory extends ProcDocumentItemFactory<StsDocument, TsDocument> {
+
+        public StsSeriesFactory() {
+            super(StsDocument.class, MODEL_CMPS, source -> source, new GenericTableUI(false,
+                    StsResultsExtractor.LEVEL,
+                    StsResultsExtractor.SLOPE, 
+                    StsResultsExtractor.CYCLE,
+                    StsResultsExtractor.SEASONAL,
+                    StsResultsExtractor.NOISE
+            ));
+        }
+
+        @Override
+        public int getPosition() {
+            return 4400;
+        }
+    }
+   
+
+//<editor-fold defaultstate="collapsed" desc="REGISTER FORECASTS">
+//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 200000 + 500)
+//    public static class ForecastsTable extends ProcDocumentItemFactory<FractionalAirlineDocument, TsDocument> {
 //
-////<editor-fold defaultstate="collapsed" desc="PREPROCESSING-DETAILS">
-//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3200)
-//    public static class ModelRegsFactory extends ModelRegressorsFactory<StsDocument> {
-//
-//        public ModelRegsFactory() {
-//            super(StsDocument.class, SaViews.PREPROCESSING_REGS, MODELEXTRACTOR);
+//        public ForecastsTable() {
+//            super(StsDocument.class, RegSarimaViews.MODEL_FCASTS_TABLE, s -> s, new GenericTableUI(false, generateItems()));
 //        }
 //
 //        @Override
 //        public int getPosition() {
-//            return 3200;
+//            return 200500;
+//        }
+//
+//        private static String[] generateItems() {
+//            return new String[]{ModellingDictionary.Y + SeriesInfo.F_SUFFIX, ModellingDictionary.Y + SeriesInfo.EF_SUFFIX};
 //        }
 //    }
 //
-//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3300)
+//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 200000 + 1000)
+//    public static class FCastsFactory extends ForecastsFactory<FractionalAirlineDocument> {
+//
+//        public FCastsFactory() {
+//            super(StsDocument.class, RegSarimaViews.MODEL_FCASTS, MODELEXTRACTOR);
+//        }
+//
+//        @Override
+//        public int getPosition() {
+//            return 201000;
+//        }
+//    }
+//
+//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 200000 + 2000)
+//    public static class FCastsOutFactory extends OutOfSampleTestFactory<FractionalAirlineDocument> {
+//
+//        public FCastsOutFactory() {
+//            super(StsDocument.class, RegSarimaViews.MODEL_FCASTS_OUTOFSAMPLE, MODELEXTRACTOR);
+//        }
+//
+//        @Override
+//        public int getPosition() {
+//            return 202000;
+//        }
+//    }
+//</editor-fold>
+//
+//<editor-fold defaultstate="collapsed" desc="REGISTER MODEL">
+//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 300000 + 1000)
+//    public static class ModelRegsFactory extends ModelRegressorsFactory<FractionalAirlineDocument> {
+//
+//        public ModelRegsFactory() {
+//            super(StsDocument.class, RegSarimaViews.MODEL_REGS, MODELEXTRACTOR);
+//        }
+//
+//        @Override
+//        public int getPosition() {
+//            return 301000;
+//        }
+//    }
+//
+//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 300000 + 2000)
 //    public static class ArimaFactory extends ModelArimaFactory {
 //
 //        public ArimaFactory() {
-//            super(StsDocument.class, SaViews.PREPROCESSING_ARIMA, MODELEXTRACTOR);
+//            super(StsDocument.class, RegSarimaViews.MODEL_ARIMA, MODELEXTRACTOR);
 //        }
 //
 //        @Override
 //        public int getPosition() {
-//            return 3300;
+//            return 302000;
 //        }
 //    }
 //
-//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3400)
-//    public static class PreprocessingDetFactory extends ProcDocumentItemFactory<StsDocument, TsDocument> {
+//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 300000 + 3000)
+//    public static class PreprocessingDetFactory extends ProcDocumentItemFactory<FractionalAirlineDocument, StsDocument> {
 //
 //        public PreprocessingDetFactory() {
-//            super(StsDocument.class, SaViews.PREPROCESSING_DET, source -> source, new GenericTableUI(false,
-//                    SaDictionaries.PREPROCESSING, ModellingDictionary.YCAL,
-//                    SaDictionaries.PREPROCESSING, ModellingDictionary.Y_LIN,
-//                    SaDictionaries.PREPROCESSING, ModellingDictionary.DET,
-//                    SaDictionaries.PREPROCESSING, ModellingDictionary.CAL,
-//                    SaDictionaries.PREPROCESSING, ModellingDictionary.TDE,
-//                    SaDictionaries.PREPROCESSING, ModellingDictionary.EE,
-//                    SaDictionaries.PREPROCESSING, ModellingDictionary.OUT,
-//                    SaDictionaries.PREPROCESSING, ModellingDictionary.FULL_RES));
+//            super(StsDocument.class, RegSarimaViews.MODEL_DET,
+//                    source -> source, new GenericTableUI(false,
+//                            ModellingDictionary.Y_LIN, ModellingDictionary.DET,
+//                            ModellingDictionary.CAL, ModellingDictionary.TDE, ModellingDictionary.EE,
+//                            ModellingDictionary.OUT, ModellingDictionary.FULL_RES));
 //        }
 //
 //        @Override
 //        public int getPosition() {
-//            return 3400;
+//            return 303000;
 //        }
 //    }
-////</editor-fold>
-//
-////<editor-fold defaultstate="collapsed" desc="PREPROCESSING-RESIDUALS">
-//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3500)
-//    public static class ModelResFactory extends ProcDocumentItemFactory<StsDocument, TsData> {
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="REGISTER RESIDUALS">
+//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 400000 + 1000)
+//    public static class ModelResFactory extends ProcDocumentItemFactory<FractionalAirlineDocument, TsData> {
 //
 //        public ModelResFactory() {
-//            super(StsDocument.class, SaViews.PREPROCESSING_RES, RESEXTRACTOR,
+//            super(StsDocument.class, RegSarimaViews.MODEL_RES, RESEXTRACTOR,
 //                    new ResidualsUI()
 //            );
 //        }
 //
 //        @Override
 //        public int getPosition() {
-//            return 3500;
+//            return 401000;
 //        }
 //    }
 //
-//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3510)
-//    public static class ModelResStatsFactory extends NiidTestsFactory<StsDocument> {
+//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 400000 + 2000)
+//    public static class ModelResStatsFactory extends NiidTestsFactory<FractionalAirlineDocument> {
 //
 //        public ModelResStatsFactory() {
-//            super(StsDocument.class, SaViews.PREPROCESSING_RES_STATS, MODELEXTRACTOR);
+//            super(StsDocument.class, RegSarimaViews.MODEL_RES_STATS, MODELEXTRACTOR);
 //        }
 //
 //        @Override
 //        public int getPosition() {
-//            return 3510;
+//            return 402000;
 //        }
 //    }
 //
-//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3520)
-//    public static class ModelResDist extends ProcDocumentItemFactory<StsDocument, TsData> {
+//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 400000 + 3000)
+//    public static class ModelResDist extends ProcDocumentItemFactory<StsDocument, DoubleSeq> {
 //
 //        public ModelResDist() {
-//            super(StsDocument.class, SaViews.PREPROCESSING_RES_DIST,
-//                    RESEXTRACTOR,
-//                    new ResidualsDistUI());
+//            super(StsDocument.class, RegSarimaViews.MODEL_RES_DIST, RESEXTRACTOR,
+//                    new DistributionUI());
 //
 //        }
 //
 //        @Override
 //        public int getPosition() {
-//            return 3520;
+//            return 403000;
 //        }
 //    }
-////</editor-fold>
+//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 400000 + 4000)
+//    public static class ModelResSpectrum extends ProcDocumentItemFactory<StsDocument, DoubleSeq> {
 //
-////<editor-fold defaultstate="collapsed" desc="REGISTER FORECASTS">
-////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 200000 + 500)
-////    public static class ForecastsTable extends ProcDocumentItemFactory<FractionalAirlineDocument, TsDocument> {
-////
-////        public ForecastsTable() {
-////            super(StsDocument.class, RegSarimaViews.MODEL_FCASTS_TABLE, s -> s, new GenericTableUI(false, generateItems()));
-////        }
-////
-////        @Override
-////        public int getPosition() {
-////            return 200500;
-////        }
-////
-////        private static String[] generateItems() {
-////            return new String[]{ModellingDictionary.Y + SeriesInfo.F_SUFFIX, ModellingDictionary.Y + SeriesInfo.EF_SUFFIX};
-////        }
-////    }
-////
-////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 200000 + 1000)
-////    public static class FCastsFactory extends ForecastsFactory<FractionalAirlineDocument> {
-////
-////        public FCastsFactory() {
-////            super(StsDocument.class, RegSarimaViews.MODEL_FCASTS, MODELEXTRACTOR);
-////        }
-////
-////        @Override
-////        public int getPosition() {
-////            return 201000;
-////        }
-////    }
-////
-////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 200000 + 2000)
-////    public static class FCastsOutFactory extends OutOfSampleTestFactory<FractionalAirlineDocument> {
-////
-////        public FCastsOutFactory() {
-////            super(StsDocument.class, RegSarimaViews.MODEL_FCASTS_OUTOFSAMPLE, MODELEXTRACTOR);
-////        }
-////
-////        @Override
-////        public int getPosition() {
-////            return 202000;
-////        }
-////    }
-////</editor-fold>
-////
-////<editor-fold defaultstate="collapsed" desc="REGISTER MODEL">
-////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 300000 + 1000)
-////    public static class ModelRegsFactory extends ModelRegressorsFactory<FractionalAirlineDocument> {
-////
-////        public ModelRegsFactory() {
-////            super(StsDocument.class, RegSarimaViews.MODEL_REGS, MODELEXTRACTOR);
-////        }
-////
-////        @Override
-////        public int getPosition() {
-////            return 301000;
-////        }
-////    }
-////
-////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 300000 + 2000)
-////    public static class ArimaFactory extends ModelArimaFactory {
-////
-////        public ArimaFactory() {
-////            super(StsDocument.class, RegSarimaViews.MODEL_ARIMA, MODELEXTRACTOR);
-////        }
-////
-////        @Override
-////        public int getPosition() {
-////            return 302000;
-////        }
-////    }
-////
-////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 300000 + 3000)
-////    public static class PreprocessingDetFactory extends ProcDocumentItemFactory<FractionalAirlineDocument, StsDocument> {
-////
-////        public PreprocessingDetFactory() {
-////            super(StsDocument.class, RegSarimaViews.MODEL_DET,
-////                    source -> source, new GenericTableUI(false,
-////                            ModellingDictionary.Y_LIN, ModellingDictionary.DET,
-////                            ModellingDictionary.CAL, ModellingDictionary.TDE, ModellingDictionary.EE,
-////                            ModellingDictionary.OUT, ModellingDictionary.FULL_RES));
-////        }
-////
-////        @Override
-////        public int getPosition() {
-////            return 303000;
-////        }
-////    }
-////</editor-fold>
-////<editor-fold defaultstate="collapsed" desc="REGISTER RESIDUALS">
-////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 400000 + 1000)
-////    public static class ModelResFactory extends ProcDocumentItemFactory<FractionalAirlineDocument, TsData> {
-////
-////        public ModelResFactory() {
-////            super(StsDocument.class, RegSarimaViews.MODEL_RES, RESEXTRACTOR,
-////                    new ResidualsUI()
-////            );
-////        }
-////
-////        @Override
-////        public int getPosition() {
-////            return 401000;
-////        }
-////    }
-////
-////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 400000 + 2000)
-////    public static class ModelResStatsFactory extends NiidTestsFactory<FractionalAirlineDocument> {
-////
-////        public ModelResStatsFactory() {
-////            super(StsDocument.class, RegSarimaViews.MODEL_RES_STATS, MODELEXTRACTOR);
-////        }
-////
-////        @Override
-////        public int getPosition() {
-////            return 402000;
-////        }
-////    }
-////
-////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 400000 + 3000)
-////    public static class ModelResDist extends ProcDocumentItemFactory<StsDocument, DoubleSeq> {
-////
-////        public ModelResDist() {
-////            super(StsDocument.class, RegSarimaViews.MODEL_RES_DIST, RESEXTRACTOR,
-////                    new DistributionUI());
-////
-////        }
-////
-////        @Override
-////        public int getPosition() {
-////            return 403000;
-////        }
-////    }
-////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 400000 + 4000)
-////    public static class ModelResSpectrum extends ProcDocumentItemFactory<StsDocument, DoubleSeq> {
-////
-////        public ModelResSpectrum() {
-////            super(StsDocument.class, RegSarimaViews.MODEL_RES_SPECTRUM, RESEXTRACTOR,
-////                    new PeriodogramUI());
-////
-////        }
-////
-////        @Override
-////        public int getPosition() {
-////            return 404000;
-////        }
-////    }
-////</editor-fold>
-////<editor-fold defaultstate="collapsed" desc="REGISTER DETAILS">
-////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 500000)
-////    public static class LFactory extends LikelihoodFactory<FractionalAirlineDocument> {
-////
-////        public LFactory() {
-////            super(StsDocument.class, RegSarimaViews.MODEL_LIKELIHOOD, MODELEXTRACTOR);
-////            setAsync(true);
-////        }
-////
-////        @Override
-////        public int getPosition() {
-////            return 500000;
-////        }
-////    }
-////</editor-fold>
+//        public ModelResSpectrum() {
+//            super(StsDocument.class, RegSarimaViews.MODEL_RES_SPECTRUM, RESEXTRACTOR,
+//                    new PeriodogramUI());
+//
+//        }
+//
+//        @Override
+//        public int getPosition() {
+//            return 404000;
+//        }
+//    }
+//</editor-fold>
+//<editor-fold defaultstate="collapsed" desc="REGISTER DETAILS">
+//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 500000)
+//    public static class LFactory extends LikelihoodFactory<FractionalAirlineDocument> {
+//
+//        public LFactory() {
+//            super(StsDocument.class, RegSarimaViews.MODEL_LIKELIHOOD, MODELEXTRACTOR);
+//            setAsync(true);
+//        }
+//
+//        @Override
+//        public int getPosition() {
+//            return 500000;
+//        }
+//    }
+//</editor-fold>
 ////<editor-fold defaultstate="collapsed" desc="BENCHMARKING">
 //    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 4900)
 //    public static class BenchmarkingFactory extends ProcDocumentItemFactory<StsDocument, BenchmarkingUI.Input> {

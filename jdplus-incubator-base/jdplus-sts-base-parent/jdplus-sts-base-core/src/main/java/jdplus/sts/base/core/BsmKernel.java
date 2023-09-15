@@ -19,7 +19,7 @@ package jdplus.sts.base.core;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.DoubleSeqCursor;
 import jdplus.toolkit.base.api.data.Parameter;
-import jdplus.sts.base.api.BsmDecomposition;
+import jdplus.sts.base.api.RawBsmDecomposition;
 import jdplus.sts.base.api.BsmEstimationSpec;
 import jdplus.sts.base.api.BsmSpec;
 import jdplus.sts.base.api.Component;
@@ -181,7 +181,7 @@ public class BsmKernel {
     }
 
     private int diffuseItems() {
-         if (X != null && estimationSpec.isDiffuseRegression()) {
+        if (X != null && estimationSpec.isDiffuseRegression()) {
             return X.getColumnsCount();
         }
         return 0;
@@ -443,7 +443,7 @@ public class BsmKernel {
         }
     }
 
-    public BsmDecomposition decompose() {
+    public RawBsmDecomposition decompose() {
         if (bsm == null) {
             return null;
         }
@@ -457,31 +457,31 @@ public class BsmKernel {
         }
         SsfBsm ssf = SsfBsm.of(bsm);
         DefaultSmoothingResults sr = DkToolkit.sqrtSmooth(ssf, new SsfData(lin), true, true);
-        BsmDecomposition.Builder builder = BsmDecomposition.builder();
+        RawBsmDecomposition.Builder builder = RawBsmDecomposition.builder();
         int pos = SsfBsm.searchPosition(bsm, Component.Level);
         if (pos >= 0) {
-            builder.add(sr.getComponent(pos), Component.Level);
-            builder.addStde(sr.getComponentVariance(pos).sqrt(), Component.Level);
+            builder.cmp(Component.Level, sr.getComponent(pos));
+            builder.ecmp(Component.Level, sr.getComponentVariance(pos).sqrt());
         }
         pos = SsfBsm.searchPosition(bsm, Component.Slope);
         if (pos >= 0) {
-            builder.add(sr.getComponent(pos), Component.Slope);
-            builder.addStde(sr.getComponentVariance(pos).sqrt(), Component.Slope);
+            builder.cmp(Component.Slope, sr.getComponent(pos));
+            builder.ecmp(Component.Slope, sr.getComponentVariance(pos).sqrt());
         }
         pos = SsfBsm.searchPosition(bsm, Component.Cycle);
         if (pos >= 0) {
-            builder.add(sr.getComponent(pos), Component.Cycle);
-            builder.addStde(sr.getComponentVariance(pos).sqrt(), Component.Cycle);
+            builder.cmp(Component.Cycle, sr.getComponent(pos));
+            builder.ecmp(Component.Cycle, sr.getComponentVariance(pos).sqrt());
         }
         pos = SsfBsm.searchPosition(bsm, Component.Seasonal);
         if (pos >= 0) {
-            builder.add(sr.getComponent(pos), Component.Seasonal);
-            builder.addStde(sr.getComponentVariance(pos).sqrt(), Component.Seasonal);
+            builder.cmp(Component.Seasonal, sr.getComponent(pos));
+            builder.ecmp(Component.Seasonal, sr.getComponentVariance(pos).sqrt());
         }
         pos = SsfBsm.searchPosition(bsm, Component.Noise);
         if (pos >= 0) {
-            builder.add(sr.getComponent(pos), Component.Noise);
-            builder.addStde(sr.getComponentVariance(pos).sqrt(), Component.Noise);
+            builder.cmp(Component.Noise, sr.getComponent(pos));
+            builder.ecmp(Component.Noise, sr.getComponentVariance(pos).sqrt());
         }
         return builder.build();
     }

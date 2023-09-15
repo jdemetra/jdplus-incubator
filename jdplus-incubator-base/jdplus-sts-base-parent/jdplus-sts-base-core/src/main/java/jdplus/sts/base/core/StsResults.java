@@ -30,7 +30,8 @@ import jdplus.toolkit.base.core.regsarima.regular.RegSarimaModel;
 @lombok.Builder
 public class StsResults implements GenericExplorable{
     private RegSarimaModel preprocessing;
-    private BsmResults decomposition;
+    private LightBasicStructuralModel bsm;
+    private BsmResults sts;
     private SeriesDecomposition finals;
     private SaBenchmarkingResults benchmarking;
     private StsDiagnostics diagnostics;

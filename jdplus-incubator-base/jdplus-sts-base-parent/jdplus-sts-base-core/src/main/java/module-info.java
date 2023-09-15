@@ -20,5 +20,6 @@ module jdplus.sts.base.core {
     exports jdplus.sts.base.core;
 
     provides InformationExtractor with
-            jdplus.sts.base.core.extractors.BasicStructuralModelExtractor;
+            jdplus.sts.base.core.extractors.BasicStructuralModelExtractor,
+            jdplus.sts.base.core.extractors.StsResultsExtractor;
 }

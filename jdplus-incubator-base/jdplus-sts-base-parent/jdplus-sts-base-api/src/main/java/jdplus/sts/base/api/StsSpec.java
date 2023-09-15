@@ -21,7 +21,11 @@ public class StsSpec implements SaSpecification{
     @lombok.NonNull
     private ModellingSpec preprocessing;
     
+    @lombok.NonNull
     private BsmSpec bsm;
+    
+    @lombok.NonNull
+    private BsmEstimationSpec estimation;
     
     @lombok.NonNull
     private SaBenchmarkingSpec benchmarking;
@@ -30,7 +34,8 @@ public class StsSpec implements SaSpecification{
     public static Builder builder() {
         return new Builder()
                 .preprocessing(ModellingSpec.FULL)
-                .bsm(null)
+                .bsm(BsmSpec.DEFAULT)
+                .estimation(BsmEstimationSpec.DEFAULT)
                 .benchmarking(SaBenchmarkingSpec.DEFAULT_DISABLED);
     }
 

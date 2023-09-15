@@ -203,7 +203,7 @@ public final class BsmSpec {
         return isScalable(levelVar) && isScalable(slopeVar) && isScalable(seasonalVar) && isScalable(noiseVar) && isScalable(cycleVar);
     }
 
-    private ComponentUse use(Parameter p) {
+    public static ComponentUse use(Parameter p) {
         if (p == null) {
             return ComponentUse.Unused;
         } else if (p.isFixed()) {

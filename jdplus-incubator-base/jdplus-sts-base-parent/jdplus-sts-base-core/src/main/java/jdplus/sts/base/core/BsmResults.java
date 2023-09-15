@@ -16,10 +16,17 @@
  */
 package jdplus.sts.base.core;
 
+import jdplus.sts.base.api.BsmDecomposition;
+import jdplus.toolkit.base.core.stats.likelihood.DiffuseConcentratedLikelihood;
+
 /**
  *
  * @author palatej
  */
+@lombok.Value
+@lombok.Builder(builderClassName="Builder", toBuilder=true)
 public class BsmResults {
-    
+    BsmData bsm;
+    DiffuseConcentratedLikelihood likelihood;
+    BsmDecomposition decomposition;
 }

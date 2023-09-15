@@ -34,13 +34,13 @@ import org.openide.util.NbBundle;
 /**
  * Top component which displays something.
  */
-@ConvertAsProperties(dtd = "-//demetra.desktop.sts//Sts//EN",
+@ConvertAsProperties(dtd = "-//jdplus.sts.desktop//Sts//EN",
         autostore = false)
 @TopComponent.Description(preferredID = "StsTopComponent",
         //iconBase="SET/PATH/TO/ICON/HERE", 
         persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
-@ActionID(category = "Seasonal Adjustment", id = "demetra.desktop.sts.StsTopComponent")
+@ActionID(category = "Seasonal Adjustment", id = "jdplus.sts.desktop.StsTopComponent")
 @ActionReference(path = "Menu/Statistical methods/Seasonal Adjustment/Single Analysis", position = 3000)
 @TopComponent.OpenActionRegistration(displayName = "#CTL_StsAction")
 @NbBundle.Messages({
@@ -63,7 +63,7 @@ public final class StsTopComponent extends WorkspaceTsTopComponent<StsDocument> 
     public StsTopComponent(WorkspaceItem<StsDocument> doc) {
         super(doc);
         initComponents();
-        setToolTipText(NbBundle.getMessage(StsTopComponent.class, "HINT_StlPlusTopComponent"));
+        setToolTipText(NbBundle.getMessage(StsTopComponent.class, "HINT_StsTopComponent"));
         associateLookup(ExplorerUtils.createLookup(mgr, getActionMap()));
     }
 

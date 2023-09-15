@@ -62,7 +62,7 @@ public class StsUIFactory implements DocumentUIServices<StsSpec, StsDocument> {
 
     @Override
     public Icon getIcon() {
-        return ImageUtilities.loadImageIcon("jdplus/stl/desktop/plugin/tangent_red.png", false);
+        return ImageUtilities.loadImageIcon("jdplus/sts/desktop/plugin/tangent_red.png", false);
     }
 
     @Override
