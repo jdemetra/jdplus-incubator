@@ -87,11 +87,24 @@ public class CompositeModel {
 
 
     public CompositeModelEstimation estimate(FastMatrix data, boolean marginal, boolean rescaling, SsfInitialization initialization, Optimizer optimizer, double eps, double[] parameters) {
+        check();
         return CompositeModelEstimation.estimationOf(this.duplicate(), data, marginal, rescaling, initialization, optimizer, eps, parameters);
     }
 
     public CompositeModelEstimation compute(FastMatrix data, double[] parameters, boolean marginal, boolean concentrated) {
-        
+        check();
         return CompositeModelEstimation.computationOf(this.duplicate(), data, DoubleSeq.of(parameters), marginal, concentrated);
+    }
+    
+    // Put default equation if the model doesn't include any equation
+    // The default equation doesn't include measurement error
+    private void check(){
+        if (equations.isEmpty()){
+            ModelEquation eq=new ModelEquation("equation", 0, true);
+            for (StateItem item : items){
+                eq.add(item);
+            }
+            equations.add(eq);
+        }
     }
 }
