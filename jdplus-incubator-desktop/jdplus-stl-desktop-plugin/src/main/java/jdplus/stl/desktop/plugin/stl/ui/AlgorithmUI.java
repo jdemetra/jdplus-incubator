@@ -130,6 +130,8 @@ public class AlgorithmUI implements IPropertyDescriptors {
         "algorithmUI.mulDesc.desc=Multiplicative decomposition."
     })
     private EnhancedPropertyDescriptor mulDesc() {
+        if (root.isPreprocessing())
+            return null;
         try {
             PropertyDescriptor desc = new PropertyDescriptor("Multiplicative", this.getClass());
             EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, MUL_ID);

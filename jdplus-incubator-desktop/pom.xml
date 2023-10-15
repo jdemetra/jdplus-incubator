@@ -20,10 +20,11 @@
     </properties>
 
     <modules>
+        <module>jdplus-advancedsa-desktop-plugin</module>
         <module>jdplus-highfreq-desktop-plugin</module>
         <module>jdplus-stl-desktop-plugin</module>
         <module>jdplus-sts-desktop-plugin</module>
-        <module>jdplus-x11plus-desktop-plugin</module>
+        <module>jdplus-x12plus-desktop-plugin</module>
     </modules>
 
     <build>

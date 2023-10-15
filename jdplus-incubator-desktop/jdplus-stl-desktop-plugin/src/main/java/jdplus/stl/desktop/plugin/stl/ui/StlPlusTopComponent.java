@@ -16,13 +16,13 @@
  */
 package jdplus.stl.desktop.plugin.stl.ui;
 
-import jdplus.stl.desktop.plugin.stl.StlPlusDocumentManager;
 import jdplus.toolkit.desktop.plugin.ui.processing.TsProcessingViewer;
 import jdplus.toolkit.desktop.plugin.workspace.DocumentUIServices;
 import jdplus.toolkit.desktop.plugin.workspace.WorkspaceFactory;
 import jdplus.toolkit.desktop.plugin.workspace.WorkspaceItem;
 import jdplus.toolkit.desktop.plugin.workspace.ui.WorkspaceTsTopComponent;
 import jdplus.stl.base.core.stlplus.StlPlusDocument;
+import jdplus.stl.desktop.plugin.stl.StlPlusDocumentManager;
 import org.openide.windows.TopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;

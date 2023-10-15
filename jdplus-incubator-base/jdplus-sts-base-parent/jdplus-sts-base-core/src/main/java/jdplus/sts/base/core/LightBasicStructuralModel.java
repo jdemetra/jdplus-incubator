@@ -29,24 +29,28 @@ import jdplus.toolkit.base.api.timeseries.regression.Variable;
 import java.util.List;
 import java.util.Map;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
-import jdplus.sts.base.api.BsmDecomposition;
+import jdplus.sts.base.api.RawBsmDecomposition;
 import jdplus.sts.base.api.BsmDescription;
 import jdplus.sts.base.api.BsmSpec;
+import jdplus.toolkit.base.api.timeseries.TsDomain;
+import jdplus.toolkit.base.core.modelling.regression.RegressionDesc;
 
 /**
  *
  * @author PALATEJ
- * @param <M>
  */
 @lombok.Value
 @lombok.Builder
-public class LightBasicStructuralModel<M> implements BasicStructuralModel {
+public class LightBasicStructuralModel implements BasicStructuralModel {
 
     Description description;
     Estimation estimation;
-    BsmDecomposition bsmDecomposition;
+    RawBsmDecomposition bsmDecomposition;
     SeriesDecomposition finalDecomposition;
 
+    @lombok.Singular
+    List<RegressionDesc> regressionItems;
+    
     @lombok.Singular
     private Map<String, StatisticalTest> diagnostics;
 
@@ -91,6 +95,8 @@ public class LightBasicStructuralModel<M> implements BasicStructuralModel {
         private DoubleSeq y;
 //        @lombok.NonNull
         private Matrix X;
+        
+        private TsDomain domain;
 
         /**
          * Regression estimation. The order correspond to the order of the

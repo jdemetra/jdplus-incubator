@@ -109,30 +109,12 @@
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
-            <artifactId>jdplus-sts-desktop-plugin</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <!-- 3. JD3 Base -->
-        <dependency>
-            <groupId>eu.europa.ec.joinup.sat</groupId>
-            <artifactId>jdplus-highfreq-base-api</artifactId>
+            <artifactId>jdplus-advancedsa-desktop-plugin</artifactId>
             <version>${project.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>eu.europa.ec.joinup.sat</groupId>
-                    <artifactId>jdplus-sa-base-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>eu.europa.ec.joinup.sat</groupId>
-            <artifactId>jdplus-highfreq-base-core</artifactId>
-            <version>${project.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>eu.europa.ec.joinup.sat</groupId>
-                    <artifactId>jdplus-sa-base-core</artifactId>
+                    <groupId>org.netbeans.api</groupId>
+                    <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -150,8 +132,7 @@
                     <artifactId>jdplus-toolkit-base-workspace</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency
-        >
+        </dependency>
 
         <!-- 4. Other libraries -->
     </dependencies>
@@ -165,9 +146,7 @@
                 <configuration>
                     <requiresRestart>true</requiresRestart>
                     <publicPackages>
-                        <publicPackage>demetra.highfreq.*</publicPackage>
-                        <publicPackage>jdplus.highfreq.*</publicPackage>
-                        <publicPackage>demetra.desktop.highfreq.*</publicPackage>
+                        jdplus.highfreq.desktop.*
                     </publicPackages>
                 </configuration>
             </plugin>
