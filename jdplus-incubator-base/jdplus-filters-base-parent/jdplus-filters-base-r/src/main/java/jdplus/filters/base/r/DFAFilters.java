@@ -16,7 +16,6 @@
  */
 package jdplus.filters.base.r;
 
-import jdplus.toolkit.base.core.math.linearfilters.FiltersToolkit;
 import jdplus.filters.base.api.SpectralDensity;
 import jdplus.filters.base.core.DFAFilterFactory;
 import jdplus.filters.base.api.DFAFilterSpec;
@@ -25,7 +24,7 @@ import jdplus.toolkit.base.core.math.linearfilters.ISymmetricFiltering;
 
 @lombok.experimental.UtilityClass
 public class DFAFilters {
-	public FiltersToolkit.FiniteFilters filterProperties(double[] target,
+	public ISymmetricFiltering filters(double[] target,
 			int nlags, int pdegree, boolean rwdensity, double passband, 
 			double waccuracy, double wsmoothness, double wtimeliness) {
         // Creates the filters
@@ -41,9 +40,6 @@ public class DFAFilters {
                 .density(rwdensity ? SpectralDensity.RandomWalk : SpectralDensity.Undefined)
                 .build();
 
-        ISymmetricFiltering dfafilter= DFAFilterFactory.of(tspec);
-       
-        return new FiltersToolkit.FiniteFilters(dfafilter.centralFilter(),
-        		dfafilter.endPointsFilters());
+        return DFAFilterFactory.of(tspec);
     }
 }

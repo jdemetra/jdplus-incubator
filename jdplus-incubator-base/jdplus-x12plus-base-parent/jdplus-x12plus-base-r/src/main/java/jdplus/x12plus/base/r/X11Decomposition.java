@@ -5,8 +5,6 @@ package jdplus.x12plus.base.r;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.api.information.InformationMapping;
 import jdplus.toolkit.base.core.math.linearfilters.HendersonFilters;
@@ -26,6 +24,11 @@ import jdplus.toolkit.base.api.math.matrices.Matrix;
 import jdplus.toolkit.base.api.math.linearfilters.KernelOption;
 import jdplus.toolkit.base.api.math.linearfilters.LocalPolynomialFilterSpec;
 import jdplus.toolkit.base.api.math.linearfilters.UserDefinedSymmetricFilterSpec;
+import jdplus.toolkit.base.core.math.linearfilters.Filtering;
+import jdplus.toolkit.base.core.math.linearfilters.FiltersToolkit;
+import jdplus.toolkit.base.core.math.linearfilters.FiniteFilter;
+import jdplus.toolkit.base.core.math.linearfilters.SymmetricFiltering;
+import jdplus.toolkit.base.core.math.polynomials.Polynomial;
 import jdplus.x12plus.base.api.GenericSeasonalFilterSpec;
 import jdplus.x12plus.base.core.AsymmetricEndPoints;
 import jdplus.x12plus.base.core.MusgraveFilterFactory;
@@ -42,6 +45,34 @@ import jdplus.x12plus.base.core.RawX11Results;
  */
 @lombok.experimental.UtilityClass
 public class X11Decomposition {
+
+    // TODO: suppress in version 3.1.2 of the main
+    private static SymmetricFiltering of(UserDefinedSymmetricFilterSpec uspec) {
+        DoubleSeq cf = uspec.getCentralFilter();
+        Matrix rf = uspec.getEndPointsFilters();
+        int l = rf.getColumnsCount();
+        if (cf.length() != 2 * l + 1) {
+            throw new IllegalArgumentException();
+        }
+        SymmetricFilter fcf = SymmetricFilter.of(cf);
+        IFiniteFilter[] frf = new IFiniteFilter[l];
+        for (int i = 0; i < l; ++i) {
+            double[] p = rf.column(i).drop(0, i).toArray();
+            FiniteFilter f = FiniteFilter.of(p, -l);
+            frf[i] = f;
+        }
+        return new SymmetricFiltering(fcf, frf);
+    }
+    
+
+    static {
+        FiltersToolkit.register(UserDefinedSymmetricFilterSpec.class, spec -> {
+            UserDefinedSymmetricFilterSpec uspec = spec;
+            return of(uspec);
+        });
+    }
+    
+    // END TODO
 
     @lombok.Value
     @lombok.Builder
@@ -124,7 +155,7 @@ public class X11Decomposition {
         }
     }
 
-    public Results process(double[] data, double period, boolean mul, int trendHorizon, int pdegree, 
+    public Results process(double[] data, double period, boolean mul, int trendHorizon, int pdegree,
             String pkernel, String asymmetric, String seas0, String seas1, double lsig, double usig) {
         int iperiod = (int) period;
         Number P;
@@ -133,13 +164,13 @@ public class X11Decomposition {
         } else {
             P = period;
         }
-        LocalPolynomialFilterSpec tspec= LocalPolynomialFilterSpec.builder()
+        LocalPolynomialFilterSpec tspec = LocalPolynomialFilterSpec.builder()
                 .filterHorizon(trendHorizon)
                 .polynomialDegree(pdegree)
                 .kernel(KernelOption.valueOf(pkernel))
                 .asymmetricFilters(AsymmetricFilterOption.valueOf(asymmetric))
                 .build();
-        
+
         X11plusSpec spec = X11plusSpec.builder()
                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
                 .period(P)
@@ -161,10 +192,10 @@ public class X11Decomposition {
 
     }
 
-    public Results lpX11(double[] data, int period, boolean mul, int thorizon, int pdegree, String pkernel, 
+    public Results lpX11(double[] data, int period, boolean mul, int thorizon, int pdegree, String pkernel,
             int adegree, double[] aparams, double tweight, double passBand,
             int shorizon, String seasKernel, double lsig, double usig) {
-        LocalPolynomialFilterSpec tspec= LocalPolynomialFilterSpec.builder()
+        LocalPolynomialFilterSpec tspec = LocalPolynomialFilterSpec.builder()
                 .filterHorizon(thorizon)
                 .polynomialDegree(pdegree)
                 .kernel(KernelOption.valueOf(pkernel))
@@ -174,12 +205,12 @@ public class X11Decomposition {
                 .timelinessWeight(tweight)
                 .passBand(passBand)
                 .build();
-        
-        GenericSeasonalFilterSpec sfilter=new GenericSeasonalFilterSpec(period,
-            LocalPolynomialFilterSpec.defaultSeasonalSpec(shorizon, KernelOption.valueOf(seasKernel)));
-        
+
+        GenericSeasonalFilterSpec sfilter = new GenericSeasonalFilterSpec(period,
+                LocalPolynomialFilterSpec.defaultSeasonalSpec(shorizon, KernelOption.valueOf(seasKernel)));
+
         X11plusSpec spec = X11plusSpec.builder()
-                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
+                .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
                 .period(period)
                 .trendFilter(tspec)
                 .initialSeasonalFilter(sfilter)
@@ -199,19 +230,18 @@ public class X11Decomposition {
 
     }
 
-    public Results dafX11(double[] data, int period, boolean mul, int thorizon, int pdegree, String pkernel, 
+    public Results dafX11(double[] data, int period, boolean mul, int thorizon, int pdegree, String pkernel,
             int shorizon, String seasKernel, double lsig, double usig) {
-        LocalPolynomialFilterSpec tspec= LocalPolynomialFilterSpec.builder()
+        LocalPolynomialFilterSpec tspec = LocalPolynomialFilterSpec.builder()
                 .filterHorizon(thorizon)
                 .polynomialDegree(pdegree)
                 .kernel(KernelOption.valueOf(pkernel))
                 .asymmetricFilters(AsymmetricFilterOption.Direct)
                 .build();
-        
-        GenericSeasonalFilterSpec sfilter=new GenericSeasonalFilterSpec(period,
-            LocalPolynomialFilterSpec.defaultSeasonalSpec(shorizon, KernelOption.valueOf(seasKernel)));
-        
-        
+
+        GenericSeasonalFilterSpec sfilter = new GenericSeasonalFilterSpec(period,
+                LocalPolynomialFilterSpec.defaultSeasonalSpec(shorizon, KernelOption.valueOf(seasKernel)));
+
         X11plusSpec spec = X11plusSpec.builder()
                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
                 .period(period)
@@ -233,18 +263,18 @@ public class X11Decomposition {
 
     }
 
-    public Results cnX11(double[] data, int period, boolean mul, int thorizon, int pdegree, String pkernel, 
+    public Results cnX11(double[] data, int period, boolean mul, int thorizon, int pdegree, String pkernel,
             int shorizon, String seasKernel, double lsig, double usig) {
-        LocalPolynomialFilterSpec tspec= LocalPolynomialFilterSpec.builder()
+        LocalPolynomialFilterSpec tspec = LocalPolynomialFilterSpec.builder()
                 .filterHorizon(thorizon)
                 .polynomialDegree(pdegree)
                 .kernel(KernelOption.valueOf(pkernel))
                 .asymmetricFilters(AsymmetricFilterOption.CutAndNormalize)
                 .build();
-        
-        GenericSeasonalFilterSpec sfilter=new GenericSeasonalFilterSpec(period,
-            LocalPolynomialFilterSpec.defaultSeasonalSpec(shorizon, KernelOption.valueOf(seasKernel)));
-        
+
+        GenericSeasonalFilterSpec sfilter = new GenericSeasonalFilterSpec(period,
+                LocalPolynomialFilterSpec.defaultSeasonalSpec(shorizon, KernelOption.valueOf(seasKernel)));
+
         X11plusSpec spec = X11plusSpec.builder()
                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
                 .period(period)
@@ -266,10 +296,10 @@ public class X11Decomposition {
 
     }
 
-    public Results rkhsX11(double[] data, int period, boolean mul, int thorizon, int pdegree, String pkernel, 
+    public Results rkhsX11(double[] data, int period, boolean mul, int thorizon, int pdegree, String pkernel,
             boolean optimalbw, String criterion, boolean rwdensity, double passBand,
             int shorizon, String seasKernel, double lsig, double usig) {
-        RKHSFilterSpec tspec=RKHSFilterSpec.builder()
+        RKHSFilterSpec tspec = RKHSFilterSpec.builder()
                 .filterLength(thorizon)
                 .polynomialDegree(pdegree)
                 .kernel(KernelOption.valueOf(pkernel))
@@ -278,13 +308,12 @@ public class X11Decomposition {
                 .density(rwdensity ? SpectralDensity.RandomWalk : SpectralDensity.Undefined)
                 .passBand(passBand)
                 .minBandWidth(thorizon)
-                .maxBandWidth(3*thorizon)
+                .maxBandWidth(3 * thorizon)
                 .build();
-        
-        GenericSeasonalFilterSpec sfilter=new GenericSeasonalFilterSpec(period,
-            LocalPolynomialFilterSpec.defaultSeasonalSpec(shorizon, KernelOption.valueOf(seasKernel)));
-        
-        
+
+        GenericSeasonalFilterSpec sfilter = new GenericSeasonalFilterSpec(period,
+                LocalPolynomialFilterSpec.defaultSeasonalSpec(shorizon, KernelOption.valueOf(seasKernel)));
+
         X11plusSpec spec = X11plusSpec.builder()
                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
                 .period(period)
@@ -305,8 +334,9 @@ public class X11Decomposition {
                 .build();
 
     }
+
     public Results trendX11(double[] data, double period, boolean mul,
-    		DoubleSeq ctrendf, Matrix ltrendf, String seas0, String seas1, double lsig, double usig) {
+            DoubleSeq ctrendf, Matrix ltrendf, String seas0, String seas1, double lsig, double usig) {
         int iperiod = (int) period;
         Number P;
         if (Math.abs(period - iperiod) < 1e-9) {
@@ -314,8 +344,8 @@ public class X11Decomposition {
         } else {
             P = period;
         }
-        UserDefinedSymmetricFilterSpec tspec=new UserDefinedSymmetricFilterSpec(ctrendf, ltrendf);
-        
+        UserDefinedSymmetricFilterSpec tspec = new UserDefinedSymmetricFilterSpec(ctrendf, ltrendf);
+
         X11plusSpec spec = X11plusSpec.builder()
                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
                 .period(P)
@@ -336,7 +366,6 @@ public class X11Decomposition {
                 .build();
 
     }
-
 
     // diagnostics
     public double icratio(double[] s, double[] sc, boolean mul) {

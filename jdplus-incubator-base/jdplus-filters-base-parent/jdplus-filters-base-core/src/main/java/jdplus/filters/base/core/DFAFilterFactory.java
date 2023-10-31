@@ -48,7 +48,7 @@ public class DFAFilterFactory {
         private Filter(DFAFilterSpec spec) {
             int len = spec.getLags();
             symmetricFilter = SymmetricFilter.ofInternal(spec.getTarget());
-            asymmetricFilters = new FiniteFilter[len + 1];
+            asymmetricFilters = new FiniteFilter[len];
             DoubleUnaryOperator density = spec.getDensity().asFunction();
 
             DFAFilter.Builder builder = DFAFilter.builder()

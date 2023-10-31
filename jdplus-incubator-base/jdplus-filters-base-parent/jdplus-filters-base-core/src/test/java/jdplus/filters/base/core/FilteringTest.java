@@ -46,7 +46,7 @@ public class FilteringTest {
         for (int i = 0; i < bf.length; ++i) {
             N.column(i).drop(i, 0).copyFrom(bf[i].weightsToArray(), 0);
         }
-        Filtering F = Filtering.of(DoubleSeq.of(cw), M);
+        Filtering F = Filtering.of(DoubleSeq.of(cw), N);
         DoubleSeq fout = F.process(s);
         assertTrue(lout.distance(fout) < 1e-9);
         Filtering G = Filtering.of(DoubleSeq.of(cw), M, N);
