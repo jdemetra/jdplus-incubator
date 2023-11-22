@@ -21,5 +21,4 @@ package jdplus.advancedsa.base.api.movingtd;
  * @author palatej
  */
 public interface MovingTradingDaysSpec {
-    boolean isReestimate();
 }

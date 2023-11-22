@@ -2,8 +2,6 @@ package jdplus.filters.base.core;
 
 import java.util.function.DoubleUnaryOperator;
 import jdplus.filters.base.api.SpectralDensity;
-import jdplus.toolkit.base.core.math.linearfilters.IFiltering;
-import jdplus.toolkit.base.core.math.linearfilters.ISymmetricFiltering;
 import jdplus.toolkit.base.api.math.linearfilters.LocalPolynomialFilterSpec;
 import jdplus.toolkit.base.core.math.linearfilters.IQuasiSymmetricFiltering;
 

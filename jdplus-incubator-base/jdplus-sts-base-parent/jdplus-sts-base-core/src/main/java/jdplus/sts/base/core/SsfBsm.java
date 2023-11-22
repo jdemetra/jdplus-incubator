@@ -19,7 +19,7 @@
 package jdplus.sts.base.core;
 
 import jdplus.sts.base.api.Component;
-import jdplus.sts.base.api.SeasonalModel;
+import jdplus.toolkit.base.api.ssf.sts.SeasonalModel;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.ssf.ISsfDynamics;
 import jdplus.toolkit.base.core.ssf.ISsfInitialization;
@@ -29,6 +29,7 @@ import jdplus.toolkit.base.core.ssf.univariate.Measurement;
 import jdplus.toolkit.base.core.ssf.univariate.Ssf;
 import jdplus.toolkit.base.core.ssf.univariate.ISsfMeasurement;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
+import jdplus.toolkit.base.core.ssf.sts.SeasonalComponent;
 
 /**
  *

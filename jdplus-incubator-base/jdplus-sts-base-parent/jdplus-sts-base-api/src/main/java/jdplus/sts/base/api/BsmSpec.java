@@ -17,6 +17,7 @@
 package jdplus.sts.base.api;
 
 import jdplus.toolkit.base.api.data.Parameter;
+import jdplus.toolkit.base.api.ssf.sts.SeasonalModel;
 import nbbrd.design.Development;
 
 /**

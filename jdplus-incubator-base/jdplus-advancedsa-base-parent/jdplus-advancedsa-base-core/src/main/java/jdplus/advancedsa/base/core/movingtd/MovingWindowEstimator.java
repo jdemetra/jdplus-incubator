@@ -32,7 +32,6 @@ import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.toolkit.base.core.modelling.regression.Regression;
 import jdplus.toolkit.base.core.regarima.RegArimaEstimation;
 import jdplus.toolkit.base.core.regarima.RegArimaModel;
-import jdplus.toolkit.base.core.regsarima.RegSarimaComputer;
 import jdplus.toolkit.base.core.regsarima.regular.RegSarimaModel;
 import jdplus.toolkit.base.core.sarima.SarimaModel;
 
@@ -141,15 +140,9 @@ public class MovingWindowEstimator {
         rawTdCoefficients = FastMatrix.make(nwindows, td.getColumnsCount());
         for (int i = 0, i0 = cbeg, i1 = cbeg + wlen; i < nwindows; ++i) {
             RegArimaModel<SarimaModel> reg = regarima(partialLinearizedSeries.getValues(), td, mean, model.arima(), i0, i1 - i0);
-            if (spec.isReestimate()) {
-                RegArimaEstimation<SarimaModel> estimation = RegSarimaComputer.PROCESSOR.optimize(reg, null);
-                DoubleSeq b = estimation.getConcentratedLikelihood().coefficients();
-                rawTdCoefficients.row(i).copy(mean ? b.drop(1, 0) : b);
-            } else {
-                RegArimaEstimation<SarimaModel> estimation = RegArimaEstimation.of(reg, 0);
-                DoubleSeq b = estimation.getConcentratedLikelihood().coefficients();
-                rawTdCoefficients.row(i).copy(mean ? b.drop(1, 0) : b);
-            }
+            RegArimaEstimation<SarimaModel> estimation = RegArimaEstimation.of(reg, 0);
+            DoubleSeq b = estimation.getConcentratedLikelihood().coefficients();
+            rawTdCoefficients.row(i).copy(mean ? b.drop(1, 0) : b);
             i0 += freq;
             i1 += freq;
         }
@@ -209,34 +202,34 @@ public class MovingWindowEstimator {
     }
 
     private void computeTdEffects() {
-        
-        double[] t=new double[domain.getLength()];
-        tdCoefficients=FastMatrix.make(t.length, smoothedTdCoefficients.getColumnsCount());
+
+        double[] t = new double[domain.getLength()];
+        tdCoefficients = FastMatrix.make(t.length, smoothedTdCoefficients.getColumnsCount());
         // incomplete y0
         int row = 0, i = 0;
         if (cbeg > 0) {
             DataBlock crow = smoothedTdCoefficients.row(row++);
             for (; i < cbeg; ++i) {
                 tdCoefficients.row(i).copy(crow);
-                t[i]=td.row(i).dot(crow);
+                t[i] = td.row(i).dot(crow);
             }
         }
         int period = domain.getAnnualFrequency();
-        for (int j=0; j<ny; ++j){
+        for (int j = 0; j < ny; ++j) {
             DataBlock crow = smoothedTdCoefficients.row(row++);
-            for (int k=0; k < period; ++k, ++i) {
+            for (int k = 0; k < period; ++k, ++i) {
                 tdCoefficients.row(i).copy(crow);
-                t[i]=td.row(i).dot(crow);
+                t[i] = td.row(i).dot(crow);
             }
         }
         if (cend > 0) {
             DataBlock crow = smoothedTdCoefficients.row(row++);
-            for (int k=0; k<=cend; ++k, ++i) {
+            for (int k = 0; k <= cend; ++k, ++i) {
                 tdCoefficients.row(i).copy(crow);
-                t[i]=td.row(i).dot(crow);
+                t[i] = td.row(i).dot(crow);
             }
         }
-        tdEffect=TsData.ofInternal(domain.getStartPeriod(), t);
+        tdEffect = TsData.ofInternal(domain.getStartPeriod(), t);
     }
 
 }

@@ -87,7 +87,7 @@ public class LoessSpec {
         if (win % 2 == 0) {
             ++win;
         }
-        return of(win, 1, nojump ? 0 : (int) Math.ceil(0.1 * win), null);
+        return of(win, 1, nojump ? 0 : 1, null);//(int) Math.ceil(0.1 * win), null);
     }
 
     /**
@@ -118,7 +118,7 @@ public class LoessSpec {
         if (swin % 2 == 0) {
             ++swin;
         }
-        return of(swin, 0, nojump ? 0 : (int) Math.ceil(0.1 * swin), null);
+        return of(swin, 0, nojump ? 0 : 1, null);//(int) Math.ceil(0.1 * swin), null);
     }
 
     public static LoessSpec defaultSeasonal(boolean nojump) {
@@ -132,7 +132,7 @@ public class LoessSpec {
         if (degree < 0 || degree > 1) {
             throw new IllegalArgumentException("STL");
         }
-        return new LoessSpec(window, degree, nojump ? 0 : (int) Math.ceil(0.1 * window), null);
+        return new LoessSpec(window, degree, nojump ? 0 : 1, null);//(int) Math.ceil(0.1 * window), null);
     }
 
     /**

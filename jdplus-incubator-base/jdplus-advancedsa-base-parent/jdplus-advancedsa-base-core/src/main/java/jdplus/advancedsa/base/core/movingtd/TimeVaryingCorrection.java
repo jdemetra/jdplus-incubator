@@ -29,7 +29,7 @@ import jdplus.toolkit.base.core.sarima.SarimaModel;
 public class TimeVaryingCorrection implements MovingTradingDaysCorrection{
     
     private FastMatrix tdCoefficients, stdeTdCoefficients;
-    private TsData tdEffect, fullTdEffect, partialLinearizedSeries;
+    private TsData tdEffect, partialLinearizedSeries;
     private SarimaModel arima0, arima;
     private double aic0, aic;
 

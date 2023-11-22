@@ -65,8 +65,8 @@ public class MovingWindowEstimatorTest {
         MovingWindowSpec mwSpec = MovingWindowSpec.DEF_SPEC;
         MovingWindowEstimator mwe = new MovingWindowEstimator(mwSpec);
         MovingWindowCorrection q = mwe.process(rslt, 0, 0);
-        System.out.println(q.getTdCoefficients());
+//        System.out.println(q.getTdCoefficients());
         
-        System.out.println(q.getTdEffect().getValues());
+//        System.out.println(q.getTdEffect().getValues());
     }
 }

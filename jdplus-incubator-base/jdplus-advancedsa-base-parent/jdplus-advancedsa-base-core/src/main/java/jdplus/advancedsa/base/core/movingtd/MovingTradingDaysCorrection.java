@@ -16,10 +16,19 @@
  */
 package jdplus.advancedsa.base.core.movingtd;
 
+import jdplus.toolkit.base.api.timeseries.TsData;
+import jdplus.toolkit.base.core.math.matrices.FastMatrix;
+
 /**
  *
  * @author palatej
  */
 public interface MovingTradingDaysCorrection {
-    
+
+    FastMatrix getTdCoefficients();
+
+    TsData getTdEffect();
+
+    TsData getPartialLinearizedSeries();
+
 }

@@ -66,18 +66,18 @@ public class TimeVaryingEstimatorTest {
                 .reestimate(false)
                 .build();
         TimeVaryingEstimator tde = new TimeVaryingEstimator(tdSpec);
-        TimeVaryingCorrection q = tde.process(rslt);
+        TimeVaryingCorrection q = tde.process(rslt,0,0);
 //        System.out.println(q.getTdCoefficients());
-        System.out.println(q.getTdEffect().getValues());
-        System.out.println();
+//        System.out.println(q.getTdEffect().getValues());
+//       System.out.println();
         tdSpec = TimeVaryingSpec.builder()
                 .onContrast(true)
                 .reestimate(false)
                 .build();
         tde = new TimeVaryingEstimator(tdSpec);
-        q = tde.process(rslt);
+        q = tde.process(rslt,0,0);
 //        System.out.println(q.getTdCoefficients());
-        System.out.println(q.getTdEffect().getValues());
+//        System.out.println(q.getTdEffect().getValues());
     }
 
 }

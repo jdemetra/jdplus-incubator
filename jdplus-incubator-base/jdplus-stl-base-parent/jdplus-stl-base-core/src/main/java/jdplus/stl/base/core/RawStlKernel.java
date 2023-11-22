@@ -39,9 +39,13 @@ public class RawStlKernel {
     private final StlSpec spec;
 
     private double[] y, season, trend, irr, weights, fit, si, sa;
+    private int nmissing;
+
+    private int n() {
+        return y.length;
+    }
 
     public RawStlResults process(DoubleSeq data) {
-
         if (!initializeProcessing(data)) {
             return null;
         }
@@ -52,19 +56,32 @@ public class RawStlKernel {
                 return finishProcessing();
             }
             if (weights == null) {
-                weights = new double[y.length];
+                weights = new double[n()];
             }
-            computeRobustWeights(fit, weights);
+            op(trend, season, fit);
+            computeRobustWeights();
         } while (true);
     }
 
     private RawStlResults finishProcessing() {
         int n = y.length;
-        for (int i = 0; i < n; ++i) {
-            if (Double.isFinite(y[i])) {
-                irr[i] = invop(y[i], fit[i]);
-            } else {
-                irr[i] = mean();
+        if (spec.isMultiplicative()) {
+            for (int i = 0; i < n; ++i) {
+                fit[i] = trend[i] * season[i];
+                if (Double.isFinite(y[i])) {
+                    irr[i] = y[i] / fit[i];
+                } else {
+                    irr[i] = 1;
+                }
+            }
+        } else {
+            for (int i = 0; i < n; ++i) {
+                fit[i] = trend[i] + season[i];
+                if (Double.isFinite(y[i])) {
+                    irr[i] = y[i] - fit[i];
+                } else {
+                    irr[i] = 0;
+                }
             }
         }
         return RawStlResults.builder()
@@ -79,7 +96,9 @@ public class RawStlKernel {
     }
 
     private boolean initializeProcessing(DoubleSeq data) {
+
         int n = data.length();
+        nmissing = data.count(z -> !Double.isFinite(z));
         y = new double[n];
         data.copyTo(y, 0);
         fit = new double[n];
@@ -91,44 +110,70 @@ public class RawStlKernel {
         irr = new double[n];
         si = new double[n];
         sa = new double[n];
+        weights = null;
         return true;
     }
 
-    private static double mad(double[] r) {
-        double[] sr = r.clone();
-        Arrays.sort(sr);
-        int n = r.length;
+    private double mad() {
+        double[] sr;
+        if (nmissing == 0) {
+            sr = weights.clone();
+        } else {
+            int n = n();
+            sr = new double[n - nmissing];
+            for (int i = 0, j = 0; i < n; ++i) {
+                if (Double.isFinite(j)) {
+                    sr[j++] = weights[i];
+                }
+            }
+        }
+        int n = sr.length;
         int n2 = n >> 1;
+        Arrays.sort(sr);
         if (n % 2 != 0) {
             return 6 * sr[n2];
         } else {
             return 3 * (sr[n2 - 1] + sr[n2]);
         }
+//        if (n % 2 != 0) {
+//            int[] idx=new int[]{n2};
+//            new PartialSort().psort(sr, idx);
+//            return 6*sr[n2];
+//        } else {
+//            int[] idx=new int[]{n2, n2-1};
+//            new PartialSort().psort(sr, idx);
+//            return 3 * (sr[n2 - 1] + sr[n2]);
+//        }
     }
 
-    private void computeRobustWeights(double[] fit, double[] w) {
+    private void computeRobustWeights() {
 
-        int n = y.length;
+        int n = n();
+        double mu = mean();
         for (int i = 0; i < n; ++i) {
             if (Double.isFinite(y[i])) {
-                w[i] = Math.abs(invop(y[i], fit[i]) - mean());
+                weights[i] = Math.abs(invop(y[i], fit[i]) - mu);
+            } else {
+                weights[i] = Double.NaN;
             }
         }
 
-        double mad = mad(w);
+        double mad = mad();
         double wthreshold = spec.getRobustWeightThreshold();
         DoubleUnaryOperator wfn = spec.getRobustWeightFunction().asFunction();
         double c1 = wthreshold * mad;
         double c9 = (1 - wthreshold) * mad;
 
         for (int i = 0; i < n; ++i) {
-            double r = w[i];
-            if (r <= c1) {
-                w[i] = 1;
-            } else if (r <= c9) {
-                w[i] = wfn.applyAsDouble(r / mad);
-            } else {
-                w[i] = 0;
+            double r = weights[i];
+            if (Double.isFinite(r)) {
+                if (r <= c1) {
+                    weights[i] = 1;
+                } else if (r <= c9) {
+                    weights[i] = wfn.applyAsDouble(r / mad);
+                } else {
+                    weights[i] = 0;
+                }
             }
         }
 
@@ -163,52 +208,6 @@ public class RawStlKernel {
             }
             op(trend, season, fit);
         }
-    }
-
-    /**
-     * @return the y
-     */
-    public double[] getY() {
-        return y;
-    }
-
-    /**
-     * @return the season
-     */
-    public double[] getSeas() {
-        return season;
-    }
-
-    /**
-     * @return the trend
-     */
-    public double[] getTrend() {
-        return trend;
-    }
-
-    /**
-     * @return the irr
-     */
-    public double[] getIrr() {
-        return irr;
-    }
-
-    /**
-     * @return the weights
-     */
-    public double[] getWeights() {
-        return weights;
-    }
-
-    /**
-     * @return the fit
-     */
-    public double[] getFit() {
-        return fit;
-    }
-
-    private double op(double l, double r) {
-        return spec.isMultiplicative() ? l * r : l + r;
     }
 
     private double invop(double l, double r) {

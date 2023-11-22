@@ -16,6 +16,7 @@
  */
 package jdplus.sts.base.core.msts;
 
+import java.util.function.Predicate;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.api.data.DoubleSeqCursor;
 import jdplus.toolkit.base.core.math.functions.IParametersDomain;
@@ -50,6 +51,11 @@ public class ArInterpreter implements ParameterInterpreter {
             this.values[i] = defValue;
         }
         this.domain = new Domain(degree);
+    }
+    
+    @Override
+    public int dim(){
+        return values.length;
     }
 
     @Override
@@ -129,7 +135,7 @@ public class ArInterpreter implements ParameterInterpreter {
     }
 
     @Override
-    public int rescaleVariances(double factor, double[] buffer, int pos) {
+    public int rescale(double factor, double[] buffer, int pos, Predicate<ParameterInterpreter> check) {
         return pos+values.length;
     }
 

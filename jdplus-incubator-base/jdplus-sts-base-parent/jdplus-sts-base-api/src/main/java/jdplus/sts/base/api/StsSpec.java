@@ -1,5 +1,7 @@
 package jdplus.sts.base.api;
 
+import jdplus.advancedsa.base.api.movingtd.MovingTradingDaysSpec;
+import jdplus.advancedsa.base.api.movingtd.TimeVaryingSpec;
 import jdplus.sa.base.api.SaSpecification;
 import jdplus.sa.base.api.benchmarking.SaBenchmarkingSpec;
 import jdplus.toolkit.base.api.modelling.regular.ModellingSpec;
@@ -27,6 +29,8 @@ public class StsSpec implements SaSpecification{
     @lombok.NonNull
     private BsmEstimationSpec estimation;
     
+    private TimeVaryingSpec timeVaryingTradingDays;
+    
     @lombok.NonNull
     private SaBenchmarkingSpec benchmarking;
 
@@ -36,6 +40,7 @@ public class StsSpec implements SaSpecification{
                 .preprocessing(ModellingSpec.FULL)
                 .bsm(BsmSpec.DEFAULT)
                 .estimation(BsmEstimationSpec.DEFAULT)
+                .timeVaryingTradingDays(null)
                 .benchmarking(SaBenchmarkingSpec.DEFAULT_DISABLED);
     }
 

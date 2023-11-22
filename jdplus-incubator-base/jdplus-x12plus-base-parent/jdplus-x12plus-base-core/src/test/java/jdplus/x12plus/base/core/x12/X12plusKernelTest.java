@@ -18,6 +18,7 @@ package jdplus.x12plus.base.core.x12;
 
 import jdplus.sa.base.api.benchmarking.SaBenchmarkingSpec;
 import jdplus.toolkit.base.api.modelling.regular.ModellingSpec;
+import jdplus.advancedsa.base.api.movingtd.TimeVaryingSpec;
 import jdplus.x12plus.base.api.SeasonalFilterOption;
 import jdplus.x12plus.base.api.X11plusSpec;
 import tck.demetra.data.Data;
@@ -43,6 +44,25 @@ public class X12plusKernelTest {
                 .build();
         X12plusKernel kernel = X12plusKernel.of(spec, null);
         X12plusResults rslt = kernel.process(Data.TS_ABS_RETAIL, null);
+    }
+
+    @Test
+    public void testTimeVaryingTD() {
+
+       X11plusSpec x11 = X11plusSpec.createDefault(true, 12, SeasonalFilterOption.S3X5)
+                .toBuilder()
+                .backcastHorizon(-1)
+                .forecastHorizon(-1)
+                .build();
+        X12plusSpec spec = X12plusSpec.builder()
+                .preprocessing(ModellingSpec.FULL)
+                .movingTradingDays(TimeVaryingSpec.DEF_SPEC)
+                .x11(x11)
+                .benchmarking(SaBenchmarkingSpec.DEFAULT_DISABLED)
+                .build();
+        X12plusKernel kernel = X12plusKernel.of(spec, null);
+        X12plusResults rslt = kernel.process(Data.TS_ABS_RETAIL, null);
+        System.out.println(rslt.getMtdCorrection().getTdCoefficients());
     }
 
     @Test

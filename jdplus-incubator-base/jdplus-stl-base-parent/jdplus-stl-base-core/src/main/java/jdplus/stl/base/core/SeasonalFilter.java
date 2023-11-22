@@ -19,6 +19,7 @@ package jdplus.stl.base.core;
 import jdplus.stl.base.api.LoessSpec;
 import jdplus.stl.base.api.SeasonalSpec;
 import java.util.function.IntToDoubleFunction;
+import jdplus.toolkit.base.api.data.DoubleSeq;
 
 /**
  *

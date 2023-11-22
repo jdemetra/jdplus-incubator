@@ -19,12 +19,12 @@ import jdplus.toolkit.base.api.data.DoubleSeq;
  */
 public interface ParameterInterpreter {
 
-    public static int fullDim(Stream<ParameterInterpreter> blocks) {
-        return blocks.map(block -> block.getDomain().getDim())
+    public static int parametersDim(Stream<ParameterInterpreter> blocks) {
+        return blocks.map(block -> block.dim())
                 .reduce(0, (a, b) -> a + b);
     }
 
-    public static int dim(Stream<ParameterInterpreter> blocks) {
+    public static int functionDim(Stream<ParameterInterpreter> blocks) {
         return blocks.filter(block -> !block.isFixed())
                 .map(block -> block.getDomain().getDim())
                 .reduce(0, (a, b) -> a + b);
@@ -38,7 +38,7 @@ public interface ParameterInterpreter {
      * @return Contains fixed model parameters, initialized with default values
      */
     public static double[] decode(List<ParameterInterpreter> blocks, DoubleSeq inparams) {
-        double[] buffer = new double[fullDim(blocks.stream())];
+        double[] buffer = new double[parametersDim(blocks.stream())];
         int pos = 0;
         DoubleSeqCursor reader = inparams.cursor();
         for (ParameterInterpreter p : blocks) {
@@ -75,7 +75,7 @@ public interface ParameterInterpreter {
      * @return
      */
     public static double[] encode(List<ParameterInterpreter> blocks, DoubleSeq inparams) {
-        double[] buffer = new double[dim(blocks.stream())];
+        double[] buffer = new double[functionDim(blocks.stream())];
         int pos = 0;
         DoubleSeqCursor reader = inparams.cursor();
         for (ParameterInterpreter p : blocks) {
@@ -85,7 +85,7 @@ public interface ParameterInterpreter {
     }
 
     public static double[] defaultFunctionParameters(List<ParameterInterpreter> blocks) {
-        double[] buffer = new double[dim(blocks.stream())];
+        double[] buffer = new double[functionDim(blocks.stream())];
         int pos = 0;
         for (ParameterInterpreter p : blocks) {
             pos = p.fillDefault(buffer, pos);
@@ -98,21 +98,23 @@ public interface ParameterInterpreter {
     String getName();
 
     boolean isFixed();
-    
+
     boolean isScaleSensitive(boolean variance);
+    
+    int dim();
 
     /**
-     * Reads the parameters and rescale them if possible.
-     * Fixed variances are also rescaled
+     * Reads the parameters and rescale them if possible. 
+     * Default values should NOT be modified
      *
-     * @param factor The rescaling factor. The underlying data have been
-     * multiplied by this factor and the parameters must be rescaled
-     * accordingly.
-     * @param buffer The buffer with the parameters. Rescaling must be done in-place
+     * @param factor The rescaling factor (stdev of the variances)
+     * @param buffer The buffer with the parameters. Rescaling must be done
+     * in-place
      * @param pos The current position in the buffer
+     * @param check Condition to apply the rescaling
      * @return New position in the buffer
      */
-    int rescaleVariances(double factor, double[] buffer, int pos);
+    int rescale(double factor, double[] buffer, int pos, Predicate<ParameterInterpreter> check);
 
     /**
      * Reads the parameters and fix them.

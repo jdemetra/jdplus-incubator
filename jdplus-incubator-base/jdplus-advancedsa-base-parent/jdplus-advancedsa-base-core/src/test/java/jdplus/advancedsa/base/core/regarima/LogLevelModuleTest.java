@@ -153,7 +153,7 @@ public class LogLevelModuleTest {
             RegSarimaModelling m = RegSarimaModelling.of(model);
             ll.process(m);
 //            System.out.print(ll.isChoosingLog());
-            System.out.print('\t');
+//            System.out.print('\t');
 
             double[] nvals = insee[i].getValues().toArray();
             nvals[nvals.length - 3] *= 0.25;

@@ -7,6 +7,7 @@ module jdplus.sts.base.api {
     requires transitive jdplus.toolkit.base.api;
 
     requires jdplus.sa.base.api;
+    requires jdplus.advancedsa.base.api;
 
     exports jdplus.sts.base.api;
 }

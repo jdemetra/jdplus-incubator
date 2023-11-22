@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jdplus.sts.base.r.rssf;
+package jdplus.sts.base.r;
 
 import tck.demetra.data.Data;
 import jdplus.toolkit.base.api.math.functions.Optimizer;
@@ -19,7 +19,7 @@ import jdplus.sts.base.core.msts.StateItem;
 import jdplus.toolkit.base.core.ssf.sts.Noise;
 import jdplus.toolkit.base.core.ssf.sts.LocalLevel;
 import jdplus.toolkit.base.core.ssf.sts.LocalLinearTrend;
-import jdplus.sts.base.core.SeasonalComponent;
+import jdplus.toolkit.base.core.ssf.sts.SeasonalComponent;
 import org.junit.jupiter.api.Test;
 
 /**

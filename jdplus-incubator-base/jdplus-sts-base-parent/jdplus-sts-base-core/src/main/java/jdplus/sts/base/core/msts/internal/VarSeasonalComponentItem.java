@@ -19,14 +19,14 @@ package jdplus.sts.base.core.msts.internal;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.sts.base.core.msts.StateItem;
 import jdplus.sts.base.core.msts.MstsMapping;
-import jdplus.sts.base.api.SeasonalModel;
+import jdplus.toolkit.base.api.ssf.sts.SeasonalModel;
 import java.util.Collections;
 import java.util.List;
 import jdplus.sts.base.core.msts.ParameterInterpreter;
 import jdplus.sts.base.core.msts.ScaleInterpreter;
 import jdplus.toolkit.base.core.ssf.ISsfLoading;
 import jdplus.toolkit.base.core.ssf.StateComponent;
-import jdplus.sts.base.core.VarSeasonalComponent;
+import jdplus.toolkit.base.core.ssf.sts.VarSeasonalComponent;
 
 /**
  *

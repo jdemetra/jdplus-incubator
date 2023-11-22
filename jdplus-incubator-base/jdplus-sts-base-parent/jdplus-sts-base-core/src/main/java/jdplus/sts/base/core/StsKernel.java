@@ -66,11 +66,11 @@ public class StsKernel {
         };
     }
 
-    private BsmSpec spec;
-    private PreliminaryChecks.Tool preliminary;
-    private FastKernel preprocessor;
-    private BsmKernel kernel;
-    private CholetteProcessor cholette;
+    private final BsmSpec spec;
+    private final PreliminaryChecks.Tool preliminary;
+    private final FastKernel preprocessor;
+    private final BsmKernel kernel;
+    private final CholetteProcessor cholette;
 
     public static StsKernel of(StsSpec spec, ModellingContext context) {
         PreliminaryChecks.Tool check = of(spec);

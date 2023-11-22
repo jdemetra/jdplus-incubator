@@ -16,8 +16,8 @@
  */
 package jdplus.advancedsa.base.core.movingtd;
 
-import jdplus.toolkit.base.api.math.matrices.Matrix;
 import jdplus.toolkit.base.api.timeseries.TsData;
+import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 
 /**
  *
@@ -27,7 +27,7 @@ import jdplus.toolkit.base.api.timeseries.TsData;
 @lombok.Builder(builderClassName="Builder", toBuilder=true)
 public class MovingWindowCorrection implements MovingTradingDaysCorrection{
 
-    private Matrix rawCoefficients, smoothedCoefficients, tdCoefficients;
-    private TsData tdEffect, fullTdEffect, partialLinearizedSeries;
+    private FastMatrix rawCoefficients, smoothedCoefficients, tdCoefficients;
+    private TsData tdEffect, partialLinearizedSeries;
 
 }

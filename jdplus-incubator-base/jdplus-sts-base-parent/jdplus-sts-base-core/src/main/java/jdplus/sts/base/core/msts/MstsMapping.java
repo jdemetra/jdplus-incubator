@@ -22,6 +22,7 @@ import jdplus.toolkit.base.core.math.functions.ParamValidation;
 import jdplus.toolkit.base.core.ssf.SsfException;
 import jdplus.toolkit.base.core.ssf.composite.MultivariateCompositeSsf;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -53,6 +54,10 @@ public class MstsMapping implements IParametricMapping<MultivariateCompositeSsf>
         return parameters.stream();
     }
 
+    public List<ParameterInterpreter> allParameters() {
+        return Collections.unmodifiableList(parameters);
+    }
+
     public List<VarianceInterpreter> smallVariances(DoubleSeq cur, double eps) {
         List<VarianceInterpreter> small = new ArrayList<>();
         double max = maxVariance(cur);
@@ -63,7 +68,7 @@ public class MstsMapping implements IParametricMapping<MultivariateCompositeSsf>
                 VarianceInterpreter vp = (VarianceInterpreter) p;
                 if (vp.isNullable()) {
                     double v = cur.get(pos);
-                    if (v < eps * max) {
+                    if (v < eps) {
                         small.add(vp);
                     }
                 }
@@ -99,7 +104,7 @@ public class MstsMapping implements IParametricMapping<MultivariateCompositeSsf>
         int pos = 0;
         VarianceInterpreter mvar = null;
         for (ParameterInterpreter p : parameters) {
-            int dim = p.getDomain().getDim();
+            int dim = p.dim();
             if (dim == 1 && p instanceof VarianceInterpreter) {
                 double v = pcur[pos];
                 if (v > max) {
@@ -109,20 +114,42 @@ public class MstsMapping implements IParametricMapping<MultivariateCompositeSsf>
             }
             pos += dim;
         }
-        if (max > 0 && max != var) {
-            rescaleVariances(var / max, pcur);
-        }
         if (mvar != null) {
             mvar.fixStde(Math.sqrt(var));
+            if (max != var) {
+                double ratio = Math.sqrt(var / max);
+                rescale(ratio, pcur, p -> p instanceof VarianceInterpreter);
+            }
         }
         return mvar;
     }
 
-    public void rescaleVariances(double factor, double[] curp) {
+    /**
+     * Rescale the parameters
+     *
+     * @param factor Scaling factor
+     * @param curp Buffer (in/out)
+     * @param check Condition
+     */
+    public void rescale(double factor, double[] curp, Predicate<ParameterInterpreter> check) {
         int pos = 0;
         for (ParameterInterpreter p : parameters) {
-            pos = p.rescaleVariances(factor, curp, pos);
+            pos = p.rescale(factor, curp, pos, check);
         }
+    }
+
+    /**
+     * Rescale the parameters
+     *
+     * @param factor Scaling factor
+     * @param curp Current parameters
+     * @param check Condition
+     * @return New (rescaled) parameters
+     */
+    public DoubleSeq rescale(double factor, DoubleSeq curp, Predicate<ParameterInterpreter> check) {
+        double[] c = curp.toArray();
+        rescale(factor, c, check);
+        return DoubleSeq.of(c);
     }
 
     /**
@@ -198,7 +225,7 @@ public class MstsMapping implements IParametricMapping<MultivariateCompositeSsf>
 
     @Override
     public int getDim() {
-        return ParameterInterpreter.dim(parameters.stream());
+        return ParameterInterpreter.functionDim(parameters.stream());
     }
 
     @Override
@@ -239,12 +266,10 @@ public class MstsMapping implements IParametricMapping<MultivariateCompositeSsf>
             if (!p.isFixed()) {
                 int dim = p.getDomain().getDim();
                 switch (p.getDomain().validate(ioparams.extract(pos, dim))) {
-                    case Changed:
+                    case Changed ->
                         changed = true;
-                        break;
-                    case Invalid:
+                    case Invalid ->
                         invalid = true;
-                        break;
                 }
                 pos += dim;
             }
@@ -281,7 +306,7 @@ public class MstsMapping implements IParametricMapping<MultivariateCompositeSsf>
                 }
             }
         }
-        return names.toArray(new String[names.size()]);
+        return names.toArray(String[]::new);
     }
 
 }

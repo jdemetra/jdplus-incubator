@@ -51,7 +51,7 @@ public class CumulatorTest {
         eq.add("disagg", disagg.defaultLoading(0));
         model.add(eq);
         
-        CompositeModelEstimation rslt = model.estimate(y, false, true, SsfInitialization.Augmented, Optimizer.BFGS, 1e-15, null);
+        CompositeModelEstimation rslt = model.estimate(y, false, true, SsfInitialization.Augmented, Optimizer.LevenbergMarquardt, 1e-15, null);
         StateStorage states = rslt.getSmoothedStates();
         
         DataBlock q=DataBlock.of(states.getComponent(1));

@@ -16,6 +16,7 @@
  */
 package jdplus.sts.base.core.msts;
 
+import java.util.function.Predicate;
 import jdplus.toolkit.base.api.data.DoubleSeqCursor;
 import jdplus.toolkit.base.core.math.functions.IParametersDomain;
 
@@ -100,6 +101,11 @@ public class GenericParameters implements ParameterInterpreter {
     }
 
     @Override
+    public int dim(){
+        return parameters.length;
+    }
+
+    @Override
     public int fillDefault(double[] buffer, int pos) {
         if (!fixed) {
             System.arraycopy(parameters, 0, buffer, pos, parameters.length);
@@ -110,7 +116,7 @@ public class GenericParameters implements ParameterInterpreter {
     }
     
     @Override
-    public int rescaleVariances(double factor, double[] buffer, int pos) {
+    public int rescale(double factor, double[] buffer, int pos, Predicate<ParameterInterpreter> check) {
         return pos+parameters.length;
     }
 

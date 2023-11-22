@@ -13,7 +13,7 @@ import jdplus.sts.base.core.BsmEstimation;
 import jdplus.sts.base.api.BsmEstimationSpec;
 import jdplus.sts.base.api.BsmSpec;
 import jdplus.sts.base.core.LightBasicStructuralModel;
-import jdplus.sts.base.api.SeasonalModel;
+import jdplus.toolkit.base.api.ssf.sts.SeasonalModel;
 import jdplus.sts.base.io.protobuf.StsProtosUtility;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.api.timeseries.TsDomain;

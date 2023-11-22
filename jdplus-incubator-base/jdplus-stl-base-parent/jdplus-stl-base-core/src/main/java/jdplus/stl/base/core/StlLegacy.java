@@ -118,14 +118,18 @@ public class StlLegacy {
         return true;
     }
 
-    private static double mad(double[] r) {
+    private static double mad(double[] r, boolean legacy) {
         double[] sr = r.clone();
-        Arrays.sort(sr);
+//        Arrays.sort(sr);
         int n = r.length;
         int n2 = n >> 1;
         if (n % 2 != 0) {
-            return 6 * sr[n2];
+            int[] idx=new int[]{n2};
+            new PartialSort().psort(sr, idx);
+            return 6*sr[n2];
         } else {
+            int[] idx= legacy ? new int[]{n2, n2-1} : new int[]{n2-1, n2};
+            new PartialSort().psort(sr, idx);
             return 3 * (sr[n2 - 1] + sr[n2]);
         }
     }
@@ -135,13 +139,13 @@ public class StlLegacy {
         int n = n();
         for (int i = 0; i < n; ++i) {
             if (missing[i]) {
-                w[i] = spec.isMultiplicative() ? 1 : 0;
+                w[i] = 0;
             } else {
                 w[i] = Math.abs(spec.isMultiplicative() ? y[i] / fit[i] - 1 : y[i] - fit[i]);
             }
         }
 
-        double mad = mad(w);
+        double mad = mad(w, spec.isLegacy());
 
         double c1 = spec.getWthreshold() * mad;
         double c9 = (1 - spec.getWthreshold()) * mad;
@@ -163,12 +167,14 @@ public class StlLegacy {
      * Moving Average (aka "running mean") ave(i) := mean(x{j}, j =
      * max(1,i-k),..., min(n, i+k)) for i = 1,2,..,n
      *
-     * @param len
-     * @param n
-     * @param x
-     * @param ave
+     * len X 1 filter
+     *
+     * @param len Length of the moving average
+     * @param n Number of input data (in x)
+     * @param x Input data
+     * @param ave Output. The results will be in ave[0, n-len[
      */
-    protected static void stlma(int len, int n, double[] x, double[] ave) {
+    static void stlma(int len, int n, double[] x, double[] ave) {
         int newn = n - len + 1;
         double v = 0, flen = len;
         for (int i = 0; i < len; ++i) {
@@ -184,13 +190,16 @@ public class StlLegacy {
     }
 
     /**
+     * This filter computes robust trend
      *
-     * @param np
-     * @param n
-     * @param x
-     * @param t
+     * len X len X 3 filter To be compared with the 12 X 2 filter of the X11,
+     * which smooths much less the series
+     *
+     * @param np Periodicity of the series that we try to remove
+     * @param x Input
+     * @param t Output. Should contain x.length-2*np figures
      */
-    protected static void stlfts(int np, double[] x, double[] t) {
+    static void stlfts(int np, double[] x, double[] t) {
         int n = x.length;
         double[] w1 = new double[n];
         double[] w2 = new double[n];
@@ -199,28 +208,39 @@ public class StlLegacy {
         stlma(3, n - 2 * np + 2, w2, t);
     }
 
-    protected double stlest(IntToDoubleFunction y, int n, int len, int degree, double xs, int nleft, int nright, IntToDoubleFunction userWeights) {
-        int nj = nright - nleft + 1;
+    /**
+     *
+     * @param y
+     * @param n
+     * @param len
+     * @param degree
+     * @param xs
+     * @param left
+     * @param right
+     * @param userWeights
+     * @return
+     */
+    private double stlest(IntToDoubleFunction y, int n, int len, int degree, double xs, int left, int right, IntToDoubleFunction userWeights) {
+        int nj = right - left + 1;
         double[] w = new double[nj];
         double range = n - 1;
-        double h = Math.max(xs - nleft, nright - xs);
+        double h = Math.max(xs - left, right - xs);
         if (len > n) {
-            h += (len - n) * .5;
+            h +=  (len - n) / 2;
         }
         double h9 = 0.999 * h;
         double h1 = 0.001 * h;
         double a = 0;
-        for (int j = nleft, jw = 0; j <= nright; ++j, ++jw) {
+        for (int j = left, jw = 0; j <= right; ++j, ++jw) {
             boolean available = Double.isFinite(y.applyAsDouble(j));
             if (available) {
                 double r = Math.abs(j - xs);
-                if (r < h9) {
-                    if (r < h1) {
+                if (r <= h9) {
+                    if (r <= h1) {
                         w[jw] = 1;
                     } else {
                         w[jw] = spec.getLoessfn().applyAsDouble(r / h);
                     }
-
                     if (userWeights != null) {
                         w[jw] *= userWeights.applyAsDouble(j);
                     }
@@ -240,7 +260,7 @@ public class StlLegacy {
                 for (int j = 0; j < nj; ++j) {
                     a += w[j] * j;
                 }
-                double b = xs - nleft - a;
+                double b = xs - left - a;
                 double c = 0;
                 for (int j = 0; j < nj; ++j) {
                     double ja = j - a;
@@ -255,7 +275,7 @@ public class StlLegacy {
                 }
             }
             double ys = 0;
-            for (int j = nleft, jw = 0; j <= nright; ++j, ++jw) {
+            for (int j = left, jw = 0; j <= right; ++j, ++jw) {
                 double yj = y.applyAsDouble(j);
                 if (Double.isFinite(yj)) {
                     ys += w[jw] * yj;
@@ -265,7 +285,7 @@ public class StlLegacy {
         }
     }
 
-    protected void stless(IntToDoubleFunction y, int n, int len, int degree, int njump, IntToDoubleFunction userWeights, double[] ys) {
+    private void stless(IntToDoubleFunction y, int n, int len, int degree, int njump, IntToDoubleFunction userWeights, double[] ys) {
 
         if (n < 2) {
             ys[0] = y.applyAsDouble(0);
@@ -285,10 +305,14 @@ public class StlLegacy {
                 }
             }
         } else if (newnj == 1) {
+            // idx of the middle 
             int nsh = (len - 1) >> 1;
+            // to start, nothing on the left, all on the right (included)
+            // nleft is the left bound, nright is the right bound 
             nleft = 0;
             nright = len - 1;
             for (int i = 0; i < n; ++i) {
+                // normal case: we shift the range to the right. Otherwise, we just shift the point
                 if (i > nsh && nright != n - 1) {
                     ++nleft;
                     ++nright;
@@ -323,7 +347,7 @@ public class StlLegacy {
             }
         }
         if (newnj != 1) {
-
+            // interpolation
             int i = 0;
             for (; i < n - newnj; i += newnj) {
                 double delta = (ys[i + newnj] - ys[i]) / newnj;
@@ -349,17 +373,18 @@ public class StlLegacy {
     }
 
     protected void stlss(IntToDoubleFunction fn, double[] season) {
-        if (spec.getNp() < 1) {
+        int np = spec.getNp();
+        if (np < 1) {
             return;
         }
         int n = n();
-        double[] s = new double[(n - 1) / spec.getNp() + 1];
-        for (int j = 0; j < spec.getNp(); ++j) {
+        double[] s = new double[(n - 1) / np + 1];
+        for (int j = 0; j < np; ++j) {
             // last index fo period j (excluded)
-            int k = (n - 1 - j) / spec.getNp() + 1;
+            int k = (n - 1 - j) / np + 1;
             final int start = j;
-            IntToDoubleFunction yp = idx -> fn.applyAsDouble(idx * spec.getNp() + start);
-            IntToDoubleFunction wp = weights == null ? null : idx -> weights[idx * spec.getNp() + start];
+            IntToDoubleFunction yp = idx -> fn.applyAsDouble(idx * np + start);
+            IntToDoubleFunction wp = weights == null ? null : idx -> weights[idx * np + start];
             stless(yp, k, spec.getNs(), spec.getSdeg(), spec.getNsjump(), wp, s);
             // backcast
             double sb = stlest(yp, k, spec.getNs(), spec.getSdeg(), -1, 0, Math.min(spec.getNs() - 1, k - 1), wp);
@@ -369,8 +394,8 @@ public class StlLegacy {
                 season[j] = yp.applyAsDouble(0);
             }
             // copy s
-            int l = spec.getNp() + j;
-            for (int i = 0; i < k; ++i, l += spec.getNp()) {
+            int l = np + j;
+            for (int i = 0; i < k; ++i, l += np) {
                 season[l] = s[i];
             }
             // forecast (pos =np*(b+1) )

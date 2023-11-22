@@ -45,7 +45,9 @@ import jdplus.toolkit.base.core.ssf.dk.DkToolkit;
 import jdplus.toolkit.base.core.ssf.dk.SsfFunction;
 import jdplus.toolkit.base.core.ssf.dk.SsfFunctionPoint;
 import jdplus.toolkit.base.core.ssf.univariate.DefaultSmoothingResults;
+import jdplus.toolkit.base.core.ssf.univariate.ExtendedSsfData;
 import jdplus.toolkit.base.core.ssf.univariate.ISsf;
+import jdplus.toolkit.base.core.ssf.univariate.ISsfData;
 import jdplus.toolkit.base.core.ssf.univariate.Ssf;
 import jdplus.toolkit.base.core.ssf.univariate.SsfData;
 
@@ -61,8 +63,6 @@ public class TimeVaryingEstimator {
     private TsData partialLinearizedSeries, tdEffect;
     private TsDomain domain;
     private Variable[] variables;
-    private double[] fixedTdCoefficients;
-    private double[] fixedTdStde;
     private SarimaModel arima0, arima;
     private double aic, aic0;
 
@@ -75,13 +75,13 @@ public class TimeVaryingEstimator {
         this.spec = spec;
     }
 
-    public TimeVaryingCorrection process(RegSarimaModel model) {
+    public TimeVaryingCorrection process(RegSarimaModel model, int bcasts, int fcasts) {
         this.model = model;
         try {
-            if (!processInitialModel()) {
+            if (!processInitialModel(bcasts, fcasts)) {
                 return null;
             }
-            if (!compute()) {
+            if (!compute(bcasts, fcasts)) {
                 return null;
             }
             return TimeVaryingCorrection.builder()
@@ -121,7 +121,7 @@ public class TimeVaryingEstimator {
         return SymmetricMatrix.XSXt(full, Q);
     }
 
-    private boolean compute() {
+    private boolean compute(int bcasts, int fcasts) {
         try {
             FastMatrix cov = null;
             Optional<Variable> otd = Arrays.stream(variables)
@@ -133,7 +133,10 @@ public class TimeVaryingEstimator {
                 cov = generateVar(htd.getClustering());
             }
 
-            SsfData data = new SsfData(partialLinearizedSeries.getValues());
+            ISsfData data = new SsfData(partialLinearizedSeries.getValues());
+            if (bcasts>0 || fcasts >0){
+                data=new ExtendedSsfData(data, bcasts, fcasts);
+            }
             // step 0 fixed model
             int period = partialLinearizedSeries.getAnnualFrequency();
             TDvarData tdVar0 = new TDvarData(SarimaModel.builder(SarimaOrders.airline(period)).setDefault(0, -.6).build(), td, null);
@@ -210,26 +213,17 @@ public class TimeVaryingEstimator {
 
     }
 
-    private boolean processInitialModel() {
+    private boolean processInitialModel(int bcasts, int fcasts) {
         variables = model.getDescription().getVariables();
         Optional<Variable> otd = Arrays.stream(variables)
                 .filter(var -> !var.isPreadjustment() && ModellingUtility.isTradingDays(var)).findFirst();
-        domain = model.getDescription().getDomain();
+        domain = model.getDescription().getDomain().extend(bcasts, fcasts);
         Variable vtd = otd.orElseThrow();
+        if (! vtd.isFree())
+            return false;
         td = Regression.matrix(domain, vtd.getCore());
-        int nfree = vtd.freeCoefficientsCount();
         if (td.isEmpty()) {
             return false;
-        }
-        if (td.getColumnsCount() > nfree) {
-            FastMatrix mtdc = FastMatrix.make(td.getRowsCount(), nfree);
-            Parameter[] c = vtd.getCoefficients();
-            for (int i = 0, j = 0; i < td.getColumnsCount(); ++i) {
-                if (c[i].isFree()) {
-                    mtdc.column(j++).copy(td.column(i));
-                }
-            }
-            td = mtdc;
         }
         TsData tdfixed = model.regressionEffect(domain, var -> ModellingUtility.isTradingDays(var));
         TsData ls = model.linearizedSeries();

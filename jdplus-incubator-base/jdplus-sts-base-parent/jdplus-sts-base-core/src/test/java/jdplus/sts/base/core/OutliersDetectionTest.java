@@ -8,7 +8,7 @@ package jdplus.sts.base.core;
 import tck.demetra.data.Data;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.sts.base.api.BsmSpec;
-import jdplus.sts.base.api.SeasonalModel;
+import jdplus.toolkit.base.api.ssf.sts.SeasonalModel;
 import jdplus.toolkit.base.api.timeseries.TsPeriod;
 import jdplus.toolkit.base.api.timeseries.calendars.DayClustering;
 import java.util.Arrays;

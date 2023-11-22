@@ -11,6 +11,7 @@ import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.core.math.linearfilters.IFiltering;
 import jdplus.toolkit.base.core.math.linearfilters.IFiniteFilter;
 import jdplus.toolkit.base.api.math.linearfilters.LocalPolynomialFilterSpec;
+import jdplus.toolkit.base.core.math.linearfilters.SymmetricFiltering;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,6 +31,7 @@ public class FilteringTest {
         IFiltering lf = LocalPolynomialFilters.of(LocalPolynomialFilterSpec.DEF_TREND_SPEC);
 
         DoubleSeq s = DoubleSeq.of(Data.NILE);
+//        System.out.println(s);
 
         DoubleSeq lout = lf.process(s);
         IFiniteFilter cf = lf.centralFilter();
@@ -44,13 +46,20 @@ public class FilteringTest {
         FastMatrix N = FastMatrix.make(cw.length - 1, cf.getUpperBound());
         IFiniteFilter[] bf = lf.rightEndPointsFilters();
         for (int i = 0; i < bf.length; ++i) {
-            N.column(i).drop(i, 0).copyFrom(bf[i].weightsToArray(), 0);
+            N.column(i).drop(0, i).copyFrom(bf[i].weightsToArray(), 0);
         }
         Filtering F = Filtering.of(DoubleSeq.of(cw), N);
         DoubleSeq fout = F.process(s);
-        assertTrue(lout.distance(fout) < 1e-9);
+        SymmetricFiltering H = SymmetricFiltering.of(DoubleSeq.of(cw), N);
+        DoubleSeq hout = H.process(s);
+//        System.out.println(fout);
+//        System.out.println(lout);
+//        System.out.println(hout);
         Filtering G = Filtering.of(DoubleSeq.of(cw), M, N);
         DoubleSeq gout = G.process(s);
+//        System.out.println(gout);
+        assertTrue(lout.distance(gout) < 1e-9);
+        assertTrue(lout.distance(fout) < 1e-9);
         assertTrue(lout.distance(gout) < 1e-9);
     }
 

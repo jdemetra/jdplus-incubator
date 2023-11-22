@@ -18,7 +18,7 @@ import jdplus.toolkit.base.protobuf.outliers.OutliersProtos;
 import jdplus.sts.base.api.BsmEstimationSpec;
 import jdplus.sts.base.api.BsmSpec;
 import jdplus.sts.base.api.Component;
-import jdplus.sts.base.api.SeasonalModel;
+import jdplus.toolkit.base.api.ssf.sts.SeasonalModel;
 import jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.protobuf.toolkit.ToolkitProtosUtility;
