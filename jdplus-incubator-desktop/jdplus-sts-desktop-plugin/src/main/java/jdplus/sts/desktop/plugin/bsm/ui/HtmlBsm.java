@@ -19,7 +19,9 @@ package jdplus.sts.desktop.plugin.bsm.ui;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Formatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
@@ -60,6 +62,7 @@ import jdplus.toolkit.base.core.stats.likelihood.DiffuseLikelihoodStatistics;
 import jdplus.toolkit.desktop.plugin.html.AbstractHtmlElement;
 import jdplus.toolkit.desktop.plugin.html.Bootstrap4;
 import jdplus.toolkit.desktop.plugin.html.HtmlStream;
+import jdplus.toolkit.desktop.plugin.html.HtmlStyle;
 import jdplus.toolkit.desktop.plugin.html.HtmlTable;
 import jdplus.toolkit.desktop.plugin.html.HtmlTableCell;
 import jdplus.toolkit.desktop.plugin.html.HtmlTag;
@@ -199,143 +202,45 @@ public class HtmlBsm extends AbstractHtmlElement {
         BsmSpec bsm = model.getDescription().getSpecification();
         DiffuseLikelihoodStatistics ll = model.getEstimation().getStatistics();
         int nhp = bsm.getFreeParametersCount();
-        stream.open(new HtmlTable().withWidth(400));
+        stream.open(new HtmlTable(0, 300));
         stream.open(HtmlTag.TABLEROW);
-        stream.write(new HtmlTableCell("").withWidth(100));
-        stream.write(new HtmlTableCell("Coefficients").withWidth(100).withClass(Bootstrap4.FONT_WEIGHT_BOLD));
-//        stream.write(new HtmlTableCell("T-Stat").withWidth(100).withClass(Bootstrap4.FONT_WEIGHT_BOLD));
-//        stream.write(new HtmlTableCell("P[|T| &gt t]").withWidth(100).withClass(Bootstrap4.FONT_WEIGHT_BOLD));
+        stream.write(new HtmlTableCell("Component", 100, HtmlStyle.Bold));
+        stream.write(new HtmlTableCell("Variance", 100, HtmlStyle.Bold));
+        stream.write(new HtmlTableCell("Q-Ratio", 100, HtmlStyle.Bold));
         stream.close(HtmlTag.TABLEROW);
+
+        double vmax = bsm.maxVariance();
+        String fmt;
+        if (vmax > 10000) {
+            fmt = "%.1f";
+        } else if (vmax > 100) {
+            fmt = "%.2f";
+        } else if (vmax > 1) {
+            fmt = "%.4f";
+        } else {
+            fmt = "%.6f";
+        }
 //        int P = sspec.getP();
 //        Parameter[] p = arima.getPhi();
-        int nobs = ll.getEffectiveObservationsCount(), nparams = ll.getEstimatedParametersCount();
-        DoubleSeqCursor vars = model.getEstimation().getParameters().getCovariance().diagonal().cursor();
-        double ndf = nobs - nparams;
-        double vcorr = (ndf - nhp) / ndf;
-        T t = new T(ndf - nhp);
-        List<String> headers = new ArrayList<>();
-        Parameter p = bsm.getLevelVar();
-        if (p != null) {
-            stream.open(HtmlTag.TABLEROW);
-            String header = "Level";
-            stream.write(new HtmlTableCell(header).withWidth(100));
-            double val = p.getValue();
-            stream.write(new HtmlTableCell(de6.format(val)).withWidth(100));
-//            if (!p.isFixed()) {
-//                double stde = Math.sqrt(vars.getAndNext() * vcorr);
-//                headers.add(header);
-//                double tval = val / stde;
-//                stream.write(new HtmlTableCell(formatT(tval)).withWidth(100));
-//                double prob = 1 - t.getProbabilityForInterval(-tval, tval);
-//                stream.write(new HtmlTableCell(df4.format(prob)).withWidth(100));
-//            }
-            stream.close(HtmlTag.TABLEROW);
-        }
-        p = bsm.getSlopeVar();
-        if (p != null) {
-            stream.open(HtmlTag.TABLEROW);
-            String header = "Slope";
-            stream.write(new HtmlTableCell(header).withWidth(100));
-            double val = p.getValue();
-            stream.write(new HtmlTableCell(de6.format(val)).withWidth(100));
-//            if (!p.isFixed()) {
-//                double stde = Math.sqrt(vars.getAndNext() * vcorr);
-//                headers.add(header);
-//                double tval = val / stde;
-//                stream.write(new HtmlTableCell(formatT(tval)).withWidth(100));
-//                double prob = 1 - t.getProbabilityForInterval(-tval, tval);
-//                stream.write(new HtmlTableCell(df4.format(prob)).withWidth(100));
-//            }
-            stream.close(HtmlTag.TABLEROW);
-        }
-        p = bsm.getCycleVar();
-        if (p != null) {
-            stream.open(HtmlTag.TABLEROW);
-            String header = "Cycle";
-            stream.write(new HtmlTableCell(header).withWidth(100));
-            double val = p.getValue();
-            stream.write(new HtmlTableCell(de6.format(val)).withWidth(100));
-//            if (!p.isFixed()) {
-//                double stde = Math.sqrt(vars.getAndNext() * vcorr);
-//                headers.add(header);
-//                double tval = val / stde;
-//                stream.write(new HtmlTableCell(formatT(tval)).withWidth(100));
-//                double prob = 1 - t.getProbabilityForInterval(-tval, tval);
-//                stream.write(new HtmlTableCell(df4.format(prob)).withWidth(100));
-//            }
-            stream.close(HtmlTag.TABLEROW);
-        }
-        stream.close(HtmlTag.TABLE);
-        p = bsm.getSeasonalVar();
-        if (p != null) {
-            stream.open(HtmlTag.TABLEROW);
-            String header = "Seasonal";
-            stream.write(new HtmlTableCell(header).withWidth(100));
-            double val = p.getValue();
-            stream.write(new HtmlTableCell(de6.format(val)).withWidth(100));
-//            if (!p.isFixed()) {
-//                double stde = Math.sqrt(vars.getAndNext() * vcorr);
-//                headers.add(header);
-//                double tval = val / stde;
-//                stream.write(new HtmlTableCell(formatT(tval)).withWidth(100));
-//                double prob = 1 - t.getProbabilityForInterval(-tval, tval);
-//                stream.write(new HtmlTableCell(df4.format(prob)).withWidth(100));
-//            }
-            stream.close(HtmlTag.TABLEROW);
-        }
-        p = bsm.getNoiseVar();
-        if (p != null) {
-            stream.open(HtmlTag.TABLEROW);
-            String header = "Noise";
-            stream.write(new HtmlTableCell(header).withWidth(100));
-            double val = p.getValue();
-            stream.write(new HtmlTableCell(de6.format(val)).withWidth(100));
-//            if (!p.isFixed()) {
-//                double stde = Math.sqrt(vars.getAndNext() * vcorr);
-//                headers.add(header);
-//                double tval = val / stde;
-//                stream.write(new HtmlTableCell(formatT(tval)).withWidth(100));
-//                double prob = 1 - t.getProbabilityForInterval(-tval, tval);
-//                stream.write(new HtmlTableCell(df4.format(prob)).withWidth(100));
-//            }
-            stream.close(HtmlTag.TABLEROW);
-        }
+        writeVariance(stream, bsm.getLevelVar(), "Level", vmax, fmt);
+        writeVariance(stream, bsm.getSlopeVar(), "Slope", vmax, fmt);
+        writeVariance(stream, bsm.getCycleVar(), "Cycle", vmax, fmt);
+        writeVariance(stream, bsm.getSeasonalVar(), "Seasonal", vmax, fmt);
+        writeVariance(stream, bsm.getNoiseVar(), "Noise", vmax, fmt);
         stream.close(HtmlTag.TABLE);
         stream.newLine();
 
-//        Matrix pcov = model.getEstimation().getParameters().getCovariance();
-//        if (!pcov.isEmpty()) {
-//            int size = pcov.getColumnsCount();
-//            stream.newLines(2);
-//            stream.write(HtmlTag.HEADER3, "Correlation of the estimates").newLine();
-//            stream.open(HtmlTag.TABLE);
-//
-//            stream.open(HtmlTag.TABLEROW);
-//            stream.write(new HtmlTableCell("").withWidth(100));
-//
-//            for (int i = 0; i < size; ++i) {
-//                stream.write(new HtmlTableCell(headers.get(i)).withWidth(100));
-//            }
-//            stream.close(HtmlTag.TABLEROW);
-//
-//            for (int i = 0; i < size; ++i) {
-//                stream.open(HtmlTag.TABLEROW);
-//                stream.write(new HtmlTableCell(headers.get(i)).withWidth(100));
-//                for (int j = 0; j < size; ++j) {
-//                    double vi = pcov.get(i, i), vj = pcov.get(j, j);
-//                    if (vi != 0 && vj != 0) {
-//                        double val = pcov.get(i, j) / Math.sqrt(vi * vj);
-//                        stream.write(new HtmlTableCell(df4.format(val)).withWidth(100));
-//                    } else {
-//                        stream.write(new HtmlTableCell("-").withWidth(100));
-//                    }
-//                }
-//                stream.close(HtmlTag.TABLEROW);
-//            }
-//
-//            stream.close(HtmlTag.TABLE);
-//            stream.newLine();
-//        }
+    }
+
+    private void writeVariance(HtmlStream stream, Parameter p, String header, double vmax, String fmt) throws IOException {
+        if (p != null) {
+            stream.open(HtmlTag.TABLEROW);
+            stream.write(new HtmlTableCell(header).withWidth(100));
+            double val = p.getValue();
+            stream.write(new HtmlTableCell(new Formatter(Locale.ROOT).format(fmt, val).toString()).withWidth(100));
+            stream.write(new HtmlTableCell(new Formatter(Locale.ROOT).format("%.4f", val / vmax).toString()).withWidth(100));
+            stream.close(HtmlTag.TABLEROW);
+        }
     }
 
     public void writeRegression(HtmlStream stream) throws IOException {

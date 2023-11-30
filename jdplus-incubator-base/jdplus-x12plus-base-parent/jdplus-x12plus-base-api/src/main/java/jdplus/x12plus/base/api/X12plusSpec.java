@@ -16,6 +16,7 @@
  */
 package jdplus.x12plus.base.api;
 
+import jdplus.advancedsa.base.api.movingtd.MovingTradingDaysSpec;
 import jdplus.toolkit.base.api.modelling.regular.ModellingSpec;
 import jdplus.toolkit.base.api.processing.AlgorithmDescriptor;
 import jdplus.sa.base.api.SaSpecification;
@@ -43,6 +44,8 @@ public class X12plusSpec implements SaSpecification{
     
     private X11plusSpec x11;
     
+    private MovingTradingDaysSpec movingTradingDays;
+    
     @lombok.NonNull
     private SaBenchmarkingSpec benchmarking;
 
@@ -51,6 +54,7 @@ public class X12plusSpec implements SaSpecification{
         return new Builder()
                 .preprocessing(ModellingSpec.FULL)
                 .x11(null)
+                .movingTradingDays(null)
                 .benchmarking(SaBenchmarkingSpec.DEFAULT_DISABLED);
     }
 

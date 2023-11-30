@@ -16,6 +16,7 @@
  */
 package jdplus.x12plus.base.core.x12;
 
+import jdplus.advancedsa.base.core.movingtd.MovingTradingDaysCorrection;
 import jdplus.toolkit.base.api.information.GenericExplorable;
 import jdplus.toolkit.base.api.processing.HasLog;
 import jdplus.toolkit.base.api.processing.ProcessingLog;
@@ -33,6 +34,7 @@ import jdplus.x12plus.base.core.X11plusResults;
 public class X12plusResults implements GenericExplorable, HasLog, HasRegSarimaPreprocessing {
 
     private RegSarimaModel preprocessing;
+    private MovingTradingDaysCorrection mtdCorrection;
     private X12plusPreadjustment preadjustment;
     private X11plusResults decomposition;
     private X12plusFinals finals;

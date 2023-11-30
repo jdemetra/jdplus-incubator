@@ -18,6 +18,11 @@ package jdplus.x12plus.base.core.x12;
 
 import java.util.Arrays;
 import java.util.Optional;
+import jdplus.advancedsa.base.api.movingtd.MovingTradingDaysSpec;
+import jdplus.advancedsa.base.api.movingtd.TimeVaryingSpec;
+import jdplus.advancedsa.base.core.movingtd.MovingTradingDaysCorrection;
+import jdplus.advancedsa.base.core.movingtd.TimeVaryingCorrection;
+import jdplus.advancedsa.base.core.movingtd.TimeVaryingEstimator;
 import jdplus.toolkit.base.api.modelling.regular.SeriesSpec;
 import jdplus.toolkit.base.api.processing.ProcessingLog;
 import jdplus.sa.base.api.ComponentType;
@@ -65,6 +70,7 @@ public class X12plusKernel {
 
     private PreliminaryChecks.Tool preliminary;
     private FastKernel preprocessor;
+    private MovingTradingDaysSpec mtd;
     private X11plusSpec spec;
     private boolean preprop;
     private CholetteProcessor cholette;
@@ -73,7 +79,7 @@ public class X12plusKernel {
         PreliminaryChecks.Tool check = of(spec);
         boolean blPreprop = spec.getPreprocessing().isEnabled();
         FastKernel preprocessor = FastKernel.of(spec.getPreprocessing(), context);
-        return new X12plusKernel(check, preprocessor, spec.getX11(), blPreprop, CholetteProcessor.of(spec.getBenchmarking()));
+        return new X12plusKernel(check, preprocessor, spec.getMovingTradingDays(), spec.getX11(), blPreprop, CholetteProcessor.of(spec.getBenchmarking()));
     }
 
     public X12plusResults process(TsData s, ProcessingLog log) {
@@ -85,11 +91,11 @@ public class X12plusKernel {
             TsData sc = preliminary.check(s, log);
             // Step 1. Preprocessing
             RegSarimaModel preprocessing;
+            MovingTradingDaysCorrection mtdc = null;
             X12plusPreadjustment preadjustment;
             TsData alin;
             if (preprocessor != null) {
                 preprocessing = preprocessor.process(sc, log);
-                // Step 2. Link between regarima and x11
                 int nb = spec == null ? 0 : spec.getBackcastHorizon();
                 if (nb < 0) {
                     nb = -nb * s.getAnnualFrequency();
@@ -98,6 +104,17 @@ public class X12plusKernel {
                 if (nf < 0) {
                     nf = -nf * s.getAnnualFrequency();
                 }
+                if (mtd != null) {
+                    if (mtd instanceof TimeVaryingSpec tspec) {
+                        TimeVaryingEstimator te = new TimeVaryingEstimator(tspec);
+                        TimeVaryingCorrection tcorr = te.process(preprocessing, nb, nf);
+                        if (tcorr != null) {
+//                            alin=tcorr.getPartialLinearizedSeries();
+                            mtdc = tcorr;
+                        }
+                    }
+                }
+                // Step 2. Link between regarima and x11
                 X12plusPreadjustment.Builder builder = X12plusPreadjustment.builder();
                 alin = initialStep(preprocessing, nb, nf, builder);
                 preadjustment = builder.build();
@@ -117,6 +134,7 @@ public class X12plusKernel {
             }
             return X12plusResults.builder()
                     .preprocessing(preprocessing)
+                    .mtdCorrection(mtdc)
                     .preadjustment(preadjustment)
                     .decomposition(xr)
                     .finals(finals)

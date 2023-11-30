@@ -28,15 +28,13 @@ import jdplus.toolkit.base.api.math.linearfilters.LocalPolynomialFilterSpec;
 public class MovingWindowSpec implements MovingTradingDaysSpec{
     int windowLength;
     FilterSpec filter;
-    boolean reestimate;
     
     public static final MovingWindowSpec DEF_SPEC=builder().build();
 
     public static Builder builder(){
         return new Builder()
                 .windowLength(7)
-                .filter(LocalPolynomialFilterSpec.DEF_SEAS_SPEC)
-                .reestimate(false);
+                .filter(LocalPolynomialFilterSpec.DEF_SEAS_SPEC);
               
     } 
 }

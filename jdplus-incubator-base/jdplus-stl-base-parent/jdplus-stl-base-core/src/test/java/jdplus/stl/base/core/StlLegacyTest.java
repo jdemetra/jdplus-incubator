@@ -21,6 +21,7 @@ import jdplus.toolkit.base.api.data.Doubles;
 import tck.demetra.data.Data;
 import jdplus.toolkit.base.core.data.DataBlock;
 import java.util.Random;
+import jdplus.toolkit.base.api.data.DoubleSeq;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -33,17 +34,49 @@ public class StlLegacyTest {
 
     public StlLegacyTest() {
     }
+    
+    @Test
+    public void teststlma() {
+        double[] input=Data.PROD;
+        int ma=13;
+        double[] output=new double[input.length-ma+1];
+        StlLegacy.stlma(ma, input.length, input, output);
+//        System.out.println(DoubleSeq.of(output));
+    }
+    
+    @Test
+    public void teststlfts() {
+        double[] input=Data.PROD;
+        int ma=13;
+        double[] output=new double[input.length-2*ma];
+        StlLegacy.stlfts(ma, input, output);
+//        System.out.println(DoubleSeq.of(output));
+        
+        double[] o1=new double[input.length-11];
+        StlLegacy.stlma(12, input.length, input, o1);
+        double[] o2=new double[input.length-12];
+        StlLegacy.stlma(2, o1.length, o1, o2);
+//        System.out.println(DoubleSeq.of(o2));
+    }
 
     @Test
     public void testDefault() {
         StlLegacySpec spec = StlLegacySpec.defaultSpec(12, 7, false);
-        StlLegacy stl = new StlLegacy(spec);
-        spec.setNo(5);
         spec.setMultiplicative(false);
-        stl.process(Doubles.of(Data.EXPORTS));
-//        System.out.println(DataBlock.of(stl.trend));
-//        System.out.println(DataBlock.of(stl.season));
-//        System.out.println(DataBlock.of(stl.irr));
+        spec.setNs(13);
+        spec.setNt(23);
+        spec.setNi(2);
+         spec.setNo(1);
+        spec.setNsjump(0);
+        spec.setNtjump(0);
+        spec.setNljump(0);
+        StlLegacy stl = new StlLegacy(spec);
+        double[] data = Data.ABS_RETAIL;
+        
+        stl.process(DoubleSeq.of(data, data.length-120, 120));
+        System.out.println(DataBlock.of(stl.trend));
+        System.out.println(DataBlock.of(stl.season));
+        System.out.println(DataBlock.of(stl.fit));
     }
 
     @Test
@@ -87,13 +120,11 @@ public class StlLegacyTest {
 //        System.out.println(new DataBlock(stl.irr));
     }
 
-    @Test
-    @Disabled
-    public void stressTest() {
+    public static void main(String[] args) {
         long t0 = System.currentTimeMillis();
-        for (int i = 0; i < 10000; ++i) {
+        for (int i = 0; i < 100000; ++i) {
             StlLegacySpec spec = StlLegacySpec.defaultSpec(12, 7, false);
-            spec.setNo(5);
+ //           spec.setNo(5);
             StlLegacy stl = new StlLegacy(spec);
             stl.process(Doubles.of(Data.EXPORTS));
         }

@@ -17,6 +17,7 @@
 package jdplus.sts.base.core.msts;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  *
@@ -50,11 +51,11 @@ public interface ModelItem {
         return false;
     }
   
-    default int rescaleVariances(double factor, double[] buffer, int pos){
+    default int rescale(double factor, double[] buffer, int pos, Predicate<ParameterInterpreter> check){
         List<ParameterInterpreter> parameters = parameters();
         int npos=pos;   
         for (ParameterInterpreter p: parameters){
-            p.rescaleVariances(factor, buffer, npos);
+            p.rescale(factor, buffer, npos, check);
             npos+=p.getDomain().getDim();
         }
         return npos;

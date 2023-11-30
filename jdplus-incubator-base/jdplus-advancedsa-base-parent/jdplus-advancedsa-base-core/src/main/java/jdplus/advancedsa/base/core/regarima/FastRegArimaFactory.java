@@ -51,6 +51,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import jdplus.toolkit.base.api.modelling.regular.MeanSpec;
 import jdplus.toolkit.base.core.modelling.GeneralLinearModel;
 import jdplus.toolkit.base.core.regarima.ami.ModellingUtility;
 
@@ -165,11 +166,10 @@ public class FastRegArimaFactory {
     private void updateMean(Variable[] vars, RegressionSpec.Builder builder) {
         Optional<Variable> fc = Arrays.stream(vars)
                 .filter(v -> v.getName().equals(TrendConstant.NAME)).findFirst();
-        builder.checkMu(false);
         if (fc.isPresent()) {
-            builder.mean(fc.orElseThrow().getCoefficient(0));
+            builder.mean(MeanSpec.mean(fc.orElseThrow().getCoefficient(0)));
         } else {
-            builder.mean(null);
+            builder.mean(MeanSpec.DEFAULT_UNUSED);
         }
     }
 
@@ -335,11 +335,10 @@ public class FastRegArimaFactory {
     private void freeVariables(RegressionSpec reg, ModellingSpec domainSpec, ModellingSpec.Builder builder) {
         RegressionSpec dreg = domainSpec.getRegression();
         RegressionSpec.Builder rbuilder = reg.toBuilder();
-        Parameter mean = reg.getMean();
-        if (mean != null && mean.isFixed()) {
-            Parameter dc = dreg.getMean();
-            if (dc == null || !dc.isFixed()) {
-                mean = Parameter.initial(mean.getValue());
+        MeanSpec mean = reg.getMean();
+        if (mean.hasFixedCoefficient()) {
+            if (! dreg.getMean().hasFixedCoefficient()){
+                mean = MeanSpec.mean(Parameter.initial(mean.getCoefficient().getValue()));
             }
         }
 
@@ -429,9 +428,9 @@ public class FastRegArimaFactory {
 
     private void fixVariables(RegressionSpec reg, ModellingSpec.Builder builder, TsDomain frozenDomain) {
         RegressionSpec.Builder rbuilder = reg.toBuilder();
-        Parameter mean = reg.getMean();
-        if (mean != null && mean.isDefined()) {
-            mean = Parameter.fixed(mean.getValue());
+        MeanSpec mean = reg.getMean();
+        if (mean.isDefined()) {
+            mean = MeanSpec.mean(Parameter.fixed(mean.getCoefficient().getValue()));
         }
 
         List<Variable<InterventionVariable>> iv = reg.getInterventionVariables();

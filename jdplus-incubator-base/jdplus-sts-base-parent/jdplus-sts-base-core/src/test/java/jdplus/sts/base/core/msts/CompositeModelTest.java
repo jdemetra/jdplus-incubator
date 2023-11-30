@@ -109,20 +109,22 @@ public class CompositeModelTest {
     public void testVAT_NOBUG() {
         CompositeModel model = new CompositeModel();
         StateItem l = AtomicModels.localLinearTrend("l", .01, .01, false, false);
-        StateItem n = AtomicModels.noise("n", .01, false);
-        ModelEquation eq = new ModelEquation("eq1", 0, true);
-        eq.add(l);
-        eq.add(n);
+        StateItem seas = AtomicModels.seasonalComponent("s", "HarrisonStevens", 4, 0.1, false);
+        StateItem n = AtomicModels.noise("n", 1, false);
         model.add(l);
+        model.add(seas);
         model.add(n);
-        model.add(eq);
         int len = VAT_NOBUG.length;
         FastMatrix M = FastMatrix.make(len, 1);
         M.column(0).copyFrom(VAT_NOBUG, 0);
-        CompositeModelEstimation rslt = model.estimate(M, false, true, SsfInitialization.SqrtDiffuse, Optimizer.LevenbergMarquardt, 1e-15, null);
+        M.column(0).normalize();
+        M.mul(10);
+        CompositeModelEstimation rslt = model.estimate(M, false, false, SsfInitialization.SqrtDiffuse, Optimizer.LevenbergMarquardt, 1e-15, null);
         StateStorage states = rslt.getSmoothedStates();
-//        System.out.println(states.getComponent(0));
+        System.out.println(states.getComponent(0));
 //        System.out.println(states.getComponent(2));
+        System.out.println(DoubleSeq.of(rslt.getFullParameters()));
+//        System.out.println(rslt.getLikelihood().factor());
     }
 
     @Test

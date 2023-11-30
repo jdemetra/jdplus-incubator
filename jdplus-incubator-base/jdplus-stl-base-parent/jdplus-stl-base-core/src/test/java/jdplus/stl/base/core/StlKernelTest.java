@@ -23,6 +23,7 @@ import jdplus.stl.base.api.LoessSpec;
 import jdplus.stl.base.api.SeasonalSpec;
 import jdplus.toolkit.base.core.data.DataBlock;
 import java.util.Random;
+import jdplus.toolkit.base.api.data.DoubleSeq;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Disabled;
@@ -40,20 +41,38 @@ public class StlKernelTest {
 //    @Ignore
     public void testDefault() {
         StlSpec spec = StlSpec.builder()
-                .multiplicative(true)
-                .seasonalSpec(new SeasonalSpec(12, 7, false))
-                .trendSpec(LoessSpec.defaultTrend(12, 7, false))
+                .multiplicative(false)
+                .seasonalSpec(
+                        SeasonalSpec.builder()
+                                .period(12)
+                                .seasonalSpec(
+                                        LoessSpec.builder()
+                                                .window(13)
+                                                .degree(0)
+                                                .jump(0)
+                                                .build())
+                                .lowPassSpec(
+                                        LoessSpec.builder()
+                                                .window(13)
+                                                .degree(1)
+                                                .jump(0)
+                                                .build())
+                                .build())
+                .trendSpec(LoessSpec.builder()
+                        .window(23)
+                        .degree(1)
+                        .jump(0)
+                        .build())
                 .innerLoopsCount(2)
-                .outerLoopsCount(5)
+                .outerLoopsCount(1)
                 .build();
         RawStlKernel stl = new RawStlKernel(spec);
-        double[] data=Data.EXPORTS.clone();
-        data[13]=Double.NaN;
-        data[14]=Double.NaN;
-        stl.process(Doubles.of(data));
-//        System.out.println(DoubleSeq.of(stl.getTrend()));
-//        System.out.println(DoubleSeq.of(stl.getSeas()));
-//        System.out.println(DoubleSeq.of(stl.getIrr()));
+        double[] data = Data.ABS_RETAIL;
+        
+        RawStlResults rslt = stl.process(DoubleSeq.of(data, data.length-120, 120));
+        System.out.println(rslt.getTrend());
+        System.out.println(rslt.getSeasonal());
+        System.out.println(rslt.getFit());
     }
 
     @Test
@@ -88,14 +107,14 @@ public class StlKernelTest {
 //    @Ignore
     public void testMul() {
 
-        StlSpec spec = StlSpec .createDefault(12, false, false);
-//        spec.setMultiplicative(true);
+        StlSpec spec = StlSpec.createDefault(12, true, true);
 //        spec.setNumberOfOuterIterations(5);
         RawStlKernel stl = new RawStlKernel(spec);
-        stl.process(Doubles.of(Data.EXPORTS));
-//        System.out.println(DataBlock.of(stl.trend));
-//        System.out.println(DataBlock.of(stl.season[0]));
-//        System.out.println(DataBlock.of(stl.irr));
+        DoubleSeq s=DoubleSeq.of(Data.EXPORTS);
+        RawStlResults rslt = stl.process(s);
+//        System.out.println(rslt.getTrend());
+//        System.out.println(rslt.getSeasonal());
+//        System.out.println(rslt.getIrregular());
     }
 
     @Test
@@ -111,21 +130,19 @@ public class StlKernelTest {
         for (int i = 0; i < 30; ++i) {
             s.set(rnd.nextInt(s.length()), Double.NaN);
         }
-        stl.process(s);
-//        System.out.println(DataBlock.of(stl.trend));
-//        System.out.println(DataBlock.of(stl.season[0]));
-//        System.out.println(DataBlock.of(stl.irr));
-    }
+        RawStlResults rslt = stl.process(s);
+//        System.out.println(rslt.getTrend());
+//        System.out.println(rslt.getSeasonal());
+//        System.out.println(rslt.getIrregular());
+      }
 
-    @Test
-    @Disabled
-    public void stressTest() {
+    public static void main(String[] args) {
         long t0 = System.currentTimeMillis();
         for (int i = 0; i < 10000; ++i) {
 //            StlPlusKernel stl = new StlPlusKernel(12, 7);
             StlSpec spec = StlSpec.createDefault(12, 7, false, false);
 //            spec.setNumberOfOuterIterations(5);
-        RawStlKernel stl = new RawStlKernel(spec);
+            RawStlKernel stl = new RawStlKernel(spec);
             stl.process(Doubles.of(Data.EXPORTS));
         }
         long t1 = System.currentTimeMillis();

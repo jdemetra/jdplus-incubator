@@ -16,6 +16,7 @@
  */
 package jdplus.sts.base.core.msts;
 
+import java.util.function.Predicate;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.api.data.DoubleSeqCursor;
 import jdplus.toolkit.base.core.math.functions.IParametersDomain;
@@ -125,8 +126,17 @@ public final class LoadingInterpreter implements ParameterInterpreter {
     }
 
     @Override
-    public int rescaleVariances(double factor, double[] buffer, int pos) {
-        return pos+1;
+    public int rescale(double factor, double[] buffer, int pos, Predicate<ParameterInterpreter> check) {
+        // Never changed if fixed. Variances should be changed instead.
+        if (!fixed && check.test(this) ) {
+            buffer[pos] *= factor;
+        }
+        return pos + 1;
+    }
+
+    @Override
+    public int dim() {
+        return 1;
     }
 
     static class Domain implements IParametersDomain {

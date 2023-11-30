@@ -8,6 +8,7 @@ module jdplus.x12plus.base.api {
     
     requires jdplus.toolkit.base.api;
     requires jdplus.sa.base.api;
+    requires jdplus.advancedsa.base.api;
     requires jdplus.highfreq.base.api;
 
 

@@ -17,6 +17,7 @@
 package jdplus.sts.base.api;
 
 import jdplus.toolkit.base.api.data.Parameter;
+import jdplus.toolkit.base.api.ssf.sts.SeasonalModel;
 import nbbrd.design.Development;
 
 /**
@@ -302,57 +303,43 @@ public final class BsmSpec {
     public boolean hasSlope() {
         return slopeVar != null;
     }
+    
+    public double maxVariance(){
+        double m=0;
+        if (levelVar != null && levelVar.isDefined()){
+            double v=levelVar.getValue();
+            if (v>m)
+                m=v;
+        }
+        if (levelVar != null && levelVar.isDefined()){
+            double v=levelVar.getValue();
+            if (v>m)
+                m=v;
+        }
+        if (slopeVar != null && slopeVar.isDefined()){
+            double v=slopeVar.getValue();
+            if (v>m)
+                m=v;
+        }
+        if (cycleVar != null && cycleVar.isDefined()){
+            double v=cycleVar.getValue();
+            if (v>m)
+                m=v;
+        }
+        if (seasonalVar != null && seasonalVar.isDefined()){
+            double v=seasonalVar.getValue();
+            if (v>m)
+                m=v;
+        }
+        if (noiseVar != null && noiseVar.isDefined()){
+            double v=noiseVar.getValue();
+            if (v>m)
+                m=v;
+        }
+        
+        return m;
+    }
 
-//    /**
-//     * @param value
-//     * @return
-//     */
-//    public BsmSpec setCycleUse(ComponentUse value) {
-//        switch (value) {
-//            case Unused:
-//                return new BsmSpec(levelVar, slopeVar, noiseVar, seasonalVar, null, null, null, seasonalModel);
-//            case Fixed:
-//                return new BsmSpec(levelVar, slopeVar, noiseVar, seasonalVar,
-//                        Parameter.fixed(cycleVar.getValue()), Parameter.fixed(cycleDumpingFactor.getValue()), Parameter.fixed(cycleLength.getValue()),
-//                        seasonalModel);
-//            default: // Free
-//                return new BsmSpec(levelVar, slopeVar, noiseVar, seasonalVar, Parameter.undefined(), Parameter.undefined(), Parameter.undefined(), seasonalModel);
-//        }
-//    }
-//
-//    /**
-//     *
-//     * @param value
-//     * @return
-//     */
-//    public BsmSpec setLevelUse(ComponentUse value) {
-//        switch (value) {
-//            case Unused:
-//                return new BsmSpec(null, null, noiseVar, seasonalVar, cycleVar, cycleDumpingFactor, cycleLength, seasonalModel);
-//            case Fixed:
-//                return new BsmSpec(Parameter.fixed(levelVar.getValue()), slopeVar, noiseVar, seasonalVar, cycleVar, cycleDumpingFactor, cycleLength, seasonalModel);
-//            default:
-//                return new BsmSpec(Parameter.undefined(), slopeVar, noiseVar, seasonalVar, cycleVar, cycleDumpingFactor, cycleLength, seasonalModel);
-//        }
-//    }
-//
-//    /**
-//     *
-//     * @param value
-//     * @return
-//     */
-//    public BsmSpec setNoiseUse(ComponentUse value) {
-//        switch (value) {
-//            case Unused:
-//                return new BsmSpec(levelVar, slopeVar, null, seasonalVar, cycleVar, cycleDumpingFactor, cycleLength, seasonalModel);
-//            case Fixed:
-//                double nvar = noiseVar.getValue();
-//                return new BsmSpec(levelVar, slopeVar, nvar == 0 ? null : Parameter.fixed(nvar),
-//                        seasonalVar, cycleVar, cycleDumpingFactor, cycleLength, seasonalModel);
-//            default:
-//                return new BsmSpec(levelVar, slopeVar, Parameter.undefined(), seasonalVar, cycleVar, cycleDumpingFactor, cycleLength, seasonalModel);
-//        }
-//    }
     public int getFreeVariancesCount() {
         int n = 0;
         if (isFree(levelVar)) {

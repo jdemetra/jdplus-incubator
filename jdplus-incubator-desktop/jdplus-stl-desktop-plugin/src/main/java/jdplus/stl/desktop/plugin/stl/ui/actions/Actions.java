@@ -30,7 +30,7 @@ import org.openide.awt.ActionReferences;
 public class Actions {
 
     @ActionID(category = "Edit",
-            id = "demetra.desktop.workspace.nodes.RenameAction")
+            id = RenameAction.ID)
     @ActionReferences({
         @ActionReference(path = StlPlusDocumentManager.ITEMPATH, position = 1050),
         @ActionReference(path = MStlPlusDocumentManager.ITEMPATH, position = 1050)
@@ -40,7 +40,7 @@ public class Actions {
     }
 
     @ActionID(category = "Edit",
-            id = "demetra.desktop.workspace.nodes.CommentAction")
+            id = CommentAction.ID)
     @ActionReferences({
         @ActionReference(path = StlPlusDocumentManager.ITEMPATH, position = 1150),
         @ActionReference(path = MStlPlusDocumentManager.ITEMPATH, position = 1150)
@@ -50,7 +50,7 @@ public class Actions {
     }
 
     @ActionID(category = "Edit",
-            id = "demetra.desktop.workspace.nodes.DeleteAction")
+            id = DeleteAction.ID)
     @ActionReferences({
         @ActionReference(path = StlPlusDocumentManager.ITEMPATH, position = 1100),
         @ActionReference(path = MStlPlusDocumentManager.ITEMPATH, position = 1100)
@@ -60,7 +60,7 @@ public class Actions {
     }
     
     @ActionID(category = "Edit",
-            id = "demetra.desktop.workspace.nodes.NewAction")
+            id = NewAction.ID)
     @ActionReferences({
         @ActionReference(path = StlPlusDocumentManager.PATH, position = 1000),
         @ActionReference(path = MStlPlusDocumentManager.PATH, position = 1000)

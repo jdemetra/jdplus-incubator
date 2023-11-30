@@ -16,6 +16,7 @@
  */
 package jdplus.sts.base.core.msts;
 
+import java.util.function.Predicate;
 import jdplus.toolkit.base.api.data.DoubleSeqCursor;
 import jdplus.toolkit.base.core.math.functions.IParametersDomain;
 import jdplus.toolkit.base.core.math.functions.ParametersRange;
@@ -114,6 +115,11 @@ public class BoundedParameterInterpreter implements ParameterInterpreter {
     }
 
     @Override
+    public int dim(){
+        return 1;
+    }
+
+    @Override
     public int decode(DoubleSeqCursor input, double[] buffer, int pos) {
         if (!fixed) {
             buffer[pos] = input.getAndNext();
@@ -150,7 +156,7 @@ public class BoundedParameterInterpreter implements ParameterInterpreter {
     }
 
     @Override
-    public int rescaleVariances(double factor, double[] buffer, int pos) {
+    public int rescale(double factor, double[] buffer, int pos, Predicate<ParameterInterpreter> check) {
         return pos+1;
     }
 

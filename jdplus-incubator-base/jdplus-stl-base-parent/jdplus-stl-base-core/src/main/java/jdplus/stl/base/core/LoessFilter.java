@@ -27,9 +27,11 @@ import java.util.function.IntToDoubleFunction;
 public class LoessFilter {
 
     private final LoessSpec spec;
+    private final double[] w;
 
     public LoessFilter(LoessSpec spec) {
         this.spec = spec;
+        this.w = new double[spec.getWindow()];
     }
 
     public boolean filter(IDataGetter y, IntToDoubleFunction userWeights, IDataSelector ys) {
@@ -50,11 +52,12 @@ public class LoessFilter {
 
         final int step = Math.min(1 + spec.getJump(), n - 1);
         int nleft = 0, nright = 0;
+        DoubleUnaryOperator kernel = spec.getLoessFunction().asFunction();
         if (win >= n) {
             nleft = 0;
             nright = n - 1;
             for (int i = i0; i < i1; i += step) {
-                double yscur = loess(y, i, nleft, nright, userWeights);
+                double yscur = loess(y, i, nleft, nright, kernel, userWeights);
                 if (Double.isFinite(yscur)) {
                     ys.set(i, yscur);
                 } else {
@@ -63,7 +66,7 @@ public class LoessFilter {
             }
             // complete the backcasts, forecasts (without jumps)
             for (int i = i0 - 1; i >= j0; --i) {
-                double yscur = loess(y, i, nleft, nright, userWeights);
+                double yscur = loess(y, i, nleft, nright, kernel, userWeights);
                 if (Double.isFinite(yscur)) {
                     ys.set(i, yscur);
                 } else {
@@ -71,7 +74,7 @@ public class LoessFilter {
                 }
             }
             for (int i = i1; i < j1; ++i) {
-                double yscur = loess(y, i, nleft, nright, userWeights);
+                double yscur = loess(y, i, nleft, nright, kernel, userWeights);
                 if (Double.isFinite(yscur)) {
                     ys.set(i, yscur);
                 } else {
@@ -87,7 +90,7 @@ public class LoessFilter {
                     ++nleft;
                     ++nright;
                 }
-                double yscur = loess(y, i, nleft, nright, userWeights);
+                double yscur = loess(y, i, nleft, nright, kernel, userWeights);
                 if (Double.isFinite(yscur)) {
                     ys.set(i, yscur);
                 } else {
@@ -108,7 +111,7 @@ public class LoessFilter {
                     nright = i + nsh;
                 }
 
-                double yscur = loess(y, i, nleft, nright, userWeights);
+                double yscur = loess(y, i, nleft, nright, kernel, userWeights);
                 if (Double.isFinite(yscur)) {
                     ys.set(i, yscur);
                 } else {
@@ -126,7 +129,7 @@ public class LoessFilter {
             }
 
             if (i != i1 - 1) {
-                double yscur = loess(y, i1 - 1, nleft, nright, userWeights);
+                double yscur = loess(y, i1 - 1, nleft, nright, kernel, userWeights);
                 if (Double.isFinite(yscur)) {
                     ys.set(i1 - 1, yscur);
                 } else {
@@ -142,7 +145,7 @@ public class LoessFilter {
         nright = i0 + Math.min(win - 1, n - 1);
         // complete the backcasts, forecasts (without jumps)
         for (int i = i0 - 1; i >= j0; --i) {
-            double yscur = loess(y, i, nleft, nright, userWeights);
+            double yscur = loess(y, i, nleft, nright, kernel, userWeights);
             if (Double.isFinite(yscur)) {
                 ys.set(i, yscur);
             } else {
@@ -152,7 +155,7 @@ public class LoessFilter {
         nright = i1 - 1;
         nleft = i1 - Math.min(win, n);
         for (int i = i1; i < j1; ++i) {
-            double yscur = loess(y, i, nleft, nright, userWeights);
+            double yscur = loess(y, i, nleft, nright, kernel, userWeights);
             if (Double.isFinite(yscur)) {
                 ys.set(i, yscur);
             } else {
@@ -162,41 +165,44 @@ public class LoessFilter {
         return true;
     }
 
-    private double loess(IDataGetter y, int ix, int nleft, int nright, IntToDoubleFunction userWeights) {
+    private double loess(IDataGetter y, int ix, int nleft, int nright, DoubleUnaryOperator kernel, IntToDoubleFunction userWeights) {
         int n = y.getLength();
         int nw = nright - nleft + 1;
-        double[] w = new double[nw];
+        int len = spec.getWindow();
         double range = n - 1;
         double h = Math.max(ix - nleft, nright - ix);
-        if (spec.getWindow() > n) {
-            h += (spec.getWindow() - n) * .5;
+        if (len > n) {  // the length of the filter is higher than the length of the data
+            h += (len - n) / 2; // Just another convention
+//            h += (len - n) * 0.5;
         }
         double h9 = 0.999 * h;
         double h1 = 0.001 * h;
         double a = 0;
-        DoubleUnaryOperator weights = spec.weights();
         for (int j = nleft, jw = 0; j <= nright; ++j, ++jw) {
-            boolean ok = Double.isFinite(y.get(j));
-            if (ok) {
+            boolean available = Double.isFinite(y.get(j));
+            if (available) {
                 double r = Math.abs(j - ix);
-                if (r < h9) {
-                    if (r < h1) {
+                if (r <= h9) {
+                    if (r <= h1) {
                         w[jw] = 1;
                     } else {
-                        w[jw] = weights.applyAsDouble(r / h);
+                        w[jw] = kernel.applyAsDouble(r / h);
                     }
-
                     if (userWeights != null) {
                         w[jw] *= userWeights.applyAsDouble(j);
                     }
                     a += w[jw];
+                } else {
+                    w[jw] = 0;
                 }
+            } else {
+                w[jw] = 0;
             }
         }
-
         if (a <= 0) {
             return Double.NaN;
         } else {
+            double cbound = .000001 * range * range;
             for (int j = 0; j < nw; ++j) {
                 w[j] /= a;
             }
@@ -215,9 +221,8 @@ public class LoessFilter {
                         c += w[j] * ja * ja;
                     }
                 }
-                if (Math.sqrt(c) > .001 * range) {
+                if (c > cbound) {
                     b /= c;
-
                     for (int j = 0; j < nw; ++j) {
                         if (w[j] != 0) {
                             w[j] *= b * (j - a) + 1;

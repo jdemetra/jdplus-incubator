@@ -16,6 +16,7 @@
  */
 package jdplus.sts.base.core.msts;
 
+import java.util.function.Predicate;
 import jdplus.toolkit.base.api.data.DoubleSeqCursor;
 import jdplus.toolkit.base.core.sarima.estimation.SarimaMapping;
 import jdplus.toolkit.base.api.arima.SarimaOrders;
@@ -27,7 +28,7 @@ import jdplus.toolkit.base.api.arima.SarimaOrders;
 public final class SarimaInterpreter implements ParameterInterpreter {
 
     private final String name;
-    private double[] values;
+    private final double[] values;
     private final SarimaMapping mapping;
     private final int np;
     private boolean fixed;
@@ -100,6 +101,11 @@ public final class SarimaInterpreter implements ParameterInterpreter {
     }
 
     @Override
+    public int dim(){
+        return values.length;
+    }
+
+    @Override
     public int fillDefault(double[] buffer, int pos) {
         if (! fixed) {
            for (int i = 0; i < values.length; ++i) {
@@ -117,7 +123,7 @@ public final class SarimaInterpreter implements ParameterInterpreter {
     }
 
     @Override
-    public int rescaleVariances(double factor, double[] buffer, int pos) {
+    public int rescale(double factor, double[] buffer, int pos, Predicate<ParameterInterpreter> check) {
         return pos+values.length;
     }
 

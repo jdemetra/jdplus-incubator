@@ -28,7 +28,7 @@ import jdplus.sts.base.core.BsmEstimation;
 import jdplus.sts.base.api.BsmSpec;
 import jdplus.sts.base.api.Component;
 import jdplus.sts.base.api.RawBsmDecomposition;
-import jdplus.sts.base.api.SeasonalModel;
+import jdplus.toolkit.base.api.ssf.sts.SeasonalModel;
 import jdplus.toolkit.base.api.timeseries.TsDomain;
 import jdplus.toolkit.base.api.timeseries.regression.ITsVariable;
 import jdplus.toolkit.base.api.timeseries.regression.Variable;

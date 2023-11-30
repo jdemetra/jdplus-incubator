@@ -18,7 +18,6 @@ package jdplus.stl.base.api;
 
 import java.util.function.DoubleUnaryOperator;
 
-
 /**
  *
  * @author Jean Palate
@@ -56,8 +55,8 @@ public class StlLegacySpec {
     }
 
     public void setDefaultJumps() {
-        nsjump = (int) Math.ceil( .1 * ns);
-        ntjump = (int) Math.ceil( .1 * nt);
+        nsjump = (int) Math.ceil(.1 * ns);
+        ntjump = (int) Math.ceil(.1 * nt);
         nljump = (int) Math.ceil(.1 * nl);
     }
 
@@ -67,60 +66,62 @@ public class StlLegacySpec {
 
     private boolean multiplicative;
 
-    protected final int np;
+    private final int np;
     /**
      * number of inner and outer (robust) iterations
      */
-    protected int ns = 7;
+    private int ns = 7;
     /**
      * number of inner and outer (robust) iterations
      */
-    protected int nt = 13;
+    private int nt = 13;
     /**
      * number of inner and outer (robust) iterations
      */
-    protected int nl = 13;
+    private int nl = 13;
     /**
      * number of inner and outer (robust) iterations
      */
-    protected int sdeg = 0;
+    private int sdeg = 0;
     /**
      * number of inner and outer (robust) iterations
      */
-    protected int tdeg = 1;
+    private int tdeg = 1;
     /**
      * number of inner and outer (robust) iterations
      */
-    protected int ldeg = 1;
+    private int ldeg = 1;
     /**
      * number of inner and outer (robust) iterations
      */
-    protected int nsjump = 1;
+    private int nsjump = 1;
     /**
      * number of inner and outer (robust) iterations
      */
-    protected int ntjump = 1;
+    private int ntjump = 1;
     /**
      * number of inner and outer (robust) iterations
      */
-    protected int nljump = 1;
+    private int nljump = 1;
     /**
      * number of inner and outer (robust) iterations
      */
-    protected int ni = 2;
+    private int ni = 2;
     /**
      * number of inner and outer (robust) iterations
      */
-    protected int no = 3;
+    private int no = 3;
 
-    protected double wthreshold = 0.001;
+    private double wthreshold = 0.001;
 
-    protected DoubleUnaryOperator wfn = x -> {
+    private boolean legacy = false;
+
+    private DoubleUnaryOperator wfn = x -> {
         double t = 1 - x * x;
         return t * t;
     };
 
-    protected DoubleUnaryOperator loessfn = x -> {
+    private DoubleUnaryOperator loessfn = x -> {
         double t = 1 - x * x * x;
         return t * t * t;
     };
@@ -238,7 +239,7 @@ public class StlLegacySpec {
      * @param njump the njump to set
      */
     public void setNsjump(int njump) {
-        if (njump < 1) {
+        if (njump < 0) {
             throw new IllegalArgumentException("STL");
         }
         this.nsjump = njump;
@@ -255,7 +256,7 @@ public class StlLegacySpec {
      * @param njump the njump to set
      */
     public void setNtjump(int njump) {
-        if (njump < 1) {
+        if (njump < 0) {
             throw new IllegalArgumentException("STL");
         }
         this.ntjump = njump;
@@ -272,7 +273,7 @@ public class StlLegacySpec {
      * @param njump the njump to set
      */
     public void setNljump(int njump) {
-        if (njump < 1) {
+        if (njump < 0) {
             throw new IllegalArgumentException("STL");
         }
         this.nljump = njump;
@@ -319,6 +320,14 @@ public class StlLegacySpec {
         return np;
     }
 
+    public boolean isLegacy() {
+        return legacy;
+    }
+
+    public void setLegacy(boolean legacy) {
+        this.legacy = legacy;
+    }
+
     /**
      * @return the wthreshold
      */
@@ -349,6 +358,7 @@ public class StlLegacySpec {
     public DoubleUnaryOperator getLoessfn() {
         return loessfn;
     }
+
     /**
      * @param wfn the wfn to set
      */

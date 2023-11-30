@@ -21,6 +21,7 @@ import jdplus.advancedsa.base.core.movingtd.MovingWindowEstimator;
 import jdplus.advancedsa.base.core.regarima.FastKernel;
 import jdplus.toolkit.base.api.modelling.regular.CalendarSpec;
 import jdplus.toolkit.base.api.modelling.regular.EasterSpec;
+import jdplus.toolkit.base.api.modelling.regular.MeanSpec;
 import jdplus.toolkit.base.api.modelling.regular.ModellingSpec;
 import jdplus.toolkit.base.api.modelling.regular.RegressionSpec;
 import jdplus.toolkit.base.api.modelling.regular.TradingDaysSpec;
@@ -54,7 +55,7 @@ public class MovingWindowEstimatorTest {
                 .tradingDays(tradingDays)
                 .build();
         RegressionSpec rspec = RegressionSpec.builder()
-                .checkMu(true)
+                .mean(MeanSpec.DEFAULT_USED)
                 .calendar(cspec)
                 .build();
 
@@ -65,8 +66,8 @@ public class MovingWindowEstimatorTest {
         MovingWindowSpec mwSpec = MovingWindowSpec.DEF_SPEC;
         MovingWindowEstimator mwe = new MovingWindowEstimator(mwSpec);
         MovingWindowCorrection q = mwe.process(rslt, 0, 0);
-        System.out.println(q.getTdCoefficients());
+//        System.out.println(q.getTdCoefficients());
         
-        System.out.println(q.getTdEffect().getValues());
+//        System.out.println(q.getTdEffect().getValues());
     }
 }

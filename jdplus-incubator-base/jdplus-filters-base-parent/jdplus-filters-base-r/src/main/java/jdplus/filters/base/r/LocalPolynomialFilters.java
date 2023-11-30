@@ -24,7 +24,9 @@ import jdplus.toolkit.base.core.math.linearfilters.AsymmetricFiltersFactory;
 import jdplus.toolkit.base.core.math.linearfilters.FilterUtility;
 import jdplus.toolkit.base.core.math.linearfilters.FiniteFilter;
 import jdplus.toolkit.base.core.math.linearfilters.IFiniteFilter;
+import jdplus.toolkit.base.core.math.linearfilters.ISymmetricFiltering;
 import jdplus.toolkit.base.core.math.linearfilters.SymmetricFilter;
+import jdplus.toolkit.base.core.math.linearfilters.SymmetricFiltering;
 
 /**
  *
@@ -96,7 +98,7 @@ public class LocalPolynomialFilters {
         }
     }
 
-    public FiltersToolkit.FiniteFilters filterProperties(int horizon, int degree, String kernel, String endpoints, double ic, double tw, double passband) {
+    public ISymmetricFiltering filters(int horizon, int degree, String kernel, String endpoints, double ic, double tw, double passband) {
         // Creates the filters
         IntToDoubleFunction weights = weights(horizon, kernel);
         SymmetricFilter filter = jdplus.toolkit.base.core.math.linearfilters.LocalPolynomialFilters.of(horizon, degree, weights);
@@ -128,11 +130,11 @@ public class LocalPolynomialFilters {
                     break;
             }
             afilters = new FiniteFilter[horizon];
-            for (int i = 0; i < afilters.length; ++i) {
-                afilters[i] = AsymmetricFiltersFactory.mmsreFilter(filter, i, u, c, null, passband, tw);
+            for (int i = 0, j=horizon-1; i < afilters.length; ++i, --j) {
+                afilters[j] = AsymmetricFiltersFactory.mmsreFilter(filter, i, u, c, null, passband, tw);
             }
         }
-        return new FiltersToolkit.FiniteFilters(filter, afilters);
+        return new SymmetricFiltering(filter, afilters);
     }
     
 }

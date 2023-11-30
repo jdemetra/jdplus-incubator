@@ -48,4 +48,9 @@ public class RegressionSpecUI extends AbstractRegressionSpecUI {
         return new CalendarSpecUI(root);
     }
 
+    @Override
+    public IPropertyDescriptors getMean() {
+        return new MeanSpecUI(root);
+    }
+
 }

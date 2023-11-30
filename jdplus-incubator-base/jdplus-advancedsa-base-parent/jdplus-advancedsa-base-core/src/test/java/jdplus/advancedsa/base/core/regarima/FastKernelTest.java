@@ -18,6 +18,7 @@ package jdplus.advancedsa.base.core.regarima;
 
 import jdplus.toolkit.base.api.modelling.regular.CalendarSpec;
 import jdplus.toolkit.base.api.modelling.regular.EasterSpec;
+import jdplus.toolkit.base.api.modelling.regular.MeanSpec;
 import jdplus.toolkit.base.api.modelling.regular.ModellingSpec;
 import jdplus.toolkit.base.api.modelling.regular.RegressionSpec;
 import jdplus.toolkit.base.api.modelling.regular.TradingDaysSpec;
@@ -56,7 +57,7 @@ public class FastKernelTest {
                 .tradingDays(tradingDays)
                 .build(); 
         RegressionSpec rspec=RegressionSpec.builder()
-                .checkMu(true)
+                .mean(MeanSpec.DEFAULT_USED)
                 .calendar(cspec)
                 .build();
         

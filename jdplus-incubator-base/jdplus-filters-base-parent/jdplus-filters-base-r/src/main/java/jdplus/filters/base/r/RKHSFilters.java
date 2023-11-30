@@ -43,7 +43,7 @@ import jdplus.toolkit.base.api.math.linearfilters.KernelOption;
 public class RKHSFilters {
 
 
-    public FiltersToolkit.FiniteFilters filterProperties(int horizon, int degree, String kernel, 
+    public ISymmetricFiltering filters(int horizon, int degree, String kernel, 
             boolean optimalbw, String criterion, boolean rwdensity, double passband, double bandwidth) {
         // Creates the filters
     	RKHSFilterSpec tspec=RKHSFilterSpec.builder()
@@ -58,12 +58,10 @@ public class RKHSFilters {
                 .minBandWidth(horizon)
                 .maxBandWidth(3*horizon)
                 .build();
-        ISymmetricFiltering rkhsfilter= RKHSFilterFactory.of(tspec);
-       
-        return new FiltersToolkit.FiniteFilters(rkhsfilter.centralFilter(),
-        		rkhsfilter.endPointsFilters());
+        return RKHSFilterFactory.of(tspec);
     }
-    public FiltersToolkit.FiniteFilters filterProperties(int horizon, int degree, String kernel, 
+    
+    public ISymmetricFiltering filters(int horizon, int degree, String kernel, 
             boolean optimalbw, String criterion, boolean rwdensity, double passband,
             double bandwidth, double minbandwidth, double maxbandwidth) {
         // Creates the filters
@@ -79,10 +77,7 @@ public class RKHSFilters {
                 .minBandWidth(minbandwidth)
                 .maxBandWidth(maxbandwidth)
                 .build();
-        ISymmetricFiltering rkhsfilter= RKHSFilterFactory.of(tspec);
-       
-        return new FiltersToolkit.FiniteFilters(rkhsfilter.centralFilter(),
-        		rkhsfilter.endPointsFilters());
+        return RKHSFilterFactory.of(tspec);
     }
     
     public DoubleUnaryOperator optimalCriteria(int horizon, int leads, int degree, String kernel, 

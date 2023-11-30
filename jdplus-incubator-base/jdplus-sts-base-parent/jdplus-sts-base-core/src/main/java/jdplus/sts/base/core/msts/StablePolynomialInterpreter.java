@@ -16,6 +16,7 @@
  */
 package jdplus.sts.base.core.msts;
 
+import java.util.function.Predicate;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.api.data.DoubleSeqCursor;
 import jdplus.toolkit.base.core.math.functions.IParametersDomain;
@@ -63,8 +64,13 @@ public class StablePolynomialInterpreter implements ParameterInterpreter {
     }
 
     @Override
-    public int rescaleVariances(double factor, double[] buffer, int pos) {
+    public int rescale(double factor, double[] buffer, int pos, Predicate<ParameterInterpreter> check) {
         return pos + values.length;
+    }
+
+    @Override
+    public int dim(){
+        return values.length;
     }
 
     @Override
