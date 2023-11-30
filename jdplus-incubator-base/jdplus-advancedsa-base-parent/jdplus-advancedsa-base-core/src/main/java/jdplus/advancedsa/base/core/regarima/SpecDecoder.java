@@ -190,7 +190,7 @@ final class SpecDecoder {
                         .precision(spec.getEstimate().getPrecision())
                         .intermediatePrecision(spec.getEstimate().getIntermediatePrecision())
                         .va(spec.getOutliers().getCriticalValue())
-                        .checkMu(spec.getRegression().isCheckMu())
+                        .checkMu(spec.getRegression().getMean().isTest())
                         .build());
 
     }

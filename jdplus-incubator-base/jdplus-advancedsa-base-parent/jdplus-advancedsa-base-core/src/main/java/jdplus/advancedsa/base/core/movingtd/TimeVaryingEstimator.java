@@ -21,7 +21,6 @@ import java.util.Optional;
 import jdplus.advancedsa.base.api.movingtd.TimeVaryingSpec;
 import jdplus.toolkit.base.api.arima.SarimaOrders;
 import jdplus.toolkit.base.api.data.DoubleSeq;
-import jdplus.toolkit.base.api.data.Parameter;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.api.timeseries.TsDomain;
 import jdplus.toolkit.base.api.timeseries.calendars.DayClustering;
@@ -102,23 +101,59 @@ public class TimeVaryingEstimator {
         }
     }
 
-    private FastMatrix generateVar(DayClustering dc) {
-        int groupsCount = dc.getGroupsCount();
-        FastMatrix full = FastMatrix.square(7);
-        if (!spec.isOnContrast()) {
-            full.set(-1.0 / 7.0);
+//    public static FastMatrix generateVar(DayClustering dc, boolean onContrast) {
+//        int groupsCount = dc.getGroupsCount() - 1;
+//        FastMatrix M = FastMatrix.square(groupsCount);
+//        M.diagonal().set(1);
+//        if (!onContrast) {
+//            int[] D = new int[groupsCount];
+//            int d = dc.getGroupCount(0);
+//            int sd2 = d * d;
+//            for (int i = 0; i < groupsCount; ++i) {
+//                d = dc.getGroupCount(i + 1);
+//                sd2 += d * d;
+//                D[i] = d;
+//            }
+//            double d2 = sd2 / 49.0;
+//            M.add(d2);
+//            for (int i = 0; i < groupsCount; ++i) {
+//                M.add(i, i, -2 * D[i] / 7.0);
+//                for (int j = 0; j < i; ++j) {
+//                    double c = (D[i] + D[j]) / 7.0;
+//                    M.add(i, j, -c);
+//                    M.add(j, i, -c);
+//                }
+//            }
+//        }
+//        return M;
+//    }
+    public static FastMatrix generateVar(DayClustering dc, boolean onContrast) {
+        // q(i)=b(i)*D(i), var(b(i))= 1/(D(i)*D(i))->var(q(i)) =1
+        // m=avg(q(i)) = sum(q(i))/7, var(m) = ngroups/49
+        // p(i) = b(i)-m
+        // cov(p(i), p(j)) = ngroups/49 - (1/D(i) + 1/D(j))/7
+        // var(pi) = ngroups/49 + 1/(D(i)*D(i)) - 2/(D(i)*7)
+        int groupsCount = dc.getGroupsCount() - 1;
+        FastMatrix M = FastMatrix.square(groupsCount);
+        int[] D = new int[groupsCount];
+        for (int i = 0; i < groupsCount; ++i) {
+            D[i] = dc.getGroupCount(i + 1);
         }
-        full.diagonal().add(1);
-        FastMatrix Q = FastMatrix.make(groupsCount - 1, 7);
-        int[] gdef = dc.getGroupsDefinition();
-        for (int i = 1; i < groupsCount; ++i) {
-            for (int j = 0; j < 7; ++j) {
-                if (gdef[j] == i) {
-                    Q.set(i - 1, j, 1);
+        M.diagonal().set(i -> 1.0 / (D[i] * D[i]));
+
+        if (!onContrast) {
+            double vm = (1 + groupsCount) / 49.0;
+            M.add(vm);
+            for (int i = 0; i < groupsCount; ++i) {
+                M.add(i, i, -2.0 / (D[i] * 7.0));
+                for (int j = 0; j < i; ++j) {
+                    double c = (1.0 / D[i] + 1.0 / D[j]) / 7.0;
+                    M.add(i, j, -c);
+                    M.add(j, i, -c);
                 }
             }
         }
-        return SymmetricMatrix.XSXt(full, Q);
+        return M;
     }
 
     private boolean compute(int bcasts, int fcasts) {
@@ -128,14 +163,14 @@ public class TimeVaryingEstimator {
                     .filter(var -> var.isFree() && ModellingUtility.isTradingDays(var)).findFirst();
             Variable v = otd.orElseThrow();
             if (v.getCore() instanceof GenericTradingDaysVariable gtd) {
-                cov = generateVar(gtd.getClustering());
+                cov = generateVar(gtd.getClustering(), spec.isOnContrast());
             } else if (v.getCore() instanceof HolidaysCorrectedTradingDays htd) {
-                cov = generateVar(htd.getClustering());
+                cov = generateVar(htd.getClustering(), spec.isOnContrast());
             }
 
             ISsfData data = new SsfData(partialLinearizedSeries.getValues());
-            if (bcasts>0 || fcasts >0){
-                data=new ExtendedSsfData(data, bcasts, fcasts);
+            if (bcasts > 0 || fcasts > 0) {
+                data = new ExtendedSsfData(data, bcasts, fcasts);
             }
             // step 0 fixed model
             int period = partialLinearizedSeries.getAnnualFrequency();
@@ -171,7 +206,7 @@ public class TimeVaryingEstimator {
             aic0 = rfn0.getLikelihood().AIC(2);
             aic = rfn1.getLikelihood().AIC(3);
 //            if (aic + spec.getDiffAIC() < aic0) {
-                ssf = rfn1.getSsf();
+            ssf = rfn1.getSsf();
 //            } else {
 //                ssf = rfn0.getSsf();
 //            }
@@ -219,8 +254,9 @@ public class TimeVaryingEstimator {
                 .filter(var -> !var.isPreadjustment() && ModellingUtility.isTradingDays(var)).findFirst();
         domain = model.getDescription().getDomain().extend(bcasts, fcasts);
         Variable vtd = otd.orElseThrow();
-        if (! vtd.isFree())
+        if (!vtd.isFree()) {
             return false;
+        }
         td = Regression.matrix(domain, vtd.getCore());
         if (td.isEmpty()) {
             return false;

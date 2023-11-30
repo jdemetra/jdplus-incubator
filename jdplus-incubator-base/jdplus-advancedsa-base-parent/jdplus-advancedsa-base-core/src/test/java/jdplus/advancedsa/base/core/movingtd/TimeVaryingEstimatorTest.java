@@ -20,6 +20,7 @@ import jdplus.advancedsa.base.api.movingtd.TimeVaryingSpec;
 import jdplus.advancedsa.base.core.regarima.FastKernel;
 import jdplus.toolkit.base.api.modelling.regular.CalendarSpec;
 import jdplus.toolkit.base.api.modelling.regular.EasterSpec;
+import jdplus.toolkit.base.api.modelling.regular.MeanSpec;
 import jdplus.toolkit.base.api.modelling.regular.ModellingSpec;
 import jdplus.toolkit.base.api.modelling.regular.RegressionSpec;
 import jdplus.toolkit.base.api.modelling.regular.TradingDaysSpec;
@@ -42,10 +43,10 @@ public class TimeVaryingEstimatorTest {
 
     @Test
     public void testProd() {
-        TsData s = Data.TS_ABS_RETAIL;
+        TsData s = Data.TS_ABS_RETAIL2;
         ModellingSpec spec = ModellingSpec.FULL;
         TradingDaysSpec tradingDays = TradingDaysSpec
-                .td(TradingDaysType.TD7, LengthOfPeriodType.LeapYear, true, true);
+                .td(TradingDaysType.TD4, LengthOfPeriodType.LeapYear, true, true);
         //.automatic(LengthOfPeriodType.LeapYear, TradingDaysSpec.AutoMethod.BIC, 0.01, true);
 
         CalendarSpec cspec = CalendarSpec.builder()
@@ -53,7 +54,7 @@ public class TimeVaryingEstimatorTest {
                 .tradingDays(tradingDays)
                 .build();
         RegressionSpec rspec = RegressionSpec.builder()
-                .checkMu(true)
+                .mean(MeanSpec.DEFAULT_USED)
                 .calendar(cspec)
                 .build();
 
@@ -66,18 +67,18 @@ public class TimeVaryingEstimatorTest {
                 .reestimate(false)
                 .build();
         TimeVaryingEstimator tde = new TimeVaryingEstimator(tdSpec);
-        TimeVaryingCorrection q = tde.process(rslt,0,0);
+        TimeVaryingCorrection q = tde.process(rslt, 0, 0);
 //        System.out.println(q.getTdCoefficients());
 //        System.out.println(q.getTdEffect().getValues());
-//       System.out.println();
+//        System.out.println();
         tdSpec = TimeVaryingSpec.builder()
                 .onContrast(true)
                 .reestimate(false)
                 .build();
         tde = new TimeVaryingEstimator(tdSpec);
-        q = tde.process(rslt,0,0);
+        q = tde.process(rslt, 0, 0);
 //        System.out.println(q.getTdCoefficients());
-//        System.out.println(q.getTdEffect().getValues());
+//         System.out.println(q.getTdEffect().getValues());
     }
 
 }
