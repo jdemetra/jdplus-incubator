@@ -21,13 +21,20 @@ import java.util.List;
 import jdplus.sa.base.core.CholetteProcessor;
 import jdplus.sa.base.core.PreliminaryChecks;
 import jdplus.advancedsa.base.core.regarima.FastKernel;
+import jdplus.sa.base.api.ComponentType;
+import jdplus.sa.base.api.DecompositionMode;
+import jdplus.sa.base.api.SeriesDecomposition;
+import jdplus.sa.base.core.modelling.TwoStepsDecomposition;
 import jdplus.sts.base.api.BsmDecomposition;
 import jdplus.sts.base.api.BsmSpec;
+import jdplus.sts.base.api.Component;
+import jdplus.sts.base.api.RawBsmDecomposition;
 import jdplus.sts.base.api.StsSpec;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.DoubleSeqCursor;
 import jdplus.toolkit.base.api.data.Parameter;
 import jdplus.toolkit.base.api.data.ParametersEstimation;
+import jdplus.toolkit.base.api.dictionaries.ResidualsDictionaries;
 import jdplus.toolkit.base.api.modelling.regular.SeriesSpec;
 import jdplus.toolkit.base.api.processing.ProcessingLog;
 import jdplus.toolkit.base.api.stats.ProbabilityType;
@@ -36,12 +43,17 @@ import jdplus.toolkit.base.api.timeseries.TsDomain;
 import jdplus.toolkit.base.api.timeseries.calendars.LengthOfPeriodType;
 import jdplus.toolkit.base.api.timeseries.regression.MissingValueEstimation;
 import jdplus.toolkit.base.api.timeseries.regression.ModellingContext;
+import jdplus.toolkit.base.api.timeseries.regression.ResidualsType;
 import jdplus.toolkit.base.api.timeseries.regression.Variable;
 import jdplus.toolkit.base.core.dstats.T;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
+import jdplus.toolkit.base.core.modelling.Residuals;
 import jdplus.toolkit.base.core.modelling.regression.RegressionDesc;
 import jdplus.toolkit.base.core.regsarima.regular.RegSarimaModel;
 import jdplus.toolkit.base.core.stats.likelihood.DiffuseConcentratedLikelihood;
+import jdplus.toolkit.base.core.stats.likelihood.DiffuseLikelihoodStatistics;
+import jdplus.toolkit.base.core.stats.likelihood.LikelihoodStatistics;
+import jdplus.toolkit.base.core.stats.tests.NiidTests;
 
 /**
  *
@@ -165,32 +177,63 @@ public class StsKernel {
                     .coefficientsCovariance(kernel.getLikelihood().covariance(nhp, true))
                     .parameters(parameters)
                     .residuals(kernel.getLikelihood().e())
-                    .statistics(kernel.getLikelihood().stats(0, nhp))
+                    .statistics(lstats(kernel.getLikelihood().stats(0, nhp)))
                     .build();
             LightBasicStructuralModel.Description description = LightBasicStructuralModel.Description.builder()
                     .series(s)
                     .logTransformation(preprocessing == null ? false : preprocessing.getDescription().isLogTransformation())
-                    .lengthOfPeriodTransformation(LengthOfPeriodType.None)
+                    .lengthOfPeriodTransformation(preprocessing == null ? LengthOfPeriodType.None : preprocessing.getDescription().getLengthOfPeriodTransformation())
                     .specification(kernel.finalSpecification(false))
                     .variables(variables)
                     .build();
-
+            DoubleSeq e = kernel.getLikelihood().e();
+            RawBsmDecomposition rdecomp = kernel.decompose();
+            NiidTests niid = NiidTests.builder()
+                    .data(e)
+                    .period(period)
+                    .hyperParametersCount(params.length())
+                    .build();
+            Residuals residuals = Residuals.builder()
+                    .type(ResidualsType.FullResiduals)
+                    .res(e)
+                    .start(description.getSeries().getStart())
+                    .test(ResidualsDictionaries.MEAN, niid.meanTest())
+                    .test(ResidualsDictionaries.SKEW, niid.skewness())
+                    .test(ResidualsDictionaries.KURT, niid.kurtosis())
+                    .test(ResidualsDictionaries.DH, niid.normalityTest())
+                    .test(ResidualsDictionaries.LB, niid.ljungBox())
+                    .test(ResidualsDictionaries.BP, niid.boxPierce())
+                    .test(ResidualsDictionaries.SEASLB, niid.seasonalLjungBox())
+                    .test(ResidualsDictionaries.SEASBP, niid.seasonalBoxPierce())
+                    .test(ResidualsDictionaries.LB2, niid.ljungBoxOnSquare())
+                    .test(ResidualsDictionaries.BP2, niid.boxPierceOnSquare())
+                    .test(ResidualsDictionaries.NRUNS, niid.runsNumber())
+                    .test(ResidualsDictionaries.LRUNS, niid.runsLength())
+                    .test(ResidualsDictionaries.NUDRUNS, niid.upAndDownRunsNumbber())
+                    .test(ResidualsDictionaries.LUDRUNS, niid.upAndDownRunsLength())
+                    .build();
             LightBasicStructuralModel bsm = LightBasicStructuralModel.builder()
                     .description(description)
                     .estimation(estimation)
-                    .bsmDecomposition(kernel.decompose())
+                    .bsmDecomposition(rdecomp)
                     .regressionItems(regressionDesc)
+                    .residuals(residuals)
                     .build();
 
             BsmResults results = BsmResults.builder()
                     .bsm(kernel.result(true))
-                    .likelihood(kernel.getLikelihood())
-                    .decomposition(BsmDecomposition.of(kernel.decompose(), s.getStart()))
+                    .decomposition(BsmDecomposition.of(rdecomp, s.getStart()))
                     .build();
+            boolean mul = bsm.getDescription().isLogTransformation();
+            SeriesDecomposition components = components(mul, results);
+            SeriesDecomposition finals = TwoStepsDecomposition.merge(bsm, components);
+
             return StsResults.builder()
                     .preprocessing(preprocessing)
                     .bsm(bsm)
                     .sts(results)
+                    .components(components)
+                    .finals(finals)
                     //                    .benchmarking(bench)
                     //                    .diagnostics(X13plusDiagnostics.of(preprocessing, preadjustment, xr, finals))
                     .log(log)
@@ -200,5 +243,49 @@ public class StsKernel {
             log.error(err);
             return null;
         }
+    }
+
+    private SeriesDecomposition components(boolean mul, BsmResults rslts) {
+        BsmDecomposition decomp = rslts.getDecomposition();
+        TsData trend = decomp.getSeries(Component.Level, false);
+        TsData cycle = decomp.getSeries(Component.Cycle, false);
+        TsData tc = TsData.add(trend, cycle);
+        TsData seas = decomp.getSeries(Component.Seasonal, false);
+        TsData series = decomp.getSeries(Component.Series, false);
+        TsData sa = TsData.subtract(series, seas);
+        TsData irr = TsData.subtract(sa, tc);
+
+        // bias correction
+        if (mul) {
+            series = series.exp();
+            tc = tc.exp();
+            seas = seas.exp();
+            irr = irr.exp();
+            double ci = irr.getValues().average();
+            double si = fullYears(seas).getValues().average();
+            seas = seas.divide(si);
+            tc.multiply(ci * si);
+            sa = TsData.divide(series, seas);
+            irr = TsData.divide(sa, tc);
+        }
+
+        return SeriesDecomposition.builder(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
+                .add(series, ComponentType.Series)
+                .add(tc, ComponentType.Trend)
+                .add(sa, ComponentType.SeasonallyAdjusted)
+                .add(seas, ComponentType.Seasonal)
+                .add(irr, ComponentType.Irregular)
+                .build();
+    }
+
+    public static TsData fullYears(TsData s) {
+        int p0 = s.getStart().annualPosition();
+        int p1 = s.getEnd().annualPosition();
+        return s.drop(p0, p1);
+    }
+
+    public static LikelihoodStatistics lstats(DiffuseLikelihoodStatistics dll) {
+        return LikelihoodStatistics.statistics(dll.getLogLikelihood(), dll.getEffectiveObservationsCount())
+                .build();
     }
 }

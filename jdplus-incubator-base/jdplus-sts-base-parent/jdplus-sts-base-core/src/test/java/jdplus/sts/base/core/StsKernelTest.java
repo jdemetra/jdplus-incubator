@@ -16,11 +16,13 @@
  */
 package jdplus.sts.base.core;
 
-import jdplus.sts.base.api.Component;
+import java.util.Arrays;
+import jdplus.sa.base.api.ComponentType;
 import jdplus.sts.base.api.StsSpec;
+import jdplus.toolkit.base.api.modelling.ComponentInformation;
 import jdplus.toolkit.base.api.timeseries.TsData;
+import jdplus.toolkit.base.api.timeseries.TsDataTable;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 import tck.demetra.data.Data;
 
 /**
@@ -35,14 +37,19 @@ public class StsKernelTest {
     @Test
     public void testProd() {
         StsSpec spec = StsSpec.FULL;
-        TsData s=Data.SP_IPI;
+        TsData s=Data.TS_PROD;
         StsKernel kernel=StsKernel.of(spec, null);
         StsResults rslts = kernel.process(s, null);   
-//        System.out.println(rslts.getSts().getDecomposition().getSeries(Component.Series, false));
-//        System.out.println(rslts.getSts().getDecomposition().getSeries(Component.Level, false));
-//        System.out.println(rslts.getSts().getDecomposition().getSeries(Component.Seasonal, false));
-//        System.out.println(rslts.getSts().getDecomposition().getSeries(Component.Noise, false));
-//        System.out.println(rslts.getSts().getBsm());
+        TsDataTable table=TsDataTable.of(Arrays.asList(
+                rslts.getFinals().getSeries(ComponentType.Series, ComponentInformation.Value),
+                rslts.getFinals().getSeries(ComponentType.SeasonallyAdjusted, ComponentInformation.Value),
+                rslts.getFinals().getSeries(ComponentType.Trend, ComponentInformation.Value),
+                rslts.getFinals().getSeries(ComponentType.Seasonal, ComponentInformation.Value),
+                rslts.getFinals().getSeries(ComponentType.Irregular, ComponentInformation.Value)
+        ));
+        System.out.println(table);
+        System.out.println(rslts.getSts().getBsm());
+
     }
 
 }

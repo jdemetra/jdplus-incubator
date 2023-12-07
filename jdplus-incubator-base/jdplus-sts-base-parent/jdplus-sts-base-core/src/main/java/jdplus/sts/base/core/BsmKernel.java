@@ -458,6 +458,7 @@ public class BsmKernel {
         SsfBsm ssf = SsfBsm.of(bsm);
         DefaultSmoothingResults sr = DkToolkit.sqrtSmooth(ssf, new SsfData(lin), true, true);
         RawBsmDecomposition.Builder builder = RawBsmDecomposition.builder();
+        builder.cmp(Component.Series, lin);
         int pos = SsfBsm.searchPosition(bsm, Component.Level);
         if (pos >= 0) {
             builder.cmp(Component.Level, sr.getComponent(pos));
