@@ -1,10 +1,22 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2023 National Bank of Belgium
+ * 
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved 
+ * by the European Commission - subsequent versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ * 
+ * https://joinup.ec.europa.eu/software/page/eupl
+ * 
+ * Unless required by applicable law or agreed to in writing, software 
+ * distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and 
+ * limitations under the Licence.
  */
 package jdplus.sts.base.core.msts;
 
+import java.util.function.Predicate;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.api.data.DoubleSeqCursor;
 import jdplus.toolkit.base.core.math.functions.IParametersDomain;
@@ -52,17 +64,20 @@ public class VarianceInterpreter implements ParameterInterpreter {
     }
 
     @Override
-    public int rescaleVariances(double factor, double[] buffer, int pos) {
-        if (fixed) {
-            stde *= Math.sqrt(factor);
-        } 
-        
-            buffer[pos] *= factor;
+    public int rescale(double factor, double[] buffer, int pos, Predicate<ParameterInterpreter> check) {
+        if (check.test(this)) {
+            buffer[pos] *= factor * factor;
+        }
         return pos + 1;
     }
 
+    @Override
+    public int dim() {
+        return 1;
+    }
+
     public void variance(double v) {
-        stde=Math.sqrt(v);
+        stde = Math.sqrt(v);
     }
 
     @Override
@@ -102,7 +117,7 @@ public class VarianceInterpreter implements ParameterInterpreter {
     }
 
     public double variance() {
-        return stde*stde;
+        return stde * stde;
     }
 
     @Override
@@ -156,15 +171,16 @@ public class VarianceInterpreter implements ParameterInterpreter {
             return true;
         }
 
-        private static final double EPS = 1e-6;
+        private static final double EPS = 0.5 * 1e-6;
 
         @Override
         public double epsilon(DoubleSeq inparams, int idx) {
-            double c=inparams.get(0);
-            if (c >= 0)
+            double c = inparams.get(0);
+            if (c >= 0) {
                 return Math.max(EPS, c * EPS);
-            else
+            } else {
                 return -Math.max(EPS, -c * EPS);
+            }
 
         }
 

@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+OpenIDE-Module-Localizing-Bundle: jdplus/x12plus/desktop/plugin/Bundle.properties
+OpenIDE-Module-Display-Category: JD+ Incubator
+OpenIDE-Module-Java-Dependencies: Java > 17
+OpenIDE-Module-Install: jdplus/x12plus/desktop/plugin/x12/util/Installer.class
+

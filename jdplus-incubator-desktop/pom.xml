@@ -6,7 +6,7 @@
     <parent>
         <groupId>eu.europa.ec.joinup.sat</groupId>
         <artifactId>jdplus-incubator</artifactId>
-        <version>1.0.0</version>
+        <version>2.0.0</version>
     </parent>
 
     <artifactId>jdplus-incubator-desktop</artifactId>
@@ -16,13 +16,15 @@
 
     <properties>
         <!-- dependencies -->
-        <netbeans.version>RELEASE180</netbeans.version>
+        <netbeans.version>RELEASE200</netbeans.version>
     </properties>
 
     <modules>
+        <module>jdplus-advancedsa-desktop-plugin</module>
         <module>jdplus-highfreq-desktop-plugin</module>
         <module>jdplus-stl-desktop-plugin</module>
         <module>jdplus-sts-desktop-plugin</module>
+        <module>jdplus-x12plus-desktop-plugin</module>
     </modules>
 
     <build>
@@ -32,7 +34,7 @@
                 <plugin>
                     <groupId>org.apache.netbeans.utilities</groupId>
                     <artifactId>nbm-maven-plugin</artifactId>
-                    <version>4.8</version>
+                    <version>14.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>

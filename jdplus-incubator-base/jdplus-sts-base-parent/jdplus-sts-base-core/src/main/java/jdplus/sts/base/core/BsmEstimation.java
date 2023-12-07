@@ -10,12 +10,15 @@ import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.timeseries.regression.MissingValueEstimation;
 import jdplus.toolkit.base.api.data.ParametersEstimation;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
+import jdplus.toolkit.base.api.timeseries.TsDomain;
 
 /**
  *
  * @author PALATEJ
  */
 public interface BsmEstimation {
+
+    TsDomain getDomain();
 
     DoubleSeq getY();
 
@@ -28,8 +31,7 @@ public interface BsmEstimation {
     MissingValueEstimation[] getMissing();
 
     /**
-     * Parameters of the stochastic component.Fixed parameters are not
-     * included
+     * Parameters of the stochastic component.Fixed parameters are not included
      *
      * @return
      */

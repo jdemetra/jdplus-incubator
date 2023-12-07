@@ -3,8 +3,6 @@
 
 package jdplus.sts.base.io.protobuf;
 
-import jdplus.sa.base.protobuf.SaProtos;
-
 public final class StsProtos {
   private StsProtos() {}
   public static void registerAllExtensions(
@@ -125,7 +123,7 @@ public final class StsProtos {
     }
     public static final com.google.protobuf.Descriptors.EnumDescriptor
         getDescriptor() {
-      return StsProtos.getDescriptor().getEnumTypes().get(0);
+      return jdplus.sts.base.io.protobuf.StsProtos.getDescriptor().getEnumTypes().get(0);
     }
 
     private static final SeasonalModel[] VALUES = values();
@@ -224,7 +222,7 @@ public final class StsProtos {
      * <code>.sts.SeasonalModel seasonal_model = 5;</code>
      * @return The seasonalModel.
      */
-    StsProtos.SeasonalModel getSeasonalModel();
+    jdplus.sts.base.io.protobuf.StsProtos.SeasonalModel getSeasonalModel();
 
     /**
      * <code>.jd3.Parameter cycle = 6;</code>
@@ -435,15 +433,15 @@ public final class StsProtos {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return StsProtos.internal_static_sts_BsmSpec_descriptor;
+      return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_BsmSpec_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return StsProtos.internal_static_sts_BsmSpec_fieldAccessorTable
+      return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_BsmSpec_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              StsProtos.BsmSpec.class, StsProtos.BsmSpec.Builder.class);
+              jdplus.sts.base.io.protobuf.StsProtos.BsmSpec.class, jdplus.sts.base.io.protobuf.StsProtos.BsmSpec.Builder.class);
     }
 
     public static final int NOISE_FIELD_NUMBER = 1;
@@ -563,10 +561,10 @@ public final class StsProtos {
      * <code>.sts.SeasonalModel seasonal_model = 5;</code>
      * @return The seasonalModel.
      */
-    @java.lang.Override public StsProtos.SeasonalModel getSeasonalModel() {
+    @java.lang.Override public jdplus.sts.base.io.protobuf.StsProtos.SeasonalModel getSeasonalModel() {
       @SuppressWarnings("deprecation")
-      StsProtos.SeasonalModel result = StsProtos.SeasonalModel.valueOf(seasonalModel_);
-      return result == null ? StsProtos.SeasonalModel.UNRECOGNIZED : result;
+      jdplus.sts.base.io.protobuf.StsProtos.SeasonalModel result = jdplus.sts.base.io.protobuf.StsProtos.SeasonalModel.valueOf(seasonalModel_);
+      return result == null ? jdplus.sts.base.io.protobuf.StsProtos.SeasonalModel.UNRECOGNIZED : result;
     }
 
     public static final int CYCLE_FIELD_NUMBER = 6;
@@ -673,7 +671,7 @@ public final class StsProtos {
       if (seas_ != null) {
         output.writeMessage(4, getSeas());
       }
-      if (seasonalModel_ != StsProtos.SeasonalModel.SEAS_NONE.getNumber()) {
+      if (seasonalModel_ != jdplus.sts.base.io.protobuf.StsProtos.SeasonalModel.SEAS_NONE.getNumber()) {
         output.writeEnum(5, seasonalModel_);
       }
       if (cycle_ != null) {
@@ -710,7 +708,7 @@ public final class StsProtos {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(4, getSeas());
       }
-      if (seasonalModel_ != StsProtos.SeasonalModel.SEAS_NONE.getNumber()) {
+      if (seasonalModel_ != jdplus.sts.base.io.protobuf.StsProtos.SeasonalModel.SEAS_NONE.getNumber()) {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(5, seasonalModel_);
       }
@@ -736,10 +734,10 @@ public final class StsProtos {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof StsProtos.BsmSpec)) {
+      if (!(obj instanceof jdplus.sts.base.io.protobuf.StsProtos.BsmSpec)) {
         return super.equals(obj);
       }
-      StsProtos.BsmSpec other = (StsProtos.BsmSpec) obj;
+      jdplus.sts.base.io.protobuf.StsProtos.BsmSpec other = (jdplus.sts.base.io.protobuf.StsProtos.BsmSpec) obj;
 
       if (hasNoise() != other.hasNoise()) return false;
       if (hasNoise()) {
@@ -823,69 +821,69 @@ public final class StsProtos {
       return hash;
     }
 
-    public static StsProtos.BsmSpec parseFrom(
+    public static jdplus.sts.base.io.protobuf.StsProtos.BsmSpec parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static StsProtos.BsmSpec parseFrom(
+    public static jdplus.sts.base.io.protobuf.StsProtos.BsmSpec parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static StsProtos.BsmSpec parseFrom(
+    public static jdplus.sts.base.io.protobuf.StsProtos.BsmSpec parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static StsProtos.BsmSpec parseFrom(
+    public static jdplus.sts.base.io.protobuf.StsProtos.BsmSpec parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static StsProtos.BsmSpec parseFrom(byte[] data)
+    public static jdplus.sts.base.io.protobuf.StsProtos.BsmSpec parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static StsProtos.BsmSpec parseFrom(
+    public static jdplus.sts.base.io.protobuf.StsProtos.BsmSpec parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static StsProtos.BsmSpec parseFrom(java.io.InputStream input)
+    public static jdplus.sts.base.io.protobuf.StsProtos.BsmSpec parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static StsProtos.BsmSpec parseFrom(
+    public static jdplus.sts.base.io.protobuf.StsProtos.BsmSpec parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static StsProtos.BsmSpec parseDelimitedFrom(java.io.InputStream input)
+    public static jdplus.sts.base.io.protobuf.StsProtos.BsmSpec parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static StsProtos.BsmSpec parseDelimitedFrom(
+    public static jdplus.sts.base.io.protobuf.StsProtos.BsmSpec parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static StsProtos.BsmSpec parseFrom(
+    public static jdplus.sts.base.io.protobuf.StsProtos.BsmSpec parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static StsProtos.BsmSpec parseFrom(
+    public static jdplus.sts.base.io.protobuf.StsProtos.BsmSpec parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -898,7 +896,7 @@ public final class StsProtos {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(StsProtos.BsmSpec prototype) {
+    public static Builder newBuilder(jdplus.sts.base.io.protobuf.StsProtos.BsmSpec prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -919,21 +917,21 @@ public final class StsProtos {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:sts.BsmSpec)
-        StsProtos.BsmSpecOrBuilder {
+        jdplus.sts.base.io.protobuf.StsProtos.BsmSpecOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return StsProtos.internal_static_sts_BsmSpec_descriptor;
+        return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_BsmSpec_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return StsProtos.internal_static_sts_BsmSpec_fieldAccessorTable
+        return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_BsmSpec_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                StsProtos.BsmSpec.class, StsProtos.BsmSpec.Builder.class);
+                jdplus.sts.base.io.protobuf.StsProtos.BsmSpec.class, jdplus.sts.base.io.protobuf.StsProtos.BsmSpec.Builder.class);
       }
 
-      // Construct using demetra.sts.io.protobuf.StsProtos.BsmSpec.newBuilder()
+      // Construct using jdplus.sts.base.io.protobuf.StsProtos.BsmSpec.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1001,17 +999,17 @@ public final class StsProtos {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return StsProtos.internal_static_sts_BsmSpec_descriptor;
+        return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_BsmSpec_descriptor;
       }
 
       @java.lang.Override
-      public StsProtos.BsmSpec getDefaultInstanceForType() {
-        return StsProtos.BsmSpec.getDefaultInstance();
+      public jdplus.sts.base.io.protobuf.StsProtos.BsmSpec getDefaultInstanceForType() {
+        return jdplus.sts.base.io.protobuf.StsProtos.BsmSpec.getDefaultInstance();
       }
 
       @java.lang.Override
-      public StsProtos.BsmSpec build() {
-        StsProtos.BsmSpec result = buildPartial();
+      public jdplus.sts.base.io.protobuf.StsProtos.BsmSpec build() {
+        jdplus.sts.base.io.protobuf.StsProtos.BsmSpec result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -1019,8 +1017,8 @@ public final class StsProtos {
       }
 
       @java.lang.Override
-      public StsProtos.BsmSpec buildPartial() {
-        StsProtos.BsmSpec result = new StsProtos.BsmSpec(this);
+      public jdplus.sts.base.io.protobuf.StsProtos.BsmSpec buildPartial() {
+        jdplus.sts.base.io.protobuf.StsProtos.BsmSpec result = new jdplus.sts.base.io.protobuf.StsProtos.BsmSpec(this);
         if (noiseBuilder_ == null) {
           result.noise_ = noise_;
         } else {
@@ -1095,16 +1093,16 @@ public final class StsProtos {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof StsProtos.BsmSpec) {
-          return mergeFrom((StsProtos.BsmSpec)other);
+        if (other instanceof jdplus.sts.base.io.protobuf.StsProtos.BsmSpec) {
+          return mergeFrom((jdplus.sts.base.io.protobuf.StsProtos.BsmSpec)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(StsProtos.BsmSpec other) {
-        if (other == StsProtos.BsmSpec.getDefaultInstance()) return this;
+      public Builder mergeFrom(jdplus.sts.base.io.protobuf.StsProtos.BsmSpec other) {
+        if (other == jdplus.sts.base.io.protobuf.StsProtos.BsmSpec.getDefaultInstance()) return this;
         if (other.hasNoise()) {
           mergeNoise(other.getNoise());
         }
@@ -1144,11 +1142,11 @@ public final class StsProtos {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        StsProtos.BsmSpec parsedMessage = null;
+        jdplus.sts.base.io.protobuf.StsProtos.BsmSpec parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (StsProtos.BsmSpec) e.getUnfinishedMessage();
+          parsedMessage = (jdplus.sts.base.io.protobuf.StsProtos.BsmSpec) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -1658,17 +1656,17 @@ public final class StsProtos {
        * @return The seasonalModel.
        */
       @java.lang.Override
-      public StsProtos.SeasonalModel getSeasonalModel() {
+      public jdplus.sts.base.io.protobuf.StsProtos.SeasonalModel getSeasonalModel() {
         @SuppressWarnings("deprecation")
-        StsProtos.SeasonalModel result = StsProtos.SeasonalModel.valueOf(seasonalModel_);
-        return result == null ? StsProtos.SeasonalModel.UNRECOGNIZED : result;
+        jdplus.sts.base.io.protobuf.StsProtos.SeasonalModel result = jdplus.sts.base.io.protobuf.StsProtos.SeasonalModel.valueOf(seasonalModel_);
+        return result == null ? jdplus.sts.base.io.protobuf.StsProtos.SeasonalModel.UNRECOGNIZED : result;
       }
       /**
        * <code>.sts.SeasonalModel seasonal_model = 5;</code>
        * @param value The seasonalModel to set.
        * @return This builder for chaining.
        */
-      public Builder setSeasonalModel(StsProtos.SeasonalModel value) {
+      public Builder setSeasonalModel(jdplus.sts.base.io.protobuf.StsProtos.SeasonalModel value) {
         if (value == null) {
           throw new NullPointerException();
         }
@@ -2061,12 +2059,12 @@ public final class StsProtos {
     }
 
     // @@protoc_insertion_point(class_scope:sts.BsmSpec)
-    private static final StsProtos.BsmSpec DEFAULT_INSTANCE;
+    private static final jdplus.sts.base.io.protobuf.StsProtos.BsmSpec DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new StsProtos.BsmSpec();
+      DEFAULT_INSTANCE = new jdplus.sts.base.io.protobuf.StsProtos.BsmSpec();
     }
 
-    public static StsProtos.BsmSpec getDefaultInstance() {
+    public static jdplus.sts.base.io.protobuf.StsProtos.BsmSpec getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2091,7 +2089,7 @@ public final class StsProtos {
     }
 
     @java.lang.Override
-    public StsProtos.BsmSpec getDefaultInstanceForType() {
+    public jdplus.sts.base.io.protobuf.StsProtos.BsmSpec getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2110,11 +2108,11 @@ public final class StsProtos {
      * <code>.sts.Bsm.Description description = 1;</code>
      * @return The description.
      */
-    StsProtos.Bsm.Description getDescription();
+    jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description getDescription();
     /**
      * <code>.sts.Bsm.Description description = 1;</code>
      */
-    StsProtos.Bsm.DescriptionOrBuilder getDescriptionOrBuilder();
+    jdplus.sts.base.io.protobuf.StsProtos.Bsm.DescriptionOrBuilder getDescriptionOrBuilder();
 
     /**
      * <code>.sts.Bsm.Estimation estimation = 2;</code>
@@ -2125,11 +2123,11 @@ public final class StsProtos {
      * <code>.sts.Bsm.Estimation estimation = 2;</code>
      * @return The estimation.
      */
-    StsProtos.Bsm.Estimation getEstimation();
+    jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation getEstimation();
     /**
      * <code>.sts.Bsm.Estimation estimation = 2;</code>
      */
-    StsProtos.Bsm.EstimationOrBuilder getEstimationOrBuilder();
+    jdplus.sts.base.io.protobuf.StsProtos.Bsm.EstimationOrBuilder getEstimationOrBuilder();
 
     /**
      * <code>.sts.Bsm.Components components = 3;</code>
@@ -2140,11 +2138,11 @@ public final class StsProtos {
      * <code>.sts.Bsm.Components components = 3;</code>
      * @return The components.
      */
-    StsProtos.Bsm.Components getComponents();
+    jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components getComponents();
     /**
      * <code>.sts.Bsm.Components components = 3;</code>
      */
-    StsProtos.Bsm.ComponentsOrBuilder getComponentsOrBuilder();
+    jdplus.sts.base.io.protobuf.StsProtos.Bsm.ComponentsOrBuilder getComponentsOrBuilder();
 
     /**
      * <code>.sa.SaDecomposition final = 4;</code>
@@ -2155,11 +2153,11 @@ public final class StsProtos {
      * <code>.sa.SaDecomposition final = 4;</code>
      * @return The final.
      */
-    SaProtos.SaDecomposition getFinal();
+    jdplus.sa.base.protobuf.SaProtos.SaDecomposition getFinal();
     /**
      * <code>.sa.SaDecomposition final = 4;</code>
      */
-    SaProtos.SaDecompositionOrBuilder getFinalOrBuilder();
+    jdplus.sa.base.protobuf.SaProtos.SaDecompositionOrBuilder getFinalOrBuilder();
 
     /**
      * <code>.modelling.Diagnostics diagnostics = 5;</code>
@@ -2222,11 +2220,11 @@ public final class StsProtos {
               done = true;
               break;
             case 10: {
-              StsProtos.Bsm.Description.Builder subBuilder = null;
+              jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description.Builder subBuilder = null;
               if (description_ != null) {
                 subBuilder = description_.toBuilder();
               }
-              description_ = input.readMessage(StsProtos.Bsm.Description.parser(), extensionRegistry);
+              description_ = input.readMessage(jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description.parser(), extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(description_);
                 description_ = subBuilder.buildPartial();
@@ -2235,11 +2233,11 @@ public final class StsProtos {
               break;
             }
             case 18: {
-              StsProtos.Bsm.Estimation.Builder subBuilder = null;
+              jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation.Builder subBuilder = null;
               if (estimation_ != null) {
                 subBuilder = estimation_.toBuilder();
               }
-              estimation_ = input.readMessage(StsProtos.Bsm.Estimation.parser(), extensionRegistry);
+              estimation_ = input.readMessage(jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation.parser(), extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(estimation_);
                 estimation_ = subBuilder.buildPartial();
@@ -2248,11 +2246,11 @@ public final class StsProtos {
               break;
             }
             case 26: {
-              StsProtos.Bsm.Components.Builder subBuilder = null;
+              jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components.Builder subBuilder = null;
               if (components_ != null) {
                 subBuilder = components_.toBuilder();
               }
-              components_ = input.readMessage(StsProtos.Bsm.Components.parser(), extensionRegistry);
+              components_ = input.readMessage(jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components.parser(), extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(components_);
                 components_ = subBuilder.buildPartial();
@@ -2261,11 +2259,11 @@ public final class StsProtos {
               break;
             }
             case 34: {
-              SaProtos.SaDecomposition.Builder subBuilder = null;
+              jdplus.sa.base.protobuf.SaProtos.SaDecomposition.Builder subBuilder = null;
               if (final_ != null) {
                 subBuilder = final_.toBuilder();
               }
-              final_ = input.readMessage(SaProtos.SaDecomposition.parser(), extensionRegistry);
+              final_ = input.readMessage(jdplus.sa.base.protobuf.SaProtos.SaDecomposition.parser(), extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(final_);
                 final_ = subBuilder.buildPartial();
@@ -2307,15 +2305,15 @@ public final class StsProtos {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return StsProtos.internal_static_sts_Bsm_descriptor;
+      return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return StsProtos.internal_static_sts_Bsm_fieldAccessorTable
+      return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              StsProtos.Bsm.class, StsProtos.Bsm.Builder.class);
+              jdplus.sts.base.io.protobuf.StsProtos.Bsm.class, jdplus.sts.base.io.protobuf.StsProtos.Bsm.Builder.class);
     }
 
     public interface DescriptionOrBuilder extends
@@ -2387,11 +2385,11 @@ public final class StsProtos {
        * <code>.sts.BsmSpec bsm = 5;</code>
        * @return The bsm.
        */
-      StsProtos.BsmSpec getBsm();
+      jdplus.sts.base.io.protobuf.StsProtos.BsmSpec getBsm();
       /**
        * <code>.sts.BsmSpec bsm = 5;</code>
        */
-      StsProtos.BsmSpecOrBuilder getBsmOrBuilder();
+      jdplus.sts.base.io.protobuf.StsProtos.BsmSpecOrBuilder getBsmOrBuilder();
     }
     /**
      * Protobuf type {@code sts.Bsm.Description}
@@ -2475,11 +2473,11 @@ public final class StsProtos {
                 break;
               }
               case 42: {
-                StsProtos.BsmSpec.Builder subBuilder = null;
+                jdplus.sts.base.io.protobuf.StsProtos.BsmSpec.Builder subBuilder = null;
                 if (bsm_ != null) {
                   subBuilder = bsm_.toBuilder();
                 }
-                bsm_ = input.readMessage(StsProtos.BsmSpec.parser(), extensionRegistry);
+                bsm_ = input.readMessage(jdplus.sts.base.io.protobuf.StsProtos.BsmSpec.parser(), extensionRegistry);
                 if (subBuilder != null) {
                   subBuilder.mergeFrom(bsm_);
                   bsm_ = subBuilder.buildPartial();
@@ -2511,15 +2509,15 @@ public final class StsProtos {
       }
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return StsProtos.internal_static_sts_Bsm_Description_descriptor;
+        return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_Description_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return StsProtos.internal_static_sts_Bsm_Description_fieldAccessorTable
+        return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_Description_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                StsProtos.Bsm.Description.class, StsProtos.Bsm.Description.Builder.class);
+                jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description.class, jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description.Builder.class);
       }
 
       public static final int SERIES_FIELD_NUMBER = 1;
@@ -2619,7 +2617,7 @@ public final class StsProtos {
       }
 
       public static final int BSM_FIELD_NUMBER = 5;
-      private StsProtos.BsmSpec bsm_;
+      private jdplus.sts.base.io.protobuf.StsProtos.BsmSpec bsm_;
       /**
        * <code>.sts.BsmSpec bsm = 5;</code>
        * @return Whether the bsm field is set.
@@ -2633,14 +2631,14 @@ public final class StsProtos {
        * @return The bsm.
        */
       @java.lang.Override
-      public StsProtos.BsmSpec getBsm() {
-        return bsm_ == null ? StsProtos.BsmSpec.getDefaultInstance() : bsm_;
+      public jdplus.sts.base.io.protobuf.StsProtos.BsmSpec getBsm() {
+        return bsm_ == null ? jdplus.sts.base.io.protobuf.StsProtos.BsmSpec.getDefaultInstance() : bsm_;
       }
       /**
        * <code>.sts.BsmSpec bsm = 5;</code>
        */
       @java.lang.Override
-      public StsProtos.BsmSpecOrBuilder getBsmOrBuilder() {
+      public jdplus.sts.base.io.protobuf.StsProtos.BsmSpecOrBuilder getBsmOrBuilder() {
         return getBsm();
       }
 
@@ -2712,10 +2710,10 @@ public final class StsProtos {
         if (obj == this) {
          return true;
         }
-        if (!(obj instanceof StsProtos.Bsm.Description)) {
+        if (!(obj instanceof jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description)) {
           return super.equals(obj);
         }
-        StsProtos.Bsm.Description other = (StsProtos.Bsm.Description) obj;
+        jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description other = (jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description) obj;
 
         if (hasSeries() != other.hasSeries()) return false;
         if (hasSeries()) {
@@ -2765,69 +2763,69 @@ public final class StsProtos {
         return hash;
       }
 
-      public static StsProtos.Bsm.Description parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description parseFrom(
           java.nio.ByteBuffer data)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
-      public static StsProtos.Bsm.Description parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description parseFrom(
           java.nio.ByteBuffer data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
-      public static StsProtos.Bsm.Description parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description parseFrom(
           com.google.protobuf.ByteString data)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
-      public static StsProtos.Bsm.Description parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description parseFrom(
           com.google.protobuf.ByteString data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
-      public static StsProtos.Bsm.Description parseFrom(byte[] data)
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description parseFrom(byte[] data)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
-      public static StsProtos.Bsm.Description parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description parseFrom(
           byte[] data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
-      public static StsProtos.Bsm.Description parseFrom(java.io.InputStream input)
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description parseFrom(java.io.InputStream input)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseWithIOException(PARSER, input);
       }
-      public static StsProtos.Bsm.Description parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description parseFrom(
           java.io.InputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseWithIOException(PARSER, input, extensionRegistry);
       }
-      public static StsProtos.Bsm.Description parseDelimitedFrom(java.io.InputStream input)
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description parseDelimitedFrom(java.io.InputStream input)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseDelimitedWithIOException(PARSER, input);
       }
-      public static StsProtos.Bsm.Description parseDelimitedFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description parseDelimitedFrom(
           java.io.InputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
       }
-      public static StsProtos.Bsm.Description parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description parseFrom(
           com.google.protobuf.CodedInputStream input)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseWithIOException(PARSER, input);
       }
-      public static StsProtos.Bsm.Description parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description parseFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
@@ -2840,7 +2838,7 @@ public final class StsProtos {
       public static Builder newBuilder() {
         return DEFAULT_INSTANCE.toBuilder();
       }
-      public static Builder newBuilder(StsProtos.Bsm.Description prototype) {
+      public static Builder newBuilder(jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description prototype) {
         return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
       }
       @java.lang.Override
@@ -2861,21 +2859,21 @@ public final class StsProtos {
       public static final class Builder extends
           com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
           // @@protoc_insertion_point(builder_implements:sts.Bsm.Description)
-          StsProtos.Bsm.DescriptionOrBuilder {
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.DescriptionOrBuilder {
         public static final com.google.protobuf.Descriptors.Descriptor
             getDescriptor() {
-          return StsProtos.internal_static_sts_Bsm_Description_descriptor;
+          return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_Description_descriptor;
         }
 
         @java.lang.Override
         protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
             internalGetFieldAccessorTable() {
-          return StsProtos.internal_static_sts_Bsm_Description_fieldAccessorTable
+          return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_Description_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
-                  StsProtos.Bsm.Description.class, StsProtos.Bsm.Description.Builder.class);
+                  jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description.class, jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description.Builder.class);
         }
 
-        // Construct using demetra.sts.io.protobuf.StsProtos.Bsm.Description.newBuilder()
+        // Construct using jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -2922,17 +2920,17 @@ public final class StsProtos {
         @java.lang.Override
         public com.google.protobuf.Descriptors.Descriptor
             getDescriptorForType() {
-          return StsProtos.internal_static_sts_Bsm_Description_descriptor;
+          return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_Description_descriptor;
         }
 
         @java.lang.Override
-        public StsProtos.Bsm.Description getDefaultInstanceForType() {
-          return StsProtos.Bsm.Description.getDefaultInstance();
+        public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description getDefaultInstanceForType() {
+          return jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description.getDefaultInstance();
         }
 
         @java.lang.Override
-        public StsProtos.Bsm.Description build() {
-          StsProtos.Bsm.Description result = buildPartial();
+        public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description build() {
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description result = buildPartial();
           if (!result.isInitialized()) {
             throw newUninitializedMessageException(result);
           }
@@ -2940,8 +2938,8 @@ public final class StsProtos {
         }
 
         @java.lang.Override
-        public StsProtos.Bsm.Description buildPartial() {
-          StsProtos.Bsm.Description result = new StsProtos.Bsm.Description(this);
+        public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description buildPartial() {
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description result = new jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description(this);
           int from_bitField0_ = bitField0_;
           if (seriesBuilder_ == null) {
             result.series_ = series_;
@@ -3002,16 +3000,16 @@ public final class StsProtos {
         }
         @java.lang.Override
         public Builder mergeFrom(com.google.protobuf.Message other) {
-          if (other instanceof StsProtos.Bsm.Description) {
-            return mergeFrom((StsProtos.Bsm.Description)other);
+          if (other instanceof jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description) {
+            return mergeFrom((jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description)other);
           } else {
             super.mergeFrom(other);
             return this;
           }
         }
 
-        public Builder mergeFrom(StsProtos.Bsm.Description other) {
-          if (other == StsProtos.Bsm.Description.getDefaultInstance()) return this;
+        public Builder mergeFrom(jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description other) {
+          if (other == jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description.getDefaultInstance()) return this;
           if (other.hasSeries()) {
             mergeSeries(other.getSeries());
           }
@@ -3065,11 +3063,11 @@ public final class StsProtos {
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
-          StsProtos.Bsm.Description parsedMessage = null;
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description parsedMessage = null;
           try {
             parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
           } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-            parsedMessage = (StsProtos.Bsm.Description) e.getUnfinishedMessage();
+            parsedMessage = (jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description) e.getUnfinishedMessage();
             throw e.unwrapIOException();
           } finally {
             if (parsedMessage != null) {
@@ -3524,9 +3522,9 @@ public final class StsProtos {
           return variablesBuilder_;
         }
 
-        private StsProtos.BsmSpec bsm_;
+        private jdplus.sts.base.io.protobuf.StsProtos.BsmSpec bsm_;
         private com.google.protobuf.SingleFieldBuilderV3<
-            StsProtos.BsmSpec, StsProtos.BsmSpec.Builder, StsProtos.BsmSpecOrBuilder> bsmBuilder_;
+            jdplus.sts.base.io.protobuf.StsProtos.BsmSpec, jdplus.sts.base.io.protobuf.StsProtos.BsmSpec.Builder, jdplus.sts.base.io.protobuf.StsProtos.BsmSpecOrBuilder> bsmBuilder_;
         /**
          * <code>.sts.BsmSpec bsm = 5;</code>
          * @return Whether the bsm field is set.
@@ -3538,9 +3536,9 @@ public final class StsProtos {
          * <code>.sts.BsmSpec bsm = 5;</code>
          * @return The bsm.
          */
-        public StsProtos.BsmSpec getBsm() {
+        public jdplus.sts.base.io.protobuf.StsProtos.BsmSpec getBsm() {
           if (bsmBuilder_ == null) {
-            return bsm_ == null ? StsProtos.BsmSpec.getDefaultInstance() : bsm_;
+            return bsm_ == null ? jdplus.sts.base.io.protobuf.StsProtos.BsmSpec.getDefaultInstance() : bsm_;
           } else {
             return bsmBuilder_.getMessage();
           }
@@ -3548,7 +3546,7 @@ public final class StsProtos {
         /**
          * <code>.sts.BsmSpec bsm = 5;</code>
          */
-        public Builder setBsm(StsProtos.BsmSpec value) {
+        public Builder setBsm(jdplus.sts.base.io.protobuf.StsProtos.BsmSpec value) {
           if (bsmBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -3565,7 +3563,7 @@ public final class StsProtos {
          * <code>.sts.BsmSpec bsm = 5;</code>
          */
         public Builder setBsm(
-            StsProtos.BsmSpec.Builder builderForValue) {
+            jdplus.sts.base.io.protobuf.StsProtos.BsmSpec.Builder builderForValue) {
           if (bsmBuilder_ == null) {
             bsm_ = builderForValue.build();
             onChanged();
@@ -3578,11 +3576,11 @@ public final class StsProtos {
         /**
          * <code>.sts.BsmSpec bsm = 5;</code>
          */
-        public Builder mergeBsm(StsProtos.BsmSpec value) {
+        public Builder mergeBsm(jdplus.sts.base.io.protobuf.StsProtos.BsmSpec value) {
           if (bsmBuilder_ == null) {
             if (bsm_ != null) {
               bsm_ =
-                StsProtos.BsmSpec.newBuilder(bsm_).mergeFrom(value).buildPartial();
+                jdplus.sts.base.io.protobuf.StsProtos.BsmSpec.newBuilder(bsm_).mergeFrom(value).buildPartial();
             } else {
               bsm_ = value;
             }
@@ -3610,7 +3608,7 @@ public final class StsProtos {
         /**
          * <code>.sts.BsmSpec bsm = 5;</code>
          */
-        public StsProtos.BsmSpec.Builder getBsmBuilder() {
+        public jdplus.sts.base.io.protobuf.StsProtos.BsmSpec.Builder getBsmBuilder() {
           
           onChanged();
           return getBsmFieldBuilder().getBuilder();
@@ -3618,23 +3616,23 @@ public final class StsProtos {
         /**
          * <code>.sts.BsmSpec bsm = 5;</code>
          */
-        public StsProtos.BsmSpecOrBuilder getBsmOrBuilder() {
+        public jdplus.sts.base.io.protobuf.StsProtos.BsmSpecOrBuilder getBsmOrBuilder() {
           if (bsmBuilder_ != null) {
             return bsmBuilder_.getMessageOrBuilder();
           } else {
             return bsm_ == null ?
-                StsProtos.BsmSpec.getDefaultInstance() : bsm_;
+                jdplus.sts.base.io.protobuf.StsProtos.BsmSpec.getDefaultInstance() : bsm_;
           }
         }
         /**
          * <code>.sts.BsmSpec bsm = 5;</code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
-            StsProtos.BsmSpec, StsProtos.BsmSpec.Builder, StsProtos.BsmSpecOrBuilder>
+            jdplus.sts.base.io.protobuf.StsProtos.BsmSpec, jdplus.sts.base.io.protobuf.StsProtos.BsmSpec.Builder, jdplus.sts.base.io.protobuf.StsProtos.BsmSpecOrBuilder> 
             getBsmFieldBuilder() {
           if (bsmBuilder_ == null) {
             bsmBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-                StsProtos.BsmSpec, StsProtos.BsmSpec.Builder, StsProtos.BsmSpecOrBuilder>(
+                jdplus.sts.base.io.protobuf.StsProtos.BsmSpec, jdplus.sts.base.io.protobuf.StsProtos.BsmSpec.Builder, jdplus.sts.base.io.protobuf.StsProtos.BsmSpecOrBuilder>(
                     getBsm(),
                     getParentForChildren(),
                     isClean());
@@ -3659,12 +3657,12 @@ public final class StsProtos {
       }
 
       // @@protoc_insertion_point(class_scope:sts.Bsm.Description)
-      private static final StsProtos.Bsm.Description DEFAULT_INSTANCE;
+      private static final jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description DEFAULT_INSTANCE;
       static {
-        DEFAULT_INSTANCE = new StsProtos.Bsm.Description();
+        DEFAULT_INSTANCE = new jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description();
       }
 
-      public static StsProtos.Bsm.Description getDefaultInstance() {
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description getDefaultInstance() {
         return DEFAULT_INSTANCE;
       }
 
@@ -3689,7 +3687,7 @@ public final class StsProtos {
       }
 
       @java.lang.Override
-      public StsProtos.Bsm.Description getDefaultInstanceForType() {
+      public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description getDefaultInstanceForType() {
         return DEFAULT_INSTANCE;
       }
 
@@ -3791,19 +3789,19 @@ public final class StsProtos {
       jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.ParametersEstimationOrBuilder getParametersOrBuilder();
 
       /**
-       * <code>.jd3.DiffuseLikelihoodStatistics likelihood = 6;</code>
+       * <code>.jd3.LikelihoodStatistics likelihood = 6;</code>
        * @return Whether the likelihood field is set.
        */
       boolean hasLikelihood();
       /**
-       * <code>.jd3.DiffuseLikelihoodStatistics likelihood = 6;</code>
+       * <code>.jd3.LikelihoodStatistics likelihood = 6;</code>
        * @return The likelihood.
        */
-      jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics getLikelihood();
+      jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics getLikelihood();
       /**
-       * <code>.jd3.DiffuseLikelihoodStatistics likelihood = 6;</code>
+       * <code>.jd3.LikelihoodStatistics likelihood = 6;</code>
        */
-      jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatisticsOrBuilder getLikelihoodOrBuilder();
+      jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatisticsOrBuilder getLikelihoodOrBuilder();
 
       /**
        * <code>repeated double residuals = 7;</code>
@@ -3978,11 +3976,11 @@ public final class StsProtos {
                 break;
               }
               case 50: {
-                jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics.Builder subBuilder = null;
+                jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics.Builder subBuilder = null;
                 if (likelihood_ != null) {
                   subBuilder = likelihood_.toBuilder();
                 }
-                likelihood_ = input.readMessage(jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics.parser(), extensionRegistry);
+                likelihood_ = input.readMessage(jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics.parser(), extensionRegistry);
                 if (subBuilder != null) {
                   subBuilder.mergeFrom(likelihood_);
                   likelihood_ = subBuilder.buildPartial();
@@ -4053,15 +4051,15 @@ public final class StsProtos {
       }
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return StsProtos.internal_static_sts_Bsm_Estimation_descriptor;
+        return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_Estimation_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return StsProtos.internal_static_sts_Bsm_Estimation_fieldAccessorTable
+        return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_Estimation_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                StsProtos.Bsm.Estimation.class, StsProtos.Bsm.Estimation.Builder.class);
+                jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation.class, jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation.Builder.class);
       }
 
       public static final int Y_FIELD_NUMBER = 1;
@@ -4211,9 +4209,9 @@ public final class StsProtos {
       }
 
       public static final int LIKELIHOOD_FIELD_NUMBER = 6;
-      private jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics likelihood_;
+      private jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics likelihood_;
       /**
-       * <code>.jd3.DiffuseLikelihoodStatistics likelihood = 6;</code>
+       * <code>.jd3.LikelihoodStatistics likelihood = 6;</code>
        * @return Whether the likelihood field is set.
        */
       @java.lang.Override
@@ -4221,18 +4219,18 @@ public final class StsProtos {
         return likelihood_ != null;
       }
       /**
-       * <code>.jd3.DiffuseLikelihoodStatistics likelihood = 6;</code>
+       * <code>.jd3.LikelihoodStatistics likelihood = 6;</code>
        * @return The likelihood.
        */
       @java.lang.Override
-      public jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics getLikelihood() {
-        return likelihood_ == null ? jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics.getDefaultInstance() : likelihood_;
+      public jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics getLikelihood() {
+        return likelihood_ == null ? jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics.getDefaultInstance() : likelihood_;
       }
       /**
-       * <code>.jd3.DiffuseLikelihoodStatistics likelihood = 6;</code>
+       * <code>.jd3.LikelihoodStatistics likelihood = 6;</code>
        */
       @java.lang.Override
-      public jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatisticsOrBuilder getLikelihoodOrBuilder() {
+      public jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatisticsOrBuilder getLikelihoodOrBuilder() {
         return getLikelihood();
       }
 
@@ -4427,10 +4425,10 @@ public final class StsProtos {
         if (obj == this) {
          return true;
         }
-        if (!(obj instanceof StsProtos.Bsm.Estimation)) {
+        if (!(obj instanceof jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation)) {
           return super.equals(obj);
         }
-        StsProtos.Bsm.Estimation other = (StsProtos.Bsm.Estimation) obj;
+        jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation other = (jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation) obj;
 
         if (!getYList()
             .equals(other.getYList())) return false;
@@ -4508,69 +4506,69 @@ public final class StsProtos {
         return hash;
       }
 
-      public static StsProtos.Bsm.Estimation parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation parseFrom(
           java.nio.ByteBuffer data)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
-      public static StsProtos.Bsm.Estimation parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation parseFrom(
           java.nio.ByteBuffer data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
-      public static StsProtos.Bsm.Estimation parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation parseFrom(
           com.google.protobuf.ByteString data)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
-      public static StsProtos.Bsm.Estimation parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation parseFrom(
           com.google.protobuf.ByteString data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
-      public static StsProtos.Bsm.Estimation parseFrom(byte[] data)
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation parseFrom(byte[] data)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
-      public static StsProtos.Bsm.Estimation parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation parseFrom(
           byte[] data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
-      public static StsProtos.Bsm.Estimation parseFrom(java.io.InputStream input)
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation parseFrom(java.io.InputStream input)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseWithIOException(PARSER, input);
       }
-      public static StsProtos.Bsm.Estimation parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation parseFrom(
           java.io.InputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseWithIOException(PARSER, input, extensionRegistry);
       }
-      public static StsProtos.Bsm.Estimation parseDelimitedFrom(java.io.InputStream input)
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation parseDelimitedFrom(java.io.InputStream input)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseDelimitedWithIOException(PARSER, input);
       }
-      public static StsProtos.Bsm.Estimation parseDelimitedFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation parseDelimitedFrom(
           java.io.InputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
       }
-      public static StsProtos.Bsm.Estimation parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation parseFrom(
           com.google.protobuf.CodedInputStream input)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseWithIOException(PARSER, input);
       }
-      public static StsProtos.Bsm.Estimation parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation parseFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
@@ -4583,7 +4581,7 @@ public final class StsProtos {
       public static Builder newBuilder() {
         return DEFAULT_INSTANCE.toBuilder();
       }
-      public static Builder newBuilder(StsProtos.Bsm.Estimation prototype) {
+      public static Builder newBuilder(jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation prototype) {
         return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
       }
       @java.lang.Override
@@ -4604,21 +4602,21 @@ public final class StsProtos {
       public static final class Builder extends
           com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
           // @@protoc_insertion_point(builder_implements:sts.Bsm.Estimation)
-          StsProtos.Bsm.EstimationOrBuilder {
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.EstimationOrBuilder {
         public static final com.google.protobuf.Descriptors.Descriptor
             getDescriptor() {
-          return StsProtos.internal_static_sts_Bsm_Estimation_descriptor;
+          return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_Estimation_descriptor;
         }
 
         @java.lang.Override
         protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
             internalGetFieldAccessorTable() {
-          return StsProtos.internal_static_sts_Bsm_Estimation_fieldAccessorTable
+          return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_Estimation_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
-                  StsProtos.Bsm.Estimation.class, StsProtos.Bsm.Estimation.Builder.class);
+                  jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation.class, jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation.Builder.class);
         }
 
-        // Construct using demetra.sts.io.protobuf.StsProtos.Bsm.Estimation.newBuilder()
+        // Construct using jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -4679,17 +4677,17 @@ public final class StsProtos {
         @java.lang.Override
         public com.google.protobuf.Descriptors.Descriptor
             getDescriptorForType() {
-          return StsProtos.internal_static_sts_Bsm_Estimation_descriptor;
+          return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_Estimation_descriptor;
         }
 
         @java.lang.Override
-        public StsProtos.Bsm.Estimation getDefaultInstanceForType() {
-          return StsProtos.Bsm.Estimation.getDefaultInstance();
+        public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation getDefaultInstanceForType() {
+          return jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation.getDefaultInstance();
         }
 
         @java.lang.Override
-        public StsProtos.Bsm.Estimation build() {
-          StsProtos.Bsm.Estimation result = buildPartial();
+        public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation build() {
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation result = buildPartial();
           if (!result.isInitialized()) {
             throw newUninitializedMessageException(result);
           }
@@ -4697,8 +4695,8 @@ public final class StsProtos {
         }
 
         @java.lang.Override
-        public StsProtos.Bsm.Estimation buildPartial() {
-          StsProtos.Bsm.Estimation result = new StsProtos.Bsm.Estimation(this);
+        public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation buildPartial() {
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation result = new jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation(this);
           int from_bitField0_ = bitField0_;
           if (((bitField0_ & 0x00000001) != 0)) {
             y_.makeImmutable();
@@ -4782,16 +4780,16 @@ public final class StsProtos {
         }
         @java.lang.Override
         public Builder mergeFrom(com.google.protobuf.Message other) {
-          if (other instanceof StsProtos.Bsm.Estimation) {
-            return mergeFrom((StsProtos.Bsm.Estimation)other);
+          if (other instanceof jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation) {
+            return mergeFrom((jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation)other);
           } else {
             super.mergeFrom(other);
             return this;
           }
         }
 
-        public Builder mergeFrom(StsProtos.Bsm.Estimation other) {
-          if (other == StsProtos.Bsm.Estimation.getDefaultInstance()) return this;
+        public Builder mergeFrom(jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation other) {
+          if (other == jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation.getDefaultInstance()) return this;
           if (!other.y_.isEmpty()) {
             if (y_.isEmpty()) {
               y_ = other.y_;
@@ -4875,11 +4873,11 @@ public final class StsProtos {
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
-          StsProtos.Bsm.Estimation parsedMessage = null;
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation parsedMessage = null;
           try {
             parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
           } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-            parsedMessage = (StsProtos.Bsm.Estimation) e.getUnfinishedMessage();
+            parsedMessage = (jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation) e.getUnfinishedMessage();
             throw e.unwrapIOException();
           } finally {
             if (parsedMessage != null) {
@@ -5433,31 +5431,31 @@ public final class StsProtos {
           return parametersBuilder_;
         }
 
-        private jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics likelihood_;
+        private jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics likelihood_;
         private com.google.protobuf.SingleFieldBuilderV3<
-            jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics, jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics.Builder, jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatisticsOrBuilder> likelihoodBuilder_;
+            jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics, jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics.Builder, jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatisticsOrBuilder> likelihoodBuilder_;
         /**
-         * <code>.jd3.DiffuseLikelihoodStatistics likelihood = 6;</code>
+         * <code>.jd3.LikelihoodStatistics likelihood = 6;</code>
          * @return Whether the likelihood field is set.
          */
         public boolean hasLikelihood() {
           return likelihoodBuilder_ != null || likelihood_ != null;
         }
         /**
-         * <code>.jd3.DiffuseLikelihoodStatistics likelihood = 6;</code>
+         * <code>.jd3.LikelihoodStatistics likelihood = 6;</code>
          * @return The likelihood.
          */
-        public jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics getLikelihood() {
+        public jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics getLikelihood() {
           if (likelihoodBuilder_ == null) {
-            return likelihood_ == null ? jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics.getDefaultInstance() : likelihood_;
+            return likelihood_ == null ? jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics.getDefaultInstance() : likelihood_;
           } else {
             return likelihoodBuilder_.getMessage();
           }
         }
         /**
-         * <code>.jd3.DiffuseLikelihoodStatistics likelihood = 6;</code>
+         * <code>.jd3.LikelihoodStatistics likelihood = 6;</code>
          */
-        public Builder setLikelihood(jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics value) {
+        public Builder setLikelihood(jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics value) {
           if (likelihoodBuilder_ == null) {
             if (value == null) {
               throw new NullPointerException();
@@ -5471,10 +5469,10 @@ public final class StsProtos {
           return this;
         }
         /**
-         * <code>.jd3.DiffuseLikelihoodStatistics likelihood = 6;</code>
+         * <code>.jd3.LikelihoodStatistics likelihood = 6;</code>
          */
         public Builder setLikelihood(
-            jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics.Builder builderForValue) {
+            jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics.Builder builderForValue) {
           if (likelihoodBuilder_ == null) {
             likelihood_ = builderForValue.build();
             onChanged();
@@ -5485,13 +5483,13 @@ public final class StsProtos {
           return this;
         }
         /**
-         * <code>.jd3.DiffuseLikelihoodStatistics likelihood = 6;</code>
+         * <code>.jd3.LikelihoodStatistics likelihood = 6;</code>
          */
-        public Builder mergeLikelihood(jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics value) {
+        public Builder mergeLikelihood(jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics value) {
           if (likelihoodBuilder_ == null) {
             if (likelihood_ != null) {
               likelihood_ =
-                jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics.newBuilder(likelihood_).mergeFrom(value).buildPartial();
+                jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics.newBuilder(likelihood_).mergeFrom(value).buildPartial();
             } else {
               likelihood_ = value;
             }
@@ -5503,7 +5501,7 @@ public final class StsProtos {
           return this;
         }
         /**
-         * <code>.jd3.DiffuseLikelihoodStatistics likelihood = 6;</code>
+         * <code>.jd3.LikelihoodStatistics likelihood = 6;</code>
          */
         public Builder clearLikelihood() {
           if (likelihoodBuilder_ == null) {
@@ -5517,33 +5515,33 @@ public final class StsProtos {
           return this;
         }
         /**
-         * <code>.jd3.DiffuseLikelihoodStatistics likelihood = 6;</code>
+         * <code>.jd3.LikelihoodStatistics likelihood = 6;</code>
          */
-        public jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics.Builder getLikelihoodBuilder() {
+        public jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics.Builder getLikelihoodBuilder() {
           
           onChanged();
           return getLikelihoodFieldBuilder().getBuilder();
         }
         /**
-         * <code>.jd3.DiffuseLikelihoodStatistics likelihood = 6;</code>
+         * <code>.jd3.LikelihoodStatistics likelihood = 6;</code>
          */
-        public jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatisticsOrBuilder getLikelihoodOrBuilder() {
+        public jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatisticsOrBuilder getLikelihoodOrBuilder() {
           if (likelihoodBuilder_ != null) {
             return likelihoodBuilder_.getMessageOrBuilder();
           } else {
             return likelihood_ == null ?
-                jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics.getDefaultInstance() : likelihood_;
+                jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics.getDefaultInstance() : likelihood_;
           }
         }
         /**
-         * <code>.jd3.DiffuseLikelihoodStatistics likelihood = 6;</code>
+         * <code>.jd3.LikelihoodStatistics likelihood = 6;</code>
          */
         private com.google.protobuf.SingleFieldBuilderV3<
-            jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics, jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics.Builder, jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatisticsOrBuilder> 
+            jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics, jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics.Builder, jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatisticsOrBuilder> 
             getLikelihoodFieldBuilder() {
           if (likelihoodBuilder_ == null) {
             likelihoodBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-                jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics, jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatistics.Builder, jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.DiffuseLikelihoodStatisticsOrBuilder>(
+                jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics, jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatistics.Builder, jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.LikelihoodStatisticsOrBuilder>(
                     getLikelihood(),
                     getParentForChildren(),
                     isClean());
@@ -5887,12 +5885,12 @@ public final class StsProtos {
       }
 
       // @@protoc_insertion_point(class_scope:sts.Bsm.Estimation)
-      private static final StsProtos.Bsm.Estimation DEFAULT_INSTANCE;
+      private static final jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation DEFAULT_INSTANCE;
       static {
-        DEFAULT_INSTANCE = new StsProtos.Bsm.Estimation();
+        DEFAULT_INSTANCE = new jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation();
       }
 
-      public static StsProtos.Bsm.Estimation getDefaultInstance() {
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation getDefaultInstance() {
         return DEFAULT_INSTANCE;
       }
 
@@ -5917,7 +5915,7 @@ public final class StsProtos {
       }
 
       @java.lang.Override
-      public StsProtos.Bsm.Estimation getDefaultInstanceForType() {
+      public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation getDefaultInstanceForType() {
         return DEFAULT_INSTANCE;
       }
 
@@ -6165,15 +6163,15 @@ public final class StsProtos {
       }
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return StsProtos.internal_static_sts_Bsm_Components_descriptor;
+        return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_Components_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return StsProtos.internal_static_sts_Bsm_Components_fieldAccessorTable
+        return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_Components_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                StsProtos.Bsm.Components.class, StsProtos.Bsm.Components.Builder.class);
+                jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components.class, jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components.Builder.class);
       }
 
       public static final int SERIES_FIELD_NUMBER = 10;
@@ -6407,10 +6405,10 @@ public final class StsProtos {
         if (obj == this) {
          return true;
         }
-        if (!(obj instanceof StsProtos.Bsm.Components)) {
+        if (!(obj instanceof jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components)) {
           return super.equals(obj);
         }
-        StsProtos.Bsm.Components other = (StsProtos.Bsm.Components) obj;
+        jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components other = (jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components) obj;
 
         if (hasSeries() != other.hasSeries()) return false;
         if (hasSeries()) {
@@ -6482,69 +6480,69 @@ public final class StsProtos {
         return hash;
       }
 
-      public static StsProtos.Bsm.Components parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components parseFrom(
           java.nio.ByteBuffer data)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
-      public static StsProtos.Bsm.Components parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components parseFrom(
           java.nio.ByteBuffer data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
-      public static StsProtos.Bsm.Components parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components parseFrom(
           com.google.protobuf.ByteString data)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
-      public static StsProtos.Bsm.Components parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components parseFrom(
           com.google.protobuf.ByteString data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
-      public static StsProtos.Bsm.Components parseFrom(byte[] data)
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components parseFrom(byte[] data)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data);
       }
-      public static StsProtos.Bsm.Components parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components parseFrom(
           byte[] data,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
         return PARSER.parseFrom(data, extensionRegistry);
       }
-      public static StsProtos.Bsm.Components parseFrom(java.io.InputStream input)
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components parseFrom(java.io.InputStream input)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseWithIOException(PARSER, input);
       }
-      public static StsProtos.Bsm.Components parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components parseFrom(
           java.io.InputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseWithIOException(PARSER, input, extensionRegistry);
       }
-      public static StsProtos.Bsm.Components parseDelimitedFrom(java.io.InputStream input)
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components parseDelimitedFrom(java.io.InputStream input)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseDelimitedWithIOException(PARSER, input);
       }
-      public static StsProtos.Bsm.Components parseDelimitedFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components parseDelimitedFrom(
           java.io.InputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
       }
-      public static StsProtos.Bsm.Components parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components parseFrom(
           com.google.protobuf.CodedInputStream input)
           throws java.io.IOException {
         return com.google.protobuf.GeneratedMessageV3
             .parseWithIOException(PARSER, input);
       }
-      public static StsProtos.Bsm.Components parseFrom(
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components parseFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
@@ -6557,7 +6555,7 @@ public final class StsProtos {
       public static Builder newBuilder() {
         return DEFAULT_INSTANCE.toBuilder();
       }
-      public static Builder newBuilder(StsProtos.Bsm.Components prototype) {
+      public static Builder newBuilder(jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components prototype) {
         return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
       }
       @java.lang.Override
@@ -6582,21 +6580,21 @@ public final class StsProtos {
       public static final class Builder extends
           com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
           // @@protoc_insertion_point(builder_implements:sts.Bsm.Components)
-          StsProtos.Bsm.ComponentsOrBuilder {
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.ComponentsOrBuilder {
         public static final com.google.protobuf.Descriptors.Descriptor
             getDescriptor() {
-          return StsProtos.internal_static_sts_Bsm_Components_descriptor;
+          return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_Components_descriptor;
         }
 
         @java.lang.Override
         protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
             internalGetFieldAccessorTable() {
-          return StsProtos.internal_static_sts_Bsm_Components_fieldAccessorTable
+          return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_Components_fieldAccessorTable
               .ensureFieldAccessorsInitialized(
-                  StsProtos.Bsm.Components.class, StsProtos.Bsm.Components.Builder.class);
+                  jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components.class, jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components.Builder.class);
         }
 
-        // Construct using demetra.sts.io.protobuf.StsProtos.Bsm.Components.newBuilder()
+        // Construct using jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components.newBuilder()
         private Builder() {
           maybeForceBuilderInitialization();
         }
@@ -6656,17 +6654,17 @@ public final class StsProtos {
         @java.lang.Override
         public com.google.protobuf.Descriptors.Descriptor
             getDescriptorForType() {
-          return StsProtos.internal_static_sts_Bsm_Components_descriptor;
+          return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_Components_descriptor;
         }
 
         @java.lang.Override
-        public StsProtos.Bsm.Components getDefaultInstanceForType() {
-          return StsProtos.Bsm.Components.getDefaultInstance();
+        public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components getDefaultInstanceForType() {
+          return jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components.getDefaultInstance();
         }
 
         @java.lang.Override
-        public StsProtos.Bsm.Components build() {
-          StsProtos.Bsm.Components result = buildPartial();
+        public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components build() {
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components result = buildPartial();
           if (!result.isInitialized()) {
             throw newUninitializedMessageException(result);
           }
@@ -6674,8 +6672,8 @@ public final class StsProtos {
         }
 
         @java.lang.Override
-        public StsProtos.Bsm.Components buildPartial() {
-          StsProtos.Bsm.Components result = new StsProtos.Bsm.Components(this);
+        public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components buildPartial() {
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components result = new jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components(this);
           if (seriesBuilder_ == null) {
             result.series_ = series_;
           } else {
@@ -6744,16 +6742,16 @@ public final class StsProtos {
         }
         @java.lang.Override
         public Builder mergeFrom(com.google.protobuf.Message other) {
-          if (other instanceof StsProtos.Bsm.Components) {
-            return mergeFrom((StsProtos.Bsm.Components)other);
+          if (other instanceof jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components) {
+            return mergeFrom((jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components)other);
           } else {
             super.mergeFrom(other);
             return this;
           }
         }
 
-        public Builder mergeFrom(StsProtos.Bsm.Components other) {
-          if (other == StsProtos.Bsm.Components.getDefaultInstance()) return this;
+        public Builder mergeFrom(jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components other) {
+          if (other == jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components.getDefaultInstance()) return this;
           if (other.hasSeries()) {
             mergeSeries(other.getSeries());
           }
@@ -6787,11 +6785,11 @@ public final class StsProtos {
             com.google.protobuf.CodedInputStream input,
             com.google.protobuf.ExtensionRegistryLite extensionRegistry)
             throws java.io.IOException {
-          StsProtos.Bsm.Components parsedMessage = null;
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components parsedMessage = null;
           try {
             parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
           } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-            parsedMessage = (StsProtos.Bsm.Components) e.getUnfinishedMessage();
+            parsedMessage = (jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components) e.getUnfinishedMessage();
             throw e.unwrapIOException();
           } finally {
             if (parsedMessage != null) {
@@ -7531,12 +7529,12 @@ public final class StsProtos {
       }
 
       // @@protoc_insertion_point(class_scope:sts.Bsm.Components)
-      private static final StsProtos.Bsm.Components DEFAULT_INSTANCE;
+      private static final jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components DEFAULT_INSTANCE;
       static {
-        DEFAULT_INSTANCE = new StsProtos.Bsm.Components();
+        DEFAULT_INSTANCE = new jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components();
       }
 
-      public static StsProtos.Bsm.Components getDefaultInstance() {
+      public static jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components getDefaultInstance() {
         return DEFAULT_INSTANCE;
       }
 
@@ -7561,14 +7559,14 @@ public final class StsProtos {
       }
 
       @java.lang.Override
-      public StsProtos.Bsm.Components getDefaultInstanceForType() {
+      public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components getDefaultInstanceForType() {
         return DEFAULT_INSTANCE;
       }
 
     }
 
     public static final int DESCRIPTION_FIELD_NUMBER = 1;
-    private StsProtos.Bsm.Description description_;
+    private jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description description_;
     /**
      * <code>.sts.Bsm.Description description = 1;</code>
      * @return Whether the description field is set.
@@ -7582,19 +7580,19 @@ public final class StsProtos {
      * @return The description.
      */
     @java.lang.Override
-    public StsProtos.Bsm.Description getDescription() {
-      return description_ == null ? StsProtos.Bsm.Description.getDefaultInstance() : description_;
+    public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description getDescription() {
+      return description_ == null ? jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description.getDefaultInstance() : description_;
     }
     /**
      * <code>.sts.Bsm.Description description = 1;</code>
      */
     @java.lang.Override
-    public StsProtos.Bsm.DescriptionOrBuilder getDescriptionOrBuilder() {
+    public jdplus.sts.base.io.protobuf.StsProtos.Bsm.DescriptionOrBuilder getDescriptionOrBuilder() {
       return getDescription();
     }
 
     public static final int ESTIMATION_FIELD_NUMBER = 2;
-    private StsProtos.Bsm.Estimation estimation_;
+    private jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation estimation_;
     /**
      * <code>.sts.Bsm.Estimation estimation = 2;</code>
      * @return Whether the estimation field is set.
@@ -7608,19 +7606,19 @@ public final class StsProtos {
      * @return The estimation.
      */
     @java.lang.Override
-    public StsProtos.Bsm.Estimation getEstimation() {
-      return estimation_ == null ? StsProtos.Bsm.Estimation.getDefaultInstance() : estimation_;
+    public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation getEstimation() {
+      return estimation_ == null ? jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation.getDefaultInstance() : estimation_;
     }
     /**
      * <code>.sts.Bsm.Estimation estimation = 2;</code>
      */
     @java.lang.Override
-    public StsProtos.Bsm.EstimationOrBuilder getEstimationOrBuilder() {
+    public jdplus.sts.base.io.protobuf.StsProtos.Bsm.EstimationOrBuilder getEstimationOrBuilder() {
       return getEstimation();
     }
 
     public static final int COMPONENTS_FIELD_NUMBER = 3;
-    private StsProtos.Bsm.Components components_;
+    private jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components components_;
     /**
      * <code>.sts.Bsm.Components components = 3;</code>
      * @return Whether the components field is set.
@@ -7634,19 +7632,19 @@ public final class StsProtos {
      * @return The components.
      */
     @java.lang.Override
-    public StsProtos.Bsm.Components getComponents() {
-      return components_ == null ? StsProtos.Bsm.Components.getDefaultInstance() : components_;
+    public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components getComponents() {
+      return components_ == null ? jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components.getDefaultInstance() : components_;
     }
     /**
      * <code>.sts.Bsm.Components components = 3;</code>
      */
     @java.lang.Override
-    public StsProtos.Bsm.ComponentsOrBuilder getComponentsOrBuilder() {
+    public jdplus.sts.base.io.protobuf.StsProtos.Bsm.ComponentsOrBuilder getComponentsOrBuilder() {
       return getComponents();
     }
 
     public static final int FINAL_FIELD_NUMBER = 4;
-    private SaProtos.SaDecomposition final_;
+    private jdplus.sa.base.protobuf.SaProtos.SaDecomposition final_;
     /**
      * <code>.sa.SaDecomposition final = 4;</code>
      * @return Whether the final field is set.
@@ -7660,14 +7658,14 @@ public final class StsProtos {
      * @return The final.
      */
     @java.lang.Override
-    public SaProtos.SaDecomposition getFinal() {
-      return final_ == null ? SaProtos.SaDecomposition.getDefaultInstance() : final_;
+    public jdplus.sa.base.protobuf.SaProtos.SaDecomposition getFinal() {
+      return final_ == null ? jdplus.sa.base.protobuf.SaProtos.SaDecomposition.getDefaultInstance() : final_;
     }
     /**
      * <code>.sa.SaDecomposition final = 4;</code>
      */
     @java.lang.Override
-    public SaProtos.SaDecompositionOrBuilder getFinalOrBuilder() {
+    public jdplus.sa.base.protobuf.SaProtos.SaDecompositionOrBuilder getFinalOrBuilder() {
       return getFinal();
     }
 
@@ -7765,10 +7763,10 @@ public final class StsProtos {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof StsProtos.Bsm)) {
+      if (!(obj instanceof jdplus.sts.base.io.protobuf.StsProtos.Bsm)) {
         return super.equals(obj);
       }
-      StsProtos.Bsm other = (StsProtos.Bsm) obj;
+      jdplus.sts.base.io.protobuf.StsProtos.Bsm other = (jdplus.sts.base.io.protobuf.StsProtos.Bsm) obj;
 
       if (hasDescription() != other.hasDescription()) return false;
       if (hasDescription()) {
@@ -7831,69 +7829,69 @@ public final class StsProtos {
       return hash;
     }
 
-    public static StsProtos.Bsm parseFrom(
+    public static jdplus.sts.base.io.protobuf.StsProtos.Bsm parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static StsProtos.Bsm parseFrom(
+    public static jdplus.sts.base.io.protobuf.StsProtos.Bsm parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static StsProtos.Bsm parseFrom(
+    public static jdplus.sts.base.io.protobuf.StsProtos.Bsm parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static StsProtos.Bsm parseFrom(
+    public static jdplus.sts.base.io.protobuf.StsProtos.Bsm parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static StsProtos.Bsm parseFrom(byte[] data)
+    public static jdplus.sts.base.io.protobuf.StsProtos.Bsm parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static StsProtos.Bsm parseFrom(
+    public static jdplus.sts.base.io.protobuf.StsProtos.Bsm parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static StsProtos.Bsm parseFrom(java.io.InputStream input)
+    public static jdplus.sts.base.io.protobuf.StsProtos.Bsm parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static StsProtos.Bsm parseFrom(
+    public static jdplus.sts.base.io.protobuf.StsProtos.Bsm parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static StsProtos.Bsm parseDelimitedFrom(java.io.InputStream input)
+    public static jdplus.sts.base.io.protobuf.StsProtos.Bsm parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static StsProtos.Bsm parseDelimitedFrom(
+    public static jdplus.sts.base.io.protobuf.StsProtos.Bsm parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static StsProtos.Bsm parseFrom(
+    public static jdplus.sts.base.io.protobuf.StsProtos.Bsm parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static StsProtos.Bsm parseFrom(
+    public static jdplus.sts.base.io.protobuf.StsProtos.Bsm parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -7906,7 +7904,7 @@ public final class StsProtos {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(StsProtos.Bsm prototype) {
+    public static Builder newBuilder(jdplus.sts.base.io.protobuf.StsProtos.Bsm prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -7927,21 +7925,21 @@ public final class StsProtos {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:sts.Bsm)
-        StsProtos.BsmOrBuilder {
+        jdplus.sts.base.io.protobuf.StsProtos.BsmOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return StsProtos.internal_static_sts_Bsm_descriptor;
+        return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return StsProtos.internal_static_sts_Bsm_fieldAccessorTable
+        return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                StsProtos.Bsm.class, StsProtos.Bsm.Builder.class);
+                jdplus.sts.base.io.protobuf.StsProtos.Bsm.class, jdplus.sts.base.io.protobuf.StsProtos.Bsm.Builder.class);
       }
 
-      // Construct using demetra.sts.io.protobuf.StsProtos.Bsm.newBuilder()
+      // Construct using jdplus.sts.base.io.protobuf.StsProtos.Bsm.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -7995,17 +7993,17 @@ public final class StsProtos {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return StsProtos.internal_static_sts_Bsm_descriptor;
+        return jdplus.sts.base.io.protobuf.StsProtos.internal_static_sts_Bsm_descriptor;
       }
 
       @java.lang.Override
-      public StsProtos.Bsm getDefaultInstanceForType() {
-        return StsProtos.Bsm.getDefaultInstance();
+      public jdplus.sts.base.io.protobuf.StsProtos.Bsm getDefaultInstanceForType() {
+        return jdplus.sts.base.io.protobuf.StsProtos.Bsm.getDefaultInstance();
       }
 
       @java.lang.Override
-      public StsProtos.Bsm build() {
-        StsProtos.Bsm result = buildPartial();
+      public jdplus.sts.base.io.protobuf.StsProtos.Bsm build() {
+        jdplus.sts.base.io.protobuf.StsProtos.Bsm result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -8013,8 +8011,8 @@ public final class StsProtos {
       }
 
       @java.lang.Override
-      public StsProtos.Bsm buildPartial() {
-        StsProtos.Bsm result = new StsProtos.Bsm(this);
+      public jdplus.sts.base.io.protobuf.StsProtos.Bsm buildPartial() {
+        jdplus.sts.base.io.protobuf.StsProtos.Bsm result = new jdplus.sts.base.io.protobuf.StsProtos.Bsm(this);
         if (descriptionBuilder_ == null) {
           result.description_ = description_;
         } else {
@@ -8078,16 +8076,16 @@ public final class StsProtos {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof StsProtos.Bsm) {
-          return mergeFrom((StsProtos.Bsm)other);
+        if (other instanceof jdplus.sts.base.io.protobuf.StsProtos.Bsm) {
+          return mergeFrom((jdplus.sts.base.io.protobuf.StsProtos.Bsm)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(StsProtos.Bsm other) {
-        if (other == StsProtos.Bsm.getDefaultInstance()) return this;
+      public Builder mergeFrom(jdplus.sts.base.io.protobuf.StsProtos.Bsm other) {
+        if (other == jdplus.sts.base.io.protobuf.StsProtos.Bsm.getDefaultInstance()) return this;
         if (other.hasDescription()) {
           mergeDescription(other.getDescription());
         }
@@ -8118,11 +8116,11 @@ public final class StsProtos {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        StsProtos.Bsm parsedMessage = null;
+        jdplus.sts.base.io.protobuf.StsProtos.Bsm parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (StsProtos.Bsm) e.getUnfinishedMessage();
+          parsedMessage = (jdplus.sts.base.io.protobuf.StsProtos.Bsm) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -8132,9 +8130,9 @@ public final class StsProtos {
         return this;
       }
 
-      private StsProtos.Bsm.Description description_;
+      private jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description description_;
       private com.google.protobuf.SingleFieldBuilderV3<
-          StsProtos.Bsm.Description, StsProtos.Bsm.Description.Builder, StsProtos.Bsm.DescriptionOrBuilder> descriptionBuilder_;
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description, jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description.Builder, jdplus.sts.base.io.protobuf.StsProtos.Bsm.DescriptionOrBuilder> descriptionBuilder_;
       /**
        * <code>.sts.Bsm.Description description = 1;</code>
        * @return Whether the description field is set.
@@ -8146,9 +8144,9 @@ public final class StsProtos {
        * <code>.sts.Bsm.Description description = 1;</code>
        * @return The description.
        */
-      public StsProtos.Bsm.Description getDescription() {
+      public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description getDescription() {
         if (descriptionBuilder_ == null) {
-          return description_ == null ? StsProtos.Bsm.Description.getDefaultInstance() : description_;
+          return description_ == null ? jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description.getDefaultInstance() : description_;
         } else {
           return descriptionBuilder_.getMessage();
         }
@@ -8156,7 +8154,7 @@ public final class StsProtos {
       /**
        * <code>.sts.Bsm.Description description = 1;</code>
        */
-      public Builder setDescription(StsProtos.Bsm.Description value) {
+      public Builder setDescription(jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description value) {
         if (descriptionBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -8173,7 +8171,7 @@ public final class StsProtos {
        * <code>.sts.Bsm.Description description = 1;</code>
        */
       public Builder setDescription(
-          StsProtos.Bsm.Description.Builder builderForValue) {
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description.Builder builderForValue) {
         if (descriptionBuilder_ == null) {
           description_ = builderForValue.build();
           onChanged();
@@ -8186,11 +8184,11 @@ public final class StsProtos {
       /**
        * <code>.sts.Bsm.Description description = 1;</code>
        */
-      public Builder mergeDescription(StsProtos.Bsm.Description value) {
+      public Builder mergeDescription(jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description value) {
         if (descriptionBuilder_ == null) {
           if (description_ != null) {
             description_ =
-              StsProtos.Bsm.Description.newBuilder(description_).mergeFrom(value).buildPartial();
+              jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description.newBuilder(description_).mergeFrom(value).buildPartial();
           } else {
             description_ = value;
           }
@@ -8218,7 +8216,7 @@ public final class StsProtos {
       /**
        * <code>.sts.Bsm.Description description = 1;</code>
        */
-      public StsProtos.Bsm.Description.Builder getDescriptionBuilder() {
+      public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description.Builder getDescriptionBuilder() {
         
         onChanged();
         return getDescriptionFieldBuilder().getBuilder();
@@ -8226,23 +8224,23 @@ public final class StsProtos {
       /**
        * <code>.sts.Bsm.Description description = 1;</code>
        */
-      public StsProtos.Bsm.DescriptionOrBuilder getDescriptionOrBuilder() {
+      public jdplus.sts.base.io.protobuf.StsProtos.Bsm.DescriptionOrBuilder getDescriptionOrBuilder() {
         if (descriptionBuilder_ != null) {
           return descriptionBuilder_.getMessageOrBuilder();
         } else {
           return description_ == null ?
-              StsProtos.Bsm.Description.getDefaultInstance() : description_;
+              jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description.getDefaultInstance() : description_;
         }
       }
       /**
        * <code>.sts.Bsm.Description description = 1;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          StsProtos.Bsm.Description, StsProtos.Bsm.Description.Builder, StsProtos.Bsm.DescriptionOrBuilder>
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description, jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description.Builder, jdplus.sts.base.io.protobuf.StsProtos.Bsm.DescriptionOrBuilder> 
           getDescriptionFieldBuilder() {
         if (descriptionBuilder_ == null) {
           descriptionBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              StsProtos.Bsm.Description, StsProtos.Bsm.Description.Builder, StsProtos.Bsm.DescriptionOrBuilder>(
+              jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description, jdplus.sts.base.io.protobuf.StsProtos.Bsm.Description.Builder, jdplus.sts.base.io.protobuf.StsProtos.Bsm.DescriptionOrBuilder>(
                   getDescription(),
                   getParentForChildren(),
                   isClean());
@@ -8251,9 +8249,9 @@ public final class StsProtos {
         return descriptionBuilder_;
       }
 
-      private StsProtos.Bsm.Estimation estimation_;
+      private jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation estimation_;
       private com.google.protobuf.SingleFieldBuilderV3<
-          StsProtos.Bsm.Estimation, StsProtos.Bsm.Estimation.Builder, StsProtos.Bsm.EstimationOrBuilder> estimationBuilder_;
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation, jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation.Builder, jdplus.sts.base.io.protobuf.StsProtos.Bsm.EstimationOrBuilder> estimationBuilder_;
       /**
        * <code>.sts.Bsm.Estimation estimation = 2;</code>
        * @return Whether the estimation field is set.
@@ -8265,9 +8263,9 @@ public final class StsProtos {
        * <code>.sts.Bsm.Estimation estimation = 2;</code>
        * @return The estimation.
        */
-      public StsProtos.Bsm.Estimation getEstimation() {
+      public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation getEstimation() {
         if (estimationBuilder_ == null) {
-          return estimation_ == null ? StsProtos.Bsm.Estimation.getDefaultInstance() : estimation_;
+          return estimation_ == null ? jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation.getDefaultInstance() : estimation_;
         } else {
           return estimationBuilder_.getMessage();
         }
@@ -8275,7 +8273,7 @@ public final class StsProtos {
       /**
        * <code>.sts.Bsm.Estimation estimation = 2;</code>
        */
-      public Builder setEstimation(StsProtos.Bsm.Estimation value) {
+      public Builder setEstimation(jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation value) {
         if (estimationBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -8292,7 +8290,7 @@ public final class StsProtos {
        * <code>.sts.Bsm.Estimation estimation = 2;</code>
        */
       public Builder setEstimation(
-          StsProtos.Bsm.Estimation.Builder builderForValue) {
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation.Builder builderForValue) {
         if (estimationBuilder_ == null) {
           estimation_ = builderForValue.build();
           onChanged();
@@ -8305,11 +8303,11 @@ public final class StsProtos {
       /**
        * <code>.sts.Bsm.Estimation estimation = 2;</code>
        */
-      public Builder mergeEstimation(StsProtos.Bsm.Estimation value) {
+      public Builder mergeEstimation(jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation value) {
         if (estimationBuilder_ == null) {
           if (estimation_ != null) {
             estimation_ =
-              StsProtos.Bsm.Estimation.newBuilder(estimation_).mergeFrom(value).buildPartial();
+              jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation.newBuilder(estimation_).mergeFrom(value).buildPartial();
           } else {
             estimation_ = value;
           }
@@ -8337,7 +8335,7 @@ public final class StsProtos {
       /**
        * <code>.sts.Bsm.Estimation estimation = 2;</code>
        */
-      public StsProtos.Bsm.Estimation.Builder getEstimationBuilder() {
+      public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation.Builder getEstimationBuilder() {
         
         onChanged();
         return getEstimationFieldBuilder().getBuilder();
@@ -8345,23 +8343,23 @@ public final class StsProtos {
       /**
        * <code>.sts.Bsm.Estimation estimation = 2;</code>
        */
-      public StsProtos.Bsm.EstimationOrBuilder getEstimationOrBuilder() {
+      public jdplus.sts.base.io.protobuf.StsProtos.Bsm.EstimationOrBuilder getEstimationOrBuilder() {
         if (estimationBuilder_ != null) {
           return estimationBuilder_.getMessageOrBuilder();
         } else {
           return estimation_ == null ?
-              StsProtos.Bsm.Estimation.getDefaultInstance() : estimation_;
+              jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation.getDefaultInstance() : estimation_;
         }
       }
       /**
        * <code>.sts.Bsm.Estimation estimation = 2;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          StsProtos.Bsm.Estimation, StsProtos.Bsm.Estimation.Builder, StsProtos.Bsm.EstimationOrBuilder>
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation, jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation.Builder, jdplus.sts.base.io.protobuf.StsProtos.Bsm.EstimationOrBuilder> 
           getEstimationFieldBuilder() {
         if (estimationBuilder_ == null) {
           estimationBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              StsProtos.Bsm.Estimation, StsProtos.Bsm.Estimation.Builder, StsProtos.Bsm.EstimationOrBuilder>(
+              jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation, jdplus.sts.base.io.protobuf.StsProtos.Bsm.Estimation.Builder, jdplus.sts.base.io.protobuf.StsProtos.Bsm.EstimationOrBuilder>(
                   getEstimation(),
                   getParentForChildren(),
                   isClean());
@@ -8370,9 +8368,9 @@ public final class StsProtos {
         return estimationBuilder_;
       }
 
-      private StsProtos.Bsm.Components components_;
+      private jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components components_;
       private com.google.protobuf.SingleFieldBuilderV3<
-          StsProtos.Bsm.Components, StsProtos.Bsm.Components.Builder, StsProtos.Bsm.ComponentsOrBuilder> componentsBuilder_;
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components, jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components.Builder, jdplus.sts.base.io.protobuf.StsProtos.Bsm.ComponentsOrBuilder> componentsBuilder_;
       /**
        * <code>.sts.Bsm.Components components = 3;</code>
        * @return Whether the components field is set.
@@ -8384,9 +8382,9 @@ public final class StsProtos {
        * <code>.sts.Bsm.Components components = 3;</code>
        * @return The components.
        */
-      public StsProtos.Bsm.Components getComponents() {
+      public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components getComponents() {
         if (componentsBuilder_ == null) {
-          return components_ == null ? StsProtos.Bsm.Components.getDefaultInstance() : components_;
+          return components_ == null ? jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components.getDefaultInstance() : components_;
         } else {
           return componentsBuilder_.getMessage();
         }
@@ -8394,7 +8392,7 @@ public final class StsProtos {
       /**
        * <code>.sts.Bsm.Components components = 3;</code>
        */
-      public Builder setComponents(StsProtos.Bsm.Components value) {
+      public Builder setComponents(jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components value) {
         if (componentsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -8411,7 +8409,7 @@ public final class StsProtos {
        * <code>.sts.Bsm.Components components = 3;</code>
        */
       public Builder setComponents(
-          StsProtos.Bsm.Components.Builder builderForValue) {
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components.Builder builderForValue) {
         if (componentsBuilder_ == null) {
           components_ = builderForValue.build();
           onChanged();
@@ -8424,11 +8422,11 @@ public final class StsProtos {
       /**
        * <code>.sts.Bsm.Components components = 3;</code>
        */
-      public Builder mergeComponents(StsProtos.Bsm.Components value) {
+      public Builder mergeComponents(jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components value) {
         if (componentsBuilder_ == null) {
           if (components_ != null) {
             components_ =
-              StsProtos.Bsm.Components.newBuilder(components_).mergeFrom(value).buildPartial();
+              jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components.newBuilder(components_).mergeFrom(value).buildPartial();
           } else {
             components_ = value;
           }
@@ -8456,7 +8454,7 @@ public final class StsProtos {
       /**
        * <code>.sts.Bsm.Components components = 3;</code>
        */
-      public StsProtos.Bsm.Components.Builder getComponentsBuilder() {
+      public jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components.Builder getComponentsBuilder() {
         
         onChanged();
         return getComponentsFieldBuilder().getBuilder();
@@ -8464,23 +8462,23 @@ public final class StsProtos {
       /**
        * <code>.sts.Bsm.Components components = 3;</code>
        */
-      public StsProtos.Bsm.ComponentsOrBuilder getComponentsOrBuilder() {
+      public jdplus.sts.base.io.protobuf.StsProtos.Bsm.ComponentsOrBuilder getComponentsOrBuilder() {
         if (componentsBuilder_ != null) {
           return componentsBuilder_.getMessageOrBuilder();
         } else {
           return components_ == null ?
-              StsProtos.Bsm.Components.getDefaultInstance() : components_;
+              jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components.getDefaultInstance() : components_;
         }
       }
       /**
        * <code>.sts.Bsm.Components components = 3;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          StsProtos.Bsm.Components, StsProtos.Bsm.Components.Builder, StsProtos.Bsm.ComponentsOrBuilder>
+          jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components, jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components.Builder, jdplus.sts.base.io.protobuf.StsProtos.Bsm.ComponentsOrBuilder> 
           getComponentsFieldBuilder() {
         if (componentsBuilder_ == null) {
           componentsBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              StsProtos.Bsm.Components, StsProtos.Bsm.Components.Builder, StsProtos.Bsm.ComponentsOrBuilder>(
+              jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components, jdplus.sts.base.io.protobuf.StsProtos.Bsm.Components.Builder, jdplus.sts.base.io.protobuf.StsProtos.Bsm.ComponentsOrBuilder>(
                   getComponents(),
                   getParentForChildren(),
                   isClean());
@@ -8489,9 +8487,9 @@ public final class StsProtos {
         return componentsBuilder_;
       }
 
-      private SaProtos.SaDecomposition final_;
+      private jdplus.sa.base.protobuf.SaProtos.SaDecomposition final_;
       private com.google.protobuf.SingleFieldBuilderV3<
-          SaProtos.SaDecomposition, SaProtos.SaDecomposition.Builder, SaProtos.SaDecompositionOrBuilder> finalBuilder_;
+          jdplus.sa.base.protobuf.SaProtos.SaDecomposition, jdplus.sa.base.protobuf.SaProtos.SaDecomposition.Builder, jdplus.sa.base.protobuf.SaProtos.SaDecompositionOrBuilder> finalBuilder_;
       /**
        * <code>.sa.SaDecomposition final = 4;</code>
        * @return Whether the final field is set.
@@ -8503,9 +8501,9 @@ public final class StsProtos {
        * <code>.sa.SaDecomposition final = 4;</code>
        * @return The final.
        */
-      public SaProtos.SaDecomposition getFinal() {
+      public jdplus.sa.base.protobuf.SaProtos.SaDecomposition getFinal() {
         if (finalBuilder_ == null) {
-          return final_ == null ? SaProtos.SaDecomposition.getDefaultInstance() : final_;
+          return final_ == null ? jdplus.sa.base.protobuf.SaProtos.SaDecomposition.getDefaultInstance() : final_;
         } else {
           return finalBuilder_.getMessage();
         }
@@ -8513,7 +8511,7 @@ public final class StsProtos {
       /**
        * <code>.sa.SaDecomposition final = 4;</code>
        */
-      public Builder setFinal(SaProtos.SaDecomposition value) {
+      public Builder setFinal(jdplus.sa.base.protobuf.SaProtos.SaDecomposition value) {
         if (finalBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -8530,7 +8528,7 @@ public final class StsProtos {
        * <code>.sa.SaDecomposition final = 4;</code>
        */
       public Builder setFinal(
-          SaProtos.SaDecomposition.Builder builderForValue) {
+          jdplus.sa.base.protobuf.SaProtos.SaDecomposition.Builder builderForValue) {
         if (finalBuilder_ == null) {
           final_ = builderForValue.build();
           onChanged();
@@ -8543,11 +8541,11 @@ public final class StsProtos {
       /**
        * <code>.sa.SaDecomposition final = 4;</code>
        */
-      public Builder mergeFinal(SaProtos.SaDecomposition value) {
+      public Builder mergeFinal(jdplus.sa.base.protobuf.SaProtos.SaDecomposition value) {
         if (finalBuilder_ == null) {
           if (final_ != null) {
             final_ =
-              SaProtos.SaDecomposition.newBuilder(final_).mergeFrom(value).buildPartial();
+              jdplus.sa.base.protobuf.SaProtos.SaDecomposition.newBuilder(final_).mergeFrom(value).buildPartial();
           } else {
             final_ = value;
           }
@@ -8575,7 +8573,7 @@ public final class StsProtos {
       /**
        * <code>.sa.SaDecomposition final = 4;</code>
        */
-      public SaProtos.SaDecomposition.Builder getFinalBuilder() {
+      public jdplus.sa.base.protobuf.SaProtos.SaDecomposition.Builder getFinalBuilder() {
         
         onChanged();
         return getFinalFieldBuilder().getBuilder();
@@ -8583,23 +8581,23 @@ public final class StsProtos {
       /**
        * <code>.sa.SaDecomposition final = 4;</code>
        */
-      public SaProtos.SaDecompositionOrBuilder getFinalOrBuilder() {
+      public jdplus.sa.base.protobuf.SaProtos.SaDecompositionOrBuilder getFinalOrBuilder() {
         if (finalBuilder_ != null) {
           return finalBuilder_.getMessageOrBuilder();
         } else {
           return final_ == null ?
-              SaProtos.SaDecomposition.getDefaultInstance() : final_;
+              jdplus.sa.base.protobuf.SaProtos.SaDecomposition.getDefaultInstance() : final_;
         }
       }
       /**
        * <code>.sa.SaDecomposition final = 4;</code>
        */
       private com.google.protobuf.SingleFieldBuilderV3<
-          SaProtos.SaDecomposition, SaProtos.SaDecomposition.Builder, SaProtos.SaDecompositionOrBuilder>
+          jdplus.sa.base.protobuf.SaProtos.SaDecomposition, jdplus.sa.base.protobuf.SaProtos.SaDecomposition.Builder, jdplus.sa.base.protobuf.SaProtos.SaDecompositionOrBuilder> 
           getFinalFieldBuilder() {
         if (finalBuilder_ == null) {
           finalBuilder_ = new com.google.protobuf.SingleFieldBuilderV3<
-              SaProtos.SaDecomposition, SaProtos.SaDecomposition.Builder, SaProtos.SaDecompositionOrBuilder>(
+              jdplus.sa.base.protobuf.SaProtos.SaDecomposition, jdplus.sa.base.protobuf.SaProtos.SaDecomposition.Builder, jdplus.sa.base.protobuf.SaProtos.SaDecompositionOrBuilder>(
                   getFinal(),
                   getParentForChildren(),
                   isClean());
@@ -8743,12 +8741,12 @@ public final class StsProtos {
     }
 
     // @@protoc_insertion_point(class_scope:sts.Bsm)
-    private static final StsProtos.Bsm DEFAULT_INSTANCE;
+    private static final jdplus.sts.base.io.protobuf.StsProtos.Bsm DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new StsProtos.Bsm();
+      DEFAULT_INSTANCE = new jdplus.sts.base.io.protobuf.StsProtos.Bsm();
     }
 
-    public static StsProtos.Bsm getDefaultInstance() {
+    public static jdplus.sts.base.io.protobuf.StsProtos.Bsm getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -8773,7 +8771,7 @@ public final class StsProtos {
     }
 
     @java.lang.Override
-    public StsProtos.Bsm getDefaultInstanceForType() {
+    public jdplus.sts.base.io.protobuf.StsProtos.Bsm getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -8821,7 +8819,7 @@ public final class StsProtos {
       "sonal_model\030\005 \001(\0162\022.sts.SeasonalModel\022\035\n" +
       "\005cycle\030\006 \001(\0132\016.jd3.Parameter\022$\n\014cycle_pe" +
       "riod\030\007 \001(\0132\016.jd3.Parameter\022$\n\014cycle_fact" +
-      "or\030\010 \001(\0132\016.jd3.Parameter\"\204\007\n\003Bsm\022)\n\013desc" +
+      "or\030\010 \001(\0132\016.jd3.Parameter\"\375\006\n\003Bsm\022)\n\013desc" +
       "ription\030\001 \001(\0132\024.sts.Bsm.Description\022\'\n\ne" +
       "stimation\030\002 \001(\0132\023.sts.Bsm.Estimation\022\'\n\n" +
       "components\030\003 \001(\0132\023.sts.Bsm.Components\022\"\n" +
@@ -8831,31 +8829,31 @@ public final class StsProtos {
       "ata\022\013\n\003log\030\002 \001(\010\0220\n\rpreadjustment\030\003 \001(\0162" +
       "\031.modelling.LengthOfPeriod\0220\n\tvariables\030" +
       "\004 \003(\0132\035.modelling.RegressionVariable\022\031\n\003" +
-      "bsm\030\005 \001(\0132\014.sts.BsmSpec\032\204\002\n\nEstimation\022\t" +
+      "bsm\030\005 \001(\0132\014.sts.BsmSpec\032\375\001\n\nEstimation\022\t" +
       "\n\001y\030\001 \003(\001\022\026\n\001x\030\002 \001(\0132\013.jd3.Matrix\022\t\n\001b\030\003" +
       " \003(\001\022 \n\013bcovariance\030\004 \001(\0132\013.jd3.Matrix\022-" +
       "\n\nparameters\030\005 \001(\0132\031.jd3.ParametersEstim" +
-      "ation\0224\n\nlikelihood\030\006 \001(\0132 .jd3.DiffuseL" +
-      "ikelihoodStatistics\022\021\n\tresiduals\030\007 \003(\001\022." +
-      "\n\010missings\030\010 \003(\0132\034.modelling.MissingEsti" +
-      "mation\032\356\001\n\nComponents\022$\n\006series\030\n \001(\0132\024." +
-      "modelling.Component\022#\n\005level\030\013 \001(\0132\024.mod" +
-      "elling.Component\022#\n\005slope\030\014 \001(\0132\024.modell" +
-      "ing.Component\022#\n\005cycle\030\r \001(\0132\024.modelling" +
-      ".Component\022&\n\010seasonal\030\016 \001(\0132\024.modelling" +
-      ".Component\022#\n\005noise\030\017 \001(\0132\024.modelling.Co" +
-      "mponent*p\n\rSeasonalModel\022\r\n\tSEAS_NONE\020\000\022" +
-      "\016\n\nSEAS_DUMMY\020\001\022\026\n\022SEAS_TRIGONOMETRIC\020\002\022" +
-      "\030\n\024SEAS_HARRISONSTEVENS\020\003\022\016\n\nSEAS_CRUDE\020" +
-      "\004B$\n\027demetra.sts.io.protobufB\tStsProtosP" +
-      "\000P\001P\002b\006proto3"
+      "ation\022-\n\nlikelihood\030\006 \001(\0132\031.jd3.Likeliho" +
+      "odStatistics\022\021\n\tresiduals\030\007 \003(\001\022.\n\010missi" +
+      "ngs\030\010 \003(\0132\034.modelling.MissingEstimation\032" +
+      "\356\001\n\nComponents\022$\n\006series\030\n \001(\0132\024.modelli" +
+      "ng.Component\022#\n\005level\030\013 \001(\0132\024.modelling." +
+      "Component\022#\n\005slope\030\014 \001(\0132\024.modelling.Com" +
+      "ponent\022#\n\005cycle\030\r \001(\0132\024.modelling.Compon" +
+      "ent\022&\n\010seasonal\030\016 \001(\0132\024.modelling.Compon" +
+      "ent\022#\n\005noise\030\017 \001(\0132\024.modelling.Component" +
+      "*p\n\rSeasonalModel\022\r\n\tSEAS_NONE\020\000\022\016\n\nSEAS" +
+      "_DUMMY\020\001\022\026\n\022SEAS_TRIGONOMETRIC\020\002\022\030\n\024SEAS" +
+      "_HARRISONSTEVENS\020\003\022\016\n\nSEAS_CRUDE\020\004B(\n\033jd" +
+      "plus.sts.base.io.protobufB\tStsProtosP\000P\001" +
+      "P\002b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.getDescriptor(),
           jdplus.toolkit.base.protobuf.modelling.ModellingProtos.getDescriptor(),
-          SaProtos.getDescriptor(),
+          jdplus.sa.base.protobuf.SaProtos.getDescriptor(),
         });
     internal_static_sts_BsmSpec_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -8889,7 +8887,7 @@ public final class StsProtos {
         new java.lang.String[] { "Series", "Level", "Slope", "Cycle", "Seasonal", "Noise", });
     jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.getDescriptor();
     jdplus.toolkit.base.protobuf.modelling.ModellingProtos.getDescriptor();
-    SaProtos.getDescriptor();
+    jdplus.sa.base.protobuf.SaProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

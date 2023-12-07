@@ -5,18 +5,15 @@
  */
 package jdplus.sts.base.core;
 
-import jdplus.sa.base.api.SeriesDecomposition;
-import jdplus.sts.base.api.BsmDecomposition;
-import jdplus.sts.base.api.BsmDescription;
+import jdplus.sts.base.api.BsmSpec;
+import jdplus.sts.base.api.RawBsmDecomposition;
+import jdplus.toolkit.base.core.modelling.GeneralLinearModel;
 
 /**
  *
  * @author PALATEJ
  */
-public interface BasicStructuralModel {
+public interface BasicStructuralModel extends GeneralLinearModel<BsmSpec>{
     
-    BsmDescription getDescription();
-    BsmEstimation getEstimation();
-    BsmDecomposition getBsmDecomposition();
-    SeriesDecomposition getFinalDecomposition();
- }
+    RawBsmDecomposition getBsmDecomposition();
+}

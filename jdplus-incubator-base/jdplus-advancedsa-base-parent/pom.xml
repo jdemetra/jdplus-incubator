@@ -5,7 +5,7 @@
     <parent>
         <groupId>eu.europa.ec.joinup.sat</groupId>
         <artifactId>jdplus-incubator-base</artifactId>
-        <version>1.0.0</version>
+        <version>2.0.0</version>
     </parent>
 
     <artifactId>jdplus-advancedsa-base-parent</artifactId>
@@ -18,5 +18,6 @@
     <modules>
         <module>jdplus-advancedsa-base-api</module>
         <module>jdplus-advancedsa-base-core</module>
+        <module>jdplus-advancedsa-base-r</module>
     </modules>
 </project>

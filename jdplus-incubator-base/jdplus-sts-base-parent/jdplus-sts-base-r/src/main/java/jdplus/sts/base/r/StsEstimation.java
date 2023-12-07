@@ -35,7 +35,7 @@ import jdplus.toolkit.base.api.timeseries.TsUnit;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import jdplus.sts.base.api.SeasonalModel;
+import jdplus.toolkit.base.api.ssf.sts.SeasonalModel;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import static jdplus.toolkit.base.core.timeseries.simplets.TsDataToolkit.add;
 import static jdplus.toolkit.base.core.timeseries.simplets.TsDataToolkit.subtract;

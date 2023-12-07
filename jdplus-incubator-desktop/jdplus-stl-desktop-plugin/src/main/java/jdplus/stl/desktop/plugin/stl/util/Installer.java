@@ -24,12 +24,11 @@ import jdplus.toolkit.desktop.plugin.util.InstallerStep;
 import jdplus.stl.base.api.SeasonalSpec;
 import org.openide.modules.ModuleInstall;
 
-
 public final class Installer extends ModuleInstall {
 
     public static final InstallerStep STEP = InstallerStep.all(
             new PropertiesStep()
-            //new DemetraTramoSeatsDiagnosticsStep(), new TramoSeatsOptionsStep()
+    //new DemetraTramoSeatsDiagnosticsStep(), new TramoSeatsOptionsStep()
     );
 
     @Override
@@ -48,8 +47,8 @@ public final class Installer extends ModuleInstall {
 
         @Override
         public void restore() {
-        CustomPropertyEditorRegistry.INSTANCE.register(SeasonalSpec[].class, new SeasonalSpecsEditor());
-        CustomPropertyRendererFactory.INSTANCE.getRegistry().registerRenderer(SeasonalSpec[].class, new ArrayRenderer());
+            CustomPropertyEditorRegistry.INSTANCE.register(SeasonalSpec[].class, new SeasonalSpecsEditor());
+            CustomPropertyRendererFactory.INSTANCE.getRegistry().registerRenderer(SeasonalSpec[].class, new ArrayRenderer());
         }
 
         @Override

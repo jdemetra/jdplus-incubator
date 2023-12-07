@@ -21,7 +21,7 @@ import jdplus.toolkit.base.api.data.DoubleSeqCursor;
 import jdplus.toolkit.base.api.data.Parameter;
 import jdplus.sts.base.api.BsmSpec;
 import jdplus.sts.base.api.Component;
-import jdplus.sts.base.api.SeasonalModel;
+import jdplus.toolkit.base.api.ssf.sts.SeasonalModel;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.math.functions.IParametricMapping;
 import jdplus.toolkit.base.core.math.functions.ParamValidation;
@@ -255,8 +255,7 @@ public class BsmMapping implements IParametricMapping<BsmData> {
     @Override
     public BsmData map(DoubleSeq seq) {
         DoubleSeqCursor cur = seq.cursor();
-        return BsmData.builder()
-                .period(period)
+        return BsmData.builder(period)
                 .seasonalModel(sm)
                 .levelVar(fp[L] ? p[L] : invar(cur.getAndNext()))
                 .slopeVar(fp[S] ? p[S] : invar(cur.getAndNext()))

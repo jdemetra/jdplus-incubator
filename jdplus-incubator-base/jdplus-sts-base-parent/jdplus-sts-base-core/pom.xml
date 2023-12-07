@@ -5,7 +5,7 @@
     <parent>
         <groupId>eu.europa.ec.joinup.sat</groupId>
         <artifactId>jdplus-sts-base-parent</artifactId>
-        <version>1.0.0</version>
+        <version>2.0.0</version>
     </parent>
 
     <artifactId>jdplus-sts-base-core</artifactId>
@@ -24,8 +24,8 @@
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
-            <artifactId>jdplus-sa-base-core</artifactId>
-            <version>${jdplus-main.version}</version>
+            <artifactId>jdplus-advancedsa-base-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- test only -->

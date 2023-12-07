@@ -38,6 +38,8 @@ import nbbrd.service.ServiceProvider;
 public class StlHandlers {
 
     public final WorkspaceFamily SA_DOC_STLPLUS = parse("Seasonal adjustment@documents@stlplus");
+    public final WorkspaceFamily SA_DOC_MSTLPLUS = parse("Seasonal adjustment@documents@mstlplus");
+    public final WorkspaceFamily SA_DOC_ISTLPLUS = parse("Seasonal adjustment@documents@istlplus");
 
     @ServiceProvider(FamilyHandler.class)
     public static final class DocStlPlus implements FamilyHandler {
@@ -62,9 +64,7 @@ public class StlHandlers {
             public boolean match(DemetraVersion version) {
                 return version == DemetraVersion.JD3;
             }
-
         }, "StlPlusDoc");
 
     }
-
 }

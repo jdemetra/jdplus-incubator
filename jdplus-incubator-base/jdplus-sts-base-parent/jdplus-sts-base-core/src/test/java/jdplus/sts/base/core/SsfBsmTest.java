@@ -19,7 +19,7 @@ package jdplus.sts.base.core;
 import tck.demetra.data.Data;
 import jdplus.toolkit.base.api.data.Parameter;
 import jdplus.sts.base.api.BsmSpec;
-import jdplus.sts.base.api.SeasonalModel;
+import jdplus.toolkit.base.api.ssf.sts.SeasonalModel;
 import jdplus.toolkit.base.core.ssf.akf.AkfToolkit;
 import jdplus.toolkit.base.core.ssf.ckms.CkmsToolkit;
 import jdplus.toolkit.base.core.ssf.likelihood.DiffuseLikelihood;

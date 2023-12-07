@@ -7,6 +7,7 @@ module jdplus.sts.base.r {
 
     requires jdplus.sts.base.api;
     requires jdplus.toolkit.base.api;
+    requires jdplus.toolkit.base.r;
     requires jdplus.sts.base.core;
     requires jdplus.sts.base.io;
     requires jdplus.toolkit.base.core;

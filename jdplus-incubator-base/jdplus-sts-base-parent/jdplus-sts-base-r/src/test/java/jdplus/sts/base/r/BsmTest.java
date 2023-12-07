@@ -8,6 +8,7 @@ package jdplus.sts.base.r;
 import tck.demetra.data.Data;
 import jdplus.toolkit.base.r.modelling.Variables;
 import jdplus.sts.base.core.BasicStructuralModel;
+import jdplus.sts.base.core.LightBasicStructuralModel;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.api.timeseries.TsPeriod;
 import static org.junit.jupiter.api.Assertions.*;
@@ -55,7 +56,7 @@ public class BsmTest {
     @Test
     public void testEstimation() {
         TsData s = TsData.ofInternal(TsPeriod.monthly(1992,1), Data.RETAIL_BOOKSTORES);
-        BasicStructuralModel bsm = Bsm.process(s, null, 1, 1, -1, 1, "Trigonometric", true, 1e-12);
+        LightBasicStructuralModel bsm = Bsm.process(s, null, 1, 1, -1, 1, "Trigonometric", true, 1e-12);
         byte[] bytes = Bsm.toBuffer(bsm);
         assertTrue(bytes != null);
     }
@@ -64,7 +65,7 @@ public class BsmTest {
     public void testEstimationWithRegs() {
          TsData s = TsData.ofInternal(TsPeriod.monthly(1992,1), Data.RETAIL_BOOKSTORES);
         Matrix td = Variables.td(s.getDomain(), new int[]{1,1,1,1,2,3,0}, true);
-        BasicStructuralModel bsm = Bsm.process(s, td, 1, 1, -1, 1, "Trigonometric", false, 1e-12);
+        LightBasicStructuralModel bsm = Bsm.process(s, td, 1, 1, -1, 1, "Trigonometric", false, 1e-12);
         byte[] bytes = Bsm.toBuffer(bsm);
         assertTrue(bytes != null);
     }

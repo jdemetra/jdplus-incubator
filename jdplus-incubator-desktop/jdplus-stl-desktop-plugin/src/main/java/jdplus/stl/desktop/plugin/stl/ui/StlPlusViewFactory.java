@@ -349,14 +349,14 @@ public class StlPlusViewFactory extends ProcDocumentViewFactory<StlPlusDocument>
 
         public PreprocessingDetFactory() {
             super(StlPlusDocument.class, SaViews.PREPROCESSING_DET, source -> source, new GenericTableUI(false,
-                    SaDictionaries.PREPROCESSING, ModellingDictionary.YCAL,
-                    SaDictionaries.PREPROCESSING, ModellingDictionary.Y_LIN,
-                    SaDictionaries.PREPROCESSING, ModellingDictionary.DET,
-                    SaDictionaries.PREPROCESSING, ModellingDictionary.CAL,
-                    SaDictionaries.PREPROCESSING, ModellingDictionary.TDE,
-                    SaDictionaries.PREPROCESSING, ModellingDictionary.EE,
-                    SaDictionaries.PREPROCESSING, ModellingDictionary.OUT,
-                    SaDictionaries.PREPROCESSING, ModellingDictionary.FULL_RES));
+                    ModellingDictionary.YCAL,
+                    ModellingDictionary.Y_LIN,
+                    ModellingDictionary.DET,
+                    ModellingDictionary.CAL,
+                    ModellingDictionary.TDE,
+                    ModellingDictionary.EE,
+                    ModellingDictionary.OUT,
+                    ModellingDictionary.FULL_RES));
         }
 
         @Override

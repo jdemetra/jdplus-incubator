@@ -17,6 +17,7 @@
 package jdplus.stl.base.core;
 
 import jdplus.stl.base.api.LoessSpec;
+import jdplus.toolkit.base.api.data.DoubleSeq;
 
 /**
  *
@@ -60,7 +61,7 @@ public class LowPassLoessFilter {
         ave.set(j, v / flen);
         if (newn > 1) {
             for (int i = j + 1, k = i1, m = i0; i < newn; ++i, ++k, ++m) {
-                v = v - x.get(m) + x.get(k);
+                v += x.get(k) - x.get(m);
                 ave.set(i, v / flen);
             }
         }

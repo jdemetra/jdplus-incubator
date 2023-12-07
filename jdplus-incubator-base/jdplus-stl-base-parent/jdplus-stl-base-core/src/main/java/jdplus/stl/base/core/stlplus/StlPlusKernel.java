@@ -33,7 +33,7 @@ import jdplus.sa.base.core.PreliminaryChecks;
 import jdplus.sa.base.core.SaBenchmarkingResults;
 import jdplus.sa.base.core.modelling.RegArimaDecomposer;
 import jdplus.sa.base.core.modelling.TwoStepsDecomposition;
-import jdplus.sa.base.core.regarima.FastKernel;
+import jdplus.advancedsa.base.core.regarima.FastKernel;
 import jdplus.stl.base.core.StlKernel;
 import jdplus.stl.base.core.StlResults;
 

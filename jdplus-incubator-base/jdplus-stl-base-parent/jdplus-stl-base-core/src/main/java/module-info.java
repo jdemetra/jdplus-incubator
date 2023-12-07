@@ -1,3 +1,4 @@
+
 import jdplus.sa.base.api.SaProcessingFactory;
 import jdplus.stl.base.core.mstlplus.MStlPlusFactory;
 import jdplus.stl.base.core.stlplus.StlPlusFactory;
@@ -18,8 +19,9 @@ module jdplus.stl.base.core {
     requires jdplus.toolkit.base.api;
     requires jdplus.sa.base.api;
     requires jdplus.highfreq.base.core;
-    requires jdplus.sa.base.core;
     requires jdplus.toolkit.base.core;
+    requires jdplus.sa.base.core;
+    requires jdplus.advancedsa.base.core;
 
     exports jdplus.stl.base.core.mstlplus;
     exports jdplus.stl.base.core.stlplus;

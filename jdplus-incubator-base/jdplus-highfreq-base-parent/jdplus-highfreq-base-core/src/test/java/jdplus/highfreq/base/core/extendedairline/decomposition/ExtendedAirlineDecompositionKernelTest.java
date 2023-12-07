@@ -50,7 +50,7 @@ import java.util.Map;
  * @author PALATEJ
  */
 public class ExtendedAirlineDecompositionKernelTest {
-    
+
     final static TsData EDF;
 
     static {
@@ -64,20 +64,20 @@ public class ExtendedAirlineDecompositionKernelTest {
         }
         EDF = y;
     }
-    
+
     public ExtendedAirlineDecompositionKernelTest() {
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         testEDF();
     }
 
     public static void testEDF() {
         Holiday[] france = ExtendedAirlineKernelTest.france();
-        ModellingContext context=new ModellingContext();
+        ModellingContext context = new ModellingContext();
         context.getCalendars().set("FR", new Calendar(france));
-       // build the psec
-        ExtendedAirlineModellingSpec spec=ExtendedAirlineModellingSpec.builder()
+        // build the psec
+        ExtendedAirlineModellingSpec spec = ExtendedAirlineModellingSpec.builder()
                 .transform(TransformSpec.builder()
                         .function(TransformationType.Log)
                         .build())
@@ -88,13 +88,13 @@ public class ExtendedAirlineDecompositionKernelTest {
                         .build())
                 .regression(RegressionSpec.builder()
                         .holidays(HolidaysSpec.builder()
-                                        .holidays("FR")
-                                        .holidaysOption(HolidaysOption.Skip)
-                                        .single(false)
-                                        .build())
+                                .holidays("FR")
+                                .holidaysOption(HolidaysOption.Skip)
+                                .single(false)
+                                .build())
                         .build())
                 .build();
-        
+
         DecompositionSpec dspec = DecompositionSpec.builder()
                 .periodicities(new double[]{7, 365.25})
                 .build();
@@ -102,17 +102,17 @@ public class ExtendedAirlineDecompositionKernelTest {
                 .preprocessing(spec)
                 .decomposition(dspec)
                 .build();
-        ExtendedAirlineDecompositionKernel kernel=new ExtendedAirlineDecompositionKernel(allspec, context);
+        ExtendedAirlineDecompositionKernel kernel = new ExtendedAirlineDecompositionKernel(allspec, context);
         ExtendedAirlineResults rslts = kernel.process(EDF, null);
-        List<TsData> main=new ArrayList<>();
+        List<TsData> main = new ArrayList<>();
         main.add(rslts.getFinals().getSeries(ComponentType.Series, ComponentInformation.Value));
         main.add(rslts.getFinals().getSeries(ComponentType.SeasonallyAdjusted, ComponentInformation.Value));
         main.add(rslts.getFinals().getSeries(ComponentType.Trend, ComponentInformation.Value));
         main.add(rslts.getFinals().getSeries(ComponentType.Seasonal, ComponentInformation.Value));
         main.add(rslts.getFinals().getSeries(ComponentType.Irregular, ComponentInformation.Value));
         System.out.println(TsDataTable.of(main));
-       Map<String, Class> dictionary = rslts.getDictionary();
-        dictionary.keySet().forEach(v->System.out.println(v));
+        Map<String, Class> dictionary = rslts.getDictionary();
+        dictionary.keySet().forEach(v -> System.out.println(v));
     }
-    
+
 }

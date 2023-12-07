@@ -83,14 +83,14 @@ public class StlSpec implements ProcSpecification {
 
         if (robust) {
             return robustBuilder()
-                    .trendSpec(LoessSpec.defaultTrend(period, swindow, true))
-                    .seasonalSpec(new SeasonalSpec(period, swindow, true))
+                    .trendSpec(LoessSpec.defaultTrend(period, swindow, false))
+                    .seasonalSpec(new SeasonalSpec(period, swindow, false))
                     .multiplicative(mul)
                     .build();
         } else {
             return builder()
-                    .trendSpec(LoessSpec.defaultTrend(period, swindow, true))
-                    .seasonalSpec(new SeasonalSpec(period, swindow, true))
+                    .trendSpec(LoessSpec.defaultTrend(period, swindow, false))
+                    .seasonalSpec(new SeasonalSpec(period, swindow, false))
                     .multiplicative(mul)
                     .build();
         }

@@ -5,14 +5,11 @@ module jdplus.advancedsa.base.core {
     requires static nbbrd.service;
     requires static org.checkerframework.checker.qual;
 
-    requires transitive jdplus.advancedsa.base.api;
     requires jdplus.toolkit.base.api;
-    requires jdplus.sts.base.api;
+    requires jdplus.advancedsa.base.api;
     requires jdplus.toolkit.base.core;
-    requires jdplus.sts.base.core;
     requires jdplus.sa.base.core;
-    requires jdplus.x13.base.api;
-    requires jdplus.tramoseats.base.api;
 
-    exports jdplus.advancedsa.base.core;
+    exports jdplus.advancedsa.base.core.regarima;
+    exports jdplus.advancedsa.base.core.movingtd;
 }

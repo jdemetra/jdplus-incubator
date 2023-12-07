@@ -58,6 +58,12 @@ import jdplus.toolkit.base.core.arima.ArimaModel;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.highfreq.base.core.regarima.HighFreqRegArimaModel;
 import jdplus.highfreq.base.core.regarima.ModelDescription;
+import jdplus.sa.base.api.SaException;
+import static jdplus.sa.base.core.PreliminaryChecks.MAX_MISSING_COUNT;
+import jdplus.toolkit.base.api.data.DoubleSeqCursor;
+import jdplus.toolkit.base.api.util.IntList;
+import jdplus.toolkit.base.core.data.interpolation.AverageInterpolator;
+import jdplus.toolkit.base.core.data.interpolation.DataInterpolator;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.toolkit.base.core.modelling.regression.AdditiveOutlierFactory;
 import jdplus.toolkit.base.core.modelling.regression.IOutlierFactory;
@@ -72,6 +78,7 @@ import jdplus.toolkit.base.core.ssf.arima.FastArimaForecasts;
 import jdplus.toolkit.base.core.ssf.arima.SsfUcarima;
 import jdplus.toolkit.base.core.ssf.composite.CompositeSsf;
 import jdplus.toolkit.base.core.stats.likelihood.LogLikelihoodFunction;
+import jdplus.toolkit.base.core.timeseries.simplets.Transformations;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -247,15 +254,49 @@ public class ExtendedAirlineKernel {
         model.addVariable(var);
     }
 
-    public static ExtendedAirlineEstimation fastProcess(DoubleSeq y, Matrix X, boolean mean, String[] outliers, double cv, ExtendedAirlineSpec spec, double eps) {
-        return fastProcess(y, X, mean, outliers, cv, spec, eps, 0);
+    public static ExtendedAirlineEstimation fastProcess(DoubleSeq y, Matrix X, boolean mean, String[] outliers, double cv, ExtendedAirlineSpec spec, double eps, boolean log) {
+        return fastProcess(y, X, mean, outliers, cv, spec, eps, 0, log);
     }
 
-    public static ExtendedAirlineEstimation fastProcess(DoubleSeq y, Matrix X, boolean mean, String[] outliers, double cv, ExtendedAirlineSpec spec, double eps, int nfcasts) {
+    public static ExtendedAirlineEstimation fastProcess(DoubleSeq y, Matrix X, boolean mean, String[] outliers, double cv, ExtendedAirlineSpec spec, double eps, int nfcasts, boolean log) {
+
+//Missing
+        int nz = y.length();
+        int nm = y.count(z -> !Double.isFinite(z));
+        if (nm > MAX_MISSING_COUNT * nz / 100) {
+            throw new SaException("Too many missing values");
+        }
+
+        DataInterpolator interpolator = AverageInterpolator.interpolator();
+        double[] interpolatedData;
+        int[] missing = IntList.EMPTY;
+
+        if (y.anyMatch(z -> Double.isNaN(z))) {
+            IntList lmissing = new IntList();
+            interpolatedData = interpolator.interpolate(y, lmissing);
+            y = DoubleSeq.of(interpolatedData);
+            if (lmissing.isEmpty()) {
+                missing = IntList.EMPTY;
+            } else {
+                missing = lmissing.toArray();
+                Arrays.sort(missing);
+            }
+        } else {
+            interpolatedData = null;
+            missing = IntList.EMPTY;
+        }
+
+        if (log) {
+            if (y.anyMatch(x -> x < 0.0000001)) {
+                log = false;
+            } else {
+                y = y.log();
+            }
+        }
 
         Matrix X_withoutFcast;
-
-        if (nfcasts > 0 && X != null) {
+        if (nfcasts > 0 && X
+                != null) {
             X_withoutFcast = X.extract(0, X.getRowsCount() - nfcasts, 0, X.getColumnsCount());
         } else {
             X_withoutFcast = X;
@@ -269,7 +310,8 @@ public class ExtendedAirlineKernel {
                 .arima(mapping.getDefault())
                 .meanCorrection(mean);
         OutlierDescriptor[] o = null;
-        if (outliers != null && outliers.length > 0) {
+        if (outliers != null && outliers.length
+                > 0) {
             GlsArimaProcessor<ArimaModel> processor = GlsArimaProcessor.builder(ArimaModel.class)
                     .precision(1e-5)
                     .build();
@@ -314,19 +356,63 @@ public class ExtendedAirlineKernel {
 
         //Ausgabe anpassen
         RegArimaModel model = rslt.getModel();
-        FastArimaForecasts fcasts = new FastArimaForecasts();
-        fcasts.prepare(model.arima(), false); //Jean said mean should not be used
-        DoubleSeq y_fcasts = fcasts.forecasts(y, nfcasts); // we should use the lin series for the fcasts
 
+        DoubleSeq y_fcasts = DoubleSeq.empty();
+
+        if (nfcasts > 0) {
+            FastArimaForecasts fcasts = new FastArimaForecasts();
+            fcasts.prepare(model.arima(), false); //Jean said mean should not be used
+            double[] detAll = new double[y.length()];
+            DoubleSeqCursor coeff = rslt.getConcentratedLikelihood().coefficients().cursor();
+            FastMatrix variables = regarima.variables();
+            for (int j = 0; j < variables.getColumnsCount(); ++j) {
+                double c = coeff.getAndNext();
+                if (c != 0) {
+                    DoubleSeqCursor cursor = variables.column(j).cursor();
+                    for (int k = 0; k < y.length(); ++k) {
+                        detAll[k] += c * cursor.getAndNext();
+                    }
+                }
+            }
+
+            //lin series is the original series y minus coeff*variables
+            double[] y_lin_a = new double[y.length()];
+            for (int i = 0; i < y.length(); i++) {
+                y_lin_a[i] = y.get(i) - detAll[i];
+            }
+            DoubleSeq y_lin = DoubleSeq.of(y_lin_a);
+            // y minus  \beta X to use as fcast
+            DoubleSeq y_fcasts_lin = fcasts.forecasts(y_lin, nfcasts); // we should use the lin series for the fcasts
+            double[] y_fcast_a;
+            coeff = rslt.getConcentratedLikelihood().coefficients().cursor();
+            y_fcast_a = y_fcasts_lin.toArray().clone();
+            if (X != null && X.getColumnsCount() != 0) {
+                for (int j = 0; j < X.getColumnsCount(); ++j) {
+                    double c = coeff.getAndNext();
+                    if (c != 0) {
+                        DoubleSeqCursor cursor = X.column(j).cursor();
+                        for (int k = y.length(); k < y.length() + nfcasts; ++k) {
+                            y_fcast_a[k - y.length()] -= c * cursor.getAndNext();
+                        }
+                    }
+                }
+            }
+            y_fcasts = DoubleSeq.of(y_fcast_a);
+        } else {
+            y_fcasts = DoubleSeq.empty();
+        }
+        //
         int xNumberRows = 0;
         int xNumberColumns = 0;
-        if (X != null) {
+        if (X
+                != null) {
             xNumberColumns = X.getColumnsCount();
             xNumberRows = X.getRowsCount();
         }
 
         Matrix regVariables;
-        if (nfcasts > 0) {
+        if (nfcasts
+                > 0) {
             double[] data = new double[(regarima.variables().getRowsCount() + nfcasts) * regarima.variables().getColumnsCount()];
             for (int i = 0; i < regarima.variables().getRowsCount(); i++) {
                 for (int j = 0; j < regarima.variables().getColumnsCount(); j++) {
@@ -354,12 +440,15 @@ public class ExtendedAirlineKernel {
             regVariables = regarima.variables();
         }
 
-        DoubleSeq y_f = regarima.getY().extend(0, y_fcasts.length());
+        DoubleSeq y_f = regarima.getY().extend(0, nfcasts);
         double[] y_inclFcasts = y_f.toArray();
-        for (int i = 0; i < y_fcasts.length(); i++) {
+        for (int i = 0;
+                i < nfcasts;
+                i++) {
             y_inclFcasts[regarima.getY().length() + i] = y_fcasts.get(i);
         }
 
+        //Missing values are still replaced
         return ExtendedAirlineEstimation.builder()
                 .y(y_inclFcasts)
                 .x(regVariables)
@@ -372,6 +461,8 @@ public class ExtendedAirlineKernel {
                 .parameters(max.getParameters())
                 .parametersCovariance(max.asymptoticCovariance())
                 .score(max.getScore())
+                .log(log)
+                .missing(missing)
                 .build();
     }
 
@@ -397,12 +488,14 @@ public class ExtendedAirlineKernel {
         OutlierSpec ospec = spec.getOutlier();
         String[] outliers = ospec.allOutliers();
         LevenbergMarquardtMinimizer.LmBuilder min = LevenbergMarquardtMinimizer.builder().maxIter(5);
-        GlsArimaProcessor<ArimaModel> processor = GlsArimaProcessor.builder(ArimaModel.class)
+        GlsArimaProcessor<ArimaModel> processor = GlsArimaProcessor.builder(ArimaModel.class
+        )
                 .minimizer(min)
                 .precision(1e-5)
                 .build();
         IOutlierFactory[] factories = factories(outliers);
-        OutliersDetectionModule od = OutliersDetectionModule.build(ArimaModel.class)
+        OutliersDetectionModule od = OutliersDetectionModule.build(ArimaModel.class
+        )
                 .maxOutliers(spec.getOutlier().getMaxOutliers())
                 .maxRound(spec.getOutlier().getMaxRound())
                 .addFactories(factories)
@@ -493,7 +586,8 @@ public class ExtendedAirlineKernel {
     public static ArimaModel estimate(DoubleSeq s, double period) {
         ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(new double[]{period});
 
-        GlsArimaProcessor.Builder<ArimaModel> builder = GlsArimaProcessor.builder(ArimaModel.class);
+        GlsArimaProcessor.Builder<ArimaModel> builder = GlsArimaProcessor.builder(ArimaModel.class
+        );
         builder.minimizer(LevenbergMarquardtMinimizer.builder())
                 .precision(1e-12)
                 .useMaximumLikelihood(true)

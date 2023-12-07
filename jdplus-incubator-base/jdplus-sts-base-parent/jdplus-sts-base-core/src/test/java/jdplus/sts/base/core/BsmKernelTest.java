@@ -21,7 +21,7 @@ import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.Parameter;
 import jdplus.sts.base.api.BsmEstimationSpec;
 import jdplus.sts.base.api.BsmSpec;
-import jdplus.sts.base.api.SeasonalModel;
+import jdplus.toolkit.base.api.ssf.sts.SeasonalModel;
 import ec.tstoolkit.structural.ComponentUse;
 import org.junit.jupiter.api.Test;
 
