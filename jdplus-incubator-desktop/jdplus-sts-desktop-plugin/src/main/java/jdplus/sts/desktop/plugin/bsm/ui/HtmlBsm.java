@@ -29,9 +29,7 @@ import java.util.stream.Collectors;
 import jdplus.sts.base.api.BsmSpec;
 import jdplus.sts.base.core.LightBasicStructuralModel;
 import jdplus.toolkit.base.api.data.DoubleSeq;
-import jdplus.toolkit.base.api.data.DoubleSeqCursor;
 import jdplus.toolkit.base.api.data.Parameter;
-import jdplus.toolkit.base.api.math.matrices.Matrix;
 import jdplus.toolkit.base.api.stats.ProbabilityType;
 import jdplus.toolkit.base.api.timeseries.TsDomain;
 import jdplus.toolkit.base.api.timeseries.calendars.DayClustering;
@@ -58,7 +56,7 @@ import jdplus.toolkit.base.core.math.matrices.LowerTriangularMatrix;
 import jdplus.toolkit.base.core.math.matrices.QuadraticForm;
 import jdplus.toolkit.base.core.math.matrices.SymmetricMatrix;
 import jdplus.toolkit.base.core.modelling.regression.RegressionDesc;
-import jdplus.toolkit.base.core.stats.likelihood.DiffuseLikelihoodStatistics;
+import jdplus.toolkit.base.core.stats.likelihood.LikelihoodStatistics;
 import jdplus.toolkit.desktop.plugin.html.AbstractHtmlElement;
 import jdplus.toolkit.desktop.plugin.html.Bootstrap4;
 import jdplus.toolkit.desktop.plugin.html.HtmlStream;
@@ -66,7 +64,7 @@ import jdplus.toolkit.desktop.plugin.html.HtmlStyle;
 import jdplus.toolkit.desktop.plugin.html.HtmlTable;
 import jdplus.toolkit.desktop.plugin.html.HtmlTableCell;
 import jdplus.toolkit.desktop.plugin.html.HtmlTag;
-import jdplus.toolkit.desktop.plugin.html.modelling.HtmlDiffuseLikelihood;
+import jdplus.toolkit.desktop.plugin.html.modelling.HtmlLikelihood;
 
 /**
  *
@@ -181,7 +179,7 @@ public class HtmlBsm extends AbstractHtmlElement {
         stream.write(HtmlTag.HEADER1, "Final model");
         stream.newLine();
         stream.write(HtmlTag.HEADER2, "Likelihood statistics");
-        stream.write(new HtmlDiffuseLikelihood(model.getEstimation().getStatistics()));
+        stream.write(new HtmlLikelihood(model.getEstimation().getStatistics()));
         writeScore(stream);
         stream.write(HtmlTag.LINEBREAK);
         stream.write(HtmlTag.HEADER2, "Basic structural model");
@@ -200,7 +198,7 @@ public class HtmlBsm extends AbstractHtmlElement {
 
     public void writeBsm(HtmlStream stream) throws IOException {
         BsmSpec bsm = model.getDescription().getSpecification();
-        DiffuseLikelihoodStatistics ll = model.getEstimation().getStatistics();
+        LikelihoodStatistics ll = model.getEstimation().getStatistics();
         int nhp = bsm.getFreeParametersCount();
         stream.open(new HtmlTable(0, 300));
         stream.open(HtmlTag.TABLEROW);

@@ -3,8 +3,6 @@
 
 package jdplus.sts.base.io.outliers.protobuf;
 
-import jdplus.sts.base.io.protobuf.StsProtos;
-
 public final class StsOutliersProtos {
   private StsOutliersProtos() {}
   public static void registerAllExtensions(
@@ -488,15 +486,15 @@ public final class StsOutliersProtos {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return StsOutliersProtos.internal_static_outliers_StsSolution_descriptor;
+      return jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.internal_static_outliers_StsSolution_descriptor;
     }
 
     @java.lang.Override
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return StsOutliersProtos.internal_static_outliers_StsSolution_fieldAccessorTable
+      return jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.internal_static_outliers_StsSolution_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              StsOutliersProtos.StsSolution.class, StsOutliersProtos.StsSolution.Builder.class);
+              jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution.class, jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution.Builder.class);
     }
 
     public static final int BSM_INITIAL_FIELD_NUMBER = 1;
@@ -995,10 +993,10 @@ public final class StsOutliersProtos {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof StsOutliersProtos.StsSolution)) {
+      if (!(obj instanceof jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution)) {
         return super.equals(obj);
       }
-      StsOutliersProtos.StsSolution other = (StsOutliersProtos.StsSolution) obj;
+      jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution other = (jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution) obj;
 
       if (!getBsmInitialList()
           .equals(other.getBsmInitialList())) return false;
@@ -1109,69 +1107,69 @@ public final class StsOutliersProtos {
       return hash;
     }
 
-    public static StsOutliersProtos.StsSolution parseFrom(
+    public static jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static StsOutliersProtos.StsSolution parseFrom(
+    public static jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static StsOutliersProtos.StsSolution parseFrom(
+    public static jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static StsOutliersProtos.StsSolution parseFrom(
+    public static jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static StsOutliersProtos.StsSolution parseFrom(byte[] data)
+    public static jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static StsOutliersProtos.StsSolution parseFrom(
+    public static jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static StsOutliersProtos.StsSolution parseFrom(java.io.InputStream input)
+    public static jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static StsOutliersProtos.StsSolution parseFrom(
+    public static jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static StsOutliersProtos.StsSolution parseDelimitedFrom(java.io.InputStream input)
+    public static jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static StsOutliersProtos.StsSolution parseDelimitedFrom(
+    public static jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static StsOutliersProtos.StsSolution parseFrom(
+    public static jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static StsOutliersProtos.StsSolution parseFrom(
+    public static jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -1184,7 +1182,7 @@ public final class StsOutliersProtos {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(StsOutliersProtos.StsSolution prototype) {
+    public static Builder newBuilder(jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     @java.lang.Override
@@ -1205,21 +1203,21 @@ public final class StsOutliersProtos {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
         // @@protoc_insertion_point(builder_implements:outliers.StsSolution)
-        StsOutliersProtos.StsSolutionOrBuilder {
+        jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolutionOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return StsOutliersProtos.internal_static_outliers_StsSolution_descriptor;
+        return jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.internal_static_outliers_StsSolution_descriptor;
       }
 
       @java.lang.Override
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return StsOutliersProtos.internal_static_outliers_StsSolution_fieldAccessorTable
+        return jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.internal_static_outliers_StsSolution_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                StsOutliersProtos.StsSolution.class, StsOutliersProtos.StsSolution.Builder.class);
+                jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution.class, jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution.Builder.class);
       }
 
-      // Construct using demetra.sts.outliers.io.protobuf.StsOutliersProtos.StsSolution.newBuilder()
+      // Construct using jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -1300,17 +1298,17 @@ public final class StsOutliersProtos {
       @java.lang.Override
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return StsOutliersProtos.internal_static_outliers_StsSolution_descriptor;
+        return jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.internal_static_outliers_StsSolution_descriptor;
       }
 
       @java.lang.Override
-      public StsOutliersProtos.StsSolution getDefaultInstanceForType() {
-        return StsOutliersProtos.StsSolution.getDefaultInstance();
+      public jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution getDefaultInstanceForType() {
+        return jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution.getDefaultInstance();
       }
 
       @java.lang.Override
-      public StsOutliersProtos.StsSolution build() {
-        StsOutliersProtos.StsSolution result = buildPartial();
+      public jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution build() {
+        jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
@@ -1318,8 +1316,8 @@ public final class StsOutliersProtos {
       }
 
       @java.lang.Override
-      public StsOutliersProtos.StsSolution buildPartial() {
-        StsOutliersProtos.StsSolution result = new StsOutliersProtos.StsSolution(this);
+      public jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution buildPartial() {
+        jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution result = new jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution(this);
         int from_bitField0_ = bitField0_;
         if (((bitField0_ & 0x00000001) != 0)) {
           bsmInitial_.makeImmutable();
@@ -1423,16 +1421,16 @@ public final class StsOutliersProtos {
       }
       @java.lang.Override
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof StsOutliersProtos.StsSolution) {
-          return mergeFrom((StsOutliersProtos.StsSolution)other);
+        if (other instanceof jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution) {
+          return mergeFrom((jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(StsOutliersProtos.StsSolution other) {
-        if (other == StsOutliersProtos.StsSolution.getDefaultInstance()) return this;
+      public Builder mergeFrom(jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution other) {
+        if (other == jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution.getDefaultInstance()) return this;
         if (!other.bsmInitial_.isEmpty()) {
           if (bsmInitial_.isEmpty()) {
             bsmInitial_ = other.bsmInitial_;
@@ -1535,11 +1533,11 @@ public final class StsOutliersProtos {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        StsOutliersProtos.StsSolution parsedMessage = null;
+        jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (StsOutliersProtos.StsSolution) e.getUnfinishedMessage();
+          parsedMessage = (jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -2955,12 +2953,12 @@ public final class StsOutliersProtos {
     }
 
     // @@protoc_insertion_point(class_scope:outliers.StsSolution)
-    private static final StsOutliersProtos.StsSolution DEFAULT_INSTANCE;
+    private static final jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new StsOutliersProtos.StsSolution();
+      DEFAULT_INSTANCE = new jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution();
     }
 
-    public static StsOutliersProtos.StsSolution getDefaultInstance() {
+    public static jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
@@ -2985,7 +2983,7 @@ public final class StsOutliersProtos {
     }
 
     @java.lang.Override
-    public StsOutliersProtos.StsSolution getDefaultInstanceForType() {
+    public jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos.StsSolution getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
@@ -3017,15 +3015,15 @@ public final class StsOutliersProtos {
       "x\022\021\n\tresiduals\030\t \003(\001\022\037\n\ncomponents\030\n \001(\013" +
       "2\013.jd3.Matrix\022 \n\013tau_initial\030\013 \001(\0132\013.jd3" +
       ".Matrix\022\036\n\ttau_final\030\014 \001(\0132\013.jd3.MatrixB" +
-      "5\n demetra.sts.outliers.io.protobufB\021Sts" +
-      "OutliersProtosP\000P\001P\002b\006proto3"
+      "9\n$jdplus.sts.base.io.outliers.protobufB" +
+      "\021StsOutliersProtosP\000P\001P\002b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
           jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.getDescriptor(),
           jdplus.toolkit.base.protobuf.outliers.OutliersProtos.getDescriptor(),
-          StsProtos.getDescriptor(),
+          jdplus.sts.base.io.protobuf.StsProtos.getDescriptor(),
         });
     internal_static_outliers_StsSolution_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -3035,7 +3033,7 @@ public final class StsOutliersProtos {
         new java.lang.String[] { "BsmInitial", "BsmFinal", "LikelihoodInitial", "LikelihoodFinal", "Outliers", "Coefficients", "Covariance", "Regressors", "Residuals", "Components", "TauInitial", "TauFinal", });
     jdplus.toolkit.base.protobuf.toolkit.ToolkitProtos.getDescriptor();
     jdplus.toolkit.base.protobuf.outliers.OutliersProtos.getDescriptor();
-    StsProtos.getDescriptor();
+    jdplus.sts.base.io.protobuf.StsProtos.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

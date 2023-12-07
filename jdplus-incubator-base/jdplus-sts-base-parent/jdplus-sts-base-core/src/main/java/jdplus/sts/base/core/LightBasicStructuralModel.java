@@ -16,12 +16,10 @@
  */
 package jdplus.sts.base.core;
 
-import jdplus.toolkit.base.core.stats.likelihood.DiffuseLikelihoodStatistics;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.timeseries.regression.MissingValueEstimation;
 import jdplus.toolkit.base.api.data.ParametersEstimation;
 import jdplus.toolkit.base.api.processing.ProcessingLog;
-import jdplus.sa.base.api.SeriesDecomposition;
 import jdplus.toolkit.base.api.stats.StatisticalTest;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.api.timeseries.calendars.LengthOfPeriodType;
@@ -30,10 +28,13 @@ import java.util.List;
 import java.util.Map;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
 import jdplus.sts.base.api.RawBsmDecomposition;
-import jdplus.sts.base.api.BsmDescription;
 import jdplus.sts.base.api.BsmSpec;
+import jdplus.toolkit.base.api.information.GenericExplorable;
 import jdplus.toolkit.base.api.timeseries.TsDomain;
+import jdplus.toolkit.base.core.modelling.GeneralLinearModel;
+import jdplus.toolkit.base.core.modelling.Residuals;
 import jdplus.toolkit.base.core.modelling.regression.RegressionDesc;
+import jdplus.toolkit.base.core.stats.likelihood.LikelihoodStatistics;
 
 /**
  *
@@ -41,12 +42,12 @@ import jdplus.toolkit.base.core.modelling.regression.RegressionDesc;
  */
 @lombok.Value
 @lombok.Builder
-public class LightBasicStructuralModel implements BasicStructuralModel {
+public class LightBasicStructuralModel implements GenericExplorable, BasicStructuralModel {
 
     Description description;
     Estimation estimation;
     RawBsmDecomposition bsmDecomposition;
-    SeriesDecomposition finalDecomposition;
+    Residuals residuals;
 
     @lombok.Singular
     List<RegressionDesc> regressionItems;
@@ -59,7 +60,7 @@ public class LightBasicStructuralModel implements BasicStructuralModel {
 
     @lombok.Value
     @lombok.Builder
-    public static class Description implements BsmDescription {
+    public static class Description implements GeneralLinearModel.Description<BsmSpec> {
 
         /**
          * Original series
@@ -84,12 +85,16 @@ public class LightBasicStructuralModel implements BasicStructuralModel {
          * For instance SarimaSpec
          */
         BsmSpec specification;
-        
+
+        @Override
+        public BsmSpec getStochasticComponent() {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
     }
 
     @lombok.Value
     @lombok.Builder
-    public static class Estimation implements BsmEstimation {
+    public static class Estimation implements GeneralLinearModel.Estimation {
 
 //        @lombok.NonNull
         private DoubleSeq y;
@@ -118,7 +123,7 @@ public class LightBasicStructuralModel implements BasicStructuralModel {
         private ParametersEstimation parameters;
 
 //        @lombok.NonNull
-        private DiffuseLikelihoodStatistics statistics;
+        private LikelihoodStatistics statistics;
 
 //        @lombok.NonNull
         private DoubleSeq residuals;

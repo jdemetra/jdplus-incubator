@@ -39,6 +39,7 @@ import jdplus.sts.base.core.BsmData;
 import jdplus.sts.base.core.SsfBsm;
 import jdplus.sts.base.core.BsmKernel;
 import jdplus.sts.base.core.BsmMapping;
+import jdplus.sts.base.core.StsKernel;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
 
 /**
@@ -48,7 +49,7 @@ import jdplus.toolkit.base.api.math.matrices.Matrix;
 @lombok.experimental.UtilityClass
 public class Bsm {
 
-    public BasicStructuralModel process(TsData y, Matrix X, int level, int slope, int cycle, int noise, String seasmodel, boolean diffuse, double tol) {
+    public LightBasicStructuralModel process(TsData y, Matrix X, int level, int slope, int cycle, int noise, String seasmodel, boolean diffuse, double tol) {
         SeasonalModel sm = seasmodel == null || seasmodel.equalsIgnoreCase("none") ? null : SeasonalModel.valueOf(seasmodel);
         BsmSpec mspec = BsmSpec.builder()
                 .level(of(level), of(slope))
@@ -79,7 +80,7 @@ public class Bsm {
                 .coefficientsCovariance(kernel.getLikelihood().covariance(nhp, true))
                 .parameters(parameters)
                 .residuals(kernel.getLikelihood().e())
-                .statistics(kernel.getLikelihood().stats(0, nhp))
+                .statistics(StsKernel.lstats(kernel.getLikelihood().stats(0, nhp)))
                 .build();
         
         Variable[] vars= X == null ? new Variable[0] : new Variable[X.getColumnsCount()];
@@ -103,11 +104,11 @@ public class Bsm {
                 .build();
     }
     
-    public byte[] toBuffer(BsmEstimation estimation){
+    public byte[] toBuffer(LightBasicStructuralModel.Estimation estimation){
         return StsProtosUtility.convert(estimation).toByteArray();
     }
 
-    public byte[] toBuffer(BasicStructuralModel bsm){
+    public byte[] toBuffer(LightBasicStructuralModel bsm){
         return StsProtosUtility.convert(bsm).toByteArray();
     }
 

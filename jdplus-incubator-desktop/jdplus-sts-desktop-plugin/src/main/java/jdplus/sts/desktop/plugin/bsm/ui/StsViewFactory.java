@@ -70,7 +70,7 @@ public class StsViewFactory extends ProcDocumentViewFactory<StsDocument> {
     public static final String SELECTION = "Selection",
             STOCHASTIC = "Stochastic series",
             COMPONENTS = "Components",
-            STM = "Structural model components",
+            STM = "Sts components",
             MODELBASED = "Model-based tests",
             WKANALYSIS = "WK analysis",
             WK_COMPONENTS = "Components",
@@ -216,65 +216,65 @@ public class StsViewFactory extends ProcDocumentViewFactory<StsDocument> {
 ////        }
 ////    }
 ////</editor-fold>
-//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 2000)
-//    public static class MainLowChart extends ProcDocumentItemFactory<StsDocument, TsDocument> {
-//
-//        public MainLowChart() {
-//            super(StsDocument.class, SaViews.MAIN_CHARTS_LOW, s -> s, new GenericChartUI(false, lowSeries()));
-//        }
-//
-//        @Override
-//        public int getPosition() {
-//            return 2000;
-//        }
-//    }
-//
-//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 2100)
-//    public static class MainHighChart extends ProcDocumentItemFactory<StsDocument, TsDocument> {
-//
-//        public MainHighChart() {
-//            super(StsDocument.class, SaViews.MAIN_CHARTS_HIGH, s -> s, new GenericChartUI(false, highSeries()));
-//        }
-//
-//        @Override
-//        public int getPosition() {
-//            return 2100;
-//        }
-//    }
-//
-//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 2200)
-//    public static class MainTable extends ProcDocumentItemFactory<StsDocument, TsDocument> {
-//
-//        public MainTable() {
-//            super(StsDocument.class, SaViews.MAIN_TABLE, s -> s, new GenericTableUI(false, finalSeries()));
-//        }
-//
-//        @Override
-//        public int getPosition() {
-//            return 2200;
-//        }
-//
-//    }
-//
-//    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 2400)
-//    public static class MainSiFactory extends SIFactory<StsDocument> {
-//
-//        public MainSiFactory() {
-//            super(StsDocument.class, SaViews.MAIN_SI, (StsDocument source) -> {
-//                StsResults result = source.getResult();
-//                if (result == null) {
-//                    return null;
-//                }
-//                return result.getDecomposition().asDecomposition();
-//            });
-//        }
-//
-//        @Override
-//        public int getPosition() {
-//            return 2400;
-//        }
-//    }
-//
+    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 2000)
+    public static class MainLowChart extends ProcDocumentItemFactory<StsDocument, TsDocument> {
+
+        public MainLowChart() {
+            super(StsDocument.class, SaViews.MAIN_CHARTS_LOW, s -> s, new GenericChartUI(false, lowSeries()));
+        }
+
+        @Override
+        public int getPosition() {
+            return 2000;
+        }
+    }
+
+    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 2100)
+    public static class MainHighChart extends ProcDocumentItemFactory<StsDocument, TsDocument> {
+
+        public MainHighChart() {
+            super(StsDocument.class, SaViews.MAIN_CHARTS_HIGH, s -> s, new GenericChartUI(false, highSeries()));
+        }
+
+        @Override
+        public int getPosition() {
+            return 2100;
+        }
+    }
+
+    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 2200)
+    public static class MainTable extends ProcDocumentItemFactory<StsDocument, TsDocument> {
+
+        public MainTable() {
+            super(StsDocument.class, SaViews.MAIN_TABLE, s -> s, new GenericTableUI(false, finalSeries()));
+        }
+
+        @Override
+        public int getPosition() {
+            return 2200;
+        }
+
+    }
+
+    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 2400)
+    public static class MainSiFactory extends SIFactory<StsDocument> {
+
+        public MainSiFactory() {
+            super(StsDocument.class, SaViews.MAIN_SI, (StsDocument source) -> {
+                StsResults result = source.getResult();
+                if (result == null) {
+                    return null;
+                }
+                return result.getComponents();
+            });
+        }
+
+        @Override
+        public int getPosition() {
+            return 2400;
+        }
+    }
+
 //<editor-fold defaultstate="collapsed" desc="PREPROCESSING">
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 3000)
     public static class SummaryFactory extends ProcDocumentItemFactory<StsDocument, HtmlElement> {
@@ -445,7 +445,7 @@ public class StsViewFactory extends ProcDocumentViewFactory<StsDocument> {
 
         @Override
         public int getPosition() {
-            return 3000;
+            return 4000;
         }
     }
     

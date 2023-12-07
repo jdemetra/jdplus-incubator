@@ -53,35 +53,50 @@ public final class BsmData {
         this.cycleDumpingFactor = BsmSpec.valueOf(spec.getCycleDumpingFactor(), BsmSpec.DEF_CDUMP);
         this.cycleLength = BsmSpec.valueOf(spec.getCycleLength(), BsmSpec.DEF_CLENGTH);
     }
-    
+
+    public static Builder builder(int period) {
+        Builder builder = new Builder();
+        builder.period = period;
+        builder.levelVar = -1;
+        builder.slopeVar = -1;
+        builder.seasonalVar = -1;
+        builder.seasonalModel = SeasonalModel.HarrisonStevens;
+        builder.noiseVar = 0;
+        builder.cycleVar = -1;
+        builder.cycleDumpingFactor = BsmSpec.DEF_CDUMP;
+        builder.cycleLength = BsmSpec.DEF_CLENGTH;
+        return builder;
+    }
+
     @lombok.Value
-    public static class ComponentVariance{
+    public static class ComponentVariance {
+
         Component component;
         double variance;
     }
 
     public ComponentVariance maxVariance() {
         double max = 0;
-        Component cmp=Component.Undefined;
+        Component cmp = Component.Undefined;
         if (levelVar > max) {
             max = levelVar;
-            cmp=Component.Level;
+            cmp = Component.Level;
         }
         if (slopeVar > max) {
             max = slopeVar;
-            cmp=Component.Slope;
+            cmp = Component.Slope;
         }
         if (seasonalVar > max) {
             max = seasonalVar;
-            cmp=Component.Seasonal;
+            cmp = Component.Seasonal;
         }
         if (noiseVar > max) {
             max = noiseVar;
-            cmp=Component.Noise;
+            cmp = Component.Noise;
         }
         if (cycleVar > max) {
             max = cycleVar;
-            cmp=Component.Cycle;
+            cmp = Component.Cycle;
         }
         return new ComponentVariance(cmp, max);
     }

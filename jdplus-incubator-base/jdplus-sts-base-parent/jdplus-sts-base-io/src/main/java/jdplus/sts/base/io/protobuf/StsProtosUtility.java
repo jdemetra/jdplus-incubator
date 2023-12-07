@@ -28,6 +28,7 @@ import jdplus.sts.base.core.BsmEstimation;
 import jdplus.sts.base.api.BsmSpec;
 import jdplus.sts.base.api.Component;
 import jdplus.sts.base.api.RawBsmDecomposition;
+import jdplus.sts.base.core.LightBasicStructuralModel;
 import jdplus.toolkit.base.api.ssf.sts.SeasonalModel;
 import jdplus.toolkit.base.api.timeseries.TsDomain;
 import jdplus.toolkit.base.api.timeseries.regression.ITsVariable;
@@ -80,7 +81,7 @@ public class StsProtosUtility {
                 .build();
     }
 
-    public StsProtos.Bsm.Estimation convert(BsmEstimation e) {
+    public StsProtos.Bsm.Estimation convert(LightBasicStructuralModel.Estimation e) {
         return StsProtos.Bsm.Estimation.newBuilder()
                 .addAllY(Iterables.of(e.getY()))
                 .setX(ToolkitProtosUtility.convert(e.getX()))
@@ -105,7 +106,7 @@ public class StsProtosUtility {
                 .build();
     }
 
-    public StsProtos.Bsm.Description convert(BsmDescription desc) {
+    public StsProtos.Bsm.Description convert(LightBasicStructuralModel.Description desc) {
         StsProtos.Bsm.Description.Builder builder = StsProtos.Bsm.Description.newBuilder()
                 .setSeries(ToolkitProtosUtility.convert(desc.getSeries()))
                 .setLog(desc.isLogTransformation())
@@ -138,7 +139,7 @@ public class StsProtosUtility {
         } else {
             return ModellingProtos.Component.newBuilder()
                     .addAllData(Iterables.of(s))
-                    .addAllStde(Iterables.of(decomposition.getSeries(cmp, true)))
+//                    .addAllStde(Iterables.of(decomposition.getSeries(cmp, true)))
                     .build();
         }
     }
@@ -172,7 +173,7 @@ public class StsProtosUtility {
         return builder.build();
     }
 
-    public StsProtos.Bsm convert(BasicStructuralModel bsm) {
+    public StsProtos.Bsm convert(LightBasicStructuralModel bsm) {
         return StsProtos.Bsm.newBuilder()
                 .setDescription(convert(bsm.getDescription()))
                 .setEstimation(convert(bsm.getEstimation()))

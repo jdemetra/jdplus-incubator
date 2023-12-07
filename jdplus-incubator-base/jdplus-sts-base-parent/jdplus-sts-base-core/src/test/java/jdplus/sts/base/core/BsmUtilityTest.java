@@ -16,25 +16,32 @@
  */
 package jdplus.sts.base.core;
 
-import jdplus.sa.base.api.SeriesDecomposition;
-import jdplus.sa.base.core.SaBenchmarkingResults;
-import jdplus.toolkit.base.api.information.GenericExplorable;
-import jdplus.toolkit.base.api.processing.ProcessingLog;
-import jdplus.toolkit.base.core.regsarima.regular.RegSarimaModel;
+import jdplus.toolkit.base.api.ssf.sts.SeasonalModel;
+import jdplus.toolkit.base.core.ucarima.UcarimaModel;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
  * @author palatej
  */
-@lombok.Value
-@lombok.Builder
-public class StsResults implements GenericExplorable{
-    private RegSarimaModel preprocessing;
-    private LightBasicStructuralModel bsm;
-    private BsmResults sts;
-    private SeriesDecomposition components, finals;
-    private SaBenchmarkingResults benchmarking;
-    private StsDiagnostics diagnostics;
-    private ProcessingLog log;
+public class BsmUtilityTest {
     
+    public BsmUtilityTest() {
+    }
+    
+      @Test
+    public void testUcm() {
+        BsmData bsm=BsmData.builder(12)
+                .levelVar(.9)
+                .slopeVar(.5)
+                .cycleVar(2)
+                .seasonalModel(SeasonalModel.HarrisonStevens)
+                .seasonalVar(0.1)
+                .noiseVar(1)
+                .build();
+        UcarimaModel ucm=BsmUtility.ucm(bsm, true);
+        assertTrue(ucm != null);
+    }
+  
 }

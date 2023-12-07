@@ -217,12 +217,12 @@ public class StsSpecUI implements IObjectDescriptor<StsSpec> {
         return new BsmSpecUI(root);
     }
 
-    @Messages({"bsmPlusSpecUI.decompositionDesc.name=DECOMPOSITION",
-        "bsmPlusSpecUI.decompositionDesc.desc=Includes the settings relevant to the decomposition step"
+    @Messages({"bsmPlusSpecUI.decompositionDesc.name=BSM",
+        "bsmPlusSpecUI.decompositionDesc.desc=Includes the settings relevant to the BSM model"
     })
     private EnhancedPropertyDescriptor decompositionDesc() {
         try {
-            PropertyDescriptor desc = new PropertyDescriptor("seats", this.getClass(), "getDecomposition", null);
+            PropertyDescriptor desc = new PropertyDescriptor("Model", this.getClass(), "getDecomposition", null);
             EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, DECOMPOSITION_ID);
             desc.setDisplayName(Bundle.bsmPlusSpecUI_decompositionDesc_name());
             desc.setShortDescription(Bundle.bsmPlusSpecUI_decompositionDesc_desc());

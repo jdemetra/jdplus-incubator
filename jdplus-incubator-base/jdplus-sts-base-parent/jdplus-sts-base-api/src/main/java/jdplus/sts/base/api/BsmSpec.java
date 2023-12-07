@@ -213,6 +213,14 @@ public final class BsmSpec {
             return ComponentUse.Free;
         }
     }
+    
+    public static Parameter ofUse(ComponentUse use, double val){
+        return switch (use) {
+            case Free -> Parameter.undefined();
+            case Fixed -> Parameter.fixed(val);
+            default -> null;
+        };
+    }
 
     private boolean isFree(Parameter p) {
         if (p == null) {

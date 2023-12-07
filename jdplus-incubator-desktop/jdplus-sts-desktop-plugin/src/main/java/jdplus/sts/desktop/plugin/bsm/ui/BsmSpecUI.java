@@ -25,8 +25,9 @@ import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.List;
 import jdplus.sts.base.api.BsmSpec;
-import org.openide.util.NbBundle;
-import org.openide.util.NbBundle.Messages;
+import jdplus.sts.base.api.ComponentUse;
+import jdplus.toolkit.base.api.data.Parameter;
+import jdplus.toolkit.base.api.ssf.sts.SeasonalModel;
 
 /**
  *
@@ -44,89 +45,221 @@ public class BsmSpecUI implements IPropertyDescriptors {
         return root.getBsm();
     }
 
-
-
-    @Override
-    public List<EnhancedPropertyDescriptor> getProperties() {
-        ArrayList<EnhancedPropertyDescriptor> descs = new ArrayList<>();
-        EnhancedPropertyDescriptor desc = defDesc();
-        if (desc != null) {
-            descs.add(desc);
-        }
-        return descs;
+    public ComponentUse getLevel() {
+        return BsmSpec.use(spec().getLevelVar());
     }
-//    ///////////////////////////////////////////////////////////////////////////
-    private static final int DEF_ID = 0, ALG_ID = 1, TREND_ID = 2, SEAS_ID = 3;
-//
 
-    @NbBundle.Messages({
-        "bsmSpecUI.defDesc.name=Default",
-        "bsmSpecUI.defDesc.desc=Is Default?"
-    })
-    private EnhancedPropertyDescriptor defDesc() {
+    public void setLevel(ComponentUse use) {
+        Parameter p=BsmSpec.ofUse(use, 0);
+        root.update(spec().toBuilder().level(p, spec().getSlopeVar()).build());
+    }
+
+    public ComponentUse getSlope() {
+       return BsmSpec.use(spec().getSlopeVar());
+    }
+
+    public void setSlope(ComponentUse use) {
+        Parameter p=BsmSpec.ofUse(use, 0);
+        root.update(spec().toBuilder().level(spec().getLevelVar(), p).build());
+    }
+
+    public ComponentUse getNoise() {
+       return BsmSpec.use(spec().getNoiseVar());
+    }
+
+    public void setNoise(ComponentUse use) {
+        Parameter p=BsmSpec.ofUse(use, 0);
+        root.update(spec().toBuilder().noise(p).build());
+    }
+
+    public ComponentUse getCycle() {
+       return BsmSpec.use(spec().getCycleVar());
+    }
+
+    public void setCycle(ComponentUse use) {
+//        Parameter p=BsmSpec.ofUse(use, 0);
+        root.update(spec().toBuilder().cycle(use != ComponentUse.Unused).build());
+    }
+
+    public SeasonalModel getModel() {
+        return spec().getSeasonalModel();
+    }
+
+    public void setModel(SeasonalModel model) {
+        root.update(spec().toBuilder().seasonal(model).build());
+    }
+    
+//    public Parameter[] getCycleDumpingFactor(){
+//        Parameter p=spec().getCycleDumpingFactor();
+//        if (p == null)
+//            p=Parameter.undefined();
+//        return new Parameter[]{p};
+//    }
+//
+//    public Parameter[] getCycleLength(){
+//        Parameter p=core.getCyclicalPeriod();
+//        if (p == null)
+//            p=new Parameter();
+//        return new Parameter[]{p};
+//    }
+    
+//    public void setCycleDumpingFactor(Parameter[] p){
+//        if (p != null && p.length == 1)
+//            core.setCyclicalDumpingFactor(p[0]);
+//    }
+//
+//    public void setCycleLength(Parameter[] p){
+//        if (p != null && p.length == 1)
+//            core.setCyclicalPeriod(p[0]);
+//    }
+//
+    private EnhancedPropertyDescriptor lDesc() {
         try {
-            PropertyDescriptor desc = new PropertyDescriptor("Default", this.getClass());
-            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, TREND_ID);
-            desc.setDisplayName(Bundle.bsmSpecUI_defDesc_name());
-            desc.setShortDescription(Bundle.bsmSpecUI_defDesc_desc());
+            PropertyDescriptor desc = new PropertyDescriptor("level", this.getClass());
+            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, L_ID);
+            desc.setDisplayName(L_NAME);
+            desc.setShortDescription(L_DESC);
             return edesc;
         } catch (IntrospectionException ex) {
             return null;
         }
     }
 
-//    @NbBundle.Messages({
-//        "bsmSpecUI.trendDesc.name=TREND",
-//        "bsmSpecUI.trendDesc.desc=Trend specification."
-//    })
-//    private EnhancedPropertyDescriptor trendDesc() {
-//        try {
-//            PropertyDescriptor desc = new PropertyDescriptor("TrendFilter", this.getClass(), "getTrendFilter", null);
-//            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, TREND_ID);
-//            desc.setDisplayName(Bundle.bsmSpecUI_trendDesc_name());
-//            desc.setShortDescription(Bundle.bsmSpecUI_trendDesc_desc());
-//            return edesc;
-//        } catch (IntrospectionException ex) {
-//            return null;
-//        }
-//    }
-//
-//    @NbBundle.Messages({
-//        "bsmSpecUI.seasDesc.name=SEASONAL",
-//        "bsmSpecUI.seasDesc.desc=Seasonal specification."
-//    })
-//    private EnhancedPropertyDescriptor seasDesc() {
-//        try {
-//            PropertyDescriptor desc = new PropertyDescriptor("SeasonalFilter", this.getClass(), "getSeasonalFilters", null);
-//            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, SEAS_ID);
-//            desc.setDisplayName(Bundle.bsmSpecUI_seasDesc_name());
-//            desc.setShortDescription(Bundle.bsmSpecUI_seasDesc_desc());
-//            return edesc;
-//        } catch (IntrospectionException ex) {
-//            return null;
-//        }
-//    }
-//
-//    @NbBundle.Messages({
-//        "bsmSpecUI.algDesc.name=ALGORITHM",
-//        "bsmSpecUI.algDesc.desc=STL+ Algorithm"
-//    })
-//    private EnhancedPropertyDescriptor algDesc() {
-//        try {
-//            PropertyDescriptor desc = new PropertyDescriptor("Algorithm", this.getClass(), "getAlgorithm", null);
-//            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, ALG_ID);
-//            desc.setDisplayName(Bundle.bsmSpecUI_algDesc_name());
-//            desc.setShortDescription(Bundle.bsmSpecUI_algDesc_desc());
-//            return edesc;
-//        } catch (IntrospectionException ex) {
-//            return null;
-//        }
-//    }
-
-    @Messages("bsmSpecUI.getDisplayName=BSM decomposition")
-    @Override
-    public String getDisplayName() {
-        return Bundle.bsmSpecUI_getDisplayName();
+    private EnhancedPropertyDescriptor sDesc() {
+        try {
+            PropertyDescriptor desc = new PropertyDescriptor("slope", this.getClass());
+            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, S_ID);
+            desc.setDisplayName(S_NAME);
+            desc.setShortDescription(S_DESC);
+            edesc.setReadOnly(getLevel() == ComponentUse.Unused);
+            return edesc;
+        } catch (IntrospectionException ex) {
+            return null;
+        }
     }
 
+    private EnhancedPropertyDescriptor smDesc() {
+        try {
+            PropertyDescriptor desc = new PropertyDescriptor("model", this.getClass());
+            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, SM_ID);
+            desc.setDisplayName(SM_NAME);
+            desc.setShortDescription(SM_DESC);
+            return edesc;
+        } catch (IntrospectionException ex) {
+            return null;
+        }
+    }
+
+    private EnhancedPropertyDescriptor nDesc() {
+        try {
+            PropertyDescriptor desc = new PropertyDescriptor("noise", this.getClass());
+            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, N_ID);
+            desc.setDisplayName(N_NAME);
+            desc.setShortDescription(N_DESC);
+            return edesc;
+        } catch (IntrospectionException ex) {
+            return null;
+        }
+    }
+
+    private EnhancedPropertyDescriptor cDesc() {
+        try {
+            PropertyDescriptor desc = new PropertyDescriptor("cycle", this.getClass());
+            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, C_ID);
+            desc.setDisplayName(C_NAME);
+            desc.setShortDescription(C_DESC);
+            return edesc;
+        } catch (IntrospectionException ex) {
+            return null;
+        }
+    }
+
+//    private EnhancedPropertyDescriptor cdDesc() {
+//        try {
+//            if (core.getCycleUse() == ComponentUse.Unused) {
+//                return null;
+//            }
+//            PropertyDescriptor desc = new PropertyDescriptor("cycleDumpingFactor", this.getClass());
+//            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, CDUMP_ID);
+//            desc.setDisplayName(CDUMP_NAME);
+//            desc.setShortDescription(CDUMP_DESC);
+//            return edesc;
+//        } catch (IntrospectionException ex) {
+//            return null;
+//        }
+//    }
+//
+//    private EnhancedPropertyDescriptor clDesc() {
+//        try {
+//            if (core.getCycleUse() == ComponentUse.Unused) {
+//                return null;
+//            }
+//            PropertyDescriptor desc = new PropertyDescriptor("cycleLength", this.getClass());
+//            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, CLEN_ID);
+//            desc.setDisplayName(CLEN_NAME);
+//            desc.setShortDescription(CLEN_DESC);
+//            return edesc;
+//        } catch (IntrospectionException ex) {
+//            return null;
+//        }
+//    }
+
+    @Override
+    public List<EnhancedPropertyDescriptor> getProperties() {
+        ArrayList<EnhancedPropertyDescriptor> descs = new ArrayList<>();
+        EnhancedPropertyDescriptor desc = lDesc();
+        if (desc != null) {
+            descs.add(desc);
+        }
+        desc = sDesc();
+        if (desc != null) {
+            descs.add(desc);
+        }
+        desc = cDesc();
+        if (desc != null) {
+            descs.add(desc);
+        }
+//        desc = cdDesc();
+//        if (desc != null) {
+//            descs.add(desc);
+//        }
+//        desc = clDesc();
+//        if (desc != null) {
+//            descs.add(desc);
+//        }
+        desc = nDesc();
+        if (desc != null) {
+            descs.add(desc);
+        }
+        desc = smDesc();
+        if (desc != null) {
+            descs.add(desc);
+        }
+        return descs;
+    }
+    public static final int L_ID = 0, S_ID = 1, C_ID = 2, CDUMP_ID = 3, CLEN_ID = 4, N_ID = 6, SM_ID = 10;
+    public static final String L_NAME = "Level",
+            S_NAME = "Slope",
+            C_NAME = "Cycle",
+            CLEN_NAME = "Cycle length",
+            CDUMP_NAME = "Cycle dumping factor",
+            N_NAME = "Noise",
+            SM_NAME = "Seasonal model";
+    public static final String L_DESC = "Level",
+            S_DESC = "Slope",
+            C_DESC = "Cycle",
+            CLEN_DESC = "Cycle length",
+            CDUMP_DESC = "Cycle dumping factor",
+            N_DESC = "Noise",
+            SM_DESC = "Seasonal model";
+
+    @Override
+    public String getDisplayName() {
+        return "Basic structural model";
+    }
+
+    @Override
+    public String toString() {
+        return "";
+    }
 }
