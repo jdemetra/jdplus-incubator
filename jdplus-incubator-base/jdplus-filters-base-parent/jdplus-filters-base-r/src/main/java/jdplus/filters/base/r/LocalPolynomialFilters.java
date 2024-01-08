@@ -105,13 +105,13 @@ public class LocalPolynomialFilters {
         IFiniteFilter[] afilters;
         if (endpoints.equals("DAF")) {
             afilters = new FiniteFilter[horizon];
-            for (int i = 0; i < afilters.length; ++i) {
-                afilters[i] = jdplus.toolkit.base.core.math.linearfilters.LocalPolynomialFilters.directAsymmetricFilter(horizon, i, degree, weights);
+            for (int i = 0, j=horizon-1; i < afilters.length; ++i, --j) {
+                afilters[j] = jdplus.toolkit.base.core.math.linearfilters.LocalPolynomialFilters.directAsymmetricFilter(horizon, i, degree, weights);
             }
         } else if (endpoints.equals("CN")) {
             afilters = new FiniteFilter[horizon];
-            for (int i = 0; i < afilters.length; ++i) {
-                afilters[i] = AsymmetricFiltersFactory.cutAndNormalizeFilter(filter, i);
+            for (int i = 0, j=horizon-1; i < afilters.length; ++i, --j) {
+                afilters[j] = AsymmetricFiltersFactory.cutAndNormalizeFilter(filter, i);
             }
         } else {
             int u = 0;
