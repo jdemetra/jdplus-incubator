@@ -28,7 +28,14 @@ public class StlDecompositionTest {
 
     @Test
     public void testStl() {
-        Matrix decomp = StlDecomposition.stl(Data.ABS_RETAIL, 12, false, 0, 0, 0, 0, 0, 0, 2, 5, 0.1, WeightFunction.TRICUBE.name(), false);
+        Matrix decomp = StlDecomposition.stl(Data.ABS_RETAIL, 12, false, 0, 0, 0, 1, 0, 1, 0, 0, 0, 2, 5, 0.1, WeightFunction.TRICUBE.name(), false);
+//        System.out.println(decomp);
+        assertTrue(null != decomp);
+    }
+
+    @Test
+    public void testStl_legacy() {
+        Matrix decomp = StlDecomposition.stl(Data.ABS_RETAIL, 12, false, 0, 0, 0, 1, 0, 1, 0, 0, 0, 2, 5, 0.1, WeightFunction.TRICUBE.name(), true);
 //        System.out.println(decomp);
         assertTrue(null != decomp);
     }
