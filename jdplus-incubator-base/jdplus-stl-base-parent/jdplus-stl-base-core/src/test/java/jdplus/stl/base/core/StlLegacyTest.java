@@ -66,7 +66,7 @@ public class StlLegacyTest {
         spec.setNs(13);
         spec.setNt(23);
         spec.setNi(2);
-         spec.setNo(1);
+         spec.setNo(0);
         spec.setNsjump(0);
         spec.setNtjump(0);
         spec.setNljump(0);
