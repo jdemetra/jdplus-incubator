@@ -122,7 +122,7 @@ public class RawStlKernel {
             int n = n();
             sr = new double[n - nmissing];
             for (int i = 0, j = 0; i < n; ++i) {
-                if (Double.isFinite(j)) {
+                if (Double.isFinite(weights[i])) {
                     sr[j++] = weights[i];
                 }
             }
