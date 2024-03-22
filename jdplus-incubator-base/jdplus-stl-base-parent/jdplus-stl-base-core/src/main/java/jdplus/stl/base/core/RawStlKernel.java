@@ -90,7 +90,7 @@ public class RawStlKernel {
                 .irregular(DoubleSeq.of(irr))
                 .fit(DoubleSeq.of(fit))
                 .seasonal(DoubleSeq.of(season))
-                .weights(weights == null ? DoubleSeq.empty() : DoubleSeq.of(weights))
+                .weights(weights == null ? DoubleSeq.onMapping(n, x -> 1.0) : DoubleSeq.of(weights))
                 .sa(DoubleSeq.of(sa))
                 .build();
     }
