@@ -43,6 +43,7 @@ import jdplus.sts.base.core.msts.StateItem;
 import jdplus.toolkit.base.core.ssf.ISsfLoading;
 import jdplus.toolkit.base.core.ssf.StateStorage;
 import jdplus.toolkit.base.core.timeseries.calendars.HolidaysUtility;
+import tck.demetra.data.Data;
 
 /**
  *
@@ -55,7 +56,7 @@ public class SplinesTest {
     static {
         DoubleSeq y;
         try {
-            InputStream stream = ExtendedAirlineMapping.class.getResourceAsStream("/births.txt");
+            InputStream stream = Data.class.getResourceAsStream("/births.txt");
             Matrix edf = MatrixSerializer.read(stream);
             y = edf.column(0);
         } catch (IOException ex) {
@@ -101,7 +102,7 @@ public class SplinesTest {
         //StateItem l = AtomicModels.localLevel("l", .01, false, Double.NaN);
         StateItem l = AtomicModels.localLinearTrend("l", .01, .01, false, false);
         StateItem sw = AtomicModels.seasonalComponent("sw", "HarrisonStevens", 7, .01, false);
-        StateItem sy = AtomicModels.dailySplineComponent("sy", 1968, 2024, pos, 0, .01, false);
+        StateItem sy = AtomicModels.dailySplineComponent("sy", 1968, pos, 0, .01, false);
         StateItem reg = AtomicModels.timeVaryingRegression("reg", X, 0.01, false);
         StateItem n = AtomicModels.noise("n", .01, false);
         ModelEquation eq = new ModelEquation("eq1", 0, true);
@@ -149,7 +150,7 @@ public class SplinesTest {
     public static void main2(String[] args) {
         DoubleSeq y;
         try {
-            InputStream stream = ExtendedAirlineMapping.class.getResourceAsStream("/usclaims.txt");
+            InputStream stream = Data.class.getResourceAsStream("/usclaims.txt");
             Matrix us = MatrixSerializer.read(stream);
             y = us.column(0);
         } catch (IOException ex) {
@@ -168,7 +169,7 @@ public class SplinesTest {
 //        StateItem l = AtomicModels.localLevel("l", .01, false, Double.NaN);
         StateItem l = AtomicModels.localLinearTrend("l", .01, .01, false, false);
 //        StateItem sw = AtomicModels.seasonalComponent("sw", "HarrisonStevens", 7, .01, false);
-        StateItem sy = AtomicModels.weeklySplineComponent("sy", 1967, 2025, pos, 6, 0, .01, false);
+        StateItem sy = AtomicModels.regularSplineComponent("sy", 1967, new double[]{1,5,10,15,20,30,40,50}, 0, .01, false);
 //        StateItem reg=AtomicModels.timeVaryingRegression("reg", X, 0.01, false);
         StateItem n = AtomicModels.noise("n", .01, false);
         ModelEquation eq = new ModelEquation("eq1", 0, true);

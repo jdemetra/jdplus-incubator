@@ -60,6 +60,7 @@ public class CompositeModelEstimation {
                 .build();
         MstsMapping mapping = model.mapping();
         monitor.process(data, mapping, parameters == null ? null : DoubleSeq.of(parameters));
+        rslt.model = monitor.getModel();
         rslt.likelihood = monitor.getLikelihood();
         rslt.ssf = monitor.getSsf();
         rslt.cmpPos = rslt.getSsf().componentsPosition();
@@ -97,6 +98,7 @@ public class CompositeModelEstimation {
     private double[] fullParameters, parameters;
     private String[] parametersName, cmpName;
     private StateStorage smoothedStates, filteredStates, filteringStates;
+    private MstsMapping model;
 
     public StateStorage getSmoothedStates() {
         if (smoothedStates == null) {
@@ -228,6 +230,34 @@ public class CompositeModelEstimation {
             }
         }
         return filteringStates;
+    }
+
+    public DoubleSeq getFilteringComponent(int equation, int cmp) {
+
+        return DoubleSeq.empty();
+    }
+
+    public DoubleSeq getFilteringComponentStdev(int equation, int cmp) {
+
+        return DoubleSeq.empty();
+    }
+
+    public DoubleSeq getSmoothedComponent(int equation, int cmp) {
+
+        return DoubleSeq.empty();
+    }
+
+    public DoubleSeq getSmoothedComponentStdev(int equation, int cmp) {
+        StateStorage ss = getSmoothedStates();
+        if (ss == null) {
+            return DoubleSeq.empty();
+        }
+        ISsfLoading loading = ssf.loading(equation);
+        return null;
+    }
+
+    public MstsMapping getModel() {
+        return model;
     }
 
     public DoubleSeq signal(int obs, int[] cmps) {
