@@ -16,6 +16,9 @@
  */
 package jdplus.sts.base.core.msts;
 
+import jdplus.sts.base.core.splines.DailySpline;
+import jdplus.sts.base.core.splines.RegularSpline;
+import jdplus.sts.base.core.splines.SplineData;
 import jdplus.sts.base.core.msts.internal.ArItem;
 import jdplus.sts.base.core.msts.internal.ArItem2;
 import jdplus.sts.base.core.msts.internal.ArimaItem;
@@ -39,12 +42,9 @@ import jdplus.sts.base.core.msts.internal.VarLocalLinearTrendItem;
 import jdplus.sts.base.core.msts.internal.VarSeasonalComponentItem;
 import jdplus.sts.base.core.msts.internal.VarNoiseItem;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
-import jdplus.sts.base.core.msts.internal.RegularSplineItem;
 import jdplus.sts.base.core.msts.internal.SplineItem;
 import jdplus.sts.base.core.msts.internal.VarRegressionItem;
-import jdplus.toolkit.base.core.ssf.sts.splines.DailySpline;
-import jdplus.toolkit.base.core.ssf.sts.splines.SplineData;
-import jdplus.toolkit.base.core.ssf.sts.splines.WeeklySpline;
+import jdplus.toolkit.base.api.data.DoubleSeq;
 
 /**
  *
@@ -149,15 +149,27 @@ public class AtomicModels {
         return new PeriodicItem(name, period, k, cvar, fixedvar);
     }
 
-    public StateItem regularSplineComponent(String name, int[] pos, int startpos, double cvar, boolean fixedvar) {
-        return new RegularSplineItem(name, pos, startpos, cvar, fixedvar);
-    }
-    
-    public StateItem dailySplineComponent(String name, int startYear, int endYear, int[] pos, int startpos, double cvar, boolean fixedvar) {
-        return new SplineItem(name, SplineData.of(new DailySpline(startYear, pos), endYear-startYear+1), startpos, cvar, fixedvar);
+    public StateItem regularSplines(String name, double period, int startpos, double cvar, boolean fixedvar) {
+        RegularSpline rs = RegularSpline.of(period);
+        SplineData sd = new SplineData(rs);
+        return new SplineItem(name, sd, startpos, cvar, fixedvar);
     }
 
-    public StateItem weeklySplineComponent(String name, int startYear, int endYear, int[] pos, int startPos, int modelStart, double cvar, boolean fixedvar) {
-        return new SplineItem(name, SplineData.of(new WeeklySpline(startYear, startPos, pos), endYear-startYear+1), modelStart, cvar, fixedvar);
+    public StateItem regularSplines(String name, double period, int nnodes, int startpos, double cvar, boolean fixedvar) {
+        RegularSpline rs = RegularSpline.of(period, nnodes);
+        SplineData sd = new SplineData(rs);
+        return new SplineItem(name, sd, startpos, cvar, fixedvar);
+    }
+
+    public StateItem regularSplines(String name, double period, double[] nodes, int startpos, double cvar, boolean fixedvar) {
+        RegularSpline rs = RegularSpline.of(period, DoubleSeq.of(nodes));
+        SplineData sd = new SplineData(rs);
+        return new SplineItem(name, sd, startpos, cvar, fixedvar);
+    }
+
+    public StateItem dailySplines(String name, int startYear, int[] pos, int startpos, double cvar, boolean fixedvar) {
+        DailySpline rs = new DailySpline(startYear, pos);
+        SplineData sd = new SplineData(rs);
+        return new SplineItem(name, sd, startpos, cvar, fixedvar);
     }
 }

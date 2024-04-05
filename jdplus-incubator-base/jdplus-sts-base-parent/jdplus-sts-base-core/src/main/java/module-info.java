@@ -17,6 +17,7 @@ module jdplus.sts.base.core {
     exports jdplus.sts.base.core.msts.internal;
     exports jdplus.sts.base.core.msts.survey;
     exports jdplus.sts.base.core.extractors;
+    exports jdplus.sts.base.core.splines;
     exports jdplus.sts.base.core;
 
     provides InformationExtractor with

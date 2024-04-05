@@ -35,22 +35,22 @@ import jdplus.toolkit.base.api.math.matrices.Matrix;
  */
 @lombok.experimental.UtilityClass
 public class CompositeModels {
-
+    
     public static class Results implements GenericExplorable {
-
+        
         private final CompositeModelEstimation estimation;
-
+        
         Results(final CompositeModelEstimation estimation) {
             this.estimation = estimation;
         }
-
+        
         private static final InformationMapping<CompositeModelEstimation> MAPPING = new InformationMapping<CompositeModelEstimation>() {
             @Override
             public Class getSourceClass() {
                 return CompositeModelEstimation.class;
             }
         };
-
+        
         static {
             MAPPING.set("likelihood.ll", Double.class, source -> source.getLikelihood().logLikelihood());
             MAPPING.set("likelihood.ser", Double.class, source -> source.getLikelihood().ser());
@@ -117,6 +117,12 @@ public class CompositeModels {
             MAPPING.setArray("ssf.smoothing.vcmp", 0, double[].class, (source, p) -> {
                 StateStorage smoothedStates = source.getSmoothedStates();
                 return smoothedStates.getComponentVariance(source.getCmpPos()[p]).toArray();
+            });
+            MAPPING.setArray("ssf.smoothing.components", 0, Matrix.class, (source, p) -> {
+                return source.getSmoothedComponents(p);
+             });
+            MAPPING.setArray("ssf.smoothing.vcomponents", 0, Matrix.class, (source, p) -> {
+                return source.getSmoothedComponentVariance(p);
             });
             MAPPING.setArray("ssf.smoothing.state", 0, double[].class, (source, p) -> {
                 StateStorage smoothedStates = source.getSmoothedStates();
@@ -186,7 +192,7 @@ public class CompositeModels {
                 StateStorage fStates = source.getFilteringStates();
                 return fStates.P(p).unmodifiable();
             });
-
+            
             MAPPING.setArray("ssf.filtered.array", 0, double[].class, (source, p) -> {
                 StateStorage fStates = source.getFilteredStates();
                 return fStates.getComponent(p).toArray();
@@ -229,74 +235,74 @@ public class CompositeModels {
                 }
                 return Matrix.of(z, n, m);
             });
-
+            
         }
-
+        
         @Override
         public boolean contains(String id) {
             return MAPPING.contains(id);
         }
-
+        
         @Override
         public Map<String, Class> getDictionary() {
             Map<String, Class> dic = new LinkedHashMap<>();
             MAPPING.fillDictionary(null, dic, true);
             return dic;
         }
-
+        
         @Override
         public <T> T getData(String id, Class<T> tclass) {
             return MAPPING.getData(estimation, id, tclass);
         }
-
+        
         public static final InformationMapping<CompositeModelEstimation> getMapping() {
             return MAPPING;
         }
-
+        
         public double[] signal(int obs, int[] cmps) {
             return estimation.signal(obs, cmps).toArray();
         }
-
+        
         public double[] stdevSignal(int obs, int[] cmps) {
             return estimation.stdevSignal(obs, cmps).toArray();
         }
-
+        
         public double[] signal(Matrix m, int[] pos) {
-            FastMatrix M=FastMatrix.of(m);
-            return (pos == null ? estimation.signal(M): estimation.signal(M, pos)).toArray();
+            FastMatrix M = FastMatrix.of(m);
+            return (pos == null ? estimation.signal(M) : estimation.signal(M, pos)).toArray();
         }
-
+        
         public double[] stdevSignal(Matrix m, int[] pos) {
-            FastMatrix M=FastMatrix.of(m);
-            return (pos == null ? estimation.stdevSignal(M): estimation.stdevSignal(M, pos)).toArray();
+            FastMatrix M = FastMatrix.of(m);
+            return (pos == null ? estimation.stdevSignal(M) : estimation.stdevSignal(M, pos)).toArray();
         }
-
+        
         public FastMatrix loading(int obs) {
             return estimation.loading(obs, null);
         }
-
+        
         public MultivariateSsf ssf() {
             return estimation.getSsf();
         }
-
+        
         public StateStorage smoothedStates() {
             return estimation.getSmoothedStates();
         }
-
+        
         public StateStorage filteredStates() {
             return estimation.getFilteredStates();
         }
-
+        
         public StateStorage filteringStates() {
             return estimation.getFilteringStates();
         }
     }
-
+    
     public Results estimate(CompositeModel model, Matrix data, boolean marginal, boolean rescaling, String initialization,
             String opt, double eps, double[] parameters) {
         return new Results(model.estimate(FastMatrix.of(data), marginal, rescaling, SsfInitialization.valueOf(initialization), Optimizer.valueOf(opt), eps, parameters));
     }
-
+    
     public Results compute(CompositeModel model, Matrix data, double[] parameters, boolean marginal, boolean concentrated) {
         return new Results(model.compute(FastMatrix.of(data), parameters, marginal, concentrated));
     }
