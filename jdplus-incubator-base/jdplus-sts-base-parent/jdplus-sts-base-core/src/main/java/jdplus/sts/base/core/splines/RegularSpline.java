@@ -70,29 +70,17 @@ public class RegularSpline implements SplineDefinition {
     @Override
     public IntSeq observations(int cycle) {
         // we need to find the integers in [cycle*period, (cycle+1)*period[
-        if (cycle >= 0) {
             int i0 =  (int) Math.floor(period * cycle + EPS),
                     i1 = (int) Math.floor(period * (cycle + 1) + EPS);
             return IntSeq.sequential(i0, i1);
-        } else {
-            int i0 = (int) Math.ceil(period * cycle - EPS),
-                    i1 = (int) Math.ceil(period * (cycle + 1) - EPS);
-            return IntSeq.sequential(i0, i1);
-        }
     }
 
     @Override
     public int cycleFor(int obs) {
-        if (obs >= 0) {
             int c=(int) Math.floor((obs + EPS) / period);
             if (obs>=(int) Math.floor(period * (c + 1) + EPS))
                 ++c;
             return c; 
-        } else {
-            double dc = Math.ceil((obs + EPS) / period);
-            return -1 + (int) dc;
-        }
-
     }
 
 }

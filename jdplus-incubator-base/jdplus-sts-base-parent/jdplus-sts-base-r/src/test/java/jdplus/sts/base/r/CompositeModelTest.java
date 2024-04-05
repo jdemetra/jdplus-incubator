@@ -60,10 +60,10 @@ public class CompositeModelTest {
         FastMatrix M = FastMatrix.make(len, 1);
         M.column(0).copyFrom(Data.PROD, 0);
         CompositeModelEstimation rslt = model.estimate(M, false, true, SsfInitialization.Augmented_NoCollapsing, Optimizer.LevenbergMarquardt, 1e-15, null);
-        System.out.println(DataBlock.of(rslt.getFullParameters()));
-        System.out.println(rslt.getSmoothedStates().getComponent(15));
-        System.out.println(rslt.getSmoothedStates().getComponentVariance(15));
-        System.out.println(rslt.getLikelihood().logLikelihood());
+//        System.out.println(DataBlock.of(rslt.getFullParameters()));
+//        System.out.println(rslt.getSmoothedStates().getComponent(15));
+//        System.out.println(rslt.getSmoothedStates().getComponentVariance(15));
+//        System.out.println(rslt.getLikelihood().logLikelihood());
     }
 
     @Test
@@ -84,7 +84,7 @@ public class CompositeModelTest {
         System.out.println(DataBlock.of(rslt.getFullParameters()));
 //        System.out.println(rslt.getSmoothedStates().getComponent(0));
 //        System.out.println(rslt.getSmoothedStates().getComponentVariance(0));
-        System.out.println(rslt.getLikelihood().logLikelihood());
+//        System.out.println(rslt.getLikelihood().logLikelihood());
     }
 
     @Test
@@ -118,7 +118,7 @@ public class CompositeModelTest {
         System.out.println(DataBlock.of(rslt.getFullParameters()));
 //        System.out.println(rslt.getSmoothedStates().getComponent(0));
 //        System.out.println(rslt.getSmoothedStates().getComponent(2));
-        System.out.println(rslt.getLikelihood().logLikelihood());
+//        System.out.println(rslt.getLikelihood().logLikelihood());
     }
 
     @Test

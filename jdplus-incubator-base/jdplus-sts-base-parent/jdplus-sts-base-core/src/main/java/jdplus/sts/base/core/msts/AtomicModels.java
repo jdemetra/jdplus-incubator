@@ -149,25 +149,25 @@ public class AtomicModels {
         return new PeriodicItem(name, period, k, cvar, fixedvar);
     }
 
-    public StateItem regularSplineComponent(String name, double period, int startpos, double cvar, boolean fixedvar) {
+    public StateItem regularSplines(String name, double period, int startpos, double cvar, boolean fixedvar) {
         RegularSpline rs = RegularSpline.of(period);
         SplineData sd = new SplineData(rs);
         return new SplineItem(name, sd, startpos, cvar, fixedvar);
     }
 
-    public StateItem regularSplineComponent(String name, double period, int nnodes, int startpos, double cvar, boolean fixedvar) {
+    public StateItem regularSplines(String name, double period, int nnodes, int startpos, double cvar, boolean fixedvar) {
         RegularSpline rs = RegularSpline.of(period, nnodes);
         SplineData sd = new SplineData(rs);
         return new SplineItem(name, sd, startpos, cvar, fixedvar);
     }
 
-    public StateItem regularSplineComponent(String name, double period, double[] nodes, int startpos, double cvar, boolean fixedvar) {
+    public StateItem regularSplines(String name, double period, double[] nodes, int startpos, double cvar, boolean fixedvar) {
         RegularSpline rs = RegularSpline.of(period, DoubleSeq.of(nodes));
         SplineData sd = new SplineData(rs);
         return new SplineItem(name, sd, startpos, cvar, fixedvar);
     }
 
-    public StateItem dailySplineComponent(String name, int startYear, int[] pos, int startpos, double cvar, boolean fixedvar) {
+    public StateItem dailySplines(String name, int startYear, int[] pos, int startpos, double cvar, boolean fixedvar) {
         DailySpline rs = new DailySpline(startYear, pos);
         SplineData sd = new SplineData(rs);
         return new SplineItem(name, sd, startpos, cvar, fixedvar);

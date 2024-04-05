@@ -66,11 +66,7 @@ public class SplineComponent {
 
         @Override
         public double ZX(int pos, DataBlock m) {
-//            try{
             return z(pos).dot(m);
-//            }catch (Exception ex){
-//                return 0;
-//            }
         }
 
         @Override

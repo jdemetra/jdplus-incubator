@@ -60,7 +60,7 @@ public class CompositeModelEstimation {
                 .build();
         MstsMapping mapping = model.mapping();
         monitor.process(data, mapping, parameters == null ? null : DoubleSeq.of(parameters));
-        rslt.model = monitor.getModel();
+        rslt.model = model;
         rslt.likelihood = monitor.getLikelihood();
         rslt.ssf = monitor.getSsf();
         rslt.cmpPos = rslt.getSsf().componentsPosition();
@@ -73,6 +73,7 @@ public class CompositeModelEstimation {
 
     public static CompositeModelEstimation computationOf(CompositeModel model, FastMatrix data, DoubleSeq fullParameters, boolean marginal, boolean concentrated) {
         CompositeModelEstimation rslt = new CompositeModelEstimation();
+        rslt.model = model;
         rslt.data = data;
         rslt.fullParameters = fullParameters.toArray();
         MstsMapping mapping = model.mapping();
@@ -98,7 +99,7 @@ public class CompositeModelEstimation {
     private double[] fullParameters, parameters;
     private String[] parametersName, cmpName;
     private StateStorage smoothedStates, filteredStates, filteringStates;
-    private MstsMapping model;
+    private CompositeModel model;
 
     public StateStorage getSmoothedStates() {
         if (smoothedStates == null) {
@@ -232,31 +233,73 @@ public class CompositeModelEstimation {
         return filteringStates;
     }
 
-    public DoubleSeq getFilteringComponent(int equation, int cmp) {
-
-        return DoubleSeq.empty();
-    }
-
-    public DoubleSeq getFilteringComponentStdev(int equation, int cmp) {
-
-        return DoubleSeq.empty();
-    }
-
-    public DoubleSeq getSmoothedComponent(int equation, int cmp) {
-
-        return DoubleSeq.empty();
-    }
-
-    public DoubleSeq getSmoothedComponentStdev(int equation, int cmp) {
-        StateStorage ss = getSmoothedStates();
-        if (ss == null) {
-            return DoubleSeq.empty();
+    private static int find(String[] ss, String s) {
+        for (int i = 0; i < ss.length; ++i) {
+            if (ss[i].equalsIgnoreCase(s)) {
+                return i;
+            }
         }
-        ISsfLoading loading = ssf.loading(equation);
-        return null;
+        return -1;
     }
 
-    public MstsMapping getModel() {
+    public FastMatrix getSmoothedComponents(int p) {
+        ModelEquation equation = model.getEquation(p);
+        StateStorage ss = getSmoothedStates();
+        int nr = ss.size();
+        int nc = equation.getItemsCount();
+        FastMatrix C = FastMatrix.make(nr, nc);
+        int[] cmpDim = ssf.componentsDimension();
+
+        for (int i = 0; i < nc; ++i) {
+            ModelEquation.Item item = equation.getItem(i);
+            String cmp = item.getCmp();
+            int pos = find(cmpName, cmp);
+            if (pos >= 0) {
+                ISsfLoading loading = item.getLoading();
+                int start = cmpPos[pos], end = start + cmpDim[pos];
+                DataBlock col = C.column(i);
+                for (int j = 0; j < nr; ++j) {
+                    col.set(j, loading.ZX(j, ss.a(j).range(start, end)));
+                }
+                LoadingInterpreter li = item.getC();
+                if (li != null) {
+                    col.mul(li.value());
+                }
+            }
+        }
+        return C;
+    }
+
+    public FastMatrix getSmoothedComponentVariance(int eq) {
+        ModelEquation equation = model.getEquation(eq);
+        StateStorage ss = getSmoothedStates();
+        int nr = ss.size();
+        int nc = equation.getItemsCount();
+        FastMatrix C = FastMatrix.make(nr, nc);
+        int[] cmpDim = ssf.componentsDimension();
+
+        for (int i = 0; i < nc; ++i) {
+            ModelEquation.Item item = equation.getItem(i);
+            String cmp = item.getCmp();
+            int pos = find(cmpName, cmp);
+            if (pos >= 0) {
+                ISsfLoading loading = item.getLoading();
+                int start = cmpPos[pos];
+                DataBlock col = C.column(i);
+                for (int j = 0; j < nr; ++j) {
+                    double v = loading.ZVZ(j, ss.P(j).extract(start, cmpDim[pos], start, cmpDim[pos]));
+                    col.set(j, v < 0 ? 0 : v);
+                }
+                LoadingInterpreter li = item.getC();
+                if (li != null) {
+                    col.mul(li.value()*li.value());
+                }
+            }
+        }
+        return C;
+    }
+
+    public CompositeModel getModel() {
         return model;
     }
 

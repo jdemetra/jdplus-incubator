@@ -102,7 +102,7 @@ public class SplinesTest {
         //StateItem l = AtomicModels.localLevel("l", .01, false, Double.NaN);
         StateItem l = AtomicModels.localLinearTrend("l", .01, .01, false, false);
         StateItem sw = AtomicModels.seasonalComponent("sw", "HarrisonStevens", 7, .01, false);
-        StateItem sy = AtomicModels.dailySplineComponent("sy", 1968, pos, 0, .01, false);
+        StateItem sy = AtomicModels.dailySplines("sy", 1968, pos, 0, .01, false);
         StateItem reg = AtomicModels.timeVaryingRegression("reg", X, 0.01, false);
         StateItem n = AtomicModels.noise("n", .01, false);
         ModelEquation eq = new ModelEquation("eq1", 0, true);
@@ -169,7 +169,7 @@ public class SplinesTest {
 //        StateItem l = AtomicModels.localLevel("l", .01, false, Double.NaN);
         StateItem l = AtomicModels.localLinearTrend("l", .01, .01, false, false);
 //        StateItem sw = AtomicModels.seasonalComponent("sw", "HarrisonStevens", 7, .01, false);
-        StateItem sy = AtomicModels.regularSplineComponent("sy", 1967, new double[]{1,5,10,15,20,30,40,50}, 0, .01, false);
+        StateItem sy = AtomicModels.regularSplines("sy", 1967, new double[]{1,5,10,15,20,30,40,50}, 0, .01, false);
 //        StateItem reg=AtomicModels.timeVaryingRegression("reg", X, 0.01, false);
         StateItem n = AtomicModels.noise("n", .01, false);
         ModelEquation eq = new ModelEquation("eq1", 0, true);

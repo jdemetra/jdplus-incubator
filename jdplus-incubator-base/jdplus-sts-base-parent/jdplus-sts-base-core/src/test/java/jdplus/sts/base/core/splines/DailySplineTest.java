@@ -15,8 +15,6 @@
  */
 package jdplus.sts.base.core.splines;
 
-import jdplus.sts.base.core.splines.DailySpline;
-import jdplus.sts.base.core.splines.IntSeq;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
