@@ -48,8 +48,15 @@ public class DailySpline implements SplineDefinition {
 
     @Override
     public IntSeq observations(int period) {
-        boolean lp = CalendarUtility.isLeap(startYear + period);
-        return lp ? new DailyIntSeq(period * 365) : IntSeq.sequential(period * 365, (period+1)*365);
+        // unoptimized code !
+        int start = 0;
+        int y = startYear + period, ycur = startYear;
+        while (ycur < y) {
+            start += CalendarUtility.isLeap(ycur) ? 366 : 365;
+            ++ycur;
+        }
+        boolean lp = CalendarUtility.isLeap(y);
+        return lp ? new DailyIntSeq(start) : IntSeq.sequential(start, start + 365);
     }
 
     private static final int LCYCLE = 4 * 365 + 1;

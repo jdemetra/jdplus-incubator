@@ -118,7 +118,7 @@ public class SplineComponent {
     public StateComponent stateComponent(SplineData data, double var, int startpos) {
 
         Dynamics dynamics = new Dynamics(data, var, startpos);
-        Initialization initialization = new Initialization(data.getDim());
+        Initialization initialization = new Initialization(data.getDim(), data.informationForCycle(0).getQ().times(var));
 
         return new StateComponent(initialization, dynamics);
 
@@ -127,9 +127,11 @@ public class SplineComponent {
     static class Initialization implements ISsfInitialization {
 
         private final int dim;
+        private final FastMatrix v0;
 
-        Initialization(int dim) {
+        Initialization(int dim, FastMatrix v0) {
             this.dim = dim;
+            this.v0=v0;            
         }
 
         @Override
@@ -158,6 +160,7 @@ public class SplineComponent {
 
         @Override
         public void Pf0(FastMatrix pf0) {
+            pf0.copy(v0);
         }
 
         @Override
