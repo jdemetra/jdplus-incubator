@@ -136,6 +136,10 @@ public class CompositeModelEstimation {
         return smoothedStates;
     }
 
+    public StateStorage getFastSmoothedStates() {
+        return AkfToolkit.robustSmooth(getSsf(), new SsfMatrix(getData()), false, false);
+    }
+
     public StateStorage getFilteredStates() {
         if (filteredStates == null) {
             try {
@@ -270,7 +274,35 @@ public class CompositeModelEstimation {
         return C;
     }
 
-    public FastMatrix getSmoothedComponentVariance(int eq) {
+    public FastMatrix getFastSmoothedComponents(int p) {
+        ModelEquation equation = model.getEquation(p);
+        StateStorage ss = getFastSmoothedStates();
+        int nr = ss.size();
+        int nc = equation.getItemsCount();
+        FastMatrix C = FastMatrix.make(nr, nc);
+        int[] cmpDim = ssf.componentsDimension();
+
+        for (int i = 0; i < nc; ++i) {
+            ModelEquation.Item item = equation.getItem(i);
+            String cmp = item.getCmp();
+            int pos = find(cmpName, cmp);
+            if (pos >= 0) {
+                ISsfLoading loading = item.getLoading();
+                int start = cmpPos[pos], end = start + cmpDim[pos];
+                DataBlock col = C.column(i);
+                for (int j = 0; j < nr; ++j) {
+                    col.set(j, loading.ZX(j, ss.a(j).range(start, end)));
+                }
+                LoadingInterpreter li = item.getC();
+                if (li != null) {
+                    col.mul(li.value());
+                }
+            }
+        }
+        return C;
+    }
+
+    public FastMatrix getSmoothedComponentsVariance(int eq) {
         ModelEquation equation = model.getEquation(eq);
         StateStorage ss = getSmoothedStates();
         int nr = ss.size();
@@ -292,7 +324,7 @@ public class CompositeModelEstimation {
                 }
                 LoadingInterpreter li = item.getC();
                 if (li != null) {
-                    col.mul(li.value()*li.value());
+                    col.mul(li.value() * li.value());
                 }
             }
         }

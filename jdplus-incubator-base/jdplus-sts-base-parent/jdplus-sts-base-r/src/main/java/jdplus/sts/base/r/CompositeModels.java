@@ -121,8 +121,11 @@ public class CompositeModels {
             MAPPING.setArray("ssf.smoothing.components", 0, Matrix.class, (source, p) -> {
                 return source.getSmoothedComponents(p);
              });
+            MAPPING.setArray("ssf.smoothing.fastcomponents", 0, Matrix.class, (source, p) -> {
+                return source.getFastSmoothedComponents(p);
+             });
             MAPPING.setArray("ssf.smoothing.vcomponents", 0, Matrix.class, (source, p) -> {
-                return source.getSmoothedComponentVariance(p);
+                return source.getSmoothedComponentsVariance(p);
             });
             MAPPING.setArray("ssf.smoothing.state", 0, double[].class, (source, p) -> {
                 StateStorage smoothedStates = source.getSmoothedStates();

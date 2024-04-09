@@ -7,6 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- ![STAT] Add State space components based on cubic splines (see Harvey, Koopman, Riani [1997])
+
+
 ## [2.0.0] - 2023-12-07
 
 ## [1.0.0] - 2023-06-15
