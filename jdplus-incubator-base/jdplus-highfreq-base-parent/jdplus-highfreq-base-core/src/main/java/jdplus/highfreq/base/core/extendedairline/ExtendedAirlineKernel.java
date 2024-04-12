@@ -390,10 +390,9 @@ public class ExtendedAirlineKernel {
             if (X != null && X.getColumnsCount() != 0) {
                 for (int j = 0; j < X.getColumnsCount(); ++j) {
                     double c = coeff.getAndNext();
-                    if (c != 0) {
-                        DoubleSeqCursor cursor = X.column(j).cursor();
-                        for (int k = y.length(); k < y.length() + nfcasts; ++k) {
-                            y_fcast_a[k - y.length()] += c * cursor.getAndNext();
+                    if (c != 0) {                     
+                        for (int k = y.length(); k < y.length() + nfcasts; ++k) {                        
+                            y_fcast_a[k - y.length()] += c * X.column(j).get(k);
                         }
                     }
                 }
