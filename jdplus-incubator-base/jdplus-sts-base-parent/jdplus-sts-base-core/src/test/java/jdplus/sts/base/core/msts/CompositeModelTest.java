@@ -121,9 +121,9 @@ public class CompositeModelTest {
         M.mul(10);
         CompositeModelEstimation rslt = model.estimate(M, false, false, SsfInitialization.SqrtDiffuse, Optimizer.LevenbergMarquardt, 1e-15, null);
         StateStorage states = rslt.getSmoothedStates();
-        System.out.println(states.getComponent(0));
+//        System.out.println(states.getComponent(0));
 //        System.out.println(states.getComponent(2));
-        System.out.println(DoubleSeq.of(rslt.getFullParameters()));
+//       System.out.println(DoubleSeq.of(rslt.getFullParameters()));
 //        System.out.println(rslt.getLikelihood().factor());
     }
 

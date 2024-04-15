@@ -62,7 +62,7 @@ public class X12plusKernelTest {
                 .build();
         X12plusKernel kernel = X12plusKernel.of(spec, null);
         X12plusResults rslt = kernel.process(Data.TS_ABS_RETAIL, null);
-        System.out.println(rslt.getMtdCorrection().getTdCoefficients());
+//        System.out.println(rslt.getMtdCorrection().getTdCoefficients());
     }
 
     @Test

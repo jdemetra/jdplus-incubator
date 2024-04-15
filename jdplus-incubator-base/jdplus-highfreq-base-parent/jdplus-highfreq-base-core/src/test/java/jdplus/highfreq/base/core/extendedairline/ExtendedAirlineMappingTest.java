@@ -44,7 +44,7 @@ public class ExtendedAirlineMappingTest {
         ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec);
         DoubleSeq p = mapping.getDefaultParameters();
         ArimaModel m = mapping.map(p);
-        System.out.println(m);
+//        System.out.println(m);
         DoubleSeq np = mapping.parametersOf(m);
         assertEquals(p, np);
     }
@@ -61,7 +61,7 @@ public class ExtendedAirlineMappingTest {
         ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec);
         DoubleSeq p = mapping.getDefaultParameters();
         ArimaModel m = mapping.map(p);
-        System.out.println(m);
+//        System.out.println(m);
         DoubleSeq np = mapping.parametersOf(m);
         assertTrue(p.distance(np) < 1.e-9);
     }
@@ -78,7 +78,7 @@ public class ExtendedAirlineMappingTest {
         ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec);
         DoubleSeq p = mapping.getDefaultParameters();
         ArimaModel m = mapping.map(p);
-        System.out.println(m);
+//        System.out.println(m);
         DoubleSeq np = mapping.parametersOf(m);
         assertEquals(p, np);
     }
@@ -95,7 +95,7 @@ public class ExtendedAirlineMappingTest {
         ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec);
         DoubleSeq p = mapping.getDefaultParameters();
         ArimaModel m = mapping.map(p);
-        System.out.println(m);
+//        System.out.println(m);
         DoubleSeq np = mapping.parametersOf(m);
         assertTrue(p.distance(np) < 1.e-9);
     }

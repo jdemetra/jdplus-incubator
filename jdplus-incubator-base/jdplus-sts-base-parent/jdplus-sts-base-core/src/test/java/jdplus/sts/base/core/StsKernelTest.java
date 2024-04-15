@@ -47,8 +47,8 @@ public class StsKernelTest {
                 rslts.getFinals().getSeries(ComponentType.Seasonal, ComponentInformation.Value),
                 rslts.getFinals().getSeries(ComponentType.Irregular, ComponentInformation.Value)
         ));
-        System.out.println(table);
-        System.out.println(rslts.getSts().getBsm());
+//        System.out.println(table);
+//        System.out.println(rslts.getSts().getBsm());
 
     }
 

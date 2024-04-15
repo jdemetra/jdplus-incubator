@@ -33,7 +33,7 @@ public class FSTFilterTest {
                     .nleads(4)
                     .build();
             FSTFilter.Results rslt = ff.make(.1 * i, 0, false);
-            System.out.println(DoubleSeq.of(rslt.getFilter().weightsToArray()));
+ //           System.out.println(DoubleSeq.of(rslt.getFilter().weightsToArray()));
         }
     }
 
@@ -45,11 +45,11 @@ public class FSTFilterTest {
                     .nleads(i)
                     .build();
             FSTFilter.Results rslt = ff.make(1, 0, true);
-            System.out.print(rslt.getS());
-            System.out.print('\t');
-            System.out.print(rslt.getF());
-            System.out.print('\t');
-            System.out.println(DoubleSeq.of(rslt.getFilter().weightsToArray()));
+//            System.out.print(rslt.getS());
+//            System.out.print('\t');
+//            System.out.print(rslt.getF());
+//            System.out.print('\t');
+//            System.out.println(DoubleSeq.of(rslt.getFilter().weightsToArray()));
         }
     }
 

@@ -7,7 +7,7 @@
     <parent>
         <groupId>eu.europa.ec.joinup.sat</groupId>
         <artifactId>jdplus-incubator</artifactId>
-        <version>2.0.0</version>
+        <version>2.1.0</version>
     </parent>
 
     <artifactId>jdplus-incubator-bom</artifactId>
@@ -42,7 +42,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>flatten-maven-plugin</artifactId>
-                <version>1.5.0</version>
+                <version>1.6.0</version>
                 <configuration>
                     <flattenMode>bom</flattenMode>
                     <outputDirectory>${project.build.directory}</outputDirectory>
@@ -92,7 +92,6 @@
                     <plugin>
                         <groupId>org.jreleaser</groupId>
                         <artifactId>jreleaser-maven-plugin</artifactId>
-                        <version>1.9.0</version>
                         <executions>
                             <execution>
                                 <id>release-assets</id>
@@ -130,6 +129,16 @@
                                                 <artifact>
                                                     <path>
                                                         ${desktop.basedir}/jdplus-sts-desktop-plugin/target/jdplus-sts-desktop-plugin-${project.version}.nbm
+                                                    </path>
+                                                </artifact>
+                                                <artifact>
+                                                    <path>
+                                                        ${desktop.basedir}/jdplus-advancedsa-desktop-plugin/target/jdplus-advancedsa-desktop-plugin-${project.version}.nbm
+                                                    </path>
+                                                </artifact>
+                                                <artifact>
+                                                    <path>
+                                                        ${desktop.basedir}/jdplus-x12plus-desktop-plugin/target/jdplus-x12plus-desktop-plugin-${project.version}.nbm
                                                     </path>
                                                 </artifact>
                                             </artifacts>

@@ -32,7 +32,7 @@ import jdplus.stl.base.core.StlLegacy;
 @lombok.experimental.UtilityClass
 public class StlDecomposition {
     
-    public Matrix stl(double[] data, int period, boolean mul, int swindow, int twindow, int lwindow, int sjump, int tjump, int ljump, int nin, int nout, double weightThreshold, String weightsFunction, boolean legacy) {
+    public Matrix stl(double[] data, int period, boolean mul, int swindow, int twindow, int lwindow, int sdegree, int tdegree, int ldegree, int sjump, int tjump, int ljump, int nin, int nout, double weightThreshold, String weightsFunction, boolean legacy) {
         if (nin < 1) {
             nin = 1;
         }
@@ -45,19 +45,31 @@ public class StlDecomposition {
         if (twindow == 0) {
             twindow = LoessSpec.defaultTrendWindow(period, swindow);
         }
-        if (lwindow == 0){
-            lwindow=period%2 == 0 ? period+1 : period;
+        if (lwindow == 0) {
+            lwindow = period % 2 == 0 ? period + 1 : period;
         }
+        if (legacy) {
+            return stl_legacy(data, period, mul, swindow, twindow, lwindow, sdegree, tdegree, ldegree, sjump, tjump, ljump, nin, nout, weightThreshold, weightsFunction);
+        } else {
+            return stl_new(data, period, mul, swindow, twindow, lwindow, sdegree, tdegree, ldegree, sjump, tjump, ljump, nin, nout, weightThreshold, weightsFunction);
+        }
+    }
+    
+    private Matrix stl_legacy(double[] data, int period, boolean mul, int swindow, int twindow, int lwindow, int sdegree, int tdegree, int ldegree, int sjump, int tjump, int ljump, int nin, int nout, double weightThreshold, String weightsFunction) {
+        
         StlLegacySpec spec = StlLegacySpec.defaultSpec(period, swindow, true);
         spec.setMultiplicative(mul);
-        spec.setLegacy(legacy);
+        spec.setLegacy(true);
         spec.setNi(nin);
         spec.setNo(nout);
         spec.setNs(swindow);
+        spec.setSdeg(sdegree);
         spec.setNsjump(sjump);
         spec.setNt(twindow);
+        spec.setTdeg(tdegree);
         spec.setNtjump(tjump);
         spec.setNl(lwindow);
+        spec.setLdeg(ldegree);
         spec.setNljump(ljump);
         spec.setWthreshold(weightThreshold);
         spec.setWfn(WeightFunction.valueOf(weightsFunction).asFunction());
@@ -88,6 +100,59 @@ public class StlDecomposition {
         } else {
             M.column(1).sub(M.column(3));
         }
+        return M;
+    }
+    
+    private Matrix stl_new(double[] data, int period, boolean mul, int swindow, int twindow, int lwindow, int sdegree, int tdegree, int ldegree, int sjump, int tjump, int ljump, int nin, int nout, double weightThreshold, String weightsFunction) {
+        LoessSpec tspec = LoessSpec.builder()
+                .window(twindow)
+                .jump(tjump)
+                .degree(tdegree)
+                .build();
+        LoessSpec sspec = LoessSpec.builder()
+                .window(swindow)
+                .jump(sjump)
+                .degree(sdegree)
+                .build();
+        LoessSpec lspec = LoessSpec.builder()
+                .window(lwindow)
+                .jump(ljump)
+                .degree(ldegree)
+                .build();
+        
+        StlSpec spec = StlSpec.builder()
+                .multiplicative(mul)
+                .trendSpec(tspec)
+                .seasonalSpec(SeasonalSpec.builder()
+                        .period(period)
+                        .seasonalSpec(sspec)
+                        .lowPassSpec(lspec)
+                        .build())
+                .innerLoopsCount(nin)
+                .outerLoopsCount(nout)
+                .robustWeightThreshold(weightThreshold)
+                .robustWeightFunction(WeightFunction.valueOf(weightsFunction))
+                .build();
+        
+        RawStlKernel stl = new RawStlKernel(spec);
+        DoubleSeq y = DoubleSeq.of(data).cleanExtremities();
+        
+        int n = y.length();
+        RawStlResults rslt = stl.process(DoubleSeq.of(data));
+        
+        FastMatrix M = FastMatrix.make(n, 7);
+        
+        M.column(0).copy(y);
+        M.column(2).copy(rslt.getTrend());
+        M.column(3).copy(rslt.getSeasonal());
+        M.column(4).copy(rslt.getIrregular());
+        M.column(5).copy(rslt.getFit());
+        if (!rslt.getWeights().isEmpty()) {
+            M.column(6).copy(rslt.getWeights());
+        } else {
+            M.column(6).set(1);
+        }
+        M.column(1).copy(rslt.getSa());
         return M;
     }
     
