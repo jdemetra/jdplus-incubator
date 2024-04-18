@@ -75,6 +75,7 @@ import jdplus.toolkit.base.core.regarima.RegArimaModel;
 import jdplus.toolkit.base.core.regarima.ami.GenericOutliersDetection;
 import jdplus.toolkit.base.core.regarima.ami.OutliersDetectionModule;
 import jdplus.toolkit.base.core.ssf.arima.FastArimaForecasts;
+import jdplus.toolkit.base.core.ssf.arima.ExactArimaForecasts;
 import jdplus.toolkit.base.core.ssf.arima.SsfUcarima;
 import jdplus.toolkit.base.core.ssf.composite.CompositeSsf;
 import jdplus.toolkit.base.core.stats.likelihood.LogLikelihoodFunction;
@@ -360,7 +361,7 @@ public class ExtendedAirlineKernel {
         DoubleSeq y_fcasts = DoubleSeq.empty();
 
         if (nfcasts > 0) {
-            FastArimaForecasts fcasts = new FastArimaForecasts();
+            ExactArimaForecasts fcasts = new ExactArimaForecasts();
             fcasts.prepare(model.arima(), false); //Jean said mean should not be used
             double[] detAll = new double[y.length()];
             DoubleSeqCursor coeff = rslt.getConcentratedLikelihood().coefficients().cursor();
@@ -381,7 +382,7 @@ public class ExtendedAirlineKernel {
                 y_lin_a[i] = y.get(i) - detAll[i];
             }
             DoubleSeq y_lin = DoubleSeq.of(y_lin_a);
-            // y minus  \beta X to use as fcast
+            // y plus  \beta X to use as fcast
             DoubleSeq y_fcasts_lin = fcasts.forecasts(y_lin, nfcasts); // we should use the lin series for the fcasts
             double[] y_fcast_a;
             coeff = rslt.getConcentratedLikelihood().coefficients().cursor();
@@ -389,10 +390,9 @@ public class ExtendedAirlineKernel {
             if (X != null && X.getColumnsCount() != 0) {
                 for (int j = 0; j < X.getColumnsCount(); ++j) {
                     double c = coeff.getAndNext();
-                    if (c != 0) {
-                        DoubleSeqCursor cursor = X.column(j).cursor();
-                        for (int k = y.length(); k < y.length() + nfcasts; ++k) {
-                            y_fcast_a[k - y.length()] -= c * cursor.getAndNext();
+                    if (c != 0) {                     
+                        for (int k = y.length(); k < y.length() + nfcasts; ++k) {                        
+                            y_fcast_a[k - y.length()] += c * X.column(j).get(k);
                         }
                     }
                 }
