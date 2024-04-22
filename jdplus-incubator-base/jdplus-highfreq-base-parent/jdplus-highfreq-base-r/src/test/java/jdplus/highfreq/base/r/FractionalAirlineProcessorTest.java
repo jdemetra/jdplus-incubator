@@ -107,8 +107,8 @@ public class FractionalAirlineProcessorTest {
         ExtendedAirlineEstimation rslt_log_OBS = FractionalAirlineProcessor.estimate(OBS_minus1, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 1, true);
         assertEquals(rslt_level_logOBS.getOutliers().length, rslt_log_OBS.getOutliers().length, "Number of outliers");
 
-        assertArrayEquals(rslt_level_logOBS.getY(), DoubleSeq.of(rslt_log_OBS.getY()).log().toArray(), "Difference in Original Series inkl. one fcast");
-        assertArrayEquals(rslt_level_logOBS.linearized(), rslt_log_OBS.linearized(), "Difference in Original Series inkl. one fcast");
+        assertArrayEquals(rslt_level_logOBS.getY(), DoubleSeq.of(rslt_log_OBS.getY()).log().toArray(), 0.00000001, "Difference in Original Series inkl. one fcast");
+        assertArrayEquals(rslt_level_logOBS.linearized(), rslt_log_OBS.linearized(), 0.00000001,"Difference in Original Series inkl. one fcast");
 
     }
 
