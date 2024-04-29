@@ -57,7 +57,7 @@ public class ExtendedAirlineKernelTest {
         // build the psec
         ExtendedAirlineModellingSpec spec=ExtendedAirlineModellingSpec.builder()
                 .transform(TransformSpec.builder()
-                        .function(TransformationType.Log)
+                        .function(TransformationType.Auto)
                         .build())
                 .stochastic(ExtendedAirlineSpec.DEFAULT_WD)
                 .outlier(OutlierSpec.builder()

@@ -44,11 +44,11 @@ import java.io.InputStream;
 import jdplus.toolkit.base.core.data.DataBlockStorage;
 import jdplus.toolkit.base.core.math.linearfilters.RationalFilter;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
-import jdplus.sts.base.core.msts.AtomicModels;
-import jdplus.sts.base.core.msts.CompositeModel;
-import jdplus.sts.base.core.msts.CompositeModelEstimation;
-import jdplus.sts.base.core.msts.ModelEquation;
-import jdplus.sts.base.core.msts.StateItem;
+//import jdplus.sts.base.core.msts.AtomicModels;
+//import jdplus.sts.base.core.msts.CompositeModel;
+//import jdplus.sts.base.core.msts.CompositeModelEstimation;
+//import jdplus.sts.base.core.msts.ModelEquation;
+//import jdplus.sts.base.core.msts.StateItem;
 import jdplus.toolkit.base.core.ssf.dk.DkToolkit;
 import jdplus.toolkit.base.core.ssf.composite.CompositeSsf;
 import jdplus.toolkit.base.core.ssf.composite.MultivariateCompositeSsf;
@@ -226,36 +226,36 @@ public class MultiPeriodicAirlineMappingTest {
     }
 
 //    @Test
-    public static void testDailySts() throws IOException {
-        InputStream stream = Data.class.getResourceAsStream("edf.txt");
-        Matrix edf = MatrixSerializer.read(stream);
-        CompositeModel model = new CompositeModel();
-        StateItem l = AtomicModels.localLinearTrend("l", .01, 0.01, false, false);
-        StateItem sd = AtomicModels.seasonalComponent("sd", "HarrisonStevens", 7, .01, false);
-        StateItem sy = AtomicModels.seasonalComponent("sy", "HarrisonStevens", 365, .01, false);
-        StateItem n = AtomicModels.noise("n", .01, false);
-        ModelEquation eq = new ModelEquation("eq1", 0, true);
-        eq.add(l);
-        eq.add(sd);
-        eq.add(sy);
-        eq.add(n);
-        model.add(l);
-        model.add(sd);
-        model.add(sy);
-        model.add(n);
-        model.add(eq);
-        FastMatrix M = FastMatrix.of(edf);
-        M.apply(Math::log);
-        CompositeModelEstimation rslt = model.estimate(M, false, true, SsfInitialization.Diffuse, Optimizer.LevenbergMarquardt, 1e-6, null);
-        MultivariateCompositeSsf ssf = rslt.getSsf();
-        ISsf ussf = M2uAdapter.of(ssf);
-        ISsfData udata = new SsfData(M.column(0));
-        DataBlockStorage ds = DkToolkit.fastSmooth(ussf, udata);
-        int[] cmpPos = rslt.getCmpPos();
-        for (int i = 0; i < cmpPos.length; ++i) {
-            System.out.println(ds.item(cmpPos[i]));
-        }
-    }
+//    public static void testDailySts() throws IOException {
+//        InputStream stream = Data.class.getResourceAsStream("edf.txt");
+//        Matrix edf = MatrixSerializer.read(stream);
+//        CompositeModel model = new CompositeModel();
+//        StateItem l = AtomicModels.localLinearTrend("l", .01, 0.01, false, false);
+//        StateItem sd = AtomicModels.seasonalComponent("sd", "HarrisonStevens", 7, .01, false);
+//        StateItem sy = AtomicModels.seasonalComponent("sy", "HarrisonStevens", 365, .01, false);
+//        StateItem n = AtomicModels.noise("n", .01, false);
+//        ModelEquation eq = new ModelEquation("eq1", 0, true);
+//        eq.add(l);
+//        eq.add(sd);
+//        eq.add(sy);
+//        eq.add(n);
+//        model.add(l);
+//        model.add(sd);
+//        model.add(sy);
+//        model.add(n);
+//        model.add(eq);
+//        FastMatrix M = FastMatrix.of(edf);
+//        M.apply(Math::log);
+//        CompositeModelEstimation rslt = model.estimate(M, false, true, SsfInitialization.Diffuse, Optimizer.LevenbergMarquardt, 1e-6, null);
+//        MultivariateCompositeSsf ssf = rslt.getSsf();
+//        ISsf ussf = M2uAdapter.of(ssf);
+//        ISsfData udata = new SsfData(M.column(0));
+//        DataBlockStorage ds = DkToolkit.fastSmooth(ussf, udata);
+//        int[] cmpPos = rslt.getCmpPos();
+//        for (int i = 0; i < cmpPos.length; ++i) {
+//            System.out.println(ds.item(cmpPos[i]));
+//        }
+//    }
 
     @Test
     @Disabled

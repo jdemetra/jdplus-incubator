@@ -270,7 +270,7 @@ public class ExtendedAirlineKernel {
 
         DataInterpolator interpolator = AverageInterpolator.interpolator();
         double[] interpolatedData;
-        int[] missing = IntList.EMPTY;
+        int[] missing;
 
         if (y.anyMatch(z -> Double.isNaN(z))) {
             IntList lmissing = new IntList();
@@ -283,7 +283,6 @@ public class ExtendedAirlineKernel {
                 Arrays.sort(missing);
             }
         } else {
-            interpolatedData = null;
             missing = IntList.EMPTY;
         }
 
@@ -310,9 +309,8 @@ public class ExtendedAirlineKernel {
                 .addX(FastMatrix.of(X_withoutFcast))
                 .arima(mapping.getDefault())
                 .meanCorrection(mean);
-        OutlierDescriptor[] o = null;
-        if (outliers != null && outliers.length
-                > 0) {
+        OutlierDescriptor[] o;
+        if (outliers != null && outliers.length > 0) {
             GlsArimaProcessor<ArimaModel> processor = GlsArimaProcessor.builder(ArimaModel.class)
                     .precision(1e-5)
                     .build();
@@ -358,7 +356,7 @@ public class ExtendedAirlineKernel {
         //Ausgabe anpassen
         RegArimaModel model = rslt.getModel();
 
-        DoubleSeq y_fcasts = DoubleSeq.empty();
+        DoubleSeq y_fcasts;
 
         if (nfcasts > 0) {
             ExactArimaForecasts fcasts = new ExactArimaForecasts();
@@ -390,8 +388,8 @@ public class ExtendedAirlineKernel {
             if (X != null && X.getColumnsCount() != 0) {
                 for (int j = 0; j < X.getColumnsCount(); ++j) {
                     double c = coeff.getAndNext();
-                    if (c != 0) {                     
-                        for (int k = y.length(); k < y.length() + nfcasts; ++k) {                        
+                    if (c != 0) {
+                        for (int k = y.length(); k < y.length() + nfcasts; ++k) {
                             y_fcast_a[k - y.length()] += c * X.column(j).get(k);
                         }
                     }
@@ -470,7 +468,14 @@ public class ExtendedAirlineKernel {
         log.push("log/level");
         switch (spec.getTransform().getFunction()) {
             case Auto:
-                log.warning("not implemented yet. log used");
+                LogLevelModule ll = LogLevelModule.builder()
+                        .aiccLogCorrection(spec.getTransform().getAicDiff())
+                        .estimationPrecision(1e-5)
+                        .build();
+
+                ll.process(modelling);
+            //    log.warning("not implemented yet. log used");
+break;
             case Log:
                 if (modelling.getDescription().getSeries().getValues().allMatch(x -> x > 0)) {
                     modelling.getDescription().setLogTransformation(true);
