@@ -138,7 +138,7 @@ public class StlDecomposition {
         DoubleSeq y = DoubleSeq.of(data).cleanExtremities();
         
         int n = y.length();
-        RawStlResults rslt = stl.process(DoubleSeq.of(data));
+        RawStlResults rslt = stl.process(y);
         
         FastMatrix M = FastMatrix.make(n, 7);
         
