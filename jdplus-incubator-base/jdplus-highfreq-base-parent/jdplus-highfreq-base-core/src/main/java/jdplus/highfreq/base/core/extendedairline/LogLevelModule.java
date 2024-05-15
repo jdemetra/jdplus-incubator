@@ -18,13 +18,18 @@ package jdplus.highfreq.base.core.extendedairline;
 
 import jdplus.highfreq.base.core.regarima.ArimaComputer;
 import jdplus.highfreq.base.core.regarima.ModelDescription;
+import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.modelling.TransformationType;
 import jdplus.toolkit.base.api.processing.ProcessingLog;
 import jdplus.toolkit.base.core.arima.ArimaModel;
-import jdplus.toolkit.base.core.math.functions.levmar.LevenbergMarquardtMinimizer;
-import jdplus.toolkit.base.core.regarima.GlsArimaProcessor;
+import jdplus.toolkit.base.core.data.transformation.LogJacobian;
+import jdplus.toolkit.base.core.data.transformation.LogTransformation;
 import jdplus.toolkit.base.core.regarima.RegArimaEstimation;
+import jdplus.toolkit.base.core.regarima.RegArimaModel;
 import jdplus.toolkit.base.core.regsarima.regular.ProcessingResult;
+import jdplus.toolkit.base.core.sarima.SarimaModel;
+import jdplus.toolkit.base.core.stats.likelihood.ConcentratedLikelihoodWithMissing;
+import jdplus.toolkit.base.core.stats.likelihood.LogLikelihoodFunction;
 import nbbrd.design.BuilderPattern;
 import nbbrd.design.Development;
 
@@ -82,7 +87,7 @@ public class LogLevelModule {
 
     private final double aiccDiff;
     private final double precision;
-    private RegArimaEstimation<ArimaModel> level, log;
+    private RegArimaEstimation level, log;
     private double aiccLevel, aiccLog;
 
     private LogLevelModule(double aiccdiff, final double precision) {
@@ -107,6 +112,42 @@ public class LogLevelModule {
             // the best is the smallest (default aiccdiff is negative to favor logs)
             return aiccLevel > aiccLog + aiccDiff;
         }
+    }
+
+    public boolean process(RegArimaModel<ArimaModel> regarima, ExtendedAirlineMapping mapping) {
+        clear();
+        DoubleSeq y = regarima.getY();
+        ArimaModel arima = regarima.arima();
+
+        if (y.anyMatch(z -> z <= 0)) {
+            return false;
+        }
+        ArimaComputer arimaComputer = new ArimaComputer(precision, false);
+        level = arimaComputer.process(regarima, mapping);
+
+        int diff = arima.getNonStationaryArOrder();
+        LogJacobian lj = new LogJacobian(diff, y.length(), regarima.missing());
+        LogTransformation logs = new LogTransformation();
+        DoubleSeq ly = logs.transform(y, lj);
+        RegArimaModel lregarima = regarima.toBuilder().y(ly).build();
+        RegArimaEstimation rawLog = arimaComputer.process(lregarima, mapping);
+        if (rawLog != null) {
+            log = RegArimaEstimation.builder()
+                    .model(rawLog.getModel())
+                    .concentratedLikelihood(rawLog.getConcentratedLikelihood())
+                    .max(rawLog.getMax())
+                    .llAdjustment(lj.value)
+                    .build();
+
+        }
+
+        if (level != null) {
+            aiccLevel = level.statistics().getAICC();
+        }
+        if (log != null) {
+            aiccLog = log.statistics().getAICC();
+        }
+        return true;
     }
 
     public ProcessingResult process(ExtendedRegAirlineModelling modelling) {
@@ -161,8 +202,8 @@ public class LogLevelModule {
     private void clear() {
         log = null;
         level = null;
-        aiccLevel = 0;
-        aiccLog = 0;
+        aiccLevel = Double.NaN;
+        aiccLog = Double.NaN;
     }
 
     /**

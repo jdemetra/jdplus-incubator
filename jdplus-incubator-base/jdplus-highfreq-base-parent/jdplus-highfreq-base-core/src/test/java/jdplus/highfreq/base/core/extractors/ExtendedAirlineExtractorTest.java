@@ -18,6 +18,7 @@ package jdplus.highfreq.base.core.extractors;
 
 import java.util.LinkedHashMap;
 import jdplus.highfreq.base.core.extendedairline.ExtendedAirlineEstimation;
+import jdplus.highfreq.base.core.extendedairline.LightExtendedAirlineEstimation;
 import jdplus.toolkit.base.api.information.InformationExtractors;
 import org.junit.jupiter.api.Test;
 
@@ -38,6 +39,14 @@ public class ExtendedAirlineExtractorTest {
         for (String s : dic.keySet()){
             System.out.println(s);            
         }
+        System.out.println("");
+                dic=new LinkedHashMap<>();
+        InformationExtractors.fillDictionary(LightExtendedAirlineEstimation.class, null, dic, true);
+        
+        for (String s : dic.keySet()){
+            System.out.println(s);            
+        }
+
     }
 
 }

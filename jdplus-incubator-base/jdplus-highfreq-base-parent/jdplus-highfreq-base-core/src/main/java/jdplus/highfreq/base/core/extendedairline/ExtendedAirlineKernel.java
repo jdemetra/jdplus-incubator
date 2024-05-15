@@ -74,12 +74,8 @@ import jdplus.toolkit.base.core.regarima.RegArimaEstimation;
 import jdplus.toolkit.base.core.regarima.RegArimaModel;
 import jdplus.toolkit.base.core.regarima.ami.GenericOutliersDetection;
 import jdplus.toolkit.base.core.regarima.ami.OutliersDetectionModule;
-import jdplus.toolkit.base.core.ssf.arima.FastArimaForecasts;
 import jdplus.toolkit.base.core.ssf.arima.ExactArimaForecasts;
-import jdplus.toolkit.base.core.ssf.arima.SsfUcarima;
-import jdplus.toolkit.base.core.ssf.composite.CompositeSsf;
 import jdplus.toolkit.base.core.stats.likelihood.LogLikelihoodFunction;
-import jdplus.toolkit.base.core.timeseries.simplets.Transformations;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
@@ -308,7 +304,8 @@ public class ExtendedAirlineKernel {
                 .y(y)
                 .addX(FastMatrix.of(X_withoutFcast))
                 .arima(mapping.getDefault())
-                .meanCorrection(mean);
+                .meanCorrection(mean)
+                .missing(missing);
         OutlierDescriptor[] o;
         if (outliers != null && outliers.length > 0) {
             GlsArimaProcessor<ArimaModel> processor = GlsArimaProcessor.builder(ArimaModel.class)
@@ -542,7 +539,7 @@ break;
         log.pop();
     }
 
-    private static int outlierType(String[] all, String cur) {
+    public static int outlierType(String[] all, String cur) {
         for (int i = 0; i < all.length; ++i) {
             if (cur.equals(all[i])) {
                 return i;
@@ -551,7 +548,7 @@ break;
         return -1;
     }
 
-    private static IOutlierFactory[] factories(String[] code) {
+    public static IOutlierFactory[] factories(String[] code) {
         List<IOutlierFactory> fac = new ArrayList<>();
         for (int i = 0; i < code.length; ++i) {
             switch (code[i]) {
@@ -567,7 +564,7 @@ break;
         return fac.toArray(IOutlierFactory[]::new);
     }
 
-    private static IOutlier outlier(String code, TsPeriod p) {
+    public static IOutlier outlier(String code, TsPeriod p) {
         LocalDateTime pos = p.start();
         return switch (code) {
             case "ao", "AO" ->

@@ -9,6 +9,7 @@ module jdplus.highfreq.base.r {
     requires jdplus.toolkit.base.api;
     requires jdplus.highfreq.base.core;
     requires jdplus.toolkit.base.core;
+    requires jdplus.sa.base.core;
 
     exports jdplus.highfreq.base.r;
 }
