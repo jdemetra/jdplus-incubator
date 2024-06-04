@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Fixed
+
+- ![OTHER] Fix category of advancedsa plugin
+
 ## [2.1.0] - 2024-04-15
 
 ### Added
