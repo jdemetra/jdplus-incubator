@@ -10,6 +10,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 
 - ![OTHER] Fix category of advancedsa plugin
+- ![OTHER] Fix invalid OpenIDE-Module-Install in jdplus-advancedsa-desktop-plugin [#154](https://github.com/jdemetra/jdplus-incubator/issues/154)
 
 ## [2.1.0] - 2024-04-15
 
