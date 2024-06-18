@@ -24,11 +24,11 @@ id = "demetra.desktop.highfreq.ui.OpenStsDoc")
     @ActionReference(path = StsDocumentManager.ITEMPATH, position = 1600, separatorBefore = 1590)
 })
 @NbBundle.Messages("CTL_OpenStsDoc=Open")
-public class OpenStlDoc implements ActionListener {
+public class OpenStsDoc implements ActionListener {
 
     private final WsNode context;
 
-    public OpenStlDoc(WsNode context) {
+    public OpenStsDoc(WsNode context) {
         this.context = context;
     }
 

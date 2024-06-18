@@ -23,7 +23,7 @@ import nbbrd.service.ServiceProvider;
  * @author palatej
  */
 @ServiceProvider(InformationExtractor.class)
-public class FractionalAirlineDecompositionExtractor extends InformationMapping<LightExtendedAirlineDecomposition> {
+public class ExtendedAirlineDecompositionExtractor extends InformationMapping<LightExtendedAirlineDecomposition> {
 
     static final String Y = "y", T = "t", S = "s", I = "i", SA = "sa", T_E = "t_stde", S_E = "s_stde", I_E = "i_stde",
             NCMPS = "ncmps", CMP = "cmp", CMP_E = "cmp_stde",
@@ -78,7 +78,7 @@ public class FractionalAirlineDecompositionExtractor extends InformationMapping<
         }
     }
 
-    public FractionalAirlineDecompositionExtractor() {
+    public ExtendedAirlineDecompositionExtractor() {
         delegate(LL, LikelihoodStatistics.class, r -> r.getLikelihood());
         set(PCOV, Matrix.class, source -> source.getParametersCovariance());
         set(PARAMETERS, double[].class, source -> source.getParameters().toArray());

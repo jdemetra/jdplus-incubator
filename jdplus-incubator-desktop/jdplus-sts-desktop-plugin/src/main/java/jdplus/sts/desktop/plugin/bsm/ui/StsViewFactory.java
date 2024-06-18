@@ -67,10 +67,10 @@ import org.openide.util.lookup.ServiceProvider;
  */
 public class StsViewFactory extends ProcDocumentViewFactory<StsDocument> {
 
-    public static final String SELECTION = "Selection",
+    public static final String SELECTION = "STS estimation",
             STOCHASTIC = "Stochastic series",
             COMPONENTS = "Components",
-            STM = "Sts components",
+            STM = "STS components",
             MODELBASED = "Model-based tests",
             WKANALYSIS = "WK analysis",
             WK_COMPONENTS = "Components",

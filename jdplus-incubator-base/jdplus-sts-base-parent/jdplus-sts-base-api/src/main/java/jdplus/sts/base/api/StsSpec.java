@@ -11,7 +11,7 @@ import nbbrd.design.LombokWorkaround;
 @lombok.Value
 @lombok.Builder(toBuilder = true, builderClassName = "Builder")
 public class StsSpec implements SaSpecification{
-    public static final String METHOD = "stlplus";
+    public static final String METHOD = "sts";
     public static final String VERSION_V3 = "3.0.0";
     public static final AlgorithmDescriptor DESCRIPTOR = new AlgorithmDescriptor(FAMILY, METHOD, VERSION_V3);
 
