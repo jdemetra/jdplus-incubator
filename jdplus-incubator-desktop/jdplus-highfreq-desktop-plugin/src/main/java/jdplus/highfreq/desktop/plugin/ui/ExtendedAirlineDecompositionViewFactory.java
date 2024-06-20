@@ -87,8 +87,8 @@ public class ExtendedAirlineDecompositionViewFactory extends ProcDocumentViewFac
     
     public static String[] highSeries(){
         return new String[]{
-            generateId("Seasonal (component)", Dictionary.concatenate(SaDictionaries.DECOMPOSITION, ExtendedAirlineDictionaries.SY_CMP)),
-            generateId("Seasonal (component)", Dictionary.concatenate(SaDictionaries.DECOMPOSITION, ExtendedAirlineDictionaries.SW_CMP)),
+            generateId("Yearly seasonal component", Dictionary.concatenate(SaDictionaries.DECOMPOSITION, ExtendedAirlineDictionaries.SY_CMP)),
+            generateId("Weekly seasonal component", Dictionary.concatenate(SaDictionaries.DECOMPOSITION, ExtendedAirlineDictionaries.SW_CMP)),
             generateId("Calendar effects", ModellingDictionary.CAL),
             generateId("Irregular", SaDictionaries.I)
         };
