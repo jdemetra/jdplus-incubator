@@ -56,22 +56,22 @@ public class RegressionItem extends StateItem {
             }
         }
     }
-    
-    private RegressionItem(RegressionItem item){
+
+    private RegressionItem(RegressionItem item) {
         super(item.name);
-        this.x=item.x;
-        if (item.v == null)
-            v=null;
-        else{
-            v=new VarianceInterpreter[item.v.length];
-            for (int i=0; i<v.length; ++i){
-                v[i]=item.v[i].duplicate();
+        this.x = item.x;
+        if (item.v == null) {
+            v = null;
+        } else {
+            v = new VarianceInterpreter[item.v.length];
+            for (int i = 0; i < v.length; ++i) {
+                v[i] = item.v[i].duplicate();
             }
         }
     }
-    
+
     @Override
-    public RegressionItem duplicate(){
+    public RegressionItem duplicate() {
         return new RegressionItem(this);
     }
 
@@ -86,7 +86,7 @@ public class RegressionItem extends StateItem {
         } else if (v.length == 1) {
             mapping.add(v[0]);
             mapping.add((p, builder) -> {
-                StateComponent cmp = Coefficients.timeVaryingCoefficients(DoubleSeq.onMapping(x.getColumnsCount(), j->p.get(0)));
+                StateComponent cmp = Coefficients.timeVaryingCoefficients(DoubleSeq.onMapping(x.getColumnsCount(), j -> p.get(0)));
                 builder.add(name, cmp, Loading.regression(x));
                 return 1;
             });
@@ -117,10 +117,22 @@ public class RegressionItem extends StateItem {
     public StateComponent build(DoubleSeq p) {
         if (v == null) {
             return Coefficients.fixedCoefficients(x.getColumnsCount());
-        } else if (v.length == 1){
-            return Coefficients.timeVaryingCoefficients(DoubleSeq.onMapping(x.getColumnsCount(), j->p.get(0)));
-        } else{
-            return Coefficients.timeVaryingCoefficients(p.extract(0, v.length));
+        } else if (v.length == 1) {
+            if (p == null) {
+                return Coefficients.timeVaryingCoefficients(DoubleSeq.onMapping(x.getColumnsCount(), j -> v[0].variance()));
+            } else {
+                return Coefficients.timeVaryingCoefficients(DoubleSeq.onMapping(x.getColumnsCount(), j -> p.get(0)));
+            }
+        } else {
+            if (p == null) {
+                double[] vars = new double[v.length];
+                for (int i = 0; i < vars.length; ++i) {
+                    vars[i] = v[i].variance();
+                }
+                return Coefficients.timeVaryingCoefficients(DoubleSeq.of(vars));
+            } else {
+                return Coefficients.timeVaryingCoefficients(p.extract(0, v.length));
+            }
         }
     }
 
@@ -142,11 +154,10 @@ public class RegressionItem extends StateItem {
     public int defaultLoadingCount() {
         return 1;
     }
-    
+
     @Override
-    public int stateDim(){
+    public int stateDim() {
         return x.getColumnsCount();
     }
 
-    
 }

@@ -20,6 +20,7 @@ import java.util.function.Predicate;
 import jdplus.toolkit.base.api.data.DoubleSeqCursor;
 import jdplus.toolkit.base.core.sarima.estimation.SarimaMapping;
 import jdplus.toolkit.base.api.arima.SarimaOrders;
+import jdplus.toolkit.base.api.data.DoubleSeq;
 
 /**
  *
@@ -39,6 +40,10 @@ public final class SarimaInterpreter implements ParameterInterpreter {
         this.values = p == null ? mapping.getDefaultParameters().toArray() : p;
         this.np = spec.getParametersCount();
         this.fixed = fixed;
+    }
+    
+    public DoubleSeq values(){
+        return DoubleSeq.of(values);
     }
 
     @Override

@@ -21,7 +21,7 @@ public class ArmaItemTest {
 
     @Test
     public void testDim() {
-        ArmaItem item = new ArmaItem("", new double[]{.1, .1, .1}, new double[]{.1, .1, .1}, 1, true);
+        ArmaItem item = new ArmaItem("", new double[]{.1, .1, .1}, false, new double[]{.1, .1, .1}, false, 1, true);
         int np = item.parametersCount();
         DataBlock p = DataBlock.make(np);
         p.set(i->.011*i);

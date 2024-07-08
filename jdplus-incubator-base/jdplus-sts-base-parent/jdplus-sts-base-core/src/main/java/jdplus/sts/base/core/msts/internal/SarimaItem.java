@@ -97,10 +97,11 @@ public class SarimaItem extends StateItem {
     @Override
     public StateComponent build(DoubleSeq x) {
         SarimaOrders spec = p.getDomain().getSpec();
-        double var = x.get(0);
+        double var = x == null ? v.variance() : x.get(0);
         int np = spec.getParametersCount();
+        DoubleSeq z = x == null ? p.values() : x.extract(1, np);
         SarimaModel sarima = SarimaModel.builder(spec)
-                .parameters(x.extract(1, np))
+                .parameters(z)
                 .build();
         StateComponent cmp;
         if (var == 1) {

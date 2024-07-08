@@ -40,19 +40,19 @@ public class PeriodicItem extends StateItem {
     public PeriodicItem(String name, double period, int[] k, double cvar, boolean fixedvar) {
         super(name);
         v = new VarianceInterpreter(name + ".var", cvar, fixedvar, true);
-        this.period=period;
-        this.k=k;
+        this.period = period;
+        this.k = k;
     }
-    
-    private PeriodicItem(PeriodicItem item){
+
+    private PeriodicItem(PeriodicItem item) {
         super(item.name);
-        this.period=item.period;
-        this.k=item.k;
-        v=item.v.duplicate();
+        this.period = item.period;
+        this.k = item.k;
+        v = item.v.duplicate();
     }
-    
+
     @Override
-    public PeriodicItem duplicate(){
+    public PeriodicItem duplicate() {
         return new PeriodicItem(this);
     }
 
@@ -73,8 +73,12 @@ public class PeriodicItem extends StateItem {
 
     @Override
     public StateComponent build(DoubleSeq p) {
-        double var = p.get(0);
-        return PeriodicComponent.stateComponent(period, k, var);
+        if (p == null) {
+            return PeriodicComponent.stateComponent(period, k, v.variance());
+        } else {
+            double var = p.get(0);
+            return PeriodicComponent.stateComponent(period, k, var);
+        }
     }
 
     @Override
@@ -97,12 +101,12 @@ public class PeriodicItem extends StateItem {
 
     @Override
     public int stateDim() {
-        return 2*k.length;
+        return 2 * k.length;
     }
-    
+
     @Override
     public boolean isScalable() {
         return !v.isFixed();
     }
-    
+
 }

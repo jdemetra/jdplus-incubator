@@ -45,7 +45,7 @@ public class LocalLinearTrendItem extends StateItem {
         super(item.name);
         this.lv = item.lv.duplicate();
         this.sv = item.sv.duplicate();
-     }
+    }
 
     @Override
     public LocalLinearTrendItem duplicate() {
@@ -72,9 +72,13 @@ public class LocalLinearTrendItem extends StateItem {
 
     @Override
     public StateComponent build(DoubleSeq p) {
-        double e1 = p.get(0);
-        double e2 = p.get(1);
-        return LocalLinearTrend.stateComponent(e1, e2);
+        if (p == null) {
+            return LocalLinearTrend.stateComponent(lv.variance(), sv.variance());
+        } else {
+            double e1 = p.get(0);
+            double e2 = p.get(1);
+            return LocalLinearTrend.stateComponent(e1, e2);
+        }
     }
 
     @Override
@@ -96,9 +100,9 @@ public class LocalLinearTrendItem extends StateItem {
     public int stateDim() {
         return 2;
     }
-    
+
     @Override
     public boolean isScalable() {
-        return !lv.isFixed() && ! sv.isFixed();
+        return !lv.isFixed() && !sv.isFixed();
     }
 }

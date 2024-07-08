@@ -53,6 +53,10 @@ public class ArInterpreter implements ParameterInterpreter {
         this.domain = new Domain(degree);
     }
     
+    public DoubleSeq values(){
+        return DoubleSeq.of(values);
+    }
+    
     @Override
     public int dim(){
         return values.length;

@@ -75,7 +75,7 @@ public class VarLocalLevelItem extends StateItem {
 
     @Override
     public StateComponent build(DoubleSeq p) {
-        double e = p.get(0);
+        double e = p == null ? scale.scale() : p.get(0);
         return VarLocalLevel.of(stde, e, initial);
     }
 

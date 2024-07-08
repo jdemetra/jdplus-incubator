@@ -129,8 +129,8 @@ public class TdRegressionItem extends StateItem {
 
     @Override
     public StateComponent build(DoubleSeq p) {
-        double pvar = p.get(0);
-        if (mvar == null) {
+        double pvar = p == null ? v.variance() : p.get(0);
+       if (mvar == null) {
             return Coefficients.fixedCoefficients(x.getColumnsCount());
         } else {
             FastMatrix xvar = mvar.deepClone();

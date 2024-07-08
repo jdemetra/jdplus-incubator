@@ -66,10 +66,14 @@ public class ArItem extends StateItem {
 
     @Override
     public StateComponent build(DoubleSeq p) {
-        int n = ar.getDomain().getDim();
-        double[] par = p.extract(0, n).toArray();
-        double w = p.get(n);
-        return SsfAr.of(par, w, nlags, zeroinit);
+        if (p == null) {
+            return SsfAr.of(ar.values().toArray(), v.variance(), nlags, zeroinit);
+        } else {
+            int n = ar.getDomain().getDim();
+            double[] par = p.extract(0, n).toArray();
+            double w = p.get(n);
+            return SsfAr.of(par, w, nlags, zeroinit);
+        }
     }
 
     @Override
