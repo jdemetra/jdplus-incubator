@@ -35,12 +35,12 @@ import jdplus.toolkit.base.api.math.matrices.Matrix;
  * @author palatej
  */
 public class MsaeItem3 extends StateItem {
-
+    
     private final VarianceInterpreter[] v;
     private final Matrix k;
     private final int lag;
     private final ArInterpreter[] par;
-
+    
     public MsaeItem3(String name, double[] v, boolean fixedVar, double[] ar, boolean fixedar, Matrix k, int lag) {
         super(name);
         int nwaves = v.length;
@@ -56,11 +56,11 @@ public class MsaeItem3 extends StateItem {
             par[i] = new ArInterpreter(name + ".wae" + (i + 1), new double[]{ar[i]}, fixedar);
         }
     }
-
-   private MsaeItem3(MsaeItem3 item) {
+    
+    private MsaeItem3(MsaeItem3 item) {
         super(item.name);
         this.lag = item.lag;
-        this.k=item.k;
+        this.k = item.k;
         this.v = new VarianceInterpreter[item.v.length];
         for (int i = 0; i < v.length; ++i) {
             v[i] = item.v[i].duplicate();
@@ -70,12 +70,12 @@ public class MsaeItem3 extends StateItem {
             par[i] = item.par[i].duplicate();
         }
     }
-
+    
     @Override
     public MsaeItem3 duplicate() {
         return new MsaeItem3(this);
     }
-
+    
     @Override
     public void addTo(MstsMapping mapping) {
         for (int i = 0; i < v.length; ++i) {
@@ -104,7 +104,7 @@ public class MsaeItem3 extends StateItem {
             return pos;
         });
     }
-
+    
     @Override
     public List<ParameterInterpreter> parameters() {
         List<ParameterInterpreter> all = new ArrayList<>();
@@ -116,43 +116,58 @@ public class MsaeItem3 extends StateItem {
         }
         return all;
     }
-
+    
     @Override
     public StateComponent build(DoubleSeq p) {
         int nwaves = v.length;
         double[] var = new double[nwaves];
-        int pos = 0;
-        for (int i = 0; i < nwaves; ++i) {
-            var[i] = p.get(pos++);
+        if (p == null) {
+             for (int i = 0; i < nwaves; ++i) {
+                var[i] = v[i].variance();
+            }
+            double[] ar = new double[nwaves - 1];
+            for (int i = 0; i < par.length; ++i) {
+                ar[i] = par[i].values().get(0);
+            }
+            // same coefficients for the last waves, if any
+            for (int i = par.length + 1; i < ar.length; ++i) {
+                ar[i] = ar[i - 1];
+            }
+            return WaveSpecificSurveyErrors3.of(var, ar, k, lag);
+        } else {
+            int pos = 0;
+            for (int i = 0; i < nwaves; ++i) {
+                var[i] = p.get(pos++);
+            }
+            double[] ar = new double[nwaves - 1];
+            for (int i = 0; i < par.length; ++i) {
+                ar[i] = p.get(pos++);
+            }
+            // same coefficients for the last waves, if any
+            for (int i = par.length + 1; i < ar.length; ++i) {
+                ar[i] = ar[i - 1];
+            }
+            return WaveSpecificSurveyErrors3.of(var, ar, k, lag);
         }
-        double[] ar = new double[nwaves - 1];
-        for (int i = 0; i < par.length; ++i) {
-            ar[i] = p.get(pos++);
-        }
-        // same coefficients for the last waves, if any
-        for (int i = par.length + 1; i < ar.length; ++i) {
-            ar[i] = ar[i - 1];
-        }
-        return WaveSpecificSurveyErrors3.of(var, ar, k, lag);
     }
-
+    
     @Override
     public int parametersCount() {
         return v.length + par.length;
     }
-
+    
     @Override
     public ISsfLoading defaultLoading(int m) {
         return m > v.length ? null : Loading.fromPosition(m * lag);
     }
-
+    
     @Override
     public int defaultLoadingCount() {
         return v.length;
     }
-
+    
     @Override
     public int stateDim() {
-        return v.length*lag;
+        return v.length * lag;
     }
 }

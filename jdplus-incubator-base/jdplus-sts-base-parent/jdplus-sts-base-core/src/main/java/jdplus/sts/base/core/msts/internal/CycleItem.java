@@ -83,8 +83,12 @@ public class CycleItem extends StateItem {
 
     @Override
     public StateComponent build(DoubleSeq p) {
+        if (p == null){
+        return CyclicalComponent.stateComponent(factor.value(), period.value(), v.variance());
+        }else{
         double f = p.get(0), l = p.get(1), var = p.get(2);
         return CyclicalComponent.stateComponent(f, l, var);
+        }
     }
 
     @Override

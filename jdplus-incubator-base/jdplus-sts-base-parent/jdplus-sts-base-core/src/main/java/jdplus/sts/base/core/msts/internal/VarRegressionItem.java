@@ -76,8 +76,8 @@ public class VarRegressionItem extends StateItem {
 
     @Override
     public StateComponent build(DoubleSeq p) {
-        double e = p.get(0);
-        return Coefficients.timeVaryingCoefficient(std, e);
+        double e = p == null ? scale.scale() : p.get(0);
+         return Coefficients.timeVaryingCoefficient(std, e);
     }
 
     @Override

@@ -75,6 +75,10 @@ public class BoundedParameterInterpreter implements ParameterInterpreter {
         this.fixed = fixed;
         this.range = new ParametersRange(lbound, ubound, open);
     }
+    
+    public double value(){
+        return value;
+    }
 
     @Override
     public BoundedParameterInterpreter duplicate() {

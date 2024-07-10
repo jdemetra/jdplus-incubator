@@ -39,14 +39,14 @@ public class NoiseItem extends StateItem {
         super(name);
         this.v = new VarianceInterpreter(name + ".var", var, fixed, true);
     }
-    
-    private NoiseItem(NoiseItem item){
+
+    private NoiseItem(NoiseItem item) {
         super(item.name);
-        v=item.v.duplicate();
+        v = item.v.duplicate();
     }
-    
+
     @Override
-    public NoiseItem duplicate(){
+    public NoiseItem duplicate() {
         return new NoiseItem(this);
     }
 
@@ -68,8 +68,12 @@ public class NoiseItem extends StateItem {
 
     @Override
     public StateComponent build(DoubleSeq p) {
+        if (p == null) {
+            return Noise.of(v.variance());
+        } else {
             double e = p.get(0);
             return Noise.of(e);
+        }
     }
 
     @Override
@@ -92,7 +96,7 @@ public class NoiseItem extends StateItem {
     }
 
     @Override
-    public int stateDim(){
+    public int stateDim() {
         return 1;
     }
 

@@ -38,8 +38,8 @@ public class VarLocalLinearTrendItem extends StateItem {
 
     public VarLocalLinearTrendItem(final String name, double[] lstd, double[] sstd, double lscale, double sscale, boolean lfixed, boolean sfixed) {
         super(name);
-        this.lstd=lstd;
-        this.sstd=sstd;
+        this.lstd = lstd;
+        this.sstd = sstd;
         this.lscale = new ScaleInterpreter(name + ".lvar", lscale, lfixed, true);
         this.sscale = new ScaleInterpreter(name + ".svar", sscale, sfixed, true);
     }
@@ -48,9 +48,9 @@ public class VarLocalLinearTrendItem extends StateItem {
         super(item.name);
         this.lscale = item.lscale.duplicate();
         this.sscale = item.sscale.duplicate();
-        this.lstd=item.lstd;
-        this.sstd=item.sstd;
-     }
+        this.lstd = item.lstd;
+        this.sstd = item.sstd;
+    }
 
     @Override
     public VarLocalLinearTrendItem duplicate() {
@@ -77,10 +77,10 @@ public class VarLocalLinearTrendItem extends StateItem {
 
     @Override
     public StateComponent build(DoubleSeq p) {
-        double e1 = p.get(0);
-        double e2 = p.get(1);
+        double e1 = p == null ? lscale.scale() : p.get(0);
+        double e2 = p == null ? sscale.scale() : p.get(1);
         return VarLocalLinearTrend.of(lstd, sstd, e1, e2);
-     }
+    }
 
     @Override
     public int parametersCount() {
@@ -101,7 +101,7 @@ public class VarLocalLinearTrendItem extends StateItem {
     public int stateDim() {
         return 2;
     }
-    
+
     @Override
     public boolean isScalable() {
         return !lscale.isFixed() && !lscale.isFixed();

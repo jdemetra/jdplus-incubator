@@ -7,10 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- ![STAT] Add default matrices for the different state blocks
+- ![OTHER] Add methods for an easier access to the state blocks from R
+
 ### Fixed
 
 - ![OTHER] Fix category of advancedsa plugin
 - ![OTHER] Fix invalid OpenIDE-Module-Install in jdplus-advancedsa-desktop-plugin [#154](https://github.com/jdemetra/jdplus-incubator/issues/154)
+- ![UI] Fix the names of periodic components in high-frequency
 
 ## [2.1.0] - 2024-04-15
 

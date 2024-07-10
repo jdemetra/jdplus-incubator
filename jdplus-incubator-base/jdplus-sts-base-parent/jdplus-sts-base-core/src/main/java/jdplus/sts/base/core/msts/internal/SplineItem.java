@@ -74,7 +74,7 @@ public class SplineItem extends StateItem {
 
     @Override
     public StateComponent build(DoubleSeq p) {
-        double var = p.get(0);
+        double var = p == null ? v.variance() : p.get(0);
         return SplineComponent.stateComponent(data, var, startpos);
     }
 

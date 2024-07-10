@@ -75,7 +75,7 @@ public class SeasonalComponentItem extends StateItem {
 
     @Override
     public StateComponent build(DoubleSeq p) {
-        double e = p.get(0);
+        double e = p == null ? v.variance() : p.get(0);
         return SeasonalComponent.of(model, period, e);
     }
 

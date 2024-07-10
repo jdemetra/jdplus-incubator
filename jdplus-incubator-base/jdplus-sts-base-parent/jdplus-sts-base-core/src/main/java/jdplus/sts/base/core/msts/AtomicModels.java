@@ -53,8 +53,8 @@ import jdplus.toolkit.base.api.data.DoubleSeq;
 @lombok.experimental.UtilityClass
 public class AtomicModels {
 
-    public StateItem arma(final String name, double[] ar, double[] ma, double var, boolean fixed) {
-        return new ArmaItem(name, ar, ma, var, fixed);
+    public StateItem arma(final String name, double[] ar, boolean fixedar, double[] ma, boolean fixedma, double var, boolean fixedvar) {
+        return new ArmaItem(name, ar, fixedar, ma, fixedma, var, fixedvar);
     }
 
     public StateItem sarima(final String name, int period, int[] orders, int[] seasonal, double[] parameters, boolean fixed, double var, boolean fixedvar) {
