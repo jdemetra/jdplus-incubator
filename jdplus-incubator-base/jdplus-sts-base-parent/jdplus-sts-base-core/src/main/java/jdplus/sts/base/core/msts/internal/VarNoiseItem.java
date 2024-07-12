@@ -71,8 +71,8 @@ public class VarNoiseItem extends StateItem {
 
     @Override
     public StateComponent build(DoubleSeq p) {
-            double e = p.get(0);
-            return VarNoise.of(std, e);
+       double e = p == null ? scale.scale() : p.get(0);
+             return VarNoise.of(std, e);
     }
 
     @Override

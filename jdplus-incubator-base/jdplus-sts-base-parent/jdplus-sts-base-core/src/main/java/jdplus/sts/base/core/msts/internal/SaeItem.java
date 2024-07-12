@@ -46,12 +46,12 @@ public class SaeItem extends StateItem {
         this.zeroinit = zeroinit;
     }
 
-   private SaeItem(SaeItem item) {
+    private SaeItem(SaeItem item) {
         super(item.name);
-        this.ar=item.ar.duplicate();
-        this.lag=item.lag;
-        this.zeroinit=item.zeroinit;
-     }
+        this.ar = item.ar.duplicate();
+        this.lag = item.lag;
+        this.zeroinit = item.zeroinit;
+    }
 
     @Override
     public SaeItem duplicate() {
@@ -78,9 +78,9 @@ public class SaeItem extends StateItem {
             return nar;
         });
     }
-    
+
     @Override
-    public boolean isScalable(){
+    public boolean isScalable() {
         return false;
     }
 
@@ -92,7 +92,7 @@ public class SaeItem extends StateItem {
     @Override
     public StateComponent build(DoubleSeq p) {
         int nar = ar.getDomain().getDim();
-        double[] par = p.extract(0, nar).toArray();
+        double[] par = p == null ? ar.values().toArray() : p.extract(0, nar).toArray();
         // compute the "normalized" covariance
         double[] car = new double[par.length + 1];
         double[] lpar = new double[par.length * lag];
@@ -122,7 +122,7 @@ public class SaeItem extends StateItem {
 
     @Override
     public int stateDim() {
-        return ar.getDomain().getDim()*lag;
+        return ar.getDomain().getDim() * lag;
     }
 
 }

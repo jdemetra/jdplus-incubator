@@ -136,22 +136,39 @@ public class MsaeItem2 extends StateItem {
     public StateComponent build(DoubleSeq p) {
         int nwaves = v.length;
         double[] var = new double[nwaves];
-        int pos = 0;
-        for (int i = 0; i < nwaves; ++i) {
-            var[i] = p.get(pos++);
+        if (p == null) {
+            for (int i = 0; i < nwaves; ++i) {
+                var[i] = v[i].variance();
+            }
+            double[][] w = new double[nwaves][];
+            w[0] = DoubleSeq.EMPTYARRAY;
+            int nar = lar.length;
+            for (int i = 0; i < nar; ++i) {
+                w[i + 1] = par[i].values().toArray();
+            }
+            // same coefficients for the last waves, if any
+            for (int i = nar + 1; i < nwaves; ++i) {
+                w[i] = w[i - 1];
+            }
+            return WaveSpecificSurveyErrors2.of(var, w, lag);
+        } else {
+            int pos = 0;
+            for (int i = 0; i < nwaves; ++i) {
+                var[i] = p.get(pos++);
+            }
+            double[][] w = new double[nwaves][];
+            w[0] = DoubleSeq.EMPTYARRAY;
+            int nar = lar.length;
+            for (int i = 0; i < nar; ++i) {
+                w[i + 1] = p.extract(pos, lar[i]).toArray();
+                pos += lar[i];
+            }
+            // same coefficients for the last waves, if any
+            for (int i = nar + 1; i < nwaves; ++i) {
+                w[i] = w[i - 1];
+            }
+            return WaveSpecificSurveyErrors2.of(var, w, lag);
         }
-        double[][] w = new double[nwaves][];
-        w[0] = DoubleSeq.EMPTYARRAY;
-        int nar = lar.length;
-        for (int i = 0; i < nar; ++i) {
-            w[i + 1] = p.extract(pos, lar[i]).toArray();
-            pos += lar[i];
-        }
-        // same coefficients for the last waves, if any
-        for (int i = nar + 1; i < nwaves; ++i) {
-            w[i] = w[i - 1];
-        }
-        return WaveSpecificSurveyErrors2.of(var, w, lag);
     }
 
     @Override

@@ -40,31 +40,31 @@ public class ArmaItem extends StateItem {
     private final StablePolynomialInterpreter par, pma;
     private final VarianceInterpreter v;
 
-    public ArmaItem(final String name, double[] ar, double[] ma, double var, boolean fixed) {
+    public ArmaItem(final String name, double[] ar, boolean fixedar, double[] ma, boolean fixedma, double var, boolean fixedvar) {
         super(name);
         int nar = ar == null ? 0 : ar.length, nma = ma == null ? 0 : ma.length;
         if (nar > 0) {
-            par = new StablePolynomialInterpreter(name + ".ar", ar, fixed);
+            par = new StablePolynomialInterpreter(name + ".ar", ar, fixedar);
         } else {
             par = null;
         }
         if (nma > 0) {
-            pma = new StablePolynomialInterpreter(name + ".ma", ma, fixed);
+            pma = new StablePolynomialInterpreter(name + ".ma", ma, fixedma);
         } else {
             pma = null;
         }
-        v = new VarianceInterpreter(name + ".var", var, true, true);
+        v = new VarianceInterpreter(name + ".var", var, fixedvar, true);
     }
 
-    private ArmaItem(ArmaItem item){
+    private ArmaItem(ArmaItem item) {
         super(item.name);
-        this.par=item.par == null ? null : item.par.duplicate();
-        this.pma=item.pma == null ? null : item.pma.duplicate();
-        this.v=item.v.duplicate();
-     }
-    
+        this.par = item.par == null ? null : item.par.duplicate();
+        this.pma = item.pma == null ? null : item.pma.duplicate();
+        this.v = item.v.duplicate();
+    }
+
     @Override
-    public ArmaItem duplicate(){
+    public ArmaItem duplicate() {
         return new ArmaItem(this);
     }
 
@@ -108,22 +108,36 @@ public class ArmaItem extends StateItem {
     @Override
     public StateComponent build(DoubleSeq p) {
         BackFilter bar = BackFilter.ONE, bma = BackFilter.ONE;
-        int pos = 0;
-        if (par != null) {
-            int nar = par.getDomain().getDim();
-            Polynomial ar = Polynomial.valueOf(1, p.extract(0, nar).toArray());
-            bar = new BackFilter(ar);
-            pos += nar;
+        if (p == null) {
+            if (par != null) {
+                Polynomial ar = Polynomial.valueOf(1, par.values().toArray());
+                bar = new BackFilter(ar);
+            }
+            if (pma != null) {
+                Polynomial ma = Polynomial.valueOf(1, pma.values().toArray());
+                bma = new BackFilter(ma);
+            }
+            ArimaModel arima = new ArimaModel(bar, BackFilter.ONE, bma, v.variance());
+            return SsfArima.stateComponent(arima);
+
+        } else {
+            int pos = 0;
+            if (par != null) {
+                int nar = par.getDomain().getDim();
+                Polynomial ar = Polynomial.valueOf(1, p.extract(0, nar).toArray());
+                bar = new BackFilter(ar);
+                pos += nar;
+            }
+            if (pma != null) {
+                int nma = pma.getDomain().getDim();
+                Polynomial ma = Polynomial.valueOf(1, p.extract(0, nma).toArray());
+                bma = new BackFilter(ma);
+                pos += nma;
+            }
+            double n = p.get(pos++);
+            ArimaModel arima = new ArimaModel(bar, BackFilter.ONE, bma, n);
+            return SsfArima.stateComponent(arima);
         }
-        if (pma != null) {
-            int nma = pma.getDomain().getDim();
-            Polynomial ma = Polynomial.valueOf(1, p.extract(0, nma).toArray());
-            bma = new BackFilter(ma);
-            pos += nma;
-        }
-        double n = p.get(pos++);
-        ArimaModel arima = new ArimaModel(bar, BackFilter.ONE, bma, n);
-        return SsfArima.stateComponent(arima);
     }
 
     @Override
@@ -149,7 +163,7 @@ public class ArmaItem extends StateItem {
     public int defaultLoadingCount() {
         return 1;
     }
-    
+
     @Override
     public int stateDim() {
         int p = 0;

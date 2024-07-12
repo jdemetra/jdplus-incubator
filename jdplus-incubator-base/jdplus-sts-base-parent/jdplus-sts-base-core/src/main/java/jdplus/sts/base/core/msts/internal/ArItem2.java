@@ -45,17 +45,17 @@ public class ArItem2 extends StateItem {
         this.ar = new ArInterpreter(name + ".ar", ar, fixedar);
         this.v = new VarianceInterpreter(name + ".var", var, fixedvar, true);
     }
-    
-    private ArItem2(ArItem2 item){
+
+    private ArItem2(ArItem2 item) {
         super(item.name);
-        this.ar=item.ar.duplicate();
-        this.v=item.v.duplicate();
-        this.nlags=item.nlags;
-        this.nfcasts=item.nfcasts;
+        this.ar = item.ar.duplicate();
+        this.v = item.v.duplicate();
+        this.nlags = item.nlags;
+        this.nfcasts = item.nfcasts;
     }
-    
+
     @Override
-    public ArItem2 duplicate(){
+    public ArItem2 duplicate() {
         return new ArItem2(this);
     }
 
@@ -80,10 +80,14 @@ public class ArItem2 extends StateItem {
 
     @Override
     public StateComponent build(DoubleSeq p) {
-        int n = ar.getDomain().getDim();
-        double[] par = p.extract(0, n).toArray();
-        double w = p.get(n);
-        return SsfAr2.of(par, w, nlags, nfcasts);
+        if (p == null) {
+            return SsfAr2.of(ar.values().toArray(), v.variance(), nlags, nfcasts);
+        } else {
+            int n = ar.getDomain().getDim();
+            double[] par = p.extract(0, n).toArray();
+            double w = p.get(n);
+            return SsfAr2.of(par, w, nlags, nfcasts);
+        }
     }
 
     @Override
@@ -105,7 +109,7 @@ public class ArItem2 extends StateItem {
     public int stateDim() {
         int n = ar.getDomain().getDim();
         if (nfcasts >= n) {
-            n = nfcasts+1;
+            n = nfcasts + 1;
         }
         return n + nlags;
     }

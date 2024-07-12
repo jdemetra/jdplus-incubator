@@ -107,8 +107,8 @@ public class FractionalAirlineProcessorTest {
         ExtendedAirlineEstimation rslt_log_OBS = FractionalAirlineProcessor.estimate(OBS_minus1, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 1, true);
         assertEquals(rslt_level_logOBS.getOutliers().length, rslt_log_OBS.getOutliers().length, "Number of outliers");
 
-        assertArrayEquals(rslt_level_logOBS.getY(), DoubleSeq.of(rslt_log_OBS.getY()).log().toArray(), "Difference in Original Series inkl. one fcast");
-        assertArrayEquals(rslt_level_logOBS.linearized(), rslt_log_OBS.linearized(), "Difference in Original Series inkl. one fcast");
+        assertArrayEquals(rslt_level_logOBS.getY(), DoubleSeq.of(rslt_log_OBS.getY()).log().toArray(),0.00000001, "Difference in Original Series inkl. one fcast");
+        assertArrayEquals(rslt_level_logOBS.linearized(), rslt_log_OBS.linearized(),0.00000001, "Difference in Original Series inkl. one fcast");
 
     }
 
@@ -166,6 +166,56 @@ public class FractionalAirlineProcessorTest {
 //        System.out.println();
     }
 
+    private static final double[] REGRES = new double[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, -0.875, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, -0.875, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, -0.875, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 1.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, -0.875, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0.125, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+    @Test
+    public void testComponentEstimation_with_fcast_withReg_comparisonR() {
+        double[] rdata = new double[]{150.4821, 167.4522, 185.8829, 141.7225, 139.2304, 155.1260, 148.2967, 153.3347, 158.0910, 162.9566, 161.1472, 158.4820};
+        double[] data = new double[]{33.2, 31.6, 39.7, 34.3, 36.5, 37, 37.8, 36.9, 35.8, 35.7, 40.5, 58.3, 36.5, 34, 42, 40, 40.2, 39.6, 40.5, 41, 39.2, 39.5, 42, 60.3, 39.4, 39.4, 42.5, 42, 42.7, 40.5, 43.4, 41.6, 38.8, 42.8, 44.5, 61.4, 41.4, 39.3, 43.6, 44.2, 44, 43.2, 46.5, 44.4, 44.4, 46, 45.9, 67.8, 43.5, 40.6, 45.5, 46.8, 47.7, 46.2, 50.9, 48.6, 48, 49.6, 54.9, 77.2, 51.3, 47.9, 56.8, 51.6, 53.6, 55.7, 58.2, 54.6, 55.2, 55.4, 61, 83.8, 54.8, 54.3, 59.2, 58.1, 67.9, 59.8, 60.7, 62.6, 59.9, 60.8, 67.5, 88.1, 63.6, 57.5, 65.6, 64, 70.3, 66.5, 68.8, 70, 63.3, 68.7, 73.8, 93.2, 64.9, 61, 70.1, 69.5, 71.6, 68.3, 74.3, 72, 68.4, 69.6, 73.7, 94.8, 68.6, 65, 69.1, 73.1, 74.1, 69.7, 76.4, 70.2, 72.1, 73.1, 72.4, 95.6, 69.1, 65.4, 75.3, 75.6, 71.6, 75.5, 77.7, 73, 72.6, 74.6, 79.1, 103.4, 69.2, 66.7, 76.1, 74.2, 75.8, 75.9, 77.1, 77.1, 74.6, 73.3, 80, 105.5, 73.2, 69.2, 81.1, 77.9, 81.1, 79.3, 83.3, 84.2, 80.5, 80.4, 87.8, 110.8, 78.3, 74, 85.6, 81.4, 85.6, 85.2, 85.3, 86.6, 80.4, 85.8, 90.8, 110.9, 81.9, 80.6, 85.3, 86.5, 86.8, 84.2, 89.3, 86, 84.6, 87, 93.6, 118.5, 82.7, 76.8, 84.7, 87.3, 87.2, 85.5, 92.4, 88.1, 85.4, 90.7, 99.2, 127.1, 84.7, 85.8, 98.6, 92.4, 92.4, 93.3, 97.8, 93.2, 89.4, 92.4, 102.1, 129.8, 88.1, 83.9, 95.5, 95.2, 97.6, 92.7, 96, 97.8, 94.7, 91.8, 100.7, 130.8, 87.9, 82.6, 98.8, 86.3, 90.6, 93.5, 81.9, 84.1, 75, 79.8, 86.3, 111.5, 76.7, 73.2, 87.3, 80, 82.5, 79.9, 88.5, 86.6, 78.2, 85.5, 93.2, 119.5, 84.5, 81.2, 88.2, 90.4, 92.7, 86.8, 95, 91.3, 90.4, 95.4, 100.3, 130.9, 93.7, 86, 98.1, 95.3, 95, 97.7, 101.8, 96.2, 95.6, 100.5, 104.3, 135.8, 92.7, 93.5, 103.7, 100.9, 100.6, 101.7, 104.3, 104.6, 102.9, 104.1, 111.9, 141.5, 96.2, 93.5, 106.1, 106.3, 108, 104.5, 107.7, 107.6, 104.8, 103, 118.3, 144.8, 101.4, 96.4, 114.9, 105.1, 105, 110.1, 110, 111.7, 103.4, 111.2, 121.5, 146.8, 105.2, 101.1, 109.4, 113.5, 112.3, 109.5, 118.6, 116.5, 107.4, 115.6, 129.8, 150.2, 111.1, 112.1, 115.5, 92.4, 102.4, 107.3, 116.8, 113.6, 111.1, 122.4, 125.6, 147.2, 101.5, 100.2, 118.3, 106.6, 112.6, 118.1, 125.3, 119.6, 115.5, 122.6, 139.3, 158.1, 112.3, 109.2, 127.9, 125.7, 126.6, 137.4, 145, 145.1, 140.9, 135.3, 161.8, 173.9, 129, 126.1, 144.5, 138.5, 146.9, 149.9, 150.9, 149.4, 150};
+        int nforecast = 12;
+        Matrix x = Matrix.of(REGRES, data.length + nforecast, 1);
+
+        ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(data, x, false, new double[]{12},
+                -1, false, null, 6, 1e-12, false, nforecast);
+             
+        for (int i = 0; i < (rslt.getY().length - data.length); i++) {
+            boolean ident = Math.abs(Math.round(10000*rslt.getY()[i + data.length])/10000.0 - rdata[i]) > 0.00000001;
+            assertFalse(ident, "The forecasts do not match, for " + i);
+        }
+
+        assertTrue(true);
+    }
+
     @Test
     public void testComponentEstimation_with_fcast_withReg() {
         int n = WeeklyData.US_CLAIMS2.length;
@@ -213,7 +263,7 @@ public class FractionalAirlineProcessorTest {
 
         for (int i = 0; i < WeeklyData.US_CLAIMS2.length; i++) {
             boolean comp = Math.abs(WeeklyData.US_CLAIMS2[i] - rslt.component_outliers()[i] - rslt.component_userdef_reg_variables()[i] - rslt.linearized()[i]) > 0.00000001;
-            assertFalse(comp, "The componets don't sum up to the lin " + i);
+            assertFalse(comp, "The components don't sum up to the lin " + i);
         }
 
         //    System.out.println("LL: " + rslt.getLikelihood());

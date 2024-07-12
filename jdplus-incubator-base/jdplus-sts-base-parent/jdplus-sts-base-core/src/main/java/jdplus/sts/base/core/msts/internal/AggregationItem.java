@@ -38,25 +38,34 @@ public class AggregationItem extends StateItem {
         super(name);
         this.cmps = cmps;
     }
-    
+
     @Override
-    public AggregationItem duplicate(){
-        StateItem[] citems=new StateItem[cmps.length];
-        for (int i=0; i<citems.length; ++i)
-            citems[i]=cmps[i].duplicate();
+    public AggregationItem duplicate() {
+        StateItem[] citems = new StateItem[cmps.length];
+        for (int i = 0; i < citems.length; ++i) {
+            citems[i] = cmps[i].duplicate();
+        }
         return new AggregationItem(name, citems);
     }
 
     @Override
     public StateComponent build(DoubleSeq p) {
-        CompositeState.Builder builder = CompositeState.builder();
-        int pos = 0;
-        for (int i = 0; i < cmps.length; ++i) {
-            int n = cmps[i].parametersCount();
-            builder.add(cmps[i].build(p.extract(pos, n)));
-            pos += n;
+        if (p == null) {
+            CompositeState.Builder builder = CompositeState.builder();
+            for (int i = 0; i < cmps.length; ++i) {
+                builder.add(cmps[i].build(null));
+            }
+            return builder.build();
+        } else {
+            CompositeState.Builder builder = CompositeState.builder();
+            int pos = 0;
+            for (int i = 0; i < cmps.length; ++i) {
+                int n = cmps[i].parametersCount();
+                builder.add(cmps[i].build(p.extract(pos, n)));
+                pos += n;
+            }
+            return builder.build();
         }
-        return builder.build();
     }
 
     @Override

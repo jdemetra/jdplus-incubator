@@ -60,16 +60,17 @@ public class MsaeItem extends StateItem {
             par[i] = new ArInterpreter(name + ".wae" + (i + 1), car, fixedar);
         }
     }
-    
-   private MsaeItem(MsaeItem item) {
+
+    private MsaeItem(MsaeItem item) {
         super(item.name);
-        this.nwaves=item.nwaves;
-        this.lag=item.lag;
-        this.lar=item.lar;
-        this.par=new ArInterpreter[item.par.length];
-        for (int i=0; i<par.length; ++i)
-            par[i]=item.par[i].duplicate();
-     }
+        this.nwaves = item.nwaves;
+        this.lag = item.lag;
+        this.lar = item.lar;
+        this.par = new ArInterpreter[item.par.length];
+        for (int i = 0; i < par.length; ++i) {
+            par[i] = item.par[i].duplicate();
+        }
+    }
 
     @Override
     public MsaeItem duplicate() {
@@ -107,19 +108,33 @@ public class MsaeItem extends StateItem {
 
     @Override
     public StateComponent build(DoubleSeq p) {
-        double[][] w = new double[nwaves][];
-        w[0] = DoubleSeq.EMPTYARRAY;
-        int pos = 0;
-        int nar = lar.length;
-        for (int i = 0; i < nar; ++i) {
-            w[i + 1] = p.extract(pos, lar[i]).toArray();
-            pos += lar[i];
+        if (p == null) {
+           double[][] w = new double[nwaves][];
+            w[0] = DoubleSeq.EMPTYARRAY;
+            int nar = lar.length;
+            for (int i = 0; i < nar; ++i) {
+                w[i + 1] = par[i].values().toArray();
+            }
+            // same coefficients for the last waves, if any
+            for (int i = nar + 1; i < nwaves; ++i) {
+                w[i] = w[i - 1];
+            }
+            return WaveSpecificSurveyErrors.of(w, lag);
+        } else {
+            double[][] w = new double[nwaves][];
+            w[0] = DoubleSeq.EMPTYARRAY;
+            int pos = 0;
+            int nar = lar.length;
+            for (int i = 0; i < nar; ++i) {
+                w[i + 1] = p.extract(pos, lar[i]).toArray();
+                pos += lar[i];
+            }
+            // same coefficients for the last waves, if any
+            for (int i = nar + 1; i < nwaves; ++i) {
+                w[i] = w[i - 1];
+            }
+            return WaveSpecificSurveyErrors.of(w, lag);
         }
-        // same coefficients for the last waves, if any
-        for (int i = nar + 1; i < nwaves; ++i) {
-            w[i] = w[i - 1];
-        }
-        return WaveSpecificSurveyErrors.of(w, lag);
     }
 
     @Override
@@ -148,6 +163,6 @@ public class MsaeItem extends StateItem {
 
     @Override
     public int stateDim() {
-        return 2*nwaves;
+        return 2 * nwaves;
     }
 }

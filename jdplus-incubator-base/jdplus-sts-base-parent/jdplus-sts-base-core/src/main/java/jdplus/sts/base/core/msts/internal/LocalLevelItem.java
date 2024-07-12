@@ -71,8 +71,12 @@ public class LocalLevelItem extends StateItem {
 
     @Override
     public StateComponent build(DoubleSeq p) {
+        if (p == null){
+        return LocalLevel.stateComponent(v.variance(), initial);
+        }else{
         double e = p.get(0);
         return LocalLevel.stateComponent(e, initial);
+        }
     }
 
     @Override

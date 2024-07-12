@@ -42,6 +42,10 @@ public class StablePolynomialInterpreter implements ParameterInterpreter {
         this.fixed = fixed;
         this.domain = new Domain(values.length);
     }
+    
+    public DoubleSeq values(){
+        return DoubleSeq.of(values);
+    }
 
     @Override
     public StablePolynomialInterpreter duplicate() {

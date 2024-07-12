@@ -14,7 +14,7 @@
  * See the Licence for the specific language governing permissions and 
  * limitations under the Licence.
  */
-package jdplus.highfreq.base.r;
+package jdplus.sts.base.r;
 
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import tck.demetra.data.MatrixSerializer;
@@ -33,7 +33,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import jdplus.highfreq.base.core.extendedairline.ExtendedAirlineMapping;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.sts.base.core.msts.AtomicModels;
 import jdplus.sts.base.core.msts.CompositeModel;

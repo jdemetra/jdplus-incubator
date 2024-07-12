@@ -1,7 +1,9 @@
+import jdplus.highfreq.base.core.extractors.ExtendedAirlineResultsExtractor;
+import jdplus.highfreq.base.core.extractors.ExtendedAirlineDecompositionExtractor;
+import jdplus.highfreq.base.core.extractors.ExtendedAirlineEstimationExtractor;
 import jdplus.highfreq.base.core.extractors.ExtendedAirlineExtractor;
-import jdplus.highfreq.base.core.extractors.FractionalAirlineDecompositionExtractor;
-import jdplus.highfreq.base.core.extractors.FractionalAirlineEstimationExtractor;
 import jdplus.highfreq.base.core.extractors.HighFreqRegArimaExtractor;
+import jdplus.highfreq.base.core.extractors.LightExtendedAirlineEstimationExtractor;
 import jdplus.toolkit.base.api.information.InformationExtractor;
 
 module jdplus.highfreq.base.core {
@@ -25,7 +27,9 @@ module jdplus.highfreq.base.core {
 
     provides InformationExtractor with
             ExtendedAirlineExtractor,
-            FractionalAirlineDecompositionExtractor,
+            ExtendedAirlineResultsExtractor,
+            ExtendedAirlineDecompositionExtractor,
             HighFreqRegArimaExtractor,
-            FractionalAirlineEstimationExtractor;
+            ExtendedAirlineEstimationExtractor,
+            LightExtendedAirlineEstimationExtractor;
 }
