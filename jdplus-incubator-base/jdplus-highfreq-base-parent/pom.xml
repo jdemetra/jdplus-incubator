@@ -5,7 +5,7 @@
     <parent>
         <groupId>eu.europa.ec.joinup.sat</groupId>
         <artifactId>jdplus-incubator-base</artifactId>
-        <version>2.2.0</version>
+        <version>2.2.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>jdplus-highfreq-base-parent</artifactId>
