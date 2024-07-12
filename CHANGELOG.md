@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.2.0] - 2024-07-12
+
 ### Added
 
 - ![STAT] Add default matrices for the different state blocks
@@ -39,7 +41,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 This is the **initial release** of incubator extensions for JDemetra+ v3.  
 [JDemetra+ v3.0.2 or later](https://github.com/jdemetra/jdplus-main) version is required to run it.
 
-[Unreleased]: https://github.com/jdemetra/jdplus-incubator/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/jdemetra/jdplus-incubator/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/jdemetra/jdplus-incubator/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/jdemetra/jdplus-incubator/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/jdemetra/jdplus-incubator/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/jdemetra/jdplus-incubator/releases/tag/v1.0.0
