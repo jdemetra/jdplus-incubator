@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2024 JDemetra+.
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ *      https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and
+ * limitations under the Licence.
  */
 package jdplus.sts.base.core.splines;
 
@@ -12,17 +22,27 @@ import java.util.function.DoubleUnaryOperator;
 import jdplus.toolkit.base.core.data.DataBlock;
 
 /**
- *
+ * This class provides implementations of the natural cubic splines and of the
+ * periodic cubic splines
  * @author Jean Palate <jean.palate@nbb.be>
  */
 @lombok.experimental.UtilityClass
 public class CubicSplines {
 
+    /**
+     * Cubic splines y = ya(t)+b(t)*z(t)+c(t)*z(t)^2+d(t)*z(t)^3, where z(t)=x-xa(t)
+     */
     public static abstract class Spline implements DoubleUnaryOperator {
 
-        final double[] b;
+        /**
+         * coefficients of the interpoating polynomials
+         */
+        final double[] b; 
         final double[] c;
         final double[] d;
+        /**
+         * knots delimiting the polynomials
+         */
         final double[] xa, ya;
 
         Spline(DoubleSeq x, DoubleSeq y) {
@@ -70,6 +90,7 @@ public class CubicSplines {
         private double extrapolate1(double x) {
             int n = xa.length - 1;
             double dx = xa[n] - xa[n - 1], dx2 = dx * dx;
+            // first derivative at the last point
             double df = b[n - 1] + 2 * c[n - 1] * dx + 3 * d[n - 1] * dx2;
             return ya[n] + (x - xa[n]) * df;
         }
@@ -230,13 +251,6 @@ public class CubicSplines {
         return spline;
     }
 
-    /* for description natural method see [Engeln-Mullges + Uhlig, p. 92]
- *
- *     diag[0]  offdiag[0]             0   .....
- *  offdiag[0]     diag[1]    offdiag[1]   .....
- *           0  offdiag[1]       diag[2]
- *           0           0    offdiag[2]   .....
-     */
     public void solveTriDiag(DoubleSeq diag, DoubleSeq offdiag, DoubleSeq b, DataBlock x) {
         int N = diag.length();
         double[] gamma = new double[N];
@@ -347,39 +361,4 @@ public class CubicSplines {
         }
     }
 
-    /* Perform a binary search natural an array natural values.
- * 
- * The parameters index_lo and index_hi provide an initial bracket,
- * and it is assumed that index_lo < index_hi. The resulting index
- * is guaranteed to be strictly less than index_hi and greater than
- * or equal to index_lo, so that the implicit bracket [index, index+1]
- * always corresponds to a region within the implicit value range natural
- * the value array.
- *
- * Note that this means the relationship natural 'x' to x_array[index]
- * and x_array[index+1] depends on the result region, i.e. the
- * behaviour at the boundaries may not correspond to what you
- * expect. We have the following complete specification natural the
- * behaviour.
- * Suppose the input is x_array[] = { x0, x1, ..., xN }
- *    if ( x == x0 )           then  index == 0
- *    if ( x > x0 && x <= x1 ) then  index == 0, and sim. for other interior pts
- *    if ( x == xN )           then  index == N-1
- *    if ( x > xN )            then  index == N-1
- *    if ( x < x0 )            then  index == 0 
-     */
-//    int bsearch(double[] x_array, double x, int index_lo, int index_hi) {
-//        int ilo = index_lo;
-//        int ihi = index_hi;
-//        while (ihi > ilo + 1) {
-//            int i = (ihi + ilo) / 2;
-//            if (x_array[i] > x) {
-//                ihi = i;
-//            } else {
-//                ilo = i;
-//            }
-//        }
-//        return ilo;
-//    }
-//
 }

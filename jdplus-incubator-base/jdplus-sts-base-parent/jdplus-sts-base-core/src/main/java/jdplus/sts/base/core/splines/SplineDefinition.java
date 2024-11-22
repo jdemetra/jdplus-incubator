@@ -16,6 +16,7 @@
  */
 package jdplus.sts.base.core.splines;
 
+import java.util.function.DoubleUnaryOperator;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 
 /**
@@ -56,11 +57,11 @@ public interface SplineDefinition {
      */
     int cycleFor(int obs);
 
-    default CubicSplines.Spline[] splines() {
+    default DoubleUnaryOperator[] splines() {
         DoubleSeq nodes = nodes();
         int dim = nodes.length();
 
-        CubicSplines.Spline[] splines = new CubicSplines.Spline[dim];
+        DoubleUnaryOperator[] splines = new DoubleUnaryOperator[dim];
         double[] xi = new double[dim + 1];
         nodes.copyTo(xi, 0);
         double x0 = xi[0];
