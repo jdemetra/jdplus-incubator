@@ -67,24 +67,21 @@ public class GenericSpline implements SplineDefinition {
         return spline.knots();
     }
 
-    private static final double EPS = 1e-12;
+    private static final double EPS = 1e-9;
 
     @Override
     public IntSeq observations(int cycle) {
-        double period = spline.getPeriod();
         // we need to find the integers in [cycle*period, (cycle+1)*period[
-        int i0 = (int) Math.floor(period * cycle + EPS),
-                i1 = (int) Math.floor(period * (cycle + 1) + EPS);
-        return IntSeq.sequential(i0, i1 + 1);
+        int i0 = (int) Math.ceil(spline.getPeriod() * cycle - EPS),
+                i1 = 1 + (int) Math.floor(spline.getPeriod() * (cycle + 1) - EPS);
+        return IntSeq.sequential(i0, i1);
     }
 
     @Override
     public int cycleFor(int obs) {
-        double period = spline.getPeriod();
-        int c = (int) Math.floor((obs + EPS) / period);
-        if (obs >= (int) Math.floor(period * (c + 1) + EPS)) {
-            ++c;
-        }
+        int c = (int) Math.floor(obs / spline.getPeriod() + EPS);
+//            if (obs>=(int) Math.floor(period * (c + 1) + EPS))
+//                ++c;
         return c;
     }
 

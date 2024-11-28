@@ -65,22 +65,22 @@ public class RegularSpline implements SplineDefinition {
         return nodes;
     }
 
-    private static final double EPS = 1e-12;
+    private static final double EPS = 1e-9;
 
     @Override
     public IntSeq observations(int cycle) {
         // we need to find the integers in [cycle*period, (cycle+1)*period[
-            int i0 =  (int) Math.floor(period * cycle + EPS),
-                    i1 = (int) Math.floor(period * (cycle + 1) + EPS);
-            return IntSeq.sequential(i0, i1);
+        int i0 = (int) Math.ceil(period * cycle - EPS),
+                i1 = 1 + (int) Math.floor(period * (cycle + 1) - EPS);
+        return IntSeq.sequential(i0, i1);
     }
 
     @Override
     public int cycleFor(int obs) {
-            int c=(int) Math.floor((obs + EPS) / period);
-            if (obs>=(int) Math.floor(period * (c + 1) + EPS))
-                ++c;
-            return c; 
+        int c = (int) Math.floor(obs / period + EPS);
+//            if (obs>=(int) Math.floor(period * (c + 1) + EPS))
+//                ++c;
+        return c;
     }
 
 }
