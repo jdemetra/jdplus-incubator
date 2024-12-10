@@ -92,7 +92,7 @@ public class SplinesTest {
         return holidays.stream().toArray(i -> new Holiday[i]);
     }
 
-    public static void main2(String[] args) {
+    public static void main(String[] args) {
         DoubleSeq y = SERIES;
 
         TsPeriod start = TsPeriod.daily(1996, 1, 1);
@@ -171,7 +171,7 @@ public class SplinesTest {
         }
         DoubleSeq t = FilterUtility.filter(y, sf, lfilters, afilters);
 
-        int nyears = 5;
+        int nyears = 3;
         double P = 365.25;
         int ny = (int) (nyears * P + 1);
         DataBlock Y = DataBlock.make(ny);
@@ -265,7 +265,7 @@ public class SplinesTest {
         System.out.println(mrslt.getLikelihood().logLikelihood());
     }
 
-    public static void main(String[] args) {
+    public static void main2(String[] args) {
 //        try {
 //            InputStream stream = Data.class.getResourceAsStream("/usclaims.txt");
 //            Matrix us = MatrixSerializer.read(stream);
@@ -277,9 +277,9 @@ public class SplinesTest {
         TsPeriod start = TsPeriod.weekly(1967, 1, 2);
         DoubleSeq y = DoubleSeq.of(tck.demetra.data.WeeklyData.US_CLAIMS).log();
 
-        int q = 35;
+        int q = 52;
         double[] knots = new double[q];
-        double P = 365.25 / 7;
+        double P = 365.25/7;
         double c = P / q;
         for (int i = 0; i < q; ++i) {
             knots[i] = i * c;
@@ -304,7 +304,7 @@ public class SplinesTest {
 
         int min = 10;
 
-        DoubleSeq m = DoubleSeq.onMapping(ny, i -> i - P * (int) (i / P));
+        DoubleSeq m = DoubleSeq.onMapping(ny, i -> i-P*(int)(i/P));
         AdaptivePeriodicSpline.Specification spec = AdaptivePeriodicSpline.Specification.builder()
                 .x(m)
                 .y(Y)
@@ -325,12 +325,14 @@ public class SplinesTest {
         AdaptivePeriodicSplines kernel = new AdaptivePeriodicSplines(dspec);
         kernel.process(aspline);
         double[] selectedKnots = kernel.selectedKnots();
+        System.out.println(DoubleSeq.of(selectedKnots));
+        System.out.println(kernel.Z().row(kernel.best()));
         CompositeModel model = new CompositeModel();
-        StateItem l = AtomicModels.localLevel("l", .01, false, Double.NaN);
-//        StateItem l = AtomicModels.localLinearTrend("l", .01, .01, false, false);
+//        StateItem l = AtomicModels.localLevel("l", .01, false, Double.NaN);
+        StateItem l = AtomicModels.localLinearTrend("l", .01, .01, false, false);
 //        StateItem sw = AtomicModels.seasonalComponent("sw", "HarrisonStevens", 7, .01, false);
 //       StateItem sy = AtomicModels.genericSplines("sy", 365.25 / 7, selectedKnots, 2, 0, .01, false);
-        StateItem sy = AtomicModels.regularSplines("sy", 365.25 / 7, selectedKnots, 0, .01, false);
+        StateItem sy = AtomicModels.regularSplines("sy", P, selectedKnots, 0, .01, false);
 //        StateItem reg=AtomicModels.timeVaryingRegression("reg", X, 0.01, false);
         StateItem n = AtomicModels.noise("n", .01, false);
         model.add(l);
@@ -358,4 +360,48 @@ public class SplinesTest {
         System.out.println(smoothedStates.getComponent(cmpPos[2]));
         System.out.println("");
     }
+    
+        public static void main3(String[] args) {
+        DoubleSeq y = SERIES.range(0, 8766);
+
+        TsPeriod start = TsPeriod.daily(1996, 1, 1);
+        FastMatrix X = HolidaysUtility.regressionVariables(france(), TsDomain.of(start, y.length()), HolidaysOption.Skip, new int[]{6, 7}, false);
+
+        long t0 = System.currentTimeMillis();
+
+        int[] pos = new int[37];
+        for (int i = 0; i < 33; ++i) {
+            pos[i] = 10 * i;
+        }
+        pos[33] = 340;
+        pos[34] = 350;
+        pos[35] = 355;
+        pos[36] = 360;
+
+        CompositeModel model = new CompositeModel();
+        //StateItem l = AtomicModels.localLevel("l", .01, false, Double.NaN);
+        StateItem l = AtomicModels.localLinearTrend("l", .01, .01, false, false);
+        StateItem sw = AtomicModels.seasonalComponent("sw", "HarrisonStevens", 7, .01, false);
+         StateItem sy = AtomicModels.seasonalComponent("sy", "HarrisonStevens", 365, .01, false);
+        StateItem reg = AtomicModels.regression("reg", X);
+        StateItem n = AtomicModels.noise("n", .01, false);
+           model.add(l);
+        model.add(sw);
+        model.add(sy);
+        model.add(n);
+        model.add(reg);
+        int len = y.length();
+        FastMatrix M = FastMatrix.make(len, 1);
+        M.column(0).copy(y);
+        CompositeModelEstimation mrslt = model.estimate(M, false, true, SsfInitialization.Augmented_Robust, Optimizer.LevenbergMarquardt, 1e-5, null);
+        long t1 = System.currentTimeMillis();
+        System.out.println(t1 - t0);
+        StateStorage smoothedStates = mrslt.getSmoothedStates();
+        int[] cmpPos = mrslt.getCmpPos();
+        System.out.println(y);
+        System.out.println(smoothedStates.getComponent(cmpPos[0]));
+        System.out.println(smoothedStates.getComponent(cmpPos[1]));
+        System.out.println(smoothedStates.getComponent(cmpPos[2]));
+        System.out.println(smoothedStates.getComponent(cmpPos[3]));
+        }
 }

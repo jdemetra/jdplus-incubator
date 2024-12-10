@@ -18,6 +18,7 @@ package jdplus.sts.base.core.splines;
 
 import java.util.function.DoubleUnaryOperator;
 import jdplus.toolkit.base.api.data.DoubleSeq;
+import jdplus.toolkit.base.core.math.splines.CubicSpline;
 
 /**
  *
@@ -75,7 +76,7 @@ public interface SplineDefinition {
             } else {
                 f[i] = 1;
             }
-            splines[i] = CubicSplines.periodic(DoubleSeq.of(xi), DoubleSeq.of(f));
+            splines[i] = CubicSpline.periodic(xi, f);
         }
         return splines;
     }
