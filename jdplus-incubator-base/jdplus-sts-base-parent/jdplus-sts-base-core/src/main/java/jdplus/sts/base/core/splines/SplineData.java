@@ -19,6 +19,7 @@ package jdplus.sts.base.core.splines;
 import jdplus.toolkit.base.api.data.DoubleSeqCursor;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.DoubleUnaryOperator;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.toolkit.base.core.math.matrices.LowerTriangularMatrix;
@@ -105,6 +106,6 @@ public class SplineData {
 
     private final SplineDefinition definition;
     private final ConcurrentMap<Integer, CycleInformation> infos = new ConcurrentHashMap<>();
-    private final CubicSplines.Spline[] splines;
+    private final DoubleUnaryOperator[] splines;
     private final int dim;
 }

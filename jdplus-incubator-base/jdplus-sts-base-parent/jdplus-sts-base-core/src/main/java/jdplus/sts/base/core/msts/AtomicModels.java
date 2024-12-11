@@ -44,6 +44,7 @@ import jdplus.sts.base.core.msts.internal.VarNoiseItem;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
 import jdplus.sts.base.core.msts.internal.SplineItem;
 import jdplus.sts.base.core.msts.internal.VarRegressionItem;
+import jdplus.sts.base.core.splines.GenericSpline;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 
 /**
@@ -164,6 +165,12 @@ public class AtomicModels {
     public StateItem regularSplines(String name, double period, double[] nodes, int startpos, double cvar, boolean fixedvar) {
         RegularSpline rs = RegularSpline.of(period, DoubleSeq.of(nodes));
         SplineData sd = new SplineData(rs);
+        return new SplineItem(name, sd, startpos, cvar, fixedvar);
+    }
+
+    public StateItem genericSplines(String name, double period, double[] nodes, int order, int startpos, double cvar, boolean fixedvar) {
+        GenericSpline gs = GenericSpline.of(period, DoubleSeq.of(nodes), order);
+        SplineData sd = new SplineData(gs);
         return new SplineItem(name, sd, startpos, cvar, fixedvar);
     }
 

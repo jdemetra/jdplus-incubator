@@ -15,6 +15,8 @@
  */
 package jdplus.sts.base.core.splines;
 
+import java.util.function.IntUnaryOperator;
+
 /**
  *
  * @author Jean Palate
@@ -25,8 +27,22 @@ public interface IntSeq {
     
     int pos(int idx);
     
-    static IntSeq sequential(int from, int to){
+    public static IntSeq sequential(int from, int to){
         return new SequentialIntSeq(from, to);
+    }
+    
+    public static IntSeq of(int length, IntUnaryOperator fn){
+        return new IntSeq(){
+            @Override
+            public int length() {
+                return length;
+            }
+
+            @Override
+            public int pos(int idx) {
+                return fn.applyAsInt(idx);
+            }
+        };
     }
     
     static class SequentialIntSeq implements IntSeq{
@@ -47,7 +63,6 @@ public interface IntSeq {
         public int pos(int idx) {
             return start+idx;
         }
-        
     }
     
 }
