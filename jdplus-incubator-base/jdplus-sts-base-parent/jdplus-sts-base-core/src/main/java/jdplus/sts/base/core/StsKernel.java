@@ -187,6 +187,7 @@ public class StsKernel {
                     .variables(variables)
                     .build();
             DoubleSeq e = kernel.getLikelihood().e();
+            // TODO: compute full residuals (to put in residuals and to compute stats)
             RawBsmDecomposition rdecomp = kernel.decompose();
             NiidTests niid = NiidTests.builder()
                     .data(e)
@@ -194,9 +195,13 @@ public class StsKernel {
                     .hyperParametersCount(params.length())
                     .build();
             Residuals residuals = Residuals.builder()
-                    .type(ResidualsType.FullResiduals)
+                    .type(ResidualsType.QR_Transformed)
                     .res(e)
-                    .start(description.getSeries().getStart())
+//                    .tsres(TsData.of(description.getSeries().getStart(), e))
+                    .ssq(ll.ssq())
+                    .n(ll.dim())
+                    .df(ll.degreesOfFreedom())
+                    .dfc(ll.degreesOfFreedom() - params.length())
                     .test(ResidualsDictionaries.MEAN, niid.meanTest())
                     .test(ResidualsDictionaries.SKEW, niid.skewness())
                     .test(ResidualsDictionaries.KURT, niid.kurtosis())

@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import jdplus.toolkit.base.api.timeseries.TsData;
+import jdplus.toolkit.base.api.timeseries.TsPeriod;
 import jdplus.toolkit.base.core.arima.IArimaModel;
 import jdplus.toolkit.base.core.dstats.T;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
@@ -167,11 +169,15 @@ public class HighFreqRegArimaModel<S extends IArimaModel, M extends ArimaDescrip
                 .period(period)
                 .hyperParametersCount(free)
                 .build();
-
+        TsPeriod start=description.getEstimationDomain().getEndPeriod().plus(-fullRes.length());
         Residuals residuals = Residuals.builder()
-                .type(ResidualsType.FullResiduals)
-                .res(fullRes)
-                .start(description.getEstimationDomain().getEndPeriod().plus(-fullRes.length()))
+                .type(ResidualsType.QR_Transformed)
+                .res(ll.e())
+                .ssq(ll.ssq())
+                .n(ll.dim())
+                .df(ll.degreesOfFreedom())
+                .dfc(ll.degreesOfFreedom()-free)
+                .tsres(TsData.of(start, fullRes))
                 .test(ResidualsDictionaries.MEAN, niid.meanTest())
                 .test(ResidualsDictionaries.SKEW, niid.skewness())
                 .test(ResidualsDictionaries.KURT, niid.kurtosis())
