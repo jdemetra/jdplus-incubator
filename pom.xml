@@ -43,7 +43,6 @@
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.release>17</maven.compiler.release>
-	<maven.compiler.proc>full</maven.compiler.proc>
 
         <!-- GitHub hosting -->
         <x.github.user>jdemetra</x.github.user>
