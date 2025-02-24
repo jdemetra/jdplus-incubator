@@ -260,6 +260,9 @@ public class CompositeModelEstimation {
             int pos = find(cmpName, cmp);
             if (pos >= 0) {
                 ISsfLoading loading = item.getLoading();
+                if (loading == null){
+                    loading=model.getItem(pos).defaultLoading(p);
+                }
                 int start = cmpPos[pos], end = start + cmpDim[pos];
                 DataBlock col = C.column(i);
                 for (int j = 0; j < nr; ++j) {
@@ -288,6 +291,9 @@ public class CompositeModelEstimation {
             int pos = find(cmpName, cmp);
             if (pos >= 0) {
                 ISsfLoading loading = item.getLoading();
+                if (loading == null){
+                    loading=model.getItem(pos).defaultLoading(p);
+                }
                 int start = cmpPos[pos], end = start + cmpDim[pos];
                 DataBlock col = C.column(i);
                 for (int j = 0; j < nr; ++j) {
@@ -316,6 +322,9 @@ public class CompositeModelEstimation {
             int pos = find(cmpName, cmp);
             if (pos >= 0) {
                 ISsfLoading loading = item.getLoading();
+                if (loading == null){
+                    loading=model.getItem(pos).defaultLoading(eq);
+                }
                 int start = cmpPos[pos];
                 DataBlock col = C.column(i);
                 for (int j = 0; j < nr; ++j) {

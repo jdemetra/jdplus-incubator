@@ -258,7 +258,7 @@ public class MstsMonitor {
                     break;
                 }
             } while (k++ < 10);
-        } else {
+        } else if (!hasFixedVariance()){
             double[] mp0 = fullp.toArray();
             fixedVariance = model.fixMaxVariance(mp0, 1);
             fullp = DoubleSeq.of(mp0);

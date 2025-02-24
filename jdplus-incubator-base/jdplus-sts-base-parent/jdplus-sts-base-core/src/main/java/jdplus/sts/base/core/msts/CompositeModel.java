@@ -51,8 +51,12 @@ public class CompositeModel {
         return items.size();
     }
 
-    public ModelItem getItem(int pos) {
+    public StateItem getItem(int pos) {
         return items.get(pos);
+    }
+
+    public StateItem getItem(String name) {
+        return items.stream().filter(s->s.getName().equals(name)).findFirst().orElseThrow();
     }
 
     public String[] getCmpsName() {
@@ -62,7 +66,7 @@ public class CompositeModel {
     public ModelEquation getEquation(int pos) {
         return equations.get(pos);
     }
-
+    
     public void add(StateItem item) {
         this.items.add(item);
     }
