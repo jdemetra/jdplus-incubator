@@ -38,7 +38,7 @@ import jdplus.toolkit.base.core.ssf.ISsfLoading;
 public class SarimaItem extends StateItem {
 
     private final VarianceInterpreter v;
-    private final SarimaInterpreter p;
+    private final SarimaInterpreter coeffs;
 
     public SarimaItem(final String name, int period, int[] orders, int[] seasonal, double[] parameters, boolean fixed, double var, boolean fixedvar) {
         super(name);
@@ -52,13 +52,13 @@ public class SarimaItem extends StateItem {
             spec.setBq(seasonal[2]);
         }
         v = new VarianceInterpreter(name + ".var", var, fixedvar, true);
-        p = new SarimaInterpreter(name, spec, parameters, fixed);
+        coeffs = new SarimaInterpreter(name, spec, parameters, fixed);
     }
 
     private SarimaItem(SarimaItem item) {
         super(item.name);
         this.v = item.v.duplicate();
-        this.p = item.p.duplicate();
+        this.coeffs = item.coeffs.duplicate();
     }
 
     @Override
@@ -69,8 +69,8 @@ public class SarimaItem extends StateItem {
     @Override
     public void addTo(MstsMapping mapping) {
         mapping.add(v);
-        mapping.add(p);
-        SarimaOrders spec = p.getDomain().getSpec();
+        mapping.add(coeffs);
+        SarimaOrders spec = coeffs.getDomain().getSpec();
         mapping.add((p, builder) -> {
             double var = p.get(0);
             int np = spec.getParametersCount();
@@ -91,15 +91,15 @@ public class SarimaItem extends StateItem {
 
     @Override
     public List<ParameterInterpreter> parameters() {
-        return Arrays.asList(v, p);
+        return Arrays.asList(v, coeffs);
     }
 
     @Override
     public StateComponent build(DoubleSeq x) {
-        SarimaOrders spec = p.getDomain().getSpec();
+        SarimaOrders spec = coeffs.getDomain().getSpec();
         double var = x == null ? v.variance() : x.get(0);
         int np = spec.getParametersCount();
-        DoubleSeq z = x == null ? p.values() : x.extract(1, np);
+        DoubleSeq z = x == null ? coeffs.values() : x.extract(1, np);
         SarimaModel sarima = SarimaModel.builder(spec)
                 .parameters(z)
                 .build();
@@ -115,7 +115,7 @@ public class SarimaItem extends StateItem {
 
     @Override
     public int parametersCount() {
-        SarimaOrders spec = p.getDomain().getSpec();
+        SarimaOrders spec = coeffs.getDomain().getSpec();
         return spec.getParametersCount() + 1;
     }
 
@@ -131,7 +131,7 @@ public class SarimaItem extends StateItem {
 
     @Override
     public int stateDim() {
-        SarimaOrders spec = p.getDomain().getSpec();
+        SarimaOrders spec = coeffs.getDomain().getSpec();
         int p = spec.getP() + spec.getD();
         int q = spec.getQ();
         int s = spec.getPeriod();

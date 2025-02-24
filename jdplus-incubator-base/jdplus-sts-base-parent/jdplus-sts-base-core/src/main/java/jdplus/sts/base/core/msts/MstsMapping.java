@@ -114,7 +114,7 @@ public class MstsMapping implements IParametricMapping<MultivariateCompositeSsf>
             }
             pos += dim;
         }
-        if (mvar != null) {
+        if (mvar != null && ! mvar.isFixed()) {
             mvar.fixStde(Math.sqrt(var));
             if (max != var) {
                 double ratio = Math.sqrt(var / max);

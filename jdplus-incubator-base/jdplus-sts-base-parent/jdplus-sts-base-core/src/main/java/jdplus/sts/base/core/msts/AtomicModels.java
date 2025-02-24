@@ -21,11 +21,13 @@ import jdplus.sts.base.core.splines.RegularSpline;
 import jdplus.sts.base.core.splines.SplineData;
 import jdplus.sts.base.core.msts.internal.ArItem;
 import jdplus.sts.base.core.msts.internal.ArItem2;
+import jdplus.sts.base.core.msts.internal.ArVarItem;
 import jdplus.sts.base.core.msts.internal.ArimaItem;
 import jdplus.sts.base.core.msts.internal.ArmaItem;
 import jdplus.sts.base.core.msts.internal.CycleItem;
 import jdplus.sts.base.core.msts.internal.LocalLevelItem;
 import jdplus.sts.base.core.msts.internal.LocalLinearTrendItem;
+import jdplus.sts.base.core.msts.internal.LtdAirlineItem;
 import jdplus.sts.base.core.msts.internal.MsaeItem;
 import jdplus.sts.base.core.msts.internal.MsaeItem2;
 import jdplus.sts.base.core.msts.internal.MsaeItem3;
@@ -118,6 +120,10 @@ public class AtomicModels {
         return new ArItem(name, ar, fixedar, var, fixedvar, nlags, zeroinit);
     }
 
+    public StateItem arVar(String name, double[] ar, boolean fixedar, final double[] stde, final double scale, final boolean fixed, boolean zeroinit) {
+        return new ArVarItem(name, ar, fixedar, stde, scale, fixed, zeroinit);
+    }
+
     public StateItem sae(String name, double[] ar, boolean fixedar, int lag, boolean zeroinit) {
         return new SaeItem(name, ar, fixedar, lag, zeroinit);
     }
@@ -179,4 +185,9 @@ public class AtomicModels {
         SplineData sd = new SplineData(rs);
         return new SplineItem(name, sd, startpos, cvar, fixedvar);
     }
+
+    public StateItem ltdAirline(final String name, int n, int period, double th0, double th1, double bth0, double bth1, boolean fixedth, double var, boolean fixedvar) {
+        return new LtdAirlineItem(name, n, period, th0, th1, bth0, bth1, fixedth, var, fixedvar);
+    }
+
 }
