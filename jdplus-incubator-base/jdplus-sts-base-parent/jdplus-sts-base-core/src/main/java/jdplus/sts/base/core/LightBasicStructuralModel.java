@@ -31,8 +31,8 @@ import jdplus.sts.base.api.RawBsmDecomposition;
 import jdplus.sts.base.api.BsmSpec;
 import jdplus.toolkit.base.api.information.GenericExplorable;
 import jdplus.toolkit.base.api.timeseries.TsDomain;
+import jdplus.toolkit.base.api.timeseries.TsResiduals;
 import jdplus.toolkit.base.core.modelling.GeneralLinearModel;
-import jdplus.toolkit.base.core.modelling.Residuals;
 import jdplus.toolkit.base.core.modelling.regression.RegressionDesc;
 import jdplus.toolkit.base.core.stats.likelihood.LikelihoodStatistics;
 
@@ -47,7 +47,7 @@ public class LightBasicStructuralModel implements GenericExplorable, BasicStruct
     Description description;
     Estimation estimation;
     RawBsmDecomposition bsmDecomposition;
-    Residuals residuals;
+    TsResiduals residuals;
 
     @lombok.Singular
     List<RegressionDesc> regressionItems;

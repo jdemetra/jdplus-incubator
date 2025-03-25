@@ -40,6 +40,7 @@ import jdplus.toolkit.base.api.processing.ProcessingLog;
 import jdplus.toolkit.base.api.stats.ProbabilityType;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.api.timeseries.TsDomain;
+import jdplus.toolkit.base.api.timeseries.TsResiduals;
 import jdplus.toolkit.base.api.timeseries.calendars.LengthOfPeriodType;
 import jdplus.toolkit.base.api.timeseries.regression.MissingValueEstimation;
 import jdplus.toolkit.base.api.timeseries.regression.ModellingContext;
@@ -194,7 +195,7 @@ public class StsKernel {
                     .period(period)
                     .hyperParametersCount(params.length())
                     .build();
-            Residuals residuals = Residuals.builder()
+            TsResiduals residuals = TsResiduals.builder()
                     .type(ResidualsType.QR_Transformed)
                     .res(e)
 //                    .tsres(TsData.of(description.getSeries().getStart(), e))

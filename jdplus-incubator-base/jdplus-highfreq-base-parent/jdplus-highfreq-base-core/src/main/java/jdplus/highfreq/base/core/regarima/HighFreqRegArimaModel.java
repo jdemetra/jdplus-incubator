@@ -38,12 +38,12 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.api.timeseries.TsPeriod;
+import jdplus.toolkit.base.api.timeseries.TsResiduals;
 import jdplus.toolkit.base.core.arima.IArimaModel;
 import jdplus.toolkit.base.core.dstats.T;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.toolkit.base.core.modelling.GeneralLinearModel;
 import jdplus.toolkit.base.core.modelling.LightweightLinearModel;
-import jdplus.toolkit.base.core.modelling.Residuals;
 import jdplus.toolkit.base.core.modelling.regression.RegressionDesc;
 import jdplus.toolkit.base.core.regarima.RegArimaEstimation;
 import jdplus.toolkit.base.core.regarima.RegArimaModel;
@@ -170,7 +170,7 @@ public class HighFreqRegArimaModel<S extends IArimaModel, M extends ArimaDescrip
                 .hyperParametersCount(free)
                 .build();
         TsPeriod start=description.getEstimationDomain().getEndPeriod().plus(-fullRes.length());
-        Residuals residuals = Residuals.builder()
+        TsResiduals residuals = TsResiduals.builder()
                 .type(ResidualsType.QR_Transformed)
                 .res(ll.e())
                 .ssq(ll.ssq())
@@ -200,7 +200,7 @@ public class HighFreqRegArimaModel<S extends IArimaModel, M extends ArimaDescrip
 
     Estimation estimation;
 
-    Residuals residuals;
+    TsResiduals residuals;
 
     DoubleSeq independentResiduals;
     List<RegressionDesc> regressionItems;
