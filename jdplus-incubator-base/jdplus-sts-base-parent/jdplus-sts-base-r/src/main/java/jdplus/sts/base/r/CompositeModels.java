@@ -341,7 +341,7 @@ public class CompositeModels {
             return (pos == null ? estimation.stdevSignal(M) : estimation.stdevSignal(M, pos)).toArray();
         }
 
-        public FastMatrix loading(int obs) {
+        public Matrix loading(int obs) {
             return estimation.loading(obs, null);
         }
 
