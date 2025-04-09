@@ -31,7 +31,7 @@ public class RegularSplineTest {
     public void testInt() {
         RegularSpline rs = RegularSpline.of(25);
         int n = 0;
-        for (int i = 0; i < 10000; ++i) {
+        for (int i = 0; i < 100000; ++i) {
             IntSeq observations = rs.observations(i);
             int nc = observations.length();
             for (int j = 0; j < nc; ++j) {
@@ -39,14 +39,14 @@ public class RegularSplineTest {
             }
             n += nc;
         }
-        assertTrue(n == 250000);
+        assertTrue(n == 2500000);
     }
 
     @Test
     public void testDouble() {
         RegularSpline rs = RegularSpline.of(24.6);
         int n = 0;
-        for (int i = 0; i < 10000; ++i) {
+        for (int i = 0; i < 100000; ++i) {
             IntSeq observations = rs.observations(i);
             int nc = observations.length();
             for (int j = 0; j < nc; ++j) {
@@ -55,7 +55,7 @@ public class RegularSplineTest {
 //            System.out.println(nc);
             n += nc;
         }
-        assertTrue(n == 246000);
+        assertTrue(n == 2460000);
     }
 
     @Test

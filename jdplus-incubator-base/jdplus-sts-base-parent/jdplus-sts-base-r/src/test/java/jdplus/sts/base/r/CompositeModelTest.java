@@ -5,29 +5,25 @@
  */
 package jdplus.sts.base.r;
 
-import jdplus.sts.base.core.msts.AtomicModels;
-import jdplus.sts.base.core.msts.ModelEquation;
-import tck.demetra.data.Data;
+import jdplus.sts.base.core.msts.*;
+import jdplus.toolkit.base.api.math.functions.Optimizer;
+import jdplus.toolkit.base.api.math.matrices.Matrix;
+import jdplus.toolkit.base.api.ssf.SsfInitialization;
+import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.data.DataBlockIterator;
-import tck.demetra.data.MatrixSerializer;
-import jdplus.toolkit.base.api.math.functions.Optimizer;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
-import jdplus.sts.base.core.msts.CompositeModel;
-import jdplus.sts.base.core.msts.CompositeModelEstimation;
 import jdplus.toolkit.base.core.ssf.basic.Loading;
-import java.io.File;
+import jdplus.toolkit.base.core.ssf.sts.LocalLevel;
+import jdplus.toolkit.base.core.ssf.sts.LocalLinearTrend;
+import org.junit.jupiter.api.Test;
+import tck.demetra.data.Data;
+import tck.demetra.data.MatrixSerializer;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import jdplus.toolkit.base.api.ssf.SsfInitialization;
-import jdplus.toolkit.base.api.timeseries.TsData;
-import jdplus.sts.base.core.msts.MstsMapping;
-import jdplus.toolkit.base.core.ssf.sts.LocalLevel;
-import jdplus.toolkit.base.core.ssf.sts.LocalLinearTrend;
-import jdplus.toolkit.base.api.math.matrices.Matrix;
-import org.junit.jupiter.api.Test;
+import java.nio.file.Path;
 
 /**
  *
@@ -41,7 +37,7 @@ public class CompositeModelTest {
         Matrix tmp = null;
         try {
             URI uri = CompositeModels.class.getResource("/mssf1").toURI();
-            tmp = MatrixSerializer.read(new File(uri), "\t|,");
+            tmp = MatrixSerializer.read(Path.of(uri).toFile(), "\t|,");
         } catch (URISyntaxException | IOException ex) {
         }
         data = tmp;

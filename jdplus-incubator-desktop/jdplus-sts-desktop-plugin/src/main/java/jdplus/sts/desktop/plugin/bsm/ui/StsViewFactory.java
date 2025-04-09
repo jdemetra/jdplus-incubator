@@ -5,16 +5,12 @@
 package jdplus.sts.desktop.plugin.bsm.ui;
 
 import jdplus.toolkit.desktop.plugin.TsDynamicProvider;
-import jdplus.toolkit.desktop.plugin.modelling.ForecastsFactory;
 import jdplus.toolkit.desktop.plugin.modelling.InputFactory;
 import jdplus.toolkit.desktop.plugin.modelling.ModelArimaFactory;
 import jdplus.toolkit.desktop.plugin.modelling.ModelRegressorsFactory;
 import jdplus.toolkit.desktop.plugin.modelling.NiidTestsFactory;
-import jdplus.toolkit.desktop.plugin.modelling.OutOfSampleTestFactory;
 import jdplus.toolkit.desktop.plugin.modelling.RegSarimaViews;
-import jdplus.sa.desktop.plugin.processing.BenchmarkingUI;
 import jdplus.sa.desktop.plugin.processing.SIFactory;
-import jdplus.sa.desktop.plugin.ui.DemetraSaUI;
 import jdplus.sa.desktop.plugin.ui.SaViews;
 import jdplus.toolkit.desktop.plugin.ui.processing.GenericChartUI;
 import jdplus.toolkit.desktop.plugin.ui.processing.GenericTableUI;
@@ -25,39 +21,22 @@ import jdplus.toolkit.desktop.plugin.ui.processing.ProcDocumentItemFactory;
 import jdplus.toolkit.desktop.plugin.ui.processing.ProcDocumentViewFactory;
 import jdplus.toolkit.desktop.plugin.ui.processing.stats.ResidualsDistUI;
 import jdplus.toolkit.desktop.plugin.ui.processing.stats.ResidualsUI;
-import jdplus.toolkit.desktop.plugin.ui.processing.stats.SpectrumUI;
 import jdplus.toolkit.desktop.plugin.html.HtmlElement;
-import jdplus.toolkit.desktop.plugin.html.HtmlElements;
-import jdplus.toolkit.desktop.plugin.html.HtmlHeader;
-import jdplus.toolkit.desktop.plugin.html.core.HtmlDiagnosticsSummary;
-import jdplus.toolkit.base.api.information.InformationSet;
-import jdplus.toolkit.base.api.modelling.ModellingDictionary;
-import jdplus.toolkit.base.api.processing.ProcDiagnostic;
 import jdplus.sa.base.api.SaDictionaries;
-import jdplus.sa.base.api.SaManager;
-import jdplus.sa.base.api.SaProcessingFactory;
-import jdplus.sa.base.api.StationaryVarianceDecomposition;
-import jdplus.sa.desktop.plugin.html.HtmlSeasonalityDiagnostics;
-import jdplus.sa.desktop.plugin.html.HtmlStationaryVarianceDecomposition;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.api.timeseries.TsDocument;
 import jdplus.toolkit.base.api.dictionaries.RegressionDictionaries;
 import jdplus.toolkit.base.api.util.Id;
 import jdplus.toolkit.base.api.util.LinearId;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import jdplus.toolkit.base.core.regsarima.regular.RegSarimaModel;
-import jdplus.sa.base.core.SaBenchmarkingResults;
-import jdplus.sa.base.core.tests.SeasonalityTests;
 import jdplus.sts.base.core.BsmResults;
 import jdplus.sts.base.core.StsDiagnostics;
 import jdplus.sts.base.core.StsDocument;
 import jdplus.sts.base.core.StsResults;
 import jdplus.sts.base.core.extractors.StsResultsExtractor;
 import jdplus.toolkit.base.api.dictionaries.Dictionary;
-import jdplus.toolkit.desktop.plugin.html.core.HtmlInformationSet;
 import jdplus.toolkit.desktop.plugin.html.modelling.HtmlRegSarima;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -151,7 +130,7 @@ public class StsViewFactory extends ProcDocumentViewFactory<StsDocument> {
     public static String[] highSeries() {
         return new String[]{
             generateId("Seasonal", SaDictionaries.S),
-            generateId("Calendar effects", ModellingDictionary.CAL),
+            generateId("Calendar effects", RegressionDictionaries.CAL),
             generateId("Irregular", SaDictionaries.I)
         };
     }
@@ -371,13 +350,13 @@ public class StsViewFactory extends ProcDocumentViewFactory<StsDocument> {
 
         public PreprocessingDetFactory() {
             super(StsDocument.class, SaViews.PREPROCESSING_DET, source -> source, new GenericTableUI(false,
-                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, ModellingDictionary.YCAL),
-                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, ModellingDictionary.Y_LIN),
-                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, ModellingDictionary.DET),
-                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, ModellingDictionary.CAL),
-                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, ModellingDictionary.TDE),
-                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, ModellingDictionary.EE),
-                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, ModellingDictionary.OUT)));
+                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, RegressionDictionaries.YCAL),
+                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, RegressionDictionaries.YLIN),
+                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, RegressionDictionaries.DET),
+                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, RegressionDictionaries.CAL),
+                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, RegressionDictionaries.TDE),
+                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, RegressionDictionaries.EE),
+                    Dictionary.concatenate(SaDictionaries.PREPROCESSING, RegressionDictionaries.OUT)));
         }
 
         @Override

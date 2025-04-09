@@ -119,14 +119,14 @@ public class CompositeModelEstimation {
                 for (int i = 0; i < n; ++i) {
                     ss.save(i, ds.block(i * m), null);
                 }
-                if (likelihood.isScalingFactor()) {
-                    ss.rescaleVariances(likelihood.sigma2());
-                }
                 smoothedStates = ss;
 
             } catch (Exception err) {
 //                StateStorage ss = AkfToolkit.smooth(getSsf(), new SsfMatrix(getData()), false, false, false);
                 StateStorage ss = DkToolkit.smooth(getSsf(), new SsfMatrix(getData()), true, false);
+                if (!ss.hasVariances()) {
+                    return null;
+                }
                 if (likelihood.isScalingFactor()) {
                     ss.rescaleVariances(likelihood.sigma2());
                 }
@@ -177,9 +177,6 @@ public class CompositeModelEstimation {
                 for (int i = 0; i < nd; ++i) {
                     ss.a(i).set(Double.NaN);
                 }
-                if (likelihood.isScalingFactor()) {
-                    ss.rescaleVariances(likelihood.sigma2());
-                }
                 filteredStates = ss;
             }
         }
@@ -228,9 +225,6 @@ public class CompositeModelEstimation {
                 for (int i = 0; i < nd; ++i) {
                     ss.a(i).set(Double.NaN);
                 }
-                if (likelihood.isScalingFactor()) {
-                    ss.rescaleVariances(likelihood.sigma2());
-                }
                 filteringStates = ss;
             }
         }
@@ -260,6 +254,9 @@ public class CompositeModelEstimation {
             int pos = find(cmpName, cmp);
             if (pos >= 0) {
                 ISsfLoading loading = item.getLoading();
+                if (loading == null) {
+                    loading = model.getItem(pos).defaultLoading(p);
+                }
                 int start = cmpPos[pos], end = start + cmpDim[pos];
                 DataBlock col = C.column(i);
                 for (int j = 0; j < nr; ++j) {
@@ -288,6 +285,9 @@ public class CompositeModelEstimation {
             int pos = find(cmpName, cmp);
             if (pos >= 0) {
                 ISsfLoading loading = item.getLoading();
+                if (loading == null) {
+                    loading = model.getItem(pos).defaultLoading(p);
+                }
                 int start = cmpPos[pos], end = start + cmpDim[pos];
                 DataBlock col = C.column(i);
                 for (int j = 0; j < nr; ++j) {
@@ -305,6 +305,9 @@ public class CompositeModelEstimation {
     public FastMatrix getSmoothedComponentsVariance(int eq) {
         ModelEquation equation = model.getEquation(eq);
         StateStorage ss = getSmoothedStates();
+        if (!ss.hasVariances()) {
+            return null;
+        }
         int nr = ss.size();
         int nc = equation.getItemsCount();
         FastMatrix C = FastMatrix.make(nr, nc);
@@ -316,6 +319,9 @@ public class CompositeModelEstimation {
             int pos = find(cmpName, cmp);
             if (pos >= 0) {
                 ISsfLoading loading = item.getLoading();
+                if (loading == null) {
+                    loading = model.getItem(pos).defaultLoading(eq);
+                }
                 int start = cmpPos[pos];
                 DataBlock col = C.column(i);
                 for (int j = 0; j < nr; ++j) {
@@ -415,7 +421,8 @@ public class CompositeModelEstimation {
             double[] v = ss.getComponentVariance(pos[0]).toArray();
             DoubleSeqCursor cursor = L.column(0).cursor();
             for (int i = 0; i < v.length; ++i) {
-                v[i] = Math.sqrt(v[i]) * Math.abs(cursor.getAndNext());
+                double e = v[i] * Math.abs(cursor.getAndNext());
+                v[i] = e <= 0 ? 0 : Math.sqrt(e);
             }
             return DoubleSeq.of(v);
         } else {

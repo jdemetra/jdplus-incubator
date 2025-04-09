@@ -15,8 +15,6 @@
  */
 package jdplus.sts.base.core.splines;
 
-import jdplus.sts.base.core.splines.RegularSpline;
-import jdplus.sts.base.core.splines.SplineData;
 import jdplus.sts.base.core.splines.SplineData.CycleInformation;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

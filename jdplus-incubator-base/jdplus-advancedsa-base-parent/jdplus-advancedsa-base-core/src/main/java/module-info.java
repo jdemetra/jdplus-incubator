@@ -12,4 +12,5 @@ module jdplus.advancedsa.base.core {
 
     exports jdplus.advancedsa.base.core.regarima;
     exports jdplus.advancedsa.base.core.movingtd;
+    exports jdplus.advancedsa.base.core.tarima;
 }

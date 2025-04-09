@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 JDemetra+.
+ * Copyright 2025 JDemetra+.
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -13,22 +13,19 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package jdplus.sts.base.core.splines;
+package jdplus.advancedsa.base.core.tarima;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import tck.demetra.data.Data;
 
 /**
  *
  * @author Jean Palate
  */
-public class CubicSplinesTest {
-    
-    public CubicSplinesTest() {
+public class LtdAirlineItemTest {
+
+//    double[] s = DoubleSeq.of(Data.RETAIL_ALLHOME).log().toArray();
+
+    public LtdAirlineItemTest() {
     }
 
-    @Test
-    public void testSomeMethod() {
-    }
-    
 }

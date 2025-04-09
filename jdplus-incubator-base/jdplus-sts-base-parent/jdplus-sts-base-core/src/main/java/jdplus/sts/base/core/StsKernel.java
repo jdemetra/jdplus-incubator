@@ -40,6 +40,7 @@ import jdplus.toolkit.base.api.processing.ProcessingLog;
 import jdplus.toolkit.base.api.stats.ProbabilityType;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.api.timeseries.TsDomain;
+import jdplus.toolkit.base.api.timeseries.TsResiduals;
 import jdplus.toolkit.base.api.timeseries.calendars.LengthOfPeriodType;
 import jdplus.toolkit.base.api.timeseries.regression.MissingValueEstimation;
 import jdplus.toolkit.base.api.timeseries.regression.ModellingContext;
@@ -187,16 +188,21 @@ public class StsKernel {
                     .variables(variables)
                     .build();
             DoubleSeq e = kernel.getLikelihood().e();
+            // TODO: compute full residuals (to put in residuals and to compute stats)
             RawBsmDecomposition rdecomp = kernel.decompose();
             NiidTests niid = NiidTests.builder()
                     .data(e)
                     .period(period)
                     .hyperParametersCount(params.length())
                     .build();
-            Residuals residuals = Residuals.builder()
-                    .type(ResidualsType.FullResiduals)
+            TsResiduals residuals = TsResiduals.builder()
+                    .type(ResidualsType.QR_Transformed)
                     .res(e)
-                    .start(description.getSeries().getStart())
+//                    .tsres(TsData.of(description.getSeries().getStart(), e))
+                    .ssq(ll.ssq())
+                    .n(ll.dim())
+                    .df(ll.degreesOfFreedom())
+                    .dfc(ll.degreesOfFreedom() - params.length())
                     .test(ResidualsDictionaries.MEAN, niid.meanTest())
                     .test(ResidualsDictionaries.SKEW, niid.skewness())
                     .test(ResidualsDictionaries.KURT, niid.kurtosis())

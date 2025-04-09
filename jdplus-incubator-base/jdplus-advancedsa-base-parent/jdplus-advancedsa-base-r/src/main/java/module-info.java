@@ -9,5 +9,5 @@ module jdplus.advancedsa.base.r {
     requires jdplus.advancedsa.base.core;
     requires jdplus.toolkit.base.core;
 
-//    exports jdplus.advancedsa.base.r;
+    exports jdplus.advancedsa.base.r;
 }

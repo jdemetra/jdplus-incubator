@@ -29,7 +29,6 @@ import jdplus.toolkit.desktop.plugin.html.HtmlElement;
 import jdplus.toolkit.desktop.plugin.html.HtmlElements;
 import jdplus.toolkit.desktop.plugin.html.HtmlHeader;
 import jdplus.toolkit.desktop.plugin.html.core.HtmlDiagnosticsSummary;
-import jdplus.toolkit.base.api.modelling.ModellingDictionary;
 import jdplus.toolkit.base.api.processing.ProcDiagnostic;
 import jdplus.sa.base.api.SaDictionaries;
 import jdplus.sa.base.api.SaManager;
@@ -167,7 +166,7 @@ public class X12plusViewFactory extends ProcDocumentViewFactory<X12plusDocument>
         } else {
             return new String[]{
                 generateId("Seasonal (component)", BasicInformationExtractor.concatenate(SaDictionaries.DECOMPOSITION, SaDictionaries.S_CMP)),
-                generateId("Calendar effects", ModellingDictionary.CAL),
+                generateId("Calendar effects", RegressionDictionaries.CAL),
                 generateId("Irregular", SaDictionaries.I)
             };
         }
@@ -416,14 +415,14 @@ public class X12plusViewFactory extends ProcDocumentViewFactory<X12plusDocument>
 
         public PreprocessingDetFactory() {
             super(X12plusDocument.class, SaViews.PREPROCESSING_DET, source -> source, new GenericTableUI(false,
-                    ModellingDictionary.YCAL,
-                    ModellingDictionary.Y_LIN,
-                    ModellingDictionary.DET,
-                    ModellingDictionary.CAL,
-                    ModellingDictionary.TDE,
-                    ModellingDictionary.EE,
-                    ModellingDictionary.OUT,
-                    ModellingDictionary.FULL_RES));
+                    RegressionDictionaries.YCAL,
+                    RegressionDictionaries.YLIN,
+                    RegressionDictionaries.DET,
+                    RegressionDictionaries.CAL,
+                    RegressionDictionaries.TDE,
+                    RegressionDictionaries.EE,
+                    RegressionDictionaries.OUT,
+                    RegressionDictionaries.FULL_RES));
         }
 
         @Override
@@ -643,7 +642,7 @@ public class X12plusViewFactory extends ProcDocumentViewFactory<X12plusDocument>
                 }
                 SaProcessingFactory factory = SaManager.factoryFor(doc.getSpecification());
                 List<ProcDiagnostic> diags = new ArrayList<>();
-                factory.fillDiagnostics(diags, rslt);
+                factory.fillDiagnostics(diags, null, rslt);
                 return new HtmlDiagnosticsSummary(diags);
             }, new HtmlItemUI());
         }
