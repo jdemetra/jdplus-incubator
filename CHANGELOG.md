@@ -7,9 +7,13 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+This is a feature release of incubator extensions for JDemetra+ v3.  
+[JDemetra+ v3.5.0 or later](https://github.com/jdemetra/jdplus-main) version is required to run it.
+
 ### Changed
 
 - Modernize use of NIO API
+- Bump jdplus-main from 3.2.4 to [3.5.0](https://github.com/jdemetra/jdplus-main/releases/tag/v3.5.0)
 
 ## [2.2.0] - 2024-07-12
 
