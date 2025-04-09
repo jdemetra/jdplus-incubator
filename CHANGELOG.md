@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.3.0] - 2025-04-09
+
 This is a feature release of incubator extensions for JDemetra+ v3.  
 [JDemetra+ v3.5.0 or later](https://github.com/jdemetra/jdplus-main) version is required to run it.
 
@@ -49,12 +51,12 @@ This is a feature release of incubator extensions for JDemetra+ v3.
 This is the **initial release** of incubator extensions for JDemetra+ v3.  
 [JDemetra+ v3.0.2 or later](https://github.com/jdemetra/jdplus-main) version is required to run it.
 
-[Unreleased]: https://github.com/jdemetra/jdplus-incubator/compare/v2.2.0...HEAD
+[Unreleased]: https://github.com/jdemetra/jdplus-incubator/compare/v2.3.0...HEAD
+[2.3.0]: https://github.com/jdemetra/jdplus-incubator/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/jdemetra/jdplus-incubator/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/jdemetra/jdplus-incubator/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/jdemetra/jdplus-incubator/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/jdemetra/jdplus-incubator/releases/tag/v1.0.0
-
 [STAT]: https://img.shields.io/badge/-STAT-068C09
 [OTHER]: https://img.shields.io/badge/-OTHER-e4e669
 [IO]: https://img.shields.io/badge/-IO-F813F7
