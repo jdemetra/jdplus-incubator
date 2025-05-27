@@ -7,6 +7,10 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- ![OTHER] Migrate OSSRH to Central Portal
+
 ## [2.3.0] - 2025-04-09
 
 This is a feature release of incubator extensions for JDemetra+ v3.  
