@@ -21,7 +21,7 @@ import jdplus.toolkit.base.api.modelling.regular.ModellingSpec;
 import jdplus.sa.base.api.benchmarking.SaBenchmarkingSpec;
 import jdplus.sts.base.api.BsmSpec;
 import jdplus.sts.base.api.StsSpec;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 
 /**
  *

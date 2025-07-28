@@ -6,7 +6,7 @@ module jdplus.highfreq.base.io {
     requires static lombok;
     requires static nbbrd.design;
     requires static nbbrd.service;
-    requires static org.checkerframework.checker.qual;
+    requires static org.jspecify;
 
     requires jdplus.toolkit.base.api;
     requires jdplus.sa.base.api;

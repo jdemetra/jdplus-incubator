@@ -48,7 +48,7 @@ import jdplus.toolkit.base.core.arima.IArimaModel;
 import jdplus.toolkit.base.core.arima.estimation.IArimaMapping;
 import jdplus.toolkit.base.core.timeseries.simplets.Transformations;
 import nbbrd.design.Development;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 
 /**
  *

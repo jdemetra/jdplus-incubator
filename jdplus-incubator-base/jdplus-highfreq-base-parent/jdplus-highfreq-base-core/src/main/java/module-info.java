@@ -11,7 +11,7 @@ module jdplus.highfreq.base.core {
     requires static lombok;
     requires static nbbrd.design;
     requires static nbbrd.service;
-    requires static org.checkerframework.checker.qual;
+    requires static org.jspecify;
 
     requires transitive jdplus.highfreq.base.api;
     requires jdplus.toolkit.base.api;

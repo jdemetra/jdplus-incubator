@@ -32,7 +32,7 @@ import jdplus.toolkit.base.api.timeseries.regression.ModellingContext;
 import jdplus.toolkit.base.core.regarima.AICcComparator;
 import jdplus.toolkit.base.core.regsarima.regular.RegressionVariablesTest;
 import jdplus.toolkit.base.api.timeseries.calendars.LengthOfPeriodType;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import jdplus.toolkit.base.api.timeseries.regression.IEasterVariable;
 import jdplus.toolkit.base.api.timeseries.calendars.DayClustering;
 import jdplus.toolkit.base.api.timeseries.regression.ITradingDaysVariable;

@@ -21,7 +21,7 @@ import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.api.data.DoubleSeqCursor;
 import jdplus.toolkit.base.core.math.functions.IParametersDomain;
 import jdplus.toolkit.base.core.math.functions.ParamValidation;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.core.math.linearfilters.FilterUtility;
 

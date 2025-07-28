@@ -13,7 +13,7 @@ module jdplus.stl.base.core {
     requires static lombok;
     requires static nbbrd.design;
     requires static nbbrd.service;
-    requires static org.checkerframework.checker.qual;
+    requires static org.jspecify;
 
     requires jdplus.stl.base.api;
     requires jdplus.toolkit.base.api;
