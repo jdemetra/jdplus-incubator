@@ -35,18 +35,18 @@ public class TimeVaryingAirlineDecomposerTest {
 
     @Test
     public void testLinear() {
-        double[] s = Data.RETAIL_BOOKSTORES.clone();
+        double[] s = Data.RETAIL_GASOLINE.clone();
         for (int i=0; i<s.length; ++i)
             s[i]=Math.log(s[i]);
-        double[] th = linear(s.length, 0.3, -0.6);
-        double[] bth = linear(s.length, -0.1, -0.8);
+        double[] th = linear(s.length, -0.135, 0.618);
+        double[] bth = linear(s.length, -.999, -.1);
         long t0 = System.currentTimeMillis();
         TimeVaryingAirlineDecomposer decomposer = new TimeVaryingAirlineDecomposer(12, th, bth);
         UcarimaModel[] ucarimaModels = decomposer.ucarimaModels();
         
         CompositeSsf ssf = TimeVaryingSsfUcarima.of(s.length, i->ucarimaModels[i]);
         
-        DefaultSmoothingResults sf = DkToolkit.smooth(ssf, new SsfData(s), false, false);
+        DefaultSmoothingResults sf = DkToolkit.sqrtSmooth(ssf, new SsfData(s), false, false);
         long t1 = System.currentTimeMillis();
         System.out.println(t1 - t0);
         int[] pos = ssf.componentsPosition();
