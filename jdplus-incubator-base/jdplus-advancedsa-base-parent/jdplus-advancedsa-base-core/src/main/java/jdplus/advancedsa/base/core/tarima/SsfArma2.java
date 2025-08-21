@@ -39,49 +39,111 @@ import nbbrd.design.Development;
 @Development(status = Development.Status.Beta)
 @lombok.experimental.UtilityClass
 public class SsfArma2 {
-    
+
     public ISsfLoading defaultLoading() {
         return Loading.fromPosition(0);
     }
-    
+
     public StateComponent stateComponent(IArimaModel arima) {
         if (!arima.isStationary()) {
             return null;
         }
         Data data = new Data(arima);
-        Initialization initialization = new Initialization(data, arima);
+        Initialization initialization = new Initialization(arima, data.dim);
         Dynamics dynamics = new Dynamics(data);
         return new StateComponent(initialization, dynamics);
     }
-    
+
     public Ssf ssf(IArimaModel arima) {
         return Ssf.of(stateComponent(arima), defaultLoading());
     }
-    
+
+    public FastMatrix unconditionalCovariance(IArimaModel arma) {
+
+        int p = arma.getArOrder(), q = arma.getMaOrder();
+        int r = Math.max(p, q + 1);
+        FastMatrix V0 = FastMatrix.square(r);
+        unconditionalCovariance(arma, V0);
+        return V0;
+    }
+
+    private void unconditionalCovariance(IArimaModel arma, FastMatrix V0) {
+        AutoCovarianceFunction acf = arma.getAutoCovarianceFunction();
+        double var = arma.getInnovationVariance();
+        Polynomial ar = arma.getAr().asPolynomial();
+        Polynomial ma = arma.getMa().asPolynomial();
+        int dim = V0.getColumnsCount();
+        double[] phi = ar.coefficients().toArray(), theta = ma.coefficients().toArray();
+
+        double[] ac = acf.values(dim);
+        // first column
+        DataBlock C0 = V0.column(0);
+        C0.set(0, ac[0]);
+        double[] lambda = lambda(phi, theta, var);
+        int p = ar.degree(), q = ma.degree();
+        for (int i = 2; i <= dim; ++i) {
+            double c = 0;
+            for (int j = i; j <= dim; ++j) {
+                if (j <= p) {
+                    c -= phi[j] * ac[j - i + 1];
+                }
+                if (j <= q + 1) {
+                    c += theta[j - 1] * lambda[j - i];
+                }
+            }
+            C0.set(i - 1, c);
+        }
+        recursion(phi, theta, var, V0);
+
+    }
+
+    double[] lambda(double[] phi, double[] theta, double var) {
+        int q = theta.length - 1, p = phi.length - 1;
+        double[] l = new double[q + 1];
+        l[0] = var;
+        for (int k = 1; k <= q; ++k) {
+            double lk = theta[k] * var;
+            int jmax = Math.min(p, k);
+            for (int j = 1; j <= jmax; ++j) {
+                lk -= phi[j] * l[k - j];
+            }
+            l[k] = lk;
+        }
+        return l;
+    }
+
+    void recursion(double[] phi, double[] theta, double v, FastMatrix V) {
+        int n = V.getColumnsCount();
+        for (int d = 0; d < n; ++d) {
+            for (int i = d + 1, j = 1; i < n; ++j, ++i) {
+                double vij = V.get(i - 1, j - 1);
+                double phii = i < phi.length ? phi[i] : 0, phij = j < phi.length ? phi[j] : 0;
+                double thetai = i <= theta.length ? theta[i - 1] : 0, thetaj = j <= theta.length ? theta[j - 1] : 0;
+                vij += phij * (V.get(i, 0) - phii * V.get(0, 0));
+                vij += phii * V.get(j, 0);
+                vij -= v * thetai * thetaj;
+                V.set(i, j, vij);
+            }
+        }
+        SymmetricMatrix.fromLower(V);
+    }
+
     static class Data {
-        
+
         final int dim;
         final double var, se;
         final double[] phi, theta;
-        
+
         int q() {
             return theta.length - 1;
         }
-        
+
         int p() {
             return phi.length - 1;
         }
-        
+
         int r() {
             return Math.max(theta.length, phi.length - 1);
-        }
-        
-        double phi(int i){
-            return i<phi.length ? phi[i] : 0;
-        }
-        
-        double theta(int i){
-            return i<theta.length ? theta[i] : 0;
         }
 
         Data(IArimaModel arima) {
@@ -93,109 +155,59 @@ public class SsfArma2 {
             theta = ma.coefficients().toArray();
             se = Math.sqrt(var);
         }
-        
+
     }
-    
+
     static class Initialization implements ISsfInitialization {
-        
-        final Data data;
+
+        final int dim;
         final IArimaModel arma;
-        
-        Initialization(Data data, IArimaModel arma) {
-            this.data = data;
+
+        Initialization(IArimaModel arma, int dim) {
             this.arma = arma;
+            this.dim = dim;
         }
-        
+
         @Override
         public int getStateDim() {
-            return data.dim;
+            return dim;
         }
-        
+
         @Override
         public boolean isDiffuse() {
             return false;
         }
-        
+
         @Override
         public int getDiffuseDim() {
             return 0;
         }
-        
+
         @Override
         public void diffuseConstraints(FastMatrix fm) {
         }
-        
+
         @Override
         public void a0(DataBlock db) {
             db.set(0);
         }
-        
+
         @Override
         public void Pf0(FastMatrix fm) {
-            AutoCovarianceFunction acf = arma.getAutoCovarianceFunction();
-            double[] ac = acf.values(data.dim);
-            // first column
-            DataBlock V0 = fm.column(0);
-            V0.set(0, ac[0]);
-            double[] lambda = lambda(data.phi, data.theta, data.var);
-            double[] psi = arma.getPsiWeights().getWeights(V0.length());
-            int q = data.q(), p = data.p();
-            for (int i = 2; i <= data.dim; ++i) {
-                double c = 0;
-                for (int j = i; j <= data.dim; ++j) {
-                    if (j <= p) {
-                        c -= data.phi[j] * ac[j - i + 1];
-                    }
-                    if (j <= q + 1) {
-                        c += data.theta[j - 1] * lambda[j - i];
-                    }
-                }
-                V0.set(i - 1, c);
-            }
-            recursion(fm);            
+            unconditionalCovariance(arma, fm);
         }
-        
+
         @Override
         public void Pi0(FastMatrix pi0) {
         }
-        
-        double[] lambda(double[] phi, double[] theta, double v) {
-            int q = theta.length - 1, p = phi.length - 1;
-            double[] l = new double[q + 1];
-            l[0] = v;
-            for (int k = 1; k <= q; ++k) {
-                double lk = theta[k] * v;
-                int jmax = Math.min(p, k);
-                for (int j = 1; j <= jmax; ++j) {
-                    lk -= phi[j] * l[k - j];
-                }
-                l[k] = lk;
-            }
-            return l;
-        }
-        
-        void recursion(FastMatrix V) {
-            int n = V.getColumnsCount();
-            for (int d = 0; d < n; ++d) {
-                for (int i=d+1, j = 1; i < n; ++j, ++i) {
-                    double vij = V.get(i - 1, j - 1);
-                    double phii=data.phi(i), phij=data.phi(j);
-                    double thetai=data.theta(i-1), thetaj=data.theta(j-1);
-                    vij+=phij*(V.get(i, 0)-phii*V.get(0, 0));
-                    vij+=phii*V.get(j, 0);
-                    vij-=data.var*thetai*thetaj;
-                    V.set(i, j, vij);
-                }
-            }
-            SymmetricMatrix.fromLower(V);
-        }
+
     }
-    
+
     static class Dynamics implements ISsfDynamics {
-        
+
         final Data data;
         final FastMatrix V;
-        
+
         Dynamics(Data data) {
             this.data = data;
             int n = data.dim;
@@ -205,17 +217,17 @@ public class SsfArma2 {
             SYRK.laddaXXt(data.var, DataPointer.of(data.theta, 0), Vc);
             SymmetricMatrix.fromLower(Vc);
         }
-        
+
         @Override
         public int getInnovationsDim() {
             return 1;
         }
-        
+
         @Override
         public void V(int i, FastMatrix vm) {
             vm.copy(V);
         }
-        
+
         @Override
         public void S(int i, FastMatrix sm) {
             double[] s = sm.getStorage();
@@ -223,17 +235,17 @@ public class SsfArma2 {
                 s[j] = data.se * data.theta[j];
             }
         }
-        
+
         @Override
         public boolean hasInnovations(int i) {
             return true;
         }
-        
+
         @Override
         public boolean areInnovationsTimeInvariant() {
             return true;
         }
-        
+
         @Override
         public void T(int i, FastMatrix t) {
             t.subDiagonal(1).set(1);
@@ -243,7 +255,7 @@ public class SsfArma2 {
                 t0.set(j - 1, -data.phi[j]);
             }
         }
-        
+
         @Override
         public void TX(int i, DataBlock x) {
             int p = data.p();
@@ -257,7 +269,7 @@ public class SsfArma2 {
                 }
             }
         }
-        
+
         @Override
         public void addSU(int i, DataBlock x, DataBlock u) {
             double a = u.get(0) * data.se;
@@ -267,12 +279,12 @@ public class SsfArma2 {
                 px[k] += a * data.theta[j];
             }
         }
-        
+
         @Override
         public void addV(int i, FastMatrix fm) {
             fm.add(V);
         }
-        
+
         @Override
         public void XT(int i, DataBlock x) {
             double[] px = x.getStorage();
@@ -284,7 +296,7 @@ public class SsfArma2 {
             x.fshift(1);
             x.set(0, x0);
         }
-        
+
         @Override
         public void XS(int i, DataBlock x, DataBlock sx) {
             double a = 0;
@@ -295,12 +307,12 @@ public class SsfArma2 {
             }
             sx.set(0, a);
         }
-        
+
         @Override
         public boolean isTimeInvariant() {
             return true;
         }
-        
+
     }
-    
+
 }

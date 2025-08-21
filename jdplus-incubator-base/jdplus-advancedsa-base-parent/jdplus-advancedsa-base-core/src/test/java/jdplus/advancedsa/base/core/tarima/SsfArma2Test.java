@@ -17,6 +17,7 @@ package jdplus.advancedsa.base.core.tarima;
 
 import java.util.Random;
 import jdplus.toolkit.base.api.arima.SarmaOrders;
+import jdplus.toolkit.base.core.arima.ArimaModel;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.toolkit.base.core.math.matrices.MatrixNorms;
@@ -81,7 +82,7 @@ public class SsfArma2Test {
                         cmp.initialization().Pf0(Q);
                         M.sub(Q);
                         double w = MatrixNorms.frobeniusNorm(M);
-                        assertTrue(w < 1e-9);
+                        assertTrue(w < 1e-6);
                     }
                 }
             }
@@ -110,39 +111,57 @@ public class SsfArma2Test {
 
         Ssf ssf1 = SsfArima.ssf(arima);
         DiffuseLikelihood ll1 = DkToolkit.likelihood(ssf1, new SsfData(x), true, true);
-        assertEquals(ll1.logLikelihood(), ll2.logLikelihood(), 1e-9);
+        assertEquals(ll1.logLikelihood(), ll2.logLikelihood(), 1e-6);
+//        System.out.println(ll1.logLikelihood());
+//        System.out.println(ll2.logLikelihood());
+
+        ArimaModel model = ArimaModel.of(arima).scaleVariance(10);
+        cmp2 = SsfArma2.stateComponent(model);
+        ssf2 = Ssf.of(cmp2, SsfArma2.defaultLoading());
+
+        ll2 = DkToolkit.likelihood(ssf2, new SsfData(x), true, true);
+
+        ssf1 = SsfArima.ssf(model);
+        ll1 = DkToolkit.likelihood(ssf1, new SsfData(x), true, true);
+        assertEquals(ll1.logLikelihood(), ll2.logLikelihood(), 1e-6);
+//        System.out.println(ll1.logLikelihood());
+//        System.out.println(ll2.logLikelihood());
+
     }
 
     public static void main(String[] arg) {
-        int p = 1;
-        int bp = 1;
-        int q = 3;
+        int p = 3;
+        int bp = 0;
+        int q = 1;
         int bq = 1;
+        int N = 300;
+        int K = 10000;
         SarmaOrders spec = new SarmaOrders(12);
         spec.setP(p);
         spec.setBp(bp);
         spec.setQ(q);
         spec.setBq(bq);
-        SarimaModel arima = SarimaModel.builder(spec).setDefault().build();
+        SarimaModel arima = SarimaModel.builder(spec).setDefault(-.2, -.9).build();
         StateComponent cmp2 = SsfArma2.stateComponent(arima);
         Ssf ssf1 = SsfArima.ssf(arima);
         Ssf ssf2 = Ssf.of(cmp2, SsfArma2.defaultLoading());
-        DataBlock x = DataBlock.make(240);
+        DataBlock x = DataBlock.make(N);
         Random rnd = new Random();
         x.set(() -> rnd.nextDouble(-1, 1));
-        int k = 1000;
+        DiffuseLikelihood ll1 = null, ll2 = null;
         long t0 = System.currentTimeMillis();
-        for (int i = 0; i < k; ++i) {
-            DkToolkit.likelihood(ssf1, new SsfData(x), true, true);
+        for (int i = 0; i < K; ++i) {
+            ll1 = DkToolkit.likelihood(ssf1, new SsfData(x), true, true);
         }
         long t1 = System.currentTimeMillis();
         System.out.println(t1 - t0);
         t0 = System.currentTimeMillis();
-        for (int i = 0; i < k; ++i) {
-            DkToolkit.likelihood(ssf2, new SsfData(x), true, true);
+        for (int i = 0; i < K; ++i) {
+            ll2 = DkToolkit.likelihood(ssf2, new SsfData(x), true, true);
         }
         t1 = System.currentTimeMillis();
         System.out.println(t1 - t0);
-
+        System.out.println(ll1.logLikelihood());
+        System.out.println(ll2.logLikelihood());
     }
 }

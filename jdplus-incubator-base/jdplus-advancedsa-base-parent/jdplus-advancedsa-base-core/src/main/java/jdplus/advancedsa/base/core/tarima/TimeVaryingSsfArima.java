@@ -27,6 +27,7 @@ import jdplus.toolkit.base.core.ssf.ISsfLoading;
 import jdplus.toolkit.base.core.ssf.StateComponent;
 import jdplus.toolkit.base.core.ssf.basic.IntegratedInitialization;
 import jdplus.toolkit.base.core.ssf.basic.Loading;
+import jdplus.toolkit.base.core.ssf.univariate.Ssf;
 
 /**
  *
@@ -35,6 +36,10 @@ import jdplus.toolkit.base.core.ssf.basic.Loading;
 @lombok.experimental.UtilityClass
 public class TimeVaryingSsfArima {
     
+    public Ssf ssf(int n, IntFunction<IArimaModel> fn) {
+        return Ssf.of(of(n, fn), Loading.fromPosition(0));
+    }
+
     public StateComponent of(int n, IntFunction<IArimaModel> fn) {
         
         IArimaModel m0 = fn.apply(0);
@@ -88,7 +93,8 @@ public class TimeVaryingSsfArima {
                 if (!phi.isEmpty()) {
                     phi.row(i).copy(ar.coefficients().drop(1, 0));
                 }
-                theta.row(i).copy(ma.coefficients());
+                DoubleSeq c = ma.coefficients();
+                theta.row(i).range(0, c.length()).copy(c);
             }
         }
     }

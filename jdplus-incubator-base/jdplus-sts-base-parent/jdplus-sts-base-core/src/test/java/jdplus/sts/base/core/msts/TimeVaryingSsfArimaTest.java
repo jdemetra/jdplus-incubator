@@ -15,10 +15,6 @@
  */
 package jdplus.sts.base.core.msts;
 
-import jdplus.sts.base.core.msts.AtomicModels;
-import jdplus.sts.base.core.msts.CompositeModel;
-import jdplus.sts.base.core.msts.CompositeModelEstimation;
-import jdplus.sts.base.core.msts.StateItem;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.math.functions.Optimizer;
 import jdplus.toolkit.base.api.ssf.SsfInitialization;
