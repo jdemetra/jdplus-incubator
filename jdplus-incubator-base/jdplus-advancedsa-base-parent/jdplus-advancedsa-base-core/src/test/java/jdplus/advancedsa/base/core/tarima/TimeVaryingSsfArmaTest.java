@@ -16,18 +16,17 @@
 package jdplus.advancedsa.base.core.tarima;
 
 import java.util.Random;
+import jdplus.toolkit.base.api.arima.SarimaOrders;
 import jdplus.toolkit.base.api.arima.SarmaOrders;
 import jdplus.toolkit.base.core.arima.IArimaModel;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.sarima.SarimaModel;
-import jdplus.toolkit.base.core.ssf.StateComponent;
 import jdplus.toolkit.base.core.ssf.arima.SsfArima;
 import jdplus.toolkit.base.core.ssf.dk.DkToolkit;
 import jdplus.toolkit.base.core.ssf.likelihood.DiffuseLikelihood;
 import jdplus.toolkit.base.core.ssf.univariate.Ssf;
 import jdplus.toolkit.base.core.ssf.univariate.SsfData;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -40,50 +39,102 @@ public class TimeVaryingSsfArmaTest {
 
     @Test
     public void testLinear() {
-        int N = 100;
+        int N = 120;
         IArimaModel[] models = new IArimaModel[N];
-        int p = 0;
+        int p = 1;
         int bp = 0;
         int q = 1;
         int bq = 1;
-        SarmaOrders spec = new SarmaOrders(12);
+        SarmaOrders spec = new SarmaOrders(4);
         spec.setP(p);
         spec.setBp(bp);
         spec.setQ(q);
         spec.setBq(bq);
 
-        double th0 = -.9, th1 = -.9;
-        double bth0 = -.9, bth1 = -.9;
+        double th0 = -.19, th1 = -.9;
+        double bth0 = -.19, bth1 = -.9;
         double dth = (th1 - th0) / (N - 1);
         double dbth = (bth1 - bth0) / (N - 1);
         for (int i = 0; i < N; ++i) {
             SarimaModel arma = SarimaModel.builder(spec)
-                    .theta(th0 + i * dth)
-                    .btheta(bth0 + dbth * i)
+                    .phi(-0.5)
+                    .theta(th0)
+                    .btheta(bth0)
                     .build();
             models[i] = arma;
+            th0 += dth;
+            bth0 += dbth;
         }
 
         Ssf ssf = TimeVaryingSsfArma.ssf(N, i -> models[i]);
 
         DataBlock x = DataBlock.make(N);
-        Random rnd = new Random();
+        Random rnd = new Random(0);
         x.set(() -> rnd.nextDouble(-1, 1));
 
-        DiffuseLikelihood ll1 = DkToolkit.likelihood(ssf, new SsfData(x), true, true);
+        DiffuseLikelihood ll1 = DkToolkit.likelihood(ssf, new SsfData(x), true, false);
         System.out.println(ll1);
-        
-        Ssf ssf2 =  TimeVaryingSsfArima.ssf(N, i->models[i]);
-        DiffuseLikelihood ll2 = DkToolkit.likelihood(ssf2, new SsfData(x), true, true);
+
+        Ssf ssf2 = TimeVaryingSsfArima2.ssf(N, i -> models[i]);
+        DiffuseLikelihood ll2 = DkToolkit.likelihood(ssf2, new SsfData(x), true, false);
         System.out.println(ll2);
 
         Ssf ssf3 =  SsfArima.ssf(models[0]);
-        DiffuseLikelihood ll3 = DkToolkit.likelihood(ssf3, new SsfData(x), true, true);
+        DiffuseLikelihood ll3 = DkToolkit.likelihood(ssf3, new SsfData(x), true, false);
         System.out.println(ll3);
     }
-    
-       public static void main(String[] arg) {
-        int N = 100, K=100000;
+
+    @Test
+    public void testLinear2() {
+        int N = 120;
+        IArimaModel[] models = new IArimaModel[N];
+        int p = 1;
+        int bp = 0;
+        int q = 1;
+        int bq = 1;
+        SarimaOrders spec = new SarimaOrders(4);
+        spec.setP(p);
+        spec.setD(1);
+        spec.setBp(bp);
+        spec.setBp(1);
+        spec.setQ(q);
+        spec.setBq(bq);
+
+        double th0 = -.9, th1 = -.9;
+        double bth0 = -.9, bth1 = -.9;
+        double dth = (th1 - th0) / (N - 1);
+        double dbth = (bth1 - bth0) / (N - 1);
+        for (int i = 0; i < N; ++i) {
+            SarimaModel arma = SarimaModel.builder(spec)
+                    .phi(-0.5)
+                    .theta(th0)
+                    .btheta(bth0)
+                    .build();
+            models[i] = arma;
+            th0 += dth;
+            bth0 += dbth;
+        }
+
+        Ssf ssf = TimeVaryingSsfArima.ssf(N, i -> models[i]);
+
+        DataBlock x = DataBlock.make(N);
+        Random rnd = new Random(0);
+        x.set(() -> rnd.nextDouble(-1, 1));
+
+        DiffuseLikelihood ll1 = DkToolkit.likelihood(ssf, new SsfData(x), true, false);
+        System.out.println(ll1);
+
+//        Ssf ssf2 = TimeVaryingSsfArima2.ssf(N, i -> models[i]);
+//        DiffuseLikelihood ll2 = DkToolkit.likelihood(ssf2, new SsfData(x), true, false);
+//        System.out.println(ll2);
+//
+        Ssf ssf3 =  SsfArima.ssf(models[0]);
+        DiffuseLikelihood ll3 = DkToolkit.likelihood(ssf3, new SsfData(x), true, false);
+        System.out.println(ll3);
+    }
+
+    public static void main(String[] arg) {
+        int N = 100, K = 100000;
         IArimaModel[] models = new IArimaModel[N];
         int p = 0;
         int bp = 0;
@@ -95,8 +146,8 @@ public class TimeVaryingSsfArmaTest {
         spec.setQ(q);
         spec.setBq(bq);
 
-        double th0 = -.9, th1 = -.9;
-        double bth0 = -.9, bth1 = -.9;
+        double th0 = -.19, th1 = -.9;
+        double bth0 = -.19, bth1 = -.9;
         double dth = (th1 - th0) / (N - 1);
         double dbth = (bth1 - bth0) / (N - 1);
         for (int i = 0; i < N; ++i) {
@@ -106,9 +157,10 @@ public class TimeVaryingSsfArmaTest {
                     .build();
             models[i] = arma;
         }
-        
-        Ssf ssf1 = SsfArma2.ssf(models[0]);
-        Ssf ssf2 = TimeVaryingSsfArma.ssf(N, i -> models[i]);
+
+//        Ssf ssf1 = SsfArma2.ssf(models[0]);
+        Ssf ssf1 = TimeVaryingSsfArma.ssf(N, i -> models[i]);
+        Ssf ssf2 = TimeVaryingSsfArima2.ssf(N, i -> models[i]);
         DataBlock x = DataBlock.make(N);
         Random rnd = new Random();
         x.set(() -> rnd.nextDouble(-1, 1));
@@ -128,6 +180,5 @@ public class TimeVaryingSsfArmaTest {
         System.out.println(ll1.logLikelihood());
         System.out.println(ll2.logLikelihood());
     }
-
 
 }

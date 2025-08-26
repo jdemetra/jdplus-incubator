@@ -32,8 +32,8 @@ public class TimeVaryingSsfUcarima {
         CompositeSsf.Builder builder = CompositeSsf.builder();
         for (int i = 0; i < m; ++i) {
             int cmp=i;
-            builder.add(TimeVaryingSsfArima.of(n, k->fn.apply(k).getComponent(cmp)), Loading.fromPosition(0));
-//            builder.add(SsfArima2.stateComponent(fn.apply(0).getComponent(cmp)), Loading.fromPosition(0));
+//            builder.add(TimeVaryingSsfArima.stateComponent(n, k->fn.apply(k).getComponent(cmp)), Loading.fromPosition(0));
+            builder.add(TimeVaryingSsfArima.stateComponent(n, k->fn.apply(k).getComponent(cmp)), Loading.fromPosition(0));
         }
         return builder.build();
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 JDemetra+.
+ * Copyright 2025 JDemetra+.
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -15,37 +15,50 @@
  */
 package jdplus.advancedsa.base.core.tarima;
 
+import jdplus.toolkit.base.api.arima.SarimaOrders;
 import jdplus.toolkit.base.api.data.DoubleSeq;
+import jdplus.toolkit.base.core.sarima.SarimaModel;
 import jdplus.toolkit.base.core.ssf.composite.CompositeSsf;
 import jdplus.toolkit.base.core.ssf.dk.DkToolkit;
 import jdplus.toolkit.base.core.ssf.univariate.DefaultSmoothingResults;
 import jdplus.toolkit.base.core.ssf.univariate.SsfData;
 import jdplus.toolkit.base.core.ucarima.UcarimaModel;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 import tck.demetra.data.Data;
 
 /**
  *
  * @author Jean Palate
  */
-public class TimeVaryingAirlineDecomposerTest {
-
-    public TimeVaryingAirlineDecomposerTest() {
-    }
+public class TimeVaryingArimaDecomposerTest {
 
     @Test
     public void testLinear() {
         double[] s = Data.RETAIL_GASOLINE.clone();
-        for (int i=0; i<s.length; ++i)
-            s[i]=Math.log(s[i]);
-        double[] th = linear(s.length, -0.135, 0.618);
-        double[] bth = linear(s.length, -.999, -.1);
+        for (int i = 0; i < s.length; ++i) {
+            s[i] = Math.log(s[i]);
+        }
+        double[] th = linear(s.length, 0.18, -0.98);
+        double[] bth = linear(s.length, -.99, -.1);
+        SarimaOrders spec = new SarimaOrders(12);
+        spec.setD(1);
+        spec.setQ(1);
+        spec.setBd(1);
+        spec.setBq(1);
         long t0 = System.currentTimeMillis();
-        TimeVaryingAirlineDecomposer decomposer = new TimeVaryingAirlineDecomposer(12, th, bth);
+        TimeVaryingArimaDecomposer decomposer = new TimeVaryingArimaDecomposer(12, s.length,
+                i -> {
+                    return SarimaModel.builder(spec)
+                            .theta(th[i])
+                            .btheta(bth[i])
+                            .build();
+                }
+        );
         UcarimaModel[] ucarimaModels = decomposer.ucarimaModels();
-        
-        CompositeSsf ssf = TimeVaryingSsfUcarima.of(s.length, i->ucarimaModels[i]);
-        
+
+        CompositeSsf ssf = TimeVaryingSsfUcarima.of(s.length, i -> ucarimaModels[i]);
+
         DefaultSmoothingResults sf = DkToolkit.sqrtSmooth(ssf, new SsfData(s), false, false);
         long t1 = System.currentTimeMillis();
         System.out.println(t1 - t0);
