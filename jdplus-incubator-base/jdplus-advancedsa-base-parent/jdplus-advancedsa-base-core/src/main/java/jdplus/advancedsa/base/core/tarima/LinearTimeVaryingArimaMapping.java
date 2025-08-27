@@ -30,6 +30,7 @@ import jdplus.toolkit.base.core.sarima.estimation.SarimaMapping;
  * @author Jean Palate
  */
 @lombok.Builder(toBuilder = true, builderClassName = "Builder")
+@lombok.Value
 public class LinearTimeVaryingArimaMapping implements IParametricMapping<LinearTimeVaryingArimaModel> {
 
     @lombok.With
@@ -62,6 +63,7 @@ public class LinearTimeVaryingArimaMapping implements IParametricMapping<LinearT
         double[] pmodels = pmodels(ds);
         return LinearTimeVaryingArimaModel.builder()
                 .spec(orders)
+                .n(n)
                 .p0(DoubleSeq.of(pmodels, 0, np))
                 .p1(DoubleSeq.of(pmodels, np, np))
                 .var1(pmodels[pmodels.length-1])

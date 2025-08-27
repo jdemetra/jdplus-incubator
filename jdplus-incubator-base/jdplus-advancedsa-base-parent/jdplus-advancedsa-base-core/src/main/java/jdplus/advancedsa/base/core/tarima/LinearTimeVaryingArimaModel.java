@@ -17,17 +17,39 @@ package jdplus.advancedsa.base.core.tarima;
 
 import jdplus.toolkit.base.api.arima.SarimaOrders;
 import jdplus.toolkit.base.api.data.DoubleSeq;
+import jdplus.toolkit.base.api.data.DoublesMath;
+import jdplus.toolkit.base.core.arima.ArimaModel;
+import jdplus.toolkit.base.core.data.DataBlock;
+import jdplus.toolkit.base.core.sarima.SarimaModel;
+import jdplus.toolkit.base.core.ssf.univariate.Ssf;
 
 /**
  *
  * @author Jean Palate
  */
 @lombok.Value
-@lombok.Builder(toBuilder=true, builderClassName="Builder")
+@lombok.Builder(toBuilder = true, builderClassName = "Builder")
 public class LinearTimeVaryingArimaModel {
-    
+
     private final SarimaOrders spec;
     private final DoubleSeq p0, p1;
     private final double var1;
-    
+    private final int n;
+
+    public Ssf ssf() {
+
+        DoubleSeq delta = DoublesMath.subtract(p1, p0);
+        double r = 1.0 / (n - 1);
+
+        return TimeVaryingSsfArima.ssf(n, i -> {
+            double v = var1 == 1 ? 1 : (var1 - 1) / (n - 1);
+            DataBlock q = DataBlock.of(p0);
+            q.addAY(i * r, delta);
+            SarimaModel sarima = SarimaModel.builder(spec)
+                    .parameters(q)
+                    .build();
+            return new ArimaModel(sarima.getStationaryAr(), sarima.getNonStationaryAr(), sarima.getMa(), v);
+        });
+    }
+
 }
