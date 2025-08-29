@@ -41,7 +41,7 @@ public class LtdArimaModelTest {
         SarimaOrders orders=SarimaOrders.airline(12);
 //        orders.setP(3);
         LtdArimaMapping mapping=LtdArimaMapping.builder(orders)
-//                .n(s.length)
+                .n(s.length)
 //                .vPhi(true)
                 .vTheta(true)
                 .vBtheta(true)
