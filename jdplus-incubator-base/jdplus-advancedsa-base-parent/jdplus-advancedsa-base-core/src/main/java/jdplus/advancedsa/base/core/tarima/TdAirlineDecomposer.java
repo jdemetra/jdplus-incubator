@@ -27,7 +27,7 @@ import jdplus.toolkit.base.core.ucarima.UcarimaModel;
  *
  * @author Jean Palate
  */
-public class TimeVaryingAirlineDecomposer {
+public class TdAirlineDecomposer {
 
     private int period;
     private final double[] thetas, bthetas;
@@ -35,7 +35,7 @@ public class TimeVaryingAirlineDecomposer {
 
     private boolean modified;
 
-    public TimeVaryingAirlineDecomposer(int period, double[] thetas, double[] bthetas) {
+    public TdAirlineDecomposer(int period, double[] thetas, double[] bthetas) {
         if (thetas.length != bthetas.length) {
             throw new IllegalArgumentException();
         }

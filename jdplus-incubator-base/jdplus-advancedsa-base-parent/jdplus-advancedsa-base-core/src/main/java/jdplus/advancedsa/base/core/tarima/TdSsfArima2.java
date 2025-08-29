@@ -34,7 +34,7 @@ import jdplus.toolkit.base.core.ssf.univariate.Ssf;
  * @author Jean Palate
  */
 @lombok.experimental.UtilityClass
-public class TimeVaryingSsfArima2 {
+public class TdSsfArima2 {
 
     public Ssf ssf(int n, IntFunction<IArimaModel> fn) {
         StateComponent cmp = of(n, fn);
@@ -45,7 +45,7 @@ public class TimeVaryingSsfArima2 {
                 pos[i] = i;
             }
 
-            TimeVaryingLoading loading = new TimeVaryingLoading(n, i -> Loading.from(pos, fn.apply(i).getMa().coefficients().toArray()));
+            TdLoading loading = new TdLoading(n, i -> Loading.from(pos, fn.apply(i).getMa().coefficients().toArray()));
             return Ssf.of(cmp, loading);
         } else {
             return Ssf.of(cmp, Loading.fromPosition(0));

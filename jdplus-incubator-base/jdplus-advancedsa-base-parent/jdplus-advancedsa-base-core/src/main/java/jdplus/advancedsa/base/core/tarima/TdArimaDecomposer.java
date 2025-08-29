@@ -28,7 +28,7 @@ import jdplus.toolkit.base.core.ucarima.UcarimaModel;
  *
  * @author Jean Palate
  */
-public class TimeVaryingArimaDecomposer {
+public class TdArimaDecomposer {
 
     private final int period;
     private final ArimaModel[] arima;
@@ -36,7 +36,7 @@ public class TimeVaryingArimaDecomposer {
 
     private boolean modified;
 
-    public TimeVaryingArimaDecomposer(int period, int n, IntFunction<IArimaModel> fn) {
+    public TdArimaDecomposer(int period, int n, IntFunction<IArimaModel> fn) {
         this.period=period;
         arima = new ArimaModel[n];
         ucms = new UcarimaModel[n];

@@ -31,7 +31,7 @@ import tck.demetra.data.Data;
  *
  * @author Jean Palate
  */
-public class TimeVaryingArimaDecomposerTest {
+public class TdArimaDecomposerTest {
 
     @Test
     public void testLinear() {
@@ -47,7 +47,7 @@ public class TimeVaryingArimaDecomposerTest {
         spec.setBd(1);
         spec.setBq(1);
         long t0 = System.currentTimeMillis();
-        TimeVaryingArimaDecomposer decomposer = new TimeVaryingArimaDecomposer(12, s.length,
+        TdArimaDecomposer decomposer = new TdArimaDecomposer(12, s.length,
                 i -> {
                     return SarimaModel.builder(spec)
                             .theta(th[i])
@@ -57,7 +57,7 @@ public class TimeVaryingArimaDecomposerTest {
         );
         UcarimaModel[] ucarimaModels = decomposer.ucarimaModels();
 
-        CompositeSsf ssf = TimeVaryingSsfUcarima.of(s.length, i -> ucarimaModels[i]);
+        CompositeSsf ssf = TdSsfUcarima.of(s.length, i -> ucarimaModels[i]);
 
         DefaultSmoothingResults sf = DkToolkit.sqrtSmooth(ssf, new SsfData(s), false, false);
         long t1 = System.currentTimeMillis();

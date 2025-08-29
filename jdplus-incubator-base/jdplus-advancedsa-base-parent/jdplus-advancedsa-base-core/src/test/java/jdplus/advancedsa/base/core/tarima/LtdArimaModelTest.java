@@ -27,9 +27,9 @@ import tck.demetra.data.Data;
  *
  * @author Jean Palate
  */
-public class LinearTimeVaryingArimaModelTest {
+public class LtdArimaModelTest {
     
-    public LinearTimeVaryingArimaModelTest() {
+    public LtdArimaModelTest() {
         
     }
     
@@ -39,14 +39,15 @@ public class LinearTimeVaryingArimaModelTest {
         DoubleSeq S=DataBlock.of(s);
                 
         SarimaOrders orders=SarimaOrders.airline(12);
-        orders.setP(3);
-        LinearTimeVaryingArimaMapping mapping=LinearTimeVaryingArimaMapping.builder(orders)
-                .n(s.length)
-                .vPhi(true)
+//        orders.setP(3);
+        LtdArimaMapping mapping=LtdArimaMapping.builder(orders)
+//                .n(s.length)
+//                .vPhi(true)
                 .vTheta(true)
                 .vBtheta(true)
+//                .vVar(true)
                 .build();
-        SsfFunction fn = SsfFunction.builder(new SsfData(S), mapping, (LinearTimeVaryingArimaModel model) -> model.ssf())
+        SsfFunction fn = SsfFunction.builder(new SsfData(S), mapping, (LtdArimaModel model) -> model.ssf())
                 .useScalingFactor(true)
                 .useLog(false)
                 .useParallelProcessing(true)

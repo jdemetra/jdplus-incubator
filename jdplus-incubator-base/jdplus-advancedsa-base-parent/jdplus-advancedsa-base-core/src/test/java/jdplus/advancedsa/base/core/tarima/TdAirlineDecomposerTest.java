@@ -28,9 +28,9 @@ import tck.demetra.data.Data;
  *
  * @author Jean Palate
  */
-public class TimeVaryingAirlineDecomposerTest {
+public class TdAirlineDecomposerTest {
 
-    public TimeVaryingAirlineDecomposerTest() {
+    public TdAirlineDecomposerTest() {
     }
 
     @Test
@@ -41,10 +41,10 @@ public class TimeVaryingAirlineDecomposerTest {
         double[] th = linear(s.length, -0.135, 0.618);
         double[] bth = linear(s.length, -.999, -.1);
         long t0 = System.currentTimeMillis();
-        TimeVaryingAirlineDecomposer decomposer = new TimeVaryingAirlineDecomposer(12, th, bth);
+        TdAirlineDecomposer decomposer = new TdAirlineDecomposer(12, th, bth);
         UcarimaModel[] ucarimaModels = decomposer.ucarimaModels();
         
-        CompositeSsf ssf = TimeVaryingSsfUcarima.of(s.length, i->ucarimaModels[i]);
+        CompositeSsf ssf = TdSsfUcarima.of(s.length, i->ucarimaModels[i]);
         
         DefaultSmoothingResults sf = DkToolkit.sqrtSmooth(ssf, new SsfData(s), false, false);
         long t1 = System.currentTimeMillis();

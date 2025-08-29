@@ -36,7 +36,7 @@ import nbbrd.design.Development;
  */
 @Development(status = Development.Status.Beta)
 @lombok.experimental.UtilityClass
-public class TimeVaryingSsfArma {
+public class TdSsfArma {
 
     public ISsfLoading defaultLoading() {
         return Loading.fromPosition(0);

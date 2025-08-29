@@ -32,9 +32,9 @@ import org.junit.jupiter.api.Test;
  *
  * @author Jean Palate
  */
-public class TimeVaryingSsfArmaTest {
+public class TdSsfArmaTest {
 
-    public TimeVaryingSsfArmaTest() {
+    public TdSsfArmaTest() {
     }
 
     @Test
@@ -66,7 +66,7 @@ public class TimeVaryingSsfArmaTest {
             bth0 += dbth;
         }
 
-        Ssf ssf = TimeVaryingSsfArma.ssf(N, i -> models[i]);
+        Ssf ssf = TdSsfArma.ssf(N, i -> models[i]);
 
         DataBlock x = DataBlock.make(N);
         Random rnd = new Random(0);
@@ -75,7 +75,7 @@ public class TimeVaryingSsfArmaTest {
         DiffuseLikelihood ll1 = DkToolkit.likelihood(ssf, new SsfData(x), true, false);
         System.out.println(ll1);
 
-        Ssf ssf2 = TimeVaryingSsfArima2.ssf(N, i -> models[i]);
+        Ssf ssf2 = TdSsfArima2.ssf(N, i -> models[i]);
         DiffuseLikelihood ll2 = DkToolkit.likelihood(ssf2, new SsfData(x), true, false);
         System.out.println(ll2);
 
@@ -115,7 +115,7 @@ public class TimeVaryingSsfArmaTest {
             bth0 += dbth;
         }
 
-        Ssf ssf = TimeVaryingSsfArima.ssf(N, i -> models[i]);
+        Ssf ssf = TdSsfArima.ssf(N, i -> models[i]);
 
         DataBlock x = DataBlock.make(N);
         Random rnd = new Random(0);
@@ -159,8 +159,8 @@ public class TimeVaryingSsfArmaTest {
         }
 
 //        Ssf ssf1 = SsfArma2.ssf(models[0]);
-        Ssf ssf1 = TimeVaryingSsfArma.ssf(N, i -> models[i]);
-        Ssf ssf2 = TimeVaryingSsfArima2.ssf(N, i -> models[i]);
+        Ssf ssf1 = TdSsfArma.ssf(N, i -> models[i]);
+        Ssf ssf2 = TdSsfArima2.ssf(N, i -> models[i]);
         DataBlock x = DataBlock.make(N);
         Random rnd = new Random();
         x.set(() -> rnd.nextDouble(-1, 1));

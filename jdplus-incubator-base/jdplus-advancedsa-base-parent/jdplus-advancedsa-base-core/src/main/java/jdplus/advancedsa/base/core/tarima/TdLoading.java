@@ -24,11 +24,11 @@ import jdplus.toolkit.base.core.ssf.ISsfLoading;
  *
  * @author Jean Palate
  */
-public class TimeVaryingLoading implements ISsfLoading {
+public class TdLoading implements ISsfLoading {
 
     private final ISsfLoading[] loadings;
 
-    public TimeVaryingLoading(int n, IntFunction<ISsfLoading> fn) {
+    public TdLoading(int n, IntFunction<ISsfLoading> fn) {
         loadings = new ISsfLoading[n];
         for (int i = 0; i < n; ++i) {
             loadings[i] = fn.apply(i);

@@ -31,7 +31,7 @@ import jdplus.toolkit.base.core.sarima.estimation.SarimaMapping;
  */
 @lombok.Builder(toBuilder = true, builderClassName = "Builder")
 @lombok.Value
-public class LinearTimeVaryingArimaMapping implements IParametricMapping<LinearTimeVaryingArimaModel> {
+public class LtdArimaMapping2 implements IParametricMapping<LtdArimaModel> {
 
     @lombok.With
     private final SarimaOrders orders;
@@ -58,10 +58,10 @@ public class LinearTimeVaryingArimaMapping implements IParametricMapping<LinearT
     }
 
     @Override
-    public LinearTimeVaryingArimaModel map(DoubleSeq ds) {
+    public LtdArimaModel map(DoubleSeq ds) {
         int np=orders.getParametersCount();
         double[] pmodels = pmodels(ds);
-        return LinearTimeVaryingArimaModel.builder()
+        return LtdArimaModel.builder()
                 .spec(orders)
                 .n(n)
                 .p0(DoubleSeq.of(pmodels, 0, np))

@@ -34,9 +34,9 @@ import tck.demetra.data.Data;
  *
  * @author Jean Palate
  */
-public class TimeVaryingSsfArimaTest {
+public class TdSsfArimaTest {
 
-    public TimeVaryingSsfArimaTest() {
+    public TdSsfArimaTest() {
     }
 
     @Test
@@ -58,7 +58,7 @@ public class TimeVaryingSsfArimaTest {
             models[i] = arma;
         }
 
-        Ssf ssf = TimeVaryingSsfArima.ssf(N, i -> models[i]);
+        Ssf ssf = TdSsfArima.ssf(N, i -> models[i]);
 
         DiffuseLikelihood ll1 = DkToolkit.likelihood(ssf, new SsfData(s), true, true);
         System.out.println(ll1);
@@ -88,8 +88,8 @@ public class TimeVaryingSsfArimaTest {
         }
 
         Ssf ssf1 = SsfArima.ssf(models[0]);
-        Ssf ssf2 = TimeVaryingSsfArima.ssf(N, i -> models[i]);
-        Ssf ssf3 = TimeVaryingSsfArima2.ssf(N, i -> models[i]);
+        Ssf ssf2 = TdSsfArima.ssf(N, i -> models[i]);
+        Ssf ssf3 = TdSsfArima2.ssf(N, i -> models[i]);
         DiffuseLikelihood ll1 = null, ll2 = null, ll3 = null;
         long t0 = System.currentTimeMillis();
         for (int i = 0; i < K; ++i) {

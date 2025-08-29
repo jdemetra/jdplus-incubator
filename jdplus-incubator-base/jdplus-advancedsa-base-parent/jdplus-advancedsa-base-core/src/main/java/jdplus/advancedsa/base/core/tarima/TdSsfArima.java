@@ -30,7 +30,7 @@ import jdplus.toolkit.base.core.ssf.univariate.Ssf;
  * @author Jean Palate
  */
 @lombok.experimental.UtilityClass
-public class TimeVaryingSsfArima {
+public class TdSsfArima {
     
     public Ssf ssf(int n, IntFunction<IArimaModel> fn) {
         return Ssf.of(stateComponent(n, fn), Loading.fromPosition(0));
@@ -41,9 +41,9 @@ public class TimeVaryingSsfArima {
         IArimaModel m0 = fn.apply(0);
         
         if (m0.isStationary()) {
-            return TimeVaryingSsfArma.stateComponent(n, fn);
+            return TdSsfArma.stateComponent(n, fn);
         } else {
-            StateComponent stcmp = TimeVaryingSsfArma.stateComponent(n, i->(IArimaModel) fn.apply(i).stationaryTransformation().getStationaryModel());
+            StateComponent stcmp = TdSsfArma.stateComponent(n, i->(IArimaModel) fn.apply(i).stationaryTransformation().getStationaryModel());
             ISsfLoading loading=Loading.fromPosition(0);
             DoubleSeq d = m0.getNonStationaryAr().coefficients().drop(1, 0);
             IntegratedDynamics idyn = new IntegratedDynamics(stcmp.dynamics(), loading, d);

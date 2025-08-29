@@ -29,7 +29,7 @@ import jdplus.toolkit.base.core.ssf.univariate.Ssf;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true, builderClassName = "Builder")
-public class LinearTimeVaryingArimaModel {
+public class LtdArimaModel {
 
     private final SarimaOrders spec;
     private final DoubleSeq p0, p1;
@@ -41,14 +41,13 @@ public class LinearTimeVaryingArimaModel {
         DoubleSeq delta = DoublesMath.subtract(p1, p0);
         double r = 1.0 / (n - 1);
 
-        return TimeVaryingSsfArima.ssf(n, i -> {
-            double v = var1 == 1 ? 1 : (var1 - 1) / (n - 1);
+        return TdSsfArima.ssf(n, i -> {
             DataBlock q = DataBlock.of(p0);
             q.addAY(i * r, delta);
             SarimaModel sarima = SarimaModel.builder(spec)
                     .parameters(q)
                     .build();
-            return new ArimaModel(sarima.getStationaryAr(), sarima.getNonStationaryAr(), sarima.getMa(), v);
+            return new ArimaModel(sarima.getStationaryAr(), sarima.getNonStationaryAr(), sarima.getMa(), 1 + (i * r) * (var1 - 1));
         });
     }
 

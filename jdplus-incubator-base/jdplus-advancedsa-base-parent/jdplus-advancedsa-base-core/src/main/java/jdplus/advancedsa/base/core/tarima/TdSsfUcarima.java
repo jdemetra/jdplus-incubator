@@ -25,7 +25,7 @@ import jdplus.toolkit.base.core.ucarima.UcarimaModel;
  * @author Jean Palate
  */
 @lombok.experimental.UtilityClass
-public class TimeVaryingSsfUcarima {
+public class TdSsfUcarima {
     
         public CompositeSsf of(int n, IntFunction<UcarimaModel> fn) {
             int m = fn.apply(0).getComponentsCount();
@@ -33,7 +33,7 @@ public class TimeVaryingSsfUcarima {
         for (int i = 0; i < m; ++i) {
             int cmp=i;
 //            builder.add(TimeVaryingSsfArima.stateComponent(n, k->fn.apply(k).getComponent(cmp)), Loading.fromPosition(0));
-            builder.add(TimeVaryingSsfArima.stateComponent(n, k->fn.apply(k).getComponent(cmp)), Loading.fromPosition(0));
+            builder.add(TdSsfArima.stateComponent(n, k->fn.apply(k).getComponent(cmp)), Loading.fromPosition(0));
         }
         return builder.build();
     }
