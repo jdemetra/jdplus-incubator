@@ -50,18 +50,18 @@ public class TdAirlineDecomposerTest {
         long t1 = System.currentTimeMillis();
         System.out.println(t1 - t0);
         int[] pos = ssf.componentsPosition();
-        System.out.println(sf.item(pos[0]));
-        System.out.println(sf.item(pos[1]));
-        System.out.println(sf.item(pos[2]));
-        System.out.println(DoubleSeq.of(s));
-        for (int i = 0; i < ucarimaModels.length; ++i) {
-            UcarimaModel ucm = ucarimaModels[i];
-            for (int j = 0; j < ucm.getComponentsCount(); ++j) {
-                System.out.print(ucm.getComponent(j).getInnovationVariance());
-                System.out.print('\t');
-            }
-            System.out.println();
-        }
+//        System.out.println(sf.item(pos[0]));
+//        System.out.println(sf.item(pos[1]));
+//        System.out.println(sf.item(pos[2]));
+//        System.out.println(DoubleSeq.of(s));
+//        for (int i = 0; i < ucarimaModels.length; ++i) {
+//            UcarimaModel ucm = ucarimaModels[i];
+//            for (int j = 0; j < ucm.getComponentsCount(); ++j) {
+//                System.out.print(ucm.getComponent(j).getInnovationVariance());
+//                System.out.print('\t');
+//            }
+//            System.out.println();
+//        }
     }
 
     public static double[] linear(int n, double a, double b) {

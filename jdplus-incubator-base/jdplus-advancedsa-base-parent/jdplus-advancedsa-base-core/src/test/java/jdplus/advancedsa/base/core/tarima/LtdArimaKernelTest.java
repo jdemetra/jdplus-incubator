@@ -48,9 +48,9 @@ public class LtdArimaKernelTest {
         long t0 = System.currentTimeMillis();
         for (int i = 0; i < s.length; ++i) {
             LtdArimaResults result = kernel.process(s[i].log());
-            System.out.print(result.getLl0().logLikelihood());
-            System.out.print('\t');
-            System.out.println(result.getLl1().logLikelihood());
+//            System.out.print(result.getLl0().logLikelihood());
+//            System.out.print('\t');
+//            System.out.println(result.getLl1().logLikelihood());
 //            System.out.println(result.getStart().parameters());
 //            System.out.println(result.getModel().getP0());
 //            System.out.println(result.getModel().getP1());
@@ -84,9 +84,9 @@ public class LtdArimaKernelTest {
         long t0 = System.currentTimeMillis();
         for (int i = 0; i < s.length; ++i) {
             LtdArimaResults result = kernel.process(s[i].log());
-            System.out.print(result.getLl0().logLikelihood());
-            System.out.print('\t');
-            System.out.println(result.getLl1().logLikelihood());
+//            System.out.print(result.getLl0().logLikelihood());
+//            System.out.print('\t');
+//            System.out.println(result.getLl1().logLikelihood());
 //            System.out.println(result.getStart().parameters());
 //            System.out.println(result.getModel().getP0());
 //            System.out.println(result.getModel().getP1());

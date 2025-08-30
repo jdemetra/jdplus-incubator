@@ -55,10 +55,10 @@ public class LtdArimaModelTest {
         LevenbergMarquardtMinimizer min = LevenbergMarquardtMinimizer.builder()
                 .functionPrecision(1e-9)
                 .build();
-        long t0=System.currentTimeMillis();
+//        long t0=System.currentTimeMillis();
         min.minimize(fn.ssqEvaluate(mapping.getDefaultParameters()));
-        long t1=System.currentTimeMillis();
-        System.out.println(t1-t0);
-        System.out.println(min.getResult().getParameters());
+//        long t1=System.currentTimeMillis();
+//        System.out.println(t1-t0);
+//        System.out.println(min.getResult().getParameters());
     }
 }

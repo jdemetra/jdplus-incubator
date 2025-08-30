@@ -12,8 +12,8 @@ import jdplus.toolkit.base.core.ssf.dk.DkToolkit;
 import jdplus.toolkit.base.core.ssf.univariate.DefaultSmoothingResults;
 import jdplus.toolkit.base.core.ssf.univariate.SsfData;
 import jdplus.toolkit.base.core.ucarima.UcarimaModel;
-import jdplus.advancedsa.base.core.tarima.TimeVaryingAirlineDecomposer;
-import jdplus.advancedsa.base.core.tarima.TimeVaryingSsfUcarima;
+import jdplus.advancedsa.base.core.tarima.TdAirlineDecomposer;
+import jdplus.advancedsa.base.core.tarima.TdSsfUcarima;
 
 /**
  *
@@ -23,9 +23,9 @@ import jdplus.advancedsa.base.core.tarima.TimeVaryingSsfUcarima;
 public class TimeVaryingArimaModels {
 
     public Matrix airlineDecomposition(double[] data, int period, double[] th, double[] bth, boolean se) {
-        TimeVaryingAirlineDecomposer decomposer = new TimeVaryingAirlineDecomposer(period, th, bth);
+        TdAirlineDecomposer decomposer = new TdAirlineDecomposer(period, th, bth);
         UcarimaModel[] ucarimaModels = decomposer.ucarimaModels();
-        CompositeSsf ssf = TimeVaryingSsfUcarima.of(data.length, i -> ucarimaModels[i]);
+        CompositeSsf ssf = TdSsfUcarima.of(data.length, i -> ucarimaModels[i]);
         int[] pos = ssf.componentsPosition();
         DefaultSmoothingResults sf = DkToolkit.smooth(ssf, new SsfData(data), se, true);
         FastMatrix rslt = FastMatrix.make(data.length, se ? 6 : 3);
