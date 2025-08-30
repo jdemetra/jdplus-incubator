@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 JDemetra+.
+ * Copyright 2025 JDemetra+.
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -15,22 +15,18 @@
  */
 package jdplus.advancedsa.base.core.tarima;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import jdplus.toolkit.base.api.arima.SarimaSpec;
 
 /**
  *
  * @author Jean Palate
  */
-public class TimeVaryingSsfUcarimaTest {
+@lombok.Builder(toBuilder = true, builderClassName = "Builder")
+@lombok.Value
+public class LtdArimaSpec {
+    @lombok.With
+    private final SarimaSpec sarimaSpec;
+    private final boolean vPhi, vBphi, vTheta, vBtheta, vVar;
     
-    public TimeVaryingSsfUcarimaTest() {
-    }
-
-    @Test
-    public void testLinear() {
-    }
-    
-    
-    
+     
 }
