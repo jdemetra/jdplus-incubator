@@ -5,6 +5,7 @@
 package jdplus.advancedsa.base.r;
 
 
+import jdplus.advancedsa.base.core.tdarima.LtdArimaResults;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.toolkit.base.core.ssf.composite.CompositeSsf;
@@ -12,8 +13,8 @@ import jdplus.toolkit.base.core.ssf.dk.DkToolkit;
 import jdplus.toolkit.base.core.ssf.univariate.DefaultSmoothingResults;
 import jdplus.toolkit.base.core.ssf.univariate.SsfData;
 import jdplus.toolkit.base.core.ucarima.UcarimaModel;
-import jdplus.advancedsa.base.core.tarima.TdAirlineDecomposer;
-import jdplus.advancedsa.base.core.tarima.TdSsfUcarima;
+import jdplus.advancedsa.base.core.tdarima.TdAirlineDecomposer;
+import jdplus.advancedsa.base.core.tdarima.TdSsfUcarima;
 
 /**
  *
@@ -36,5 +37,12 @@ public class TimeVaryingArimaModels {
             }
         }
         return rslt;
+    }
+    
+    public LtdArimaResults estimate(double[] data, int period, boolean mean, Matrix X, int[] regular, int[] seasonal, 
+            double[] phi, double[] bphi, double[] theta, double[] btheta, 
+            double[] dphi, double[] dbphi, double[] dtheta, double[] dbtheta, 
+            double dvar, double eps){
+        return null;
     }
 }

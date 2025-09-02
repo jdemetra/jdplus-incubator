@@ -13,7 +13,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package jdplus.advancedsa.base.core.tarima;
+package jdplus.advancedsa.base.core.tdarima;
 
 import java.util.Random;
 import jdplus.toolkit.base.api.arima.SarimaOrders;
@@ -41,7 +41,7 @@ public class TdSsfArmaTest {
     public void testLinear() {
         int N = 120;
         IArimaModel[] models = new IArimaModel[N];
-        int p = 1;
+        int p = 3;
         int bp = 0;
         int q = 1;
         int bq = 1;
@@ -51,13 +51,13 @@ public class TdSsfArmaTest {
         spec.setQ(q);
         spec.setBq(bq);
 
-        double th0 = -.19, th1 = -.9;
-        double bth0 = -.19, bth1 = -.9;
+        double th0 = -.9, th1 = -.9;
+        double bth0 = -.9, bth1 = -.9;
         double dth = (th1 - th0) / (N - 1);
         double dbth = (bth1 - bth0) / (N - 1);
         for (int i = 0; i < N; ++i) {
             SarimaModel arma = SarimaModel.builder(spec)
-                    .phi(-0.5)
+                    .phi(-0.5, .2, .15)
                     .theta(th0)
                     .btheta(bth0)
                     .build();
@@ -88,7 +88,7 @@ public class TdSsfArmaTest {
     public void testLinear2() {
         int N = 120;
         IArimaModel[] models = new IArimaModel[N];
-        int p = 1;
+        int p = 3;
         int bp = 0;
         int q = 1;
         int bq = 1;
@@ -96,7 +96,6 @@ public class TdSsfArmaTest {
         spec.setP(p);
         spec.setD(1);
         spec.setBp(bp);
-        spec.setBp(1);
         spec.setQ(q);
         spec.setBq(bq);
 
@@ -106,7 +105,7 @@ public class TdSsfArmaTest {
         double dbth = (bth1 - bth0) / (N - 1);
         for (int i = 0; i < N; ++i) {
             SarimaModel arma = SarimaModel.builder(spec)
-                    .phi(-0.5)
+                    .phi(-0.5,.2, .1)
                     .theta(th0)
                     .btheta(bth0)
                     .build();

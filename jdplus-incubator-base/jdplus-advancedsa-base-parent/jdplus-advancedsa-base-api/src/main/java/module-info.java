@@ -4,8 +4,9 @@ module jdplus.advancedsa.base.api {
     requires static nbbrd.design;
     requires static nbbrd.service;
     requires static org.jspecify;
-    requires jdplus.toolkit.base.api;
+    requires jdplus.sa.base.api;
 
     exports jdplus.advancedsa.base.api.modelling;
     exports jdplus.advancedsa.base.api.movingtd;
+    exports jdplus.advancedsa.base.api.tdarima;
 }

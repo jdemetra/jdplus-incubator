@@ -13,7 +13,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package jdplus.advancedsa.base.core.tarima;
+package jdplus.advancedsa.base.core.tdarima;
 
 import java.util.function.IntFunction;
 import jdplus.toolkit.base.api.data.DoubleSeq;
@@ -303,16 +303,16 @@ public class TdSsfArma {
                             cov += phi_i.get(ki - 1) * phi_j.get(kj - 1) * ac[Math.abs(tki - tkj)];
                         }
                         for (int tlj = 0, lj = j; lj <= q; ++tlj, ++lj) {
-                            if (tlj <= tki) {
-                                cov -= phi_i.get(ki - 1) * th_j.get(lj) * psi[tki - tlj] * v0;
+                            if (tlj >= tki) {
+                                cov -= phi_i.get(ki - 1) * th_j.get(lj) * psi[tlj - tki] * v0;
                             }
                         }
                     }
 
                     for (int tli = 0, li = i; li <= q; ++tli, ++li) {
                         for (int tkj = 1, kj = j + 1; kj <= p; ++tkj, ++kj) {
-                            if (tli <= tkj) {
-                                cov -= th_i.get(li) * phi_j.get(kj - 1) * psi[tkj - tli];
+                            if (tli >= tkj) {
+                                cov -= th_i.get(li) * phi_j.get(kj - 1) * psi[tli-tkj ];
                             }
                         }
                         for (int tlj = 0, lj = j; lj <= q; ++tlj, ++lj) {

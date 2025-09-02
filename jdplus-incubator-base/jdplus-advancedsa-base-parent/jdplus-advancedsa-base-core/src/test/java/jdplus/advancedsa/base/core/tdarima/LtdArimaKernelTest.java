@@ -13,8 +13,9 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package jdplus.advancedsa.base.core.tarima;
+package jdplus.advancedsa.base.core.tdarima;
 
+import jdplus.advancedsa.base.api.tdarima.LtdArimaSpec;
 import jdplus.toolkit.base.api.arima.SarimaSpec;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.DoublesMath;
@@ -48,9 +49,9 @@ public class LtdArimaKernelTest {
         long t0 = System.currentTimeMillis();
         for (int i = 0; i < s.length; ++i) {
             LtdArimaResults result = kernel.process(s[i].log());
-//            System.out.print(result.getLl0().logLikelihood());
-//            System.out.print('\t');
-//            System.out.println(result.getLl1().logLikelihood());
+            System.out.print(result.getLl0().getLogLikelihood());
+            System.out.print('\t');
+            System.out.println(result.getLl1().getLogLikelihood());
 //            System.out.println(result.getStart().parameters());
 //            System.out.println(result.getModel().getP0());
 //            System.out.println(result.getModel().getP1());
@@ -84,9 +85,9 @@ public class LtdArimaKernelTest {
         long t0 = System.currentTimeMillis();
         for (int i = 0; i < s.length; ++i) {
             LtdArimaResults result = kernel.process(s[i].log());
-//            System.out.print(result.getLl0().logLikelihood());
-//            System.out.print('\t');
-//            System.out.println(result.getLl1().logLikelihood());
+            System.out.print(result.getLl0().getLogLikelihood());
+            System.out.print('\t');
+            System.out.println(result.getLl1().getLogLikelihood());
 //            System.out.println(result.getStart().parameters());
 //            System.out.println(result.getModel().getP0());
 //            System.out.println(result.getModel().getP1());

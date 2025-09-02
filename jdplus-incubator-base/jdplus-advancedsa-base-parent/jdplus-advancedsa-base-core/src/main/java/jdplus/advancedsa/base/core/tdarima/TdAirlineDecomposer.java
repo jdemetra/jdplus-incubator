@@ -13,11 +13,10 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package jdplus.advancedsa.base.core.tarima;
+package jdplus.advancedsa.base.core.tdarima;
 
-import java.util.function.IntFunction;
-import jdplus.toolkit.base.core.arima.ArimaModel;
-import jdplus.toolkit.base.core.arima.IArimaModel;
+import jdplus.toolkit.base.api.arima.SarimaOrders;
+import jdplus.toolkit.base.core.sarima.SarimaModel;
 import jdplus.toolkit.base.core.ucarima.ModelDecomposer;
 import jdplus.toolkit.base.core.ucarima.SeasonalSelector;
 import jdplus.toolkit.base.core.ucarima.TrendCycleSelector;
@@ -28,24 +27,25 @@ import jdplus.toolkit.base.core.ucarima.UcarimaModel;
  *
  * @author Jean Palate
  */
-public class TdArimaDecomposer {
+public class TdAirlineDecomposer {
 
-    private final int period;
-    private final ArimaModel[] arima;
+    private int period;
+    private final double[] thetas, bthetas;
     private final UcarimaModel[] ucms;
 
     private boolean modified;
 
-    public TdArimaDecomposer(int period, int n, IntFunction<IArimaModel> fn) {
-        this.period=period;
-        arima = new ArimaModel[n];
-        ucms = new UcarimaModel[n];
+    public TdAirlineDecomposer(int period, double[] thetas, double[] bthetas) {
+        if (thetas.length != bthetas.length) {
+            throw new IllegalArgumentException();
+        }
+        this.period = period;
+        this.thetas = thetas;
+        this.bthetas = bthetas;
+        ucms = new UcarimaModel[thetas.length];
         int first = -1, last = -1;
         for (int i = 0; i < ucms.length; ++i) {
-            ArimaModel m= ArimaModel.of(fn.apply(i));
-            m=m.simplifyAr();
-            arima[i]=m;
-            UcarimaModel ucm = ucm(m);
+            UcarimaModel ucm = ucm(i);
             ucms[i] = ucm;
             if (ucm != null) {
                 if (first == -1) {
@@ -78,7 +78,11 @@ public class TdArimaDecomposer {
     
     
 
-    private UcarimaModel ucm(IArimaModel model) {
+    private UcarimaModel ucm(int idx) {
+        SarimaModel airline = SarimaModel.builder(SarimaOrders.airline(period))
+                .theta(thetas[idx])
+                .btheta(bthetas[idx])
+                .build();
         TrendCycleSelector tsel = new TrendCycleSelector();
         SeasonalSelector ssel = new SeasonalSelector(period);
 
@@ -86,7 +90,7 @@ public class TdArimaDecomposer {
         decomposer.add(tsel);
         decomposer.add(ssel);
 
-        UcarimaModel ucm = decomposer.decompose(model);
+        UcarimaModel ucm = decomposer.decompose(airline);
         ucm = ucm.setVarianceMax(2, false);
 //        ucm = ucm.setVarianceMax(-1, false);
         return ucm;

@@ -13,13 +13,10 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package jdplus.advancedsa.base.core.tarima;
+package jdplus.advancedsa.base.core.tdarima;
 
-import java.util.Random;
 import jdplus.toolkit.base.api.arima.SarimaOrders;
-import jdplus.toolkit.base.api.arima.SarmaOrders;
 import jdplus.toolkit.base.core.arima.IArimaModel;
-import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.sarima.SarimaModel;
 import jdplus.toolkit.base.core.ssf.arima.SsfArima;
 import jdplus.toolkit.base.core.ssf.dk.DkToolkit;
@@ -27,7 +24,6 @@ import jdplus.toolkit.base.core.ssf.likelihood.DiffuseLikelihood;
 import jdplus.toolkit.base.core.ssf.univariate.Ssf;
 import jdplus.toolkit.base.core.ssf.univariate.SsfData;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 import tck.demetra.data.Data;
 
 /**

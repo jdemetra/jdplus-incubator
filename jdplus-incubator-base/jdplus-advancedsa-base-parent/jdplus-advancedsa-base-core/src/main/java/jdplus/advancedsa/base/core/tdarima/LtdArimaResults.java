@@ -13,10 +13,11 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package jdplus.advancedsa.base.core.tarima;
+package jdplus.advancedsa.base.core.tdarima;
 
 import jdplus.toolkit.base.core.sarima.SarimaModel;
 import jdplus.toolkit.base.core.stats.likelihood.ConcentratedLikelihoodWithMissing;
+import jdplus.toolkit.base.core.stats.likelihood.LikelihoodStatistics;
 import jdplus.toolkit.base.core.stats.likelihood.DiffuseConcentratedLikelihood;
 import jdplus.toolkit.base.core.stats.likelihood.LogLikelihoodFunction;
 
@@ -29,10 +30,9 @@ import jdplus.toolkit.base.core.stats.likelihood.LogLikelihoodFunction;
 public class LtdArimaResults {
 
     private SarimaModel start;
-    private ConcentratedLikelihoodWithMissing ll0 ;
+    private LikelihoodStatistics ll0 ;
     private LtdArimaModel model;
     private LogLikelihoodFunction.Point<LtdArimaModel, DiffuseConcentratedLikelihood> max;
-    private DiffuseConcentratedLikelihood ll1;
+    private LikelihoodStatistics ll1;
     
-
 }
