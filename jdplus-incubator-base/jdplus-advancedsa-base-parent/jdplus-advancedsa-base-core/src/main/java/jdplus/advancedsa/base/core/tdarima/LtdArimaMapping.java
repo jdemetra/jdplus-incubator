@@ -70,28 +70,28 @@ public class LtdArimaMapping implements IParametricMapping<LtdArimaModel> {
                 .build();
     }
 
-    private int stepParamsCount() {
-        int n = 0;
+    public int deltaParamsCount() {
+        int dn = 0;
         if (vPhi) {
-            n += orders.getP();
+            dn += orders.getP();
         }
         if (vBphi) {
-            n += orders.getBp();
+            dn += orders.getBp();
         }
         if (vTheta) {
-            n += orders.getQ();
+            dn += orders.getQ();
         }
         if (vBtheta) {
-            n += orders.getBq();
+            dn += orders.getBq();
         }
-        return n;
+        return dn;
     }
 
     @Override
     public DoubleSeq getDefaultParameters() {
         SarimaMapping mapping = new SarimaMapping(orders, eps, true);
         DoubleSeq p0 = mapping.getDefaultParameters();
-        int ns = stepParamsCount();
+        int ns = deltaParamsCount();
         if (ns == 0 && !vVar) {
             return p0;
         }
@@ -125,9 +125,18 @@ public class LtdArimaMapping implements IParametricMapping<LtdArimaModel> {
     public ParamValidation validate(DataBlock ioParams) {
         SarimaMapping mapping = new SarimaMapping(orders, eps, true);
         int np = orders.getParametersCount();
-        int nd = stepParamsCount();
+        int nd = deltaParamsCount();
         // step 1: with validate the mean
         ParamValidation v0 = mapping.validate(ioParams.range(0, np));
+
+        boolean changed = v0 == ParamValidation.Changed;
+        if (vVar) {
+            double v = ioParams.getLast();
+            if (v < 0) {
+                ioParams.setLast(-1 / v);
+                changed = true;
+            }
+        }
 
         // adapt delta if need be
         double alpha = 1, mu = .5;
@@ -137,8 +146,8 @@ public class LtdArimaMapping implements IParametricMapping<LtdArimaModel> {
         int iter = 0;
         do {
             double c = alpha;
-            DoubleSeq p0 = DoubleSeq.onMapping(np, i -> mean.get(i) - c * delta.get(i)/2);
-            DoubleSeq p1 = DoubleSeq.onMapping(np, i -> mean.get(i) + c * delta.get(i)/2);
+            DoubleSeq p0 = DoubleSeq.onMapping(np, i -> mean.get(i) - c * delta.get(i) / 2);
+            DoubleSeq p1 = DoubleSeq.onMapping(np, i -> mean.get(i) + c * delta.get(i) / 2);
             if (mapping.checkBoundaries(p0) && mapping.checkBoundaries(p1)) {
                 if (iter == 0) {
                     return v0;
@@ -158,7 +167,6 @@ public class LtdArimaMapping implements IParametricMapping<LtdArimaModel> {
         if (v1 == ParamValidation.Invalid || v2 == ParamValidation.Invalid) {
             return ParamValidation.Invalid;
         }
-        boolean changed = v0 == ParamValidation.Changed;
         if (v1 == ParamValidation.Changed || v2 == ParamValidation.Changed) {
             changed = true;
             // set new means
@@ -467,7 +475,7 @@ public class LtdArimaMapping implements IParametricMapping<LtdArimaModel> {
 
     private DoubleSeq delta(DoubleSeq pall) {
         int np = orders.getParametersCount();
-        int nd = stepParamsCount();
+        int nd = deltaParamsCount();
         if (np == nd) {
             return pall.range(np, 2 * np);
         }

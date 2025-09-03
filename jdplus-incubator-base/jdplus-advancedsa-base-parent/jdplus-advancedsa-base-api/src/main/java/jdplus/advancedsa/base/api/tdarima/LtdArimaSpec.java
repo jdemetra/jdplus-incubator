@@ -24,7 +24,17 @@ import jdplus.toolkit.base.api.arima.SarimaSpec;
 @lombok.Builder(toBuilder = true, builderClassName = "Builder")
 @lombok.Value
 public class LtdArimaSpec {
+    
+    public static final double DEF_PRECISION=1e-9;
+    
     @lombok.With
     private final SarimaSpec sarimaSpec;
     private final boolean vPhi, vBphi, vTheta, vBtheta, vVar;
+    
+    @lombok.With
+    private double precision;
+    
+    public static Builder builder(){
+        return new Builder().precision(DEF_PRECISION);
+    }
 }

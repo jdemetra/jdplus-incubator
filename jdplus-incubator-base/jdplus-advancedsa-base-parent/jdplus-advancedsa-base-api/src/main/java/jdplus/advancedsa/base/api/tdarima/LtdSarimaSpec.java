@@ -54,6 +54,7 @@ public final class LtdSarimaSpec implements Validatable<LtdSarimaSpec> {
     Parameter[] phi, bphi, theta, btheta;
     Parameter[] dphi, dbphi, dtheta, dbtheta;
     Parameter dvar;
+    
 
     // Defensive getters !
     public Parameter[] getPhi() {
@@ -146,6 +147,21 @@ public final class LtdSarimaSpec implements Validatable<LtdSarimaSpec> {
                 phi = value.clone();
                 dphi = EMPTY;
             }
+            return this;
+        }
+
+        // invalid settings
+        private Builder dphi(Parameter[] value) {
+            return this;
+        }
+        
+        private Builder dbphi(Parameter[] value) {
+            return this;
+        }
+        private Builder dtheta(Parameter[] value) {
+            return this;
+        }
+        private Builder dbtheta(Parameter[] value) {
             return this;
         }
 

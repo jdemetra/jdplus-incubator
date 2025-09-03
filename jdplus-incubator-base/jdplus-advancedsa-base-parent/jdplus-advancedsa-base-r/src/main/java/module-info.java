@@ -8,6 +8,7 @@ module jdplus.advancedsa.base.r {
     requires jdplus.advancedsa.base.api;
     requires jdplus.advancedsa.base.core;
     requires jdplus.toolkit.base.core;
+    requires jdplus.toolkit.base.r;
 
     exports jdplus.advancedsa.base.r;
 }

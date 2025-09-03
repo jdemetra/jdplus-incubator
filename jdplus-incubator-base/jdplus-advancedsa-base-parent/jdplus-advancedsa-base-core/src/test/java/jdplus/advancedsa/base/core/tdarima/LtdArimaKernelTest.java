@@ -48,13 +48,11 @@ public class LtdArimaKernelTest {
 
         long t0 = System.currentTimeMillis();
         for (int i = 0; i < s.length; ++i) {
-            LtdArimaResults result = kernel.process(s[i].log());
+            LtdArimaResults result = kernel.process(s[i].log().getValues(), s[i].getAnnualFrequency(), false, null);
             System.out.print(result.getLl0().getLogLikelihood());
             System.out.print('\t');
             System.out.println(result.getLl1().getLogLikelihood());
 //            System.out.println(result.getStart().parameters());
-//            System.out.println(result.getModel().getP0());
-//            System.out.println(result.getModel().getP1());
 //
 //            System.out.println(result.getMax().getParameters());
 //            System.out.println(result.getMax().getScore());
@@ -77,6 +75,7 @@ public class LtdArimaKernelTest {
                 .sarimaSpec(aspec)
                 .vTheta(true)
                 .vBtheta(true)
+                .vPhi(false)
                 //                .vVar(true)
                 .build();
 
@@ -84,7 +83,7 @@ public class LtdArimaKernelTest {
 
         long t0 = System.currentTimeMillis();
         for (int i = 0; i < s.length; ++i) {
-            LtdArimaResults result = kernel.process(s[i].log());
+            LtdArimaResults result = kernel.process(s[i].log().getValues(), s[i].getAnnualFrequency(), false, null);
             System.out.print(result.getLl0().getLogLikelihood());
             System.out.print('\t');
             System.out.println(result.getLl1().getLogLikelihood());

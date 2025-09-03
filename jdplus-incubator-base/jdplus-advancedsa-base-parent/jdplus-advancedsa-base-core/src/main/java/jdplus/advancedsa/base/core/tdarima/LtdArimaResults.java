@@ -15,11 +15,15 @@
  */
 package jdplus.advancedsa.base.core.tdarima;
 
+import jdplus.toolkit.base.api.information.GenericExplorable;
 import jdplus.toolkit.base.core.sarima.SarimaModel;
 import jdplus.toolkit.base.core.stats.likelihood.ConcentratedLikelihoodWithMissing;
 import jdplus.toolkit.base.core.stats.likelihood.LikelihoodStatistics;
 import jdplus.toolkit.base.core.stats.likelihood.DiffuseConcentratedLikelihood;
 import jdplus.toolkit.base.core.stats.likelihood.LogLikelihoodFunction;
+import jdplus.toolkit.base.core.regarima.RegArimaModel;
+import jdplus.toolkit.base.api.data.DoubleSeq;
+import jdplus.toolkit.base.api.math.matrices.Matrix;
 
 /**
  *
@@ -27,12 +31,29 @@ import jdplus.toolkit.base.core.stats.likelihood.LogLikelihoodFunction;
  */
 @lombok.Builder(builderClassName = "Builder")
 @lombok.Value
-public class LtdArimaResults {
+public class LtdArimaResults implements GenericExplorable {
+    
+    private DoubleSeq linearizedSeries0, regsEffect0;
+    private DoubleSeq linearizedSeries1, regsEffect1;
 
     private SarimaModel start;
-    private LikelihoodStatistics ll0 ;
+    private LogLikelihoodFunction.Point<RegArimaModel<SarimaModel>, ConcentratedLikelihoodWithMissing> startMax;
+    private LikelihoodStatistics ll0;
+    private DoubleSeq coefficients0;
+    private Matrix covariance0;
+
     private LtdArimaModel model;
     private LogLikelihoodFunction.Point<LtdArimaModel, DiffuseConcentratedLikelihood> max;
     private LikelihoodStatistics ll1;
+    private DoubleSeq coefficients1;
+    private Matrix covariance1;
+
+    public double v0() {
+        return ll1.getSsqErr() / (ll1.getEffectiveObservationsCount() - ll1.getEstimatedParametersCount());
+    }
+
+    public double v1() {
+        return model.getVar1() * ll1.getSsqErr() / (ll1.getEffectiveObservationsCount() - ll1.getEstimatedParametersCount());
+    }
     
 }
