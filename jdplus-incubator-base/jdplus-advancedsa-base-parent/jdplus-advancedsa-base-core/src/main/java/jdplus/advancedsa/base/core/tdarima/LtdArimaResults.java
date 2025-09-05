@@ -24,6 +24,7 @@ import jdplus.toolkit.base.core.stats.likelihood.LogLikelihoodFunction;
 import jdplus.toolkit.base.core.regarima.RegArimaModel;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
+import jdplus.toolkit.base.api.timeseries.TsResiduals;
 
 /**
  *
@@ -41,12 +42,14 @@ public class LtdArimaResults implements GenericExplorable {
     private LikelihoodStatistics ll0;
     private DoubleSeq coefficients0;
     private Matrix covariance0;
+    private TsResiduals residuals0;
 
     private LtdArimaModel model;
     private LogLikelihoodFunction.Point<LtdArimaModel, DiffuseConcentratedLikelihood> max;
     private LikelihoodStatistics ll1;
     private DoubleSeq coefficients1;
     private Matrix covariance1;
+    private TsResiduals residuals1;
 
     public double v0() {
         return ll1.getSsqErr() / (ll1.getEffectiveObservationsCount() - ll1.getEstimatedParametersCount());

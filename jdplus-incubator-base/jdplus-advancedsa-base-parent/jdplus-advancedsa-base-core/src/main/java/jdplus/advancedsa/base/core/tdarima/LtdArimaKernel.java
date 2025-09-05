@@ -21,6 +21,10 @@ import jdplus.toolkit.base.api.arima.SarimaOrders;
 import jdplus.toolkit.base.api.arima.SarmaOrders;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.DoublesMath;
+import jdplus.toolkit.base.api.dictionaries.ResidualsDictionaries;
+import jdplus.toolkit.base.api.timeseries.TsData;
+import jdplus.toolkit.base.api.timeseries.TsResiduals;
+import jdplus.toolkit.base.api.timeseries.regression.ResidualsType;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.math.functions.levmar.LevenbergMarquardtMinimizer;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
@@ -36,9 +40,11 @@ import jdplus.toolkit.base.core.ssf.dk.SsfFunctionPoint;
 import jdplus.toolkit.base.core.ssf.univariate.Ssf;
 import jdplus.toolkit.base.core.ssf.univariate.SsfData;
 import jdplus.toolkit.base.core.stats.likelihood.ConcentratedLikelihood;
+import jdplus.toolkit.base.core.stats.likelihood.ConcentratedLikelihoodWithMissing;
 import jdplus.toolkit.base.core.stats.likelihood.DiffuseConcentratedLikelihood;
 import jdplus.toolkit.base.core.stats.likelihood.LikelihoodStatistics;
 import jdplus.toolkit.base.core.stats.likelihood.LogLikelihoodFunction;
+import jdplus.toolkit.base.core.stats.tests.NiidTests;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -80,13 +86,46 @@ public class LtdArimaKernel {
         SarimaMapping mapping = SarimaMapping.of(orders);
         RegArimaEstimation<SarimaModel> initial = RegSarimaComputer.PROCESSOR.process(regarima, mapping);
         
-
-        DoubleSeq coefficients0 = initial.getConcentratedLikelihood().coefficients();
-        FastMatrix covariance0 = initial.getConcentratedLikelihood().covariance(mapping.getDim(), true);
+        ConcentratedLikelihoodWithMissing ll = initial.getConcentratedLikelihood();
+        DoubleSeq coefficients0 = ll.coefficients();
+        FastMatrix covariance0 = ll.covariance(mapping.getDim(), true);
         LikelihoodStatistics ll0 = initial.statistics();
+        
+        DoubleSeq e = ll.e();
+        NiidTests niid=NiidTests.builder()
+                .data(e)
+                .period(period)
+                .hyperParametersCount(mapping.getDim())
+                .build();
+        
+        TsResiduals res0=TsResiduals.builder()
+                .type(ResidualsType.QR_Transformed)
+                .res(e)
+                .ssq(ll.ssq())
+                .n(ll.dim())
+                .df(ll.degreesOfFreedom())
+                .dfc(ll.degreesOfFreedom()-mapping.getDim())
+                .test(ResidualsDictionaries.MEAN, niid.meanTest())
+                .test(ResidualsDictionaries.SKEW, niid.skewness())
+                .test(ResidualsDictionaries.KURT, niid.kurtosis())
+                .test(ResidualsDictionaries.DH, niid.normalityTest())
+                .test(ResidualsDictionaries.LB, niid.ljungBox())
+                .test(ResidualsDictionaries.BP, niid.boxPierce())
+                .test(ResidualsDictionaries.SEASLB, niid.seasonalLjungBox())
+                .test(ResidualsDictionaries.SEASBP, niid.seasonalBoxPierce())
+                .test(ResidualsDictionaries.LB2, niid.ljungBoxOnSquare())
+                .test(ResidualsDictionaries.BP2, niid.boxPierceOnSquare())
+                .test(ResidualsDictionaries.NRUNS, niid.runsNumber())
+                .test(ResidualsDictionaries.LRUNS, niid.runsLength())
+                .test(ResidualsDictionaries.NUDRUNS, niid.upAndDownRunsNumbber())
+                .test(ResidualsDictionaries.LUDRUNS, niid.upAndDownRunsLength())
+                .build();
+        
+        
         builder.start(initial.getModel().arima())
                 .startMax(initial.getMax())
-                .ll0(ll0);
+                .ll0(ll0)
+                .residuals0(res0);
 
         RegArimaModel<SarimaModel> model = initial.getModel();
         RegArmaModel<SarimaModel> dmodel = model.differencedModel();
@@ -146,11 +185,42 @@ public class LtdArimaKernel {
                 .ssq(likelihood.ssq())
                 .build();
 
+        e = likelihood.e();
+        niid=NiidTests.builder()
+                .data(e)
+                .period(period)
+                .hyperParametersCount(dim)
+                .build();
+        
+        TsResiduals res1=TsResiduals.builder()
+                .type(ResidualsType.OneStepAHead)
+                .res(e)
+                .ssq(likelihood.ssq())
+                .n(likelihood.dim())
+                .df(likelihood.degreesOfFreedom())
+                .dfc(likelihood.degreesOfFreedom()-dim)
+                .test(ResidualsDictionaries.MEAN, niid.meanTest())
+                .test(ResidualsDictionaries.SKEW, niid.skewness())
+                .test(ResidualsDictionaries.KURT, niid.kurtosis())
+                .test(ResidualsDictionaries.DH, niid.normalityTest())
+                .test(ResidualsDictionaries.LB, niid.ljungBox())
+                .test(ResidualsDictionaries.BP, niid.boxPierce())
+                .test(ResidualsDictionaries.SEASLB, niid.seasonalLjungBox())
+                .test(ResidualsDictionaries.SEASBP, niid.seasonalBoxPierce())
+                .test(ResidualsDictionaries.LB2, niid.ljungBoxOnSquare())
+                .test(ResidualsDictionaries.BP2, niid.boxPierceOnSquare())
+                .test(ResidualsDictionaries.NRUNS, niid.runsNumber())
+                .test(ResidualsDictionaries.LRUNS, niid.runsLength())
+                .test(ResidualsDictionaries.NUDRUNS, niid.upAndDownRunsNumbber())
+                .test(ResidualsDictionaries.LUDRUNS, niid.upAndDownRunsLength())
+                .build();
+        
         builder.model((LtdArimaModel) pt.getCore())
                 .coefficients0(coefficients0)
                 .covariance0(covariance0)
                 .coefficients1(coefficients1)
                 .covariance1(covariance1)
+                .residuals1(res1)
                 .ll1(ll1);
         double[] gradient = min.gradientAtMinimum().toArray();
         FastMatrix hessian = min.curvatureAtMinimum();
@@ -161,8 +231,8 @@ public class LtdArimaKernel {
             gradient[i] *= (-.5 * ndf) / objective;
         }
         
-        LogLikelihoodFunction<LtdArimaModel, DiffuseConcentratedLikelihood> ll = concentratedLogLikelihoodFunction(dmodel);
-        LogLikelihoodFunction.Point max = new LogLikelihoodFunction.Point(ll, pt.getParameters(), DoubleSeq.of(gradient), hessian);
+        LogLikelihoodFunction<LtdArimaModel, DiffuseConcentratedLikelihood> fll = concentratedLogLikelihoodFunction(dmodel);
+        LogLikelihoodFunction.Point max = new LogLikelihoodFunction.Point(fll, pt.getParameters(), DoubleSeq.of(gradient), hessian);
         return builder.max(max).build();
     }
 

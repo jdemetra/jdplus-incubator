@@ -16,7 +16,11 @@
 package jdplus.advancedsa.base.api.tdarima;
 
 import jdplus.toolkit.base.api.dictionaries.AtomicDictionary;
+import jdplus.toolkit.base.api.dictionaries.ComplexDictionary;
 import jdplus.toolkit.base.api.dictionaries.Dictionary;
+import jdplus.toolkit.base.api.dictionaries.PrefixedDictionary;
+import static jdplus.toolkit.base.api.dictionaries.RegArimaDictionaries.RESIDUALS;
+import jdplus.toolkit.base.api.dictionaries.ResidualsDictionaries;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
 
 /**
@@ -30,11 +34,13 @@ public class LtdDictionaries {
             PARAMETERS_V0="v0", PARAMETERS_V1="v1",
             PARAMETERS_FIXED_COV="pfixed_cov", PARAMETERS_COV="pall_cov";
     
-    public static final String REGS_COV0="regs_cov0", REGS_COV1="regs_cov1", REGS_C0="regs_c0", REGS_C1="regs_c1", 
-            REGS_EFFECT0="regs_effect0", Y_LIN0="y_lin0",
-            REGS_EFFECT1="regs_effect1", Y_LIN1="y_lin1";
+    public static final String REGS_COV0="cov0", REGS_COV1="cov1", REGS_C0="c0", REGS_C1="c1", 
+            REGS_EFFECT0="effect0", Y_LIN0="y_lin0",
+            REGS_EFFECT1="effect1", Y_LIN1="y_lin1";
     
-    public final Dictionary LTDARIMA = AtomicDictionary.builder()
+    public static final String MODEL="model", RESIDUALS="residuals", REGRESSION="regression";
+    
+    public final Dictionary LTDARIMA_MODEL = AtomicDictionary.builder()
             .name("ltdarima")
             .item(AtomicDictionary.Item.builder().name(PARAMETERS_FIXED).description("arima parameters of the fixed model").outputClass(double[].class).build())
             .item(AtomicDictionary.Item.builder().name(PARAMETERS_P0).description("arima parameters at the beginning").outputClass(double[].class).build())
@@ -56,5 +62,12 @@ public class LtdDictionaries {
             .item(AtomicDictionary.Item.builder().name(Y_LIN0).description("linearized series of the fixed model").outputClass(double[].class).build())
             .item(AtomicDictionary.Item.builder().name(Y_LIN1).description("linearized series of the tme dependent model").outputClass(double[].class).build())
             .build();
+    
+       public final Dictionary LTDARIMA = ComplexDictionary.builder()
+            .dictionary(new PrefixedDictionary(MODEL, LTDARIMA_MODEL))
+            .dictionary(new PrefixedDictionary(REGRESSION, LTDARIMA_REG))
+            .dictionary(new PrefixedDictionary(RESIDUALS, ResidualsDictionaries.RESIDUALS_DEFAULT))
+            .build();
+
     
 }
