@@ -11,7 +11,10 @@ import jdplus.sts.base.core.BasicStructuralModel;
 import jdplus.sts.base.core.LightBasicStructuralModel;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.api.timeseries.TsPeriod;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+
 import org.junit.jupiter.api.Test;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
 
@@ -48,7 +51,7 @@ public class BsmTest {
     public void testYearly() {
         TsData s = TsData.ofInternal(TsPeriod.yearly(1992), Data.RETAIL_BOOKSTORES);
         Matrix fcast = Bsm.forecast(s, "full", 24);
-        assertTrue(fcast.getRowsCount() == 24);
+        assertEquals(24, fcast.getRowsCount());
 //        System.out.println(fcast.column(0));
 //        System.out.println(fcast.column(1));
     }
@@ -58,7 +61,7 @@ public class BsmTest {
         TsData s = TsData.ofInternal(TsPeriod.monthly(1992,1), Data.RETAIL_BOOKSTORES);
         LightBasicStructuralModel bsm = Bsm.process(s, null, 1, 1, -1, 1, "Trigonometric", true, 1e-12);
         byte[] bytes = Bsm.toBuffer(bsm);
-        assertTrue(bytes != null);
+        assertNotSame(bytes, null);
     }
 
     @Test
@@ -67,6 +70,6 @@ public class BsmTest {
         Matrix td = Variables.td(s.getDomain(), new int[]{1,1,1,1,2,3,0}, true);
         LightBasicStructuralModel bsm = Bsm.process(s, td, 1, 1, -1, 1, "Trigonometric", false, 1e-12);
         byte[] bytes = Bsm.toBuffer(bsm);
-        assertTrue(bytes != null);
+        assertNotSame(bytes, null);
     }
 }

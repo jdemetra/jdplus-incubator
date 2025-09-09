@@ -16,7 +16,8 @@
 package jdplus.sts.base.core.splines;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -35,11 +36,11 @@ public class DailySplineTest {
             IntSeq observations = rs.observations(i);
             int nc = observations.length();
             for (int j = 0; j < nc; ++j) {
-                assertTrue(rs.cycleFor(n+j) == i);
+                assertEquals(rs.cycleFor(n + j), i);
             }
             n += nc;
         }
-        assertTrue(n == 365 * 120 + 30);
+        assertEquals(n, 365 * 120 + 30);
     }
 
 }

@@ -25,9 +25,10 @@ import jdplus.toolkit.base.api.modelling.regular.TradingDaysSpec;
 import jdplus.toolkit.base.api.timeseries.calendars.LengthOfPeriodType;
 import jdplus.toolkit.base.api.timeseries.calendars.TradingDaysType;
 import jdplus.toolkit.base.core.regsarima.regular.RegSarimaModel;
+import org.junit.jupiter.api.Test;
 import tck.demetra.data.Data;
-import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 /**
  *
@@ -43,7 +44,7 @@ public class FastKernelTest {
         ModellingSpec spec = ModellingSpec.FULL;
         FastKernel kernel = FastKernel.of(spec, null);
         RegSarimaModel rslt = kernel.process(Data.TS_PROD, null);
-        assertTrue(rslt != null);
+        assertNotSame(rslt, null);
     }
     
     public static void main(String[] args) {

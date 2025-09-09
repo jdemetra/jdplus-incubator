@@ -12,7 +12,6 @@ import jdplus.highfreq.base.core.extendedairline.decomposition.LightExtendedAirl
 import jdplus.highfreq.base.core.extendedairline.ExtendedAirlineEstimation;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
 import jdplus.highfreq.base.core.ssf.extractors.SsfUcarimaEstimation;
-import org.junit.Assert;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
@@ -52,9 +51,9 @@ public class FractionalAirlineProcessorTest {
         ExtendedAirlineEstimation rslt_level_logOBS = FractionalAirlineProcessor.estimate(logOBS_NA, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 3, 1e-12, false, 0, false);
         ExtendedAirlineEstimation rslt_log_OBS = FractionalAirlineProcessor.estimate(OBS_Na, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 0, true);
         assertEquals(rslt_level_logOBS.getMissing().length, rslt_log_OBS.getMissing().length, "Differnce in Number of Missing");
-        Assert.assertArrayEquals("Difference in Missing", rslt_level_logOBS.getMissing(), rslt_log_OBS.getMissing());
+        assertArrayEquals(rslt_level_logOBS.getMissing(), rslt_log_OBS.getMissing(), "Difference in Missing");
         int[] arr = {5};
-        Assert.assertArrayEquals("Difference in Missing", rslt_level_logOBS.getMissing(), arr);
+        assertArrayEquals(rslt_level_logOBS.getMissing(), arr, "Difference in Missing");
     }
 
     @Test
@@ -65,8 +64,8 @@ public class FractionalAirlineProcessorTest {
 
         assertFalse(rslt_level_logOBS.isLog(), "Logs are taken");
         assertTrue(rslt_log_OBS.isLog(), "Logs are not taken");
-        assertEquals(rslt_level_logOBS.getMissing().length, 0, "Wrong number of missing");
-        assertEquals(rslt_log_OBS.getMissing().length, 0, "Wrong number of missing");
+        assertEquals(0, rslt_level_logOBS.getMissing().length, "Wrong number of missing");
+        assertEquals(0, rslt_log_OBS.getMissing().length, "Wrong number of missing");
 
         assertArrayEquals(rslt_level_logOBS.getMissing(), rslt_log_OBS.getMissing(), "Different Missing values");
         assertEquals(rslt_level_logOBS.getOutliers().length, rslt_log_OBS.getOutliers().length, "Number of outliers");
@@ -146,7 +145,7 @@ public class FractionalAirlineProcessorTest {
 //        System.out.println(rslt.component("t").getStde());
 //        System.out.println(rslt.component("s").getStde());
 //        System.out.println(rslt.component("i").getStde());
-        assertTrue(null != rslt.getData("sa", double[].class
+        assertNotSame(null, rslt.getData("sa", double[].class
         ));
     }
 
@@ -212,8 +211,6 @@ public class FractionalAirlineProcessorTest {
             boolean ident = Math.abs(Math.round(10000*rslt.getY()[i + data.length])/10000.0 - rdata[i]) > 0.00000001;
             assertFalse(ident, "The forecasts do not match, for " + i);
         }
-
-        assertTrue(true);
     }
 
     @Test
@@ -273,7 +270,7 @@ public class FractionalAirlineProcessorTest {
     public void testWeeklySsf() {
         LightExtendedAirlineDecomposition rslt = FractionalAirlineProcessor.decompose(WeeklyData.US_CLAIMS2, new double[]{365.25 / 7}, -1, false, true, 7, 7);
         SsfUcarimaEstimation details = FractionalAirlineProcessor.ssfDetails(rslt);
-        assertTrue(null != details.getData("smoothing.states", Matrix.class
+        assertNotSame(null, details.getData("smoothing.states", Matrix.class
         ));
     }
 

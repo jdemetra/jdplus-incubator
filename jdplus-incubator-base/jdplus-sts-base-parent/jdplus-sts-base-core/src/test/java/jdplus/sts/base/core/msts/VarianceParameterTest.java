@@ -6,7 +6,7 @@
 package jdplus.sts.base.core.msts;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -23,7 +23,7 @@ public class VarianceParameterTest {
         VarianceInterpreter var=new VarianceInterpreter("v", 3, false, true);
         double stde = var.stde();
         var.variance(stde*stde);
-        assertEquals(var.variance(), 3, 1e-9);
+        assertEquals(3, var.variance(), 1e-9);
     }
     
 }
