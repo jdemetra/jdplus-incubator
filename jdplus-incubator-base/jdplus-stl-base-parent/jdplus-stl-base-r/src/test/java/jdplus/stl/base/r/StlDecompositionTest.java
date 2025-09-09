@@ -8,7 +8,8 @@ package jdplus.stl.base.r;
 import tck.demetra.data.Data;
 import jdplus.toolkit.base.api.data.WeightFunction;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+
 import jdplus.toolkit.base.api.math.matrices.Matrix;
 import org.junit.jupiter.api.Test;
 
@@ -23,7 +24,7 @@ public class StlDecompositionTest {
 
     @Test
     public void testFilter() {
-        assertTrue(null != StlDecomposition.loess(Data.ABS_RETAIL, 13, 1, 1));
+        assertNotSame(null, StlDecomposition.loess(Data.ABS_RETAIL, 13, 1, 1));
     }
 
     @Test
@@ -31,34 +32,34 @@ public class StlDecompositionTest {
         Matrix decomp = StlDecomposition.stl(Data.ABS_RETAIL, 12, false, 0, 0, 0,
                 1, 0, 1, 0, 0, 0, 2, 0, 0.1, WeightFunction.TRICUBE.name(), false);
         System.out.println(decomp);
-        assertTrue(null != decomp);
+        assertNotSame(null, decomp);
     }
 
     @Test
     public void testStl() {
         Matrix decomp = StlDecomposition.stl(Data.ABS_RETAIL, 12, false, 0, 0, 0, 1, 0, 1, 0, 0, 0, 2, 0, 0.1, WeightFunction.TRICUBE.name(), false);
 //        System.out.println(decomp);
-        assertTrue(null != decomp);
+        assertNotSame(null, decomp);
     }
 
     @Test
     public void testStl_legacy() {
         Matrix decomp = StlDecomposition.stl(Data.ABS_RETAIL, 12, false, 0, 0, 0, 1, 0, 1, 0, 0, 0, 2, 0, 0.1, WeightFunction.TRICUBE.name(), true);
 //        System.out.println(decomp);
-        assertTrue(null != decomp);
+        assertNotSame(null, decomp);
     }
 
     @Test
     public void testMStl() {
         Matrix decomp = StlDecomposition.mstl(Data.ABS_RETAIL, new int[]{12}, false, null, 0, 2, 5, true, 0.1, WeightFunction.EPANECHNIKOV.name());
         //       System.out.println(decomp);
-        assertTrue(null != decomp);
+        assertNotSame(null, decomp);
     }
 
     @Test
     public void testIStl() {
         Matrix decomp = StlDecomposition.istl(Data.ABS_RETAIL, new int[]{12}, false, null, null, 2, 5, true, 0.1, WeightFunction.TRIANGULAR.name());
         //       System.out.println(decomp);
-        assertTrue(null != decomp);
+        assertNotSame(null, decomp);
     }
 }

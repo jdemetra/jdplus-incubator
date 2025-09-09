@@ -22,7 +22,7 @@ import jdplus.toolkit.base.core.math.linearfilters.HendersonFilters;
 import jdplus.toolkit.base.core.math.linearfilters.SymmetricFilter;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -42,7 +42,7 @@ public class HendersonFiltersTest {
             for (int j = 0; j < w.length; ++j) {
                 s += w[j];
             }
-            assertEquals(s, 1, 1e-9);
+            assertEquals(1, s, 1e-9);
         }
     }
 

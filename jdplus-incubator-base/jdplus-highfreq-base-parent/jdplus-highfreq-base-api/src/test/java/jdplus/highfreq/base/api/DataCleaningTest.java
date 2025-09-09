@@ -21,8 +21,9 @@ import jdplus.toolkit.base.api.modelling.highfreq.CleanedData;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.api.timeseries.TsPeriod;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  *
@@ -39,7 +40,7 @@ public class DataCleaningTest {
             TsData z = TsData.of(TsPeriod.daily(2000, 1, i), DoubleSeq.onMapping(5000, j -> j));
             CleanedData cdata=CleanedData.of(z, DataCleaning.SUNDAYS);
             TsData zc = DataCleaning.withMissingSundays(z.getDomain(), cdata.getData());
-            assertTrue(DataCleaning.of(zc) == DataCleaning.SUNDAYS);
+            assertSame(DataCleaning.of(zc), DataCleaning.SUNDAYS);
         }
     }
     
@@ -49,7 +50,7 @@ public class DataCleaningTest {
             TsData z = TsData.of(TsPeriod.daily(2000, 1, i), DoubleSeq.onMapping(5000, j -> j));
             CleanedData cdata=CleanedData.of(z, DataCleaning.WEEKENDS);
             TsData zc = DataCleaning.withMissingWeekEnds(z.getDomain(), cdata.getData());
-            assertTrue(DataCleaning.of(zc) == DataCleaning.WEEKENDS);
+            assertSame(DataCleaning.of(zc), DataCleaning.WEEKENDS);
         }
     }
 

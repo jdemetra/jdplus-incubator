@@ -16,7 +16,7 @@ import jdplus.toolkit.base.core.math.linearfilters.SymmetricFilter;
 import jdplus.toolkit.base.core.stats.Kernels;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *

@@ -35,7 +35,7 @@ import jdplus.toolkit.base.core.regsarima.regular.RegSarimaModelling;
 import tck.demetra.data.Data;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -72,7 +72,7 @@ public class LogLevelModuleTest {
             boolean olog = oll.isChoosingLog();
             assertEquals(ll.getAICcLevel(), oll.getLevel().getStatistics().AICC, 1e-1);
             assertEquals(ll.getAICcLog(), oll.getLog().getStatistics().AICC, 1e-1);
-            assertTrue(log == olog);
+            assertEquals(log, olog);
         }
     }
 
@@ -105,7 +105,7 @@ public class LogLevelModuleTest {
             context.hasseas = true;
             oll.process(context);
             boolean olog = oll.isChoosingLog();
-            assertTrue(log == olog);
+            assertEquals(log, olog);
             assertEquals(ll.getAICcLevel(), oll.getLevel().getStatistics().AICC, 1e-1);
             assertEquals(ll.getAICcLog(), oll.getLog().getStatistics().AICC, 1e-1);
         }

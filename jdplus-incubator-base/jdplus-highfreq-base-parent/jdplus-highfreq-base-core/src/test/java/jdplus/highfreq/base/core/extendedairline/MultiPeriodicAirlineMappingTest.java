@@ -37,7 +37,8 @@ import jdplus.toolkit.base.core.ucarima.UcarimaModel;
 import java.io.IOException;
 import java.util.function.Consumer;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Disabled;
 import jdplus.toolkit.base.api.ssf.SsfInitialization;
 import java.io.InputStream;
@@ -84,7 +85,7 @@ public class MultiPeriodicAirlineMappingTest {
                 .arima(mapping.getDefault())
                 .build();
         RegArimaEstimation<ArimaModel> estimation = processor.process(regarima, mapping);
-        assertTrue(estimation != null);
+        assertNotSame(estimation, null);
         System.out.println(estimation.getMax().getParameters());
         UcarimaModel ucm = ucm(estimation.getModel().arima(), true);
         ucm = ucm.simplify();
@@ -121,7 +122,7 @@ public class MultiPeriodicAirlineMappingTest {
                 .arima(mapping.getDefault())
                 .build();
         RegArimaEstimation<ArimaModel> estimation = processor.process(regarima, mapping);
-        assertTrue(estimation != null);
+        assertNotSame(estimation, null);
         System.out.println(estimation.getMax().getParameters());
         UcarimaModel ucm = ucm(estimation.getModel().arima(), true);
         ucm = ucm.simplify();
@@ -159,7 +160,7 @@ public class MultiPeriodicAirlineMappingTest {
                 .arima(mapping.getDefault())
                 .build();
         RegArimaEstimation<ArimaModel> estimation = processor.process(regarima, mapping);
-        assertTrue(estimation != null);
+        assertNotSame(estimation, null);
         System.out.println(estimation.getMax().getParameters());
         UcarimaModel ucm = ucm(estimation.getModel().arima(), true);
         assertTrue(ucm.isValid());
@@ -186,7 +187,7 @@ public class MultiPeriodicAirlineMappingTest {
                 .arima(mapping.getDefault())
                 .build();
         RegArimaEstimation<ArimaModel> estimation = processor.process(regarima, mapping);
-        assertTrue(estimation != null);
+        assertNotSame(estimation, null);
         System.out.println(estimation.getMax().getParameters());
         UcarimaModel ucm = ucm(estimation.getModel().arima(), true);
         assertTrue(ucm.isValid());
@@ -213,7 +214,7 @@ public class MultiPeriodicAirlineMappingTest {
                 .arima(mapping.getDefault())
                 .build();
         RegArimaEstimation<ArimaModel> estimation = processor.process(regarima, mapping);
-        assertTrue(estimation != null);
+        assertNotSame(estimation, null);
         UcarimaModel ucm = ucm(estimation.getModel().arima(), true);
         assertTrue(ucm.isValid());
         System.out.println(edf.column(0));
