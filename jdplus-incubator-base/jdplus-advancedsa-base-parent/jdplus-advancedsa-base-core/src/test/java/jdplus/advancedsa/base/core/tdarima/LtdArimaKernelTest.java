@@ -39,6 +39,7 @@ public class LtdArimaKernelTest {
 
         LtdArimaSpec spec = LtdArimaSpec.builder()
                 .sarimaSpec(SarimaSpec.airline())
+                .parametrization(LtdArimaSpec.Parametrization.MEAN_DELTA)
                 .vTheta(true)
                 .vBtheta(true)
                 //                .vVar(true)
@@ -47,19 +48,21 @@ public class LtdArimaKernelTest {
         LtdArimaKernel kernel = LtdArimaKernel.of(spec);
 
         long t0 = System.currentTimeMillis();
-        for (int i = 0; i < s.length; ++i) {
-            LtdArimaResults result = kernel.process(s[i].log().getValues(), s[i].getAnnualFrequency(), false, null);
+        for (int i = 1; i < s.length; ++i) {
+            LtdArimaResults result = kernel.process(s[i].getValues(), s[i].getAnnualFrequency(), false, null);
             System.out.print(result.getLl0().getLogLikelihood());
             System.out.print('\t');
-            System.out.println(result.getLl1().getLogLikelihood());
-//            System.out.println(result.getStart().parameters());
+            System.out.print(result.getLl1().getLogLikelihood());
+            System.out.print('\t');
+//            System.out.print(result.getStart().parameters());
+            System.out.print(result.getMax().getParameters());
+            System.out.print('\t');
 //
-//            System.out.println(result.getMax().getParameters());
 //            System.out.println(result.getMax().getScore());
 //
-            DoubleSeq t = DoublesMath.divide(result.getMax().getParameters(), result.getMax().asymptoticCovariance().diagonal().sqrt());
+            DoubleSeq t = DoublesMath.divide(result.getMax().getParameters(), LtdArimaKernel.covariance(result.getMax().getInformation()).diagonal().sqrt());
 //            System.out.println();
-//            System.out.println(t);
+            System.out.println(t);
         }
         long t1 = System.currentTimeMillis();
         System.out.println(t1 - t0);
@@ -72,6 +75,7 @@ public class LtdArimaKernelTest {
         SarimaSpec aspec = airline.toBuilder().p(3).build();
         
         LtdArimaSpec spec = LtdArimaSpec.builder()
+                .parametrization(LtdArimaSpec.Parametrization.MEAN_DELTA)
                 .sarimaSpec(aspec)
                 .vTheta(true)
                 .vBtheta(true)

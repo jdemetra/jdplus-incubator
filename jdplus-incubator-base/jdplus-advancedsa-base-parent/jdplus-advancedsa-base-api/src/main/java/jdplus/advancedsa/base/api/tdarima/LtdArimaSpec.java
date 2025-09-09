@@ -25,7 +25,13 @@ import jdplus.toolkit.base.api.arima.SarimaSpec;
 @lombok.Value
 public class LtdArimaSpec {
     
+    public enum Parametrization{
+        START_END, MEAN_DELTA;
+    }
+    
     public static final double DEF_PRECISION=1e-9;
+    
+    public static final Parametrization DEF_PARAMETRIZATION=Parametrization.MEAN_DELTA;
     
     @lombok.With
     private final SarimaSpec sarimaSpec;
@@ -34,7 +40,10 @@ public class LtdArimaSpec {
     @lombok.With
     private double precision;
     
+    @lombok.With
+    private Parametrization parametrization;
+
     public static Builder builder(){
-        return new Builder().precision(DEF_PRECISION);
+        return new Builder().precision(DEF_PRECISION).parametrization(DEF_PARAMETRIZATION);
     }
 }

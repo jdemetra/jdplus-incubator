@@ -15,7 +15,6 @@
  */
 package jdplus.advancedsa.base.core.tdarima;
 
-import java.util.function.IntToDoubleFunction;
 import jdplus.toolkit.base.api.arima.SarimaOrders;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.core.data.DataBlock;
@@ -24,28 +23,29 @@ import jdplus.toolkit.base.core.math.functions.ParamValidation;
 import jdplus.toolkit.base.core.sarima.estimation.SarimaMapping;
 
 /**
- * The parameters are organized as follows: p_0 for all sarima parameters,
- * p_1 for all variable sarima parameters (phi, bphi, theta, btheta), true
+ * The parameters are organized as follows: p_mean for all sarima parameters,
+ * p_step for all variable sarima parameters (phi, bphi, theta, btheta), true
  * signs + var_end (var_start = 1)
  *
  * @author Jean Palate
  */
 @lombok.Builder(toBuilder = true, builderClassName = "Builder")
 @lombok.Value
-public class LtdArimaMapping2 implements LtdArimaMapping {
+public class LtdAirlineMapping implements IParametricMapping<LtdArimaModel> {
 
-    private final int n;
     @lombok.With
     private final SarimaOrders orders;
+    private final int n;
     private final boolean vPhi, vBphi, vTheta, vBtheta, vVar;
     private final double eps, epsVar;
 
-//    static final double MAX = 0.99999;
-//    public static final double STEP = Math.pow(2.220446e-16, 0.5), EVAR = 1e-6;
+    static final double MAX = 0.99999;
+    public static final double STEP = Math.pow(2.220446e-16, 0.5), EVAR = 1e-6;
 
     public static Builder builder(SarimaOrders orders) {
         Builder builder = new Builder();
         builder.orders(orders)
+                .n(0)
                 .vPhi(false)
                 .vBphi(false)
                 .vTheta(false)
@@ -59,55 +59,44 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
 
     @Override
     public LtdArimaModel map(DoubleSeq ds) {
-        int np = orders.getParametersCount();
+        int np=orders.getParametersCount();
         double[] pmodels = pmodels(ds);
         return LtdArimaModel.builder()
-                .n(n)
                 .spec(orders)
+                .n(n)
                 .p0(DoubleSeq.of(pmodels, 0, np))
                 .p1(DoubleSeq.of(pmodels, np, np))
-                .var1(pmodels[pmodels.length - 1])
+                .var1(pmodels[pmodels.length-1])
                 .build();
     }
-
-    public int varParamsCount() {
-        int dn = 0;
-        if (vPhi) {
-            dn += orders.getP();
-        }
-        if (vBphi) {
-            dn += orders.getBp();
-        }
-        if (vTheta) {
-            dn += orders.getQ();
-        }
-        if (vBtheta) {
-            dn += orders.getBq();
-        }
-        return dn;
+    
+    private int stepParamsCount(){
+        int n=0;
+        if (vPhi)
+            n+=orders.getP();
+        if (vBphi)
+            n+=orders.getBp();
+        if (vTheta)
+            n+=orders.getQ();
+        if (vBtheta)
+            n+=orders.getBq();
+        return n;
     }
 
     @Override
     public DoubleSeq getDefaultParameters() {
         SarimaMapping mapping = new SarimaMapping(orders, eps, true);
         DoubleSeq p0 = mapping.getDefaultParameters();
-        int ns = varParamsCount();
-        if (ns == 0 && !vVar) {
+        int ns=stepParamsCount();
+        if (ns == 0 && ! vVar)
             return p0;
-        }
-        int np0=p0.length();
-        int np = np0 + ns;
-        if (vVar) {
+        int np =p0.length()+ns;
+        if (vVar)
             ++np;
-        }
-        double[] p = new double[np];
+        double[] p=new double[np];
         p0.copyTo(p, 0);
-        
-        DataBlock P=DataBlock.of(p);
-        setP1(P.drop(np, 0), i->p[i]);
-        if (vVar) {
-            p[p.length - 1] = 1;
-        }
+        if (vVar)
+            p[p.length-1]=1;
         return DoubleSeq.of(p);
     }
 
@@ -129,26 +118,66 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
     public ParamValidation validate(DataBlock ioParams) {
         SarimaMapping mapping = new SarimaMapping(orders, eps, true);
         int np = orders.getParametersCount();
-        // step 1: with validate p0 and var
-        ParamValidation v0 = mapping.validate(ioParams.range(0, np));
-        boolean changed = v0 == ParamValidation.Changed;
+        double[] pm = pmodels(ioParams);
+        ParamValidation v0 = mapping.validate(DataBlock.of(pm, 0, np));
+        ParamValidation v1 = mapping.validate(DataBlock.of(pm, np, 2 * np));
+        if (v0 == ParamValidation.Invalid || v1 == ParamValidation.Invalid) {
+            return ParamValidation.Invalid;
+        }
+        boolean changed = false;
+        if (v0 == ParamValidation.Changed || v1 == ParamValidation.Changed) {
+            changed = true;
+            // set new means
+            for (int i = 0; i < np; ++i) {
+                ioParams.set(i, (pm[i] + pm[i + np]) / 2);
+            }
+            // set delta
+            int ip = 0, istep = np;
+            int p = orders.getP();
+            if (p > 0) {
+                if (vPhi) {
+                    for (int i = 0; i < p; ++i) {
+                        ioParams.set(np + istep, (pm[np + ip + i] - pm[ip + i]) / (n - 1));
+                    }
+                    istep += p;
+                }
+                ip += p;
+            }
+            int bp = orders.getBp();
+            if (bp > 0) {
+                if (vBphi) {
+                    for (int i = 0; i < bp; ++i) {
+                        ioParams.set(np + istep, (pm[np + ip + i] - pm[ip + i]) / (n - 1));
+                    }
+                    istep += bp;
+                }
+                ip += bp;
+            }
+            int q = orders.getQ();
+            if (q > 0) {
+                if (vTheta) {
+                    for (int i = 0; i < q; ++i) {
+                        ioParams.set(np + istep, (pm[np + ip + i] - pm[ip + i]) / (n - 1));
+                    }
+                    istep += q;
+                }
+                ip += q;
+            }
+            int bq = orders.getBq();
+            if (bq > 0) {
+                if (vBtheta) {
+                    for (int i = 0; i < q; ++i) {
+                        ioParams.set(np + istep, (pm[np + ip + i] - pm[ip + i]) / (n - 1));
+                    }
+                }
+            }
+        }
         if (vVar) {
             double v = ioParams.getLast();
             if (v < 0) {
                 ioParams.setLast(-1 / v);
                 changed = true;
             }
-        }
- 
-        double[] p1 = p1(ioParams);
-        ParamValidation v1 = mapping.validate(DataBlock.of(p1));
-        if (v1 == ParamValidation.Invalid) {
-            return ParamValidation.Invalid;
-        }
-        if (v1 == ParamValidation.Changed) {
-            changed = true;
-            // set new p1
-            setP1(ioParams.drop(np, 0), i -> p1[i]);
         }
         return changed ? ParamValidation.Changed : ParamValidation.Valid;
     }
@@ -236,7 +265,7 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
         if (vPhi && orders.getP() > 0) {
             if (idx < orders.getP()) {
                 if (orders.getP() == 1) {
-                    return -MAX;
+                    return -2 * MAX / (n - 1);
                 } else {
                     return Double.NEGATIVE_INFINITY;
                 }
@@ -246,7 +275,7 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
         if (vBphi && orders.getBp() > 0) {
             if (idx < orders.getBp()) {
                 if (orders.getBp() == 1) {
-                    return -MAX;
+                    return -2 * MAX / (n - 1);
                 } else {
                     return Double.NEGATIVE_INFINITY;
                 }
@@ -256,7 +285,7 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
         if (vTheta && orders.getQ() > 0) {
             if (idx < orders.getQ()) {
                 if (orders.getQ() == 1) {
-                    return -MAX;
+                    return -2 * MAX / (n - 1);
                 } else {
                     return Double.NEGATIVE_INFINITY;
                 }
@@ -265,7 +294,7 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
         if (vBtheta && orders.getBq() > 0) {
             if (idx < orders.getBq()) {
                 if (orders.getBq() == 1) {
-                    return -MAX;
+                    return -2 * MAX / (n - 1);
                 } else {
                     return Double.NEGATIVE_INFINITY;
                 }
@@ -319,7 +348,7 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
         if (vPhi && orders.getP() > 0) {
             if (idx < orders.getP()) {
                 if (orders.getP() == 1) {
-                    return MAX;
+                    return 2 * MAX / (n - 1);
                 } else {
                     return Double.POSITIVE_INFINITY;
                 }
@@ -329,7 +358,7 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
         if (vBphi && orders.getBp() > 0) {
             if (idx < orders.getBp()) {
                 if (orders.getBp() == 1) {
-                    return MAX;
+                    return 2 * MAX / (n - 1);
                 } else {
                     return Double.POSITIVE_INFINITY;
                 }
@@ -339,7 +368,7 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
         if (vTheta && orders.getQ() > 0) {
             if (idx < orders.getQ()) {
                 if (orders.getQ() == 1) {
-                    return MAX;
+                    return 2 * MAX / (n - 1);
                 } else {
                     return Double.POSITIVE_INFINITY;
                 }
@@ -348,7 +377,7 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
         if (vBtheta && orders.getBq() > 0) {
             if (idx < orders.getBq()) {
                 if (orders.getBq() == 1) {
-                    return MAX;
+                    return 2 * MAX / (n - 1);
                 } else {
                     return Double.POSITIVE_INFINITY;
                 }
@@ -361,22 +390,24 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
     private double[] pmodels(DoubleSeq pall) {
         int np = orders.getParametersCount();
         double[] pm = new double[2 * np + 1];
-        int ip = 0, ivp = np;
+        int ip = 0, istep = np;
         int p = orders.getP();
         if (p > 0) {
             DoubleSeq cp = pall.extract(ip, p);
             if (vPhi) {
-                DoubleSeq vp = pall.extract(ivp, p);
+                DoubleSeq dp = pall.extract(istep, p);
+                double s = .5 * (n - 1);
                 for (int i = 0; i < p; ++i) {
-                    double p0 = cp.get(i);
-                    double p1 = vp.get(i);
-                    pm[ip + i] = p0;
-                    pm[np + ip + i] = p1;
+                    double m = cp.get(i);
+                    double d = dp.get(i) * s;
+                    pm[ip + i] = m - d;
+                    pm[np + ip + i] = m + d;
                 }
-                ivp += p;
+                istep += p;
             } else {
                 cp.copyTo(pm, ip);
                 cp.copyTo(pm, ip + np);
+
             }
             ip += p;
         }
@@ -384,14 +415,15 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
         if (bp > 0) {
             DoubleSeq cp = pall.extract(ip, bp);
             if (vBphi) {
-                DoubleSeq vp = pall.extract(ivp, bp);
+                DoubleSeq dp = pall.extract(istep, bp);
+                double s = .5 * (n - 1);
                 for (int i = 0; i < bp; ++i) {
-                    double p0 = cp.get(i);
-                    double p1 = vp.get(i);
-                    pm[ip + i] = p0;
-                    pm[np + ip + i] = p1;
+                    double m = cp.get(i);
+                    double d = dp.get(i) * s;
+                    pm[ip + i] = m - d;
+                    pm[np + ip + i] = m + d;
                 }
-                ivp += bp;
+                istep += bp;
             } else {
                 cp.copyTo(pm, ip);
                 cp.copyTo(pm, ip + np);
@@ -402,14 +434,15 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
         if (q > 0) {
             DoubleSeq cp = pall.extract(ip, q);
             if (vTheta) {
-                DoubleSeq vp = pall.extract(ivp, q);
+                DoubleSeq dp = pall.extract(istep, q);
+                double s = .5 * (n - 1);
                 for (int i = 0; i < q; ++i) {
-                    double p0 = cp.get(i);
-                    double p1 = vp.get(i);
-                    pm[ip + i] = p0;
-                    pm[np + ip + i] = p1;
+                    double m = cp.get(i);
+                    double d = dp.get(i) * s;
+                    pm[ip + i] = m - d;
+                    pm[np + ip + i] = m + d;
                 }
-                ivp += q;
+                istep += q;
             } else {
                 cp.copyTo(pm, ip);
                 cp.copyTo(pm, ip + np);
@@ -418,14 +451,15 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
         }
         int bq = orders.getBq();
         if (bq > 0) {
-            DoubleSeq cp = pall.extract(ip, bq);
+            DoubleSeq cp = pall.extract(ip, q);
             if (vBtheta) {
-                DoubleSeq vp = pall.extract(ivp, bq);
+                DoubleSeq dp = pall.extract(istep, bq);
+                double s = .5 * (n - 1);
                 for (int i = 0; i < bq; ++i) {
-                    double p0 = cp.get(i);
-                    double p1 = vp.get(i);
-                    pm[ip + i] = p0;
-                    pm[np + ip + i] = p1;
+                    double m = cp.get(i);
+                    double d = dp.get(i) * s;
+                    pm[ip + i] = m - d;
+                    pm[np + ip + i] = m + d;
                 }
             } else {
                 cp.copyTo(pm, ip);
@@ -436,96 +470,4 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
         return pm;
     }
 
-    private double[] p1(DoubleSeq pall) {
-        int np = orders.getParametersCount();
-        int nd = varParamsCount();
-        if (np == nd) {
-            return pall.range(np, 2 * np).toArray();
-        }
-        double[] vm = new double[np];
-        int ip = 0, istep = np;
-        int p = orders.getP();
-        if (p > 0) {
-            if (vPhi) {
-                pall.extract(istep, p).copyTo(vm, ip);
-                istep += p;
-            }
-            ip += p;
-        }
-        int bp = orders.getBp();
-        if (bp > 0) {
-            if (vBphi) {
-                pall.extract(istep, bp).copyTo(vm, ip);
-                istep += bp;
-            }
-            ip += bp;
-        }
-        int q = orders.getQ();
-        if (q > 0) {
-            if (vTheta) {
-                pall.extract(istep, q).copyTo(vm, ip);
-                istep += q;
-            }
-            ip += q;
-        }
-        int bq = orders.getBq();
-        if (bq > 0) {
-            if (vBtheta) {
-                pall.extract(istep, bq).copyTo(vm, ip);
-            }
-        }
-        return vm;
-    }
-
-    private void setP1(DataBlock p1, IntToDoubleFunction fp1) {
-        int ip = 0, iv = 0;
-        int p = orders.getP();
-        if (p > 0) {
-            if (vPhi) {
-                int start = ip;
-                p1.extract(iv, p).set(i -> fp1.applyAsDouble(start + i));
-                iv += p;
-            }
-            ip += p;
-        }
-        int bp = orders.getBp();
-        if (bp > 0) {
-            if (vBphi) {
-                int start = ip;
-                p1.extract(iv, bp).set(i -> fp1.applyAsDouble(start + i));
-                iv += bp;
-            }
-            ip += bp;
-        }
-        int q = orders.getQ();
-        if (q > 0) {
-            if (vTheta) {
-                int start = ip;
-                p1.extract(iv, q).set(i -> fp1.applyAsDouble(start + i));
-                iv += q;
-            }
-            ip += q;
-        }
-        int bq = orders.getBq();
-        if (bq > 0) {
-            if (vBtheta) {
-                int start = ip;
-                p1.extract(iv, bq).set(i -> fp1.applyAsDouble(start + i));
-            }
-        }
-    }
-
-    @Override
-    public DoubleSeq parametersOf(LtdArimaModel model) {
-        int np0 = orders.getParametersCount(), np1 = varParamsCount(), nv = vVar ? 1 : 0;
-        double[] p = new double[np0 + np1 + nv];
-        DoubleSeq p0 = model.getP0();
-        DoubleSeq p1 = model.getP1();
-        p0.copyTo(p, 0);
-        DataBlock P=DataBlock.of(p, np0, np0+np1, 1);
-        setP1(P, i->p1.get(i));
-        if (vVar)
-            p[np0+np1]=model.getVar1();
-        return DoubleSeq.of(p);
-    }
 }

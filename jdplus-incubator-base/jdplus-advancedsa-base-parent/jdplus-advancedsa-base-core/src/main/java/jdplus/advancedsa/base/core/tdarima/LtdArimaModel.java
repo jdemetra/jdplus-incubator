@@ -35,6 +35,10 @@ public class LtdArimaModel {
     private final DoubleSeq p0, p1;
     private final double var1;
     private final int n;
+    
+    public static LtdArimaModel of(SarimaOrders spec, DoubleSeq p, int n){
+        return new LtdArimaModel(spec, p, p, 1, n);
+    }
 
     public Ssf ssf() {
 

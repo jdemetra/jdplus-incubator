@@ -40,7 +40,7 @@ public class LtdArimaModelTest {
                 
         SarimaOrders orders=SarimaOrders.airline(12);
 //        orders.setP(3);
-        LtdArimaMapping mapping=LtdArimaMapping.builder(orders)
+        LtdArimaMapping mapping=LtdArimaMapping1.builder(orders)
                 .n(s.length)
 //                .vPhi(true)
                 .vTheta(true)
