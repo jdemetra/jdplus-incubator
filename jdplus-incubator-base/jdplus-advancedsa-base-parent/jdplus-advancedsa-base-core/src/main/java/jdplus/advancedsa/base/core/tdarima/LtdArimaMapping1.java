@@ -65,7 +65,7 @@ public class LtdArimaMapping1 implements LtdArimaMapping {
                 .spec(orders)
                 .p0(DoubleSeq.of(pmodels, 0, np))
                 .p1(DoubleSeq.of(pmodels, np, np))
-                .var1(pmodels[pmodels.length - 1])
+                .var1(1 + pmodels[pmodels.length - 1])
                 .build();
     }
 
@@ -100,9 +100,9 @@ public class LtdArimaMapping1 implements LtdArimaMapping {
         }
         double[] p = new double[np];
         p0.copyTo(p, 0);
-        if (vVar) {
-            p[p.length - 1] = 1;
-        }
+//        if (vVar) {
+//            p[p.length - 1] = 0;
+//        }
         return DoubleSeq.of(p);
     }
 
@@ -117,7 +117,7 @@ public class LtdArimaMapping1 implements LtdArimaMapping {
         if (!mapping.checkBoundaries(DoubleSeq.of(p, np, np))) {
             return false;
         }
-        return p[2 * np] >= 0;
+        return p[2 * np] >= -1;
     }
 
     @Override
@@ -131,25 +131,23 @@ public class LtdArimaMapping1 implements LtdArimaMapping {
         boolean changed = v0 == ParamValidation.Changed;
         if (vVar) {
             double v = ioParams.getLast();
-            if (v < 0) {
-                ioParams.setLast(-1 / v);
+            if (v < -1) {
+                double w = -1 / (v + 1); // new var
+                ioParams.setLast(w - 1);
                 changed = true;
             }
         }
-        
 
         // adapt delta if need be
-        
-        double alpha = 1, mu = .5;
-        DoubleSeq mean = mean(ioParams);
-        DoubleSeq delta = delta(ioParams);
-
+//        double alpha = 1, mu = .5;
+//        DoubleSeq mean = mean(ioParams);
+//        DoubleSeq delta = delta(ioParams);
         double[] pm = pmodels(ioParams);
-                
+
         ParamValidation v1 = mapping.validate(DataBlock.of(pm, 0, np));
         ParamValidation v2 = mapping.validate(DataBlock.of(pm, np, 2 * np));
 
-        if (v1 != ParamValidation.Valid || v2 != ParamValidation.Valid){
+        if (v1 != ParamValidation.Valid || v2 != ParamValidation.Valid) {
             // ok with the new mean
             changed = true;
             // set new means
@@ -214,7 +212,6 @@ public class LtdArimaMapping1 implements LtdArimaMapping {
 //        }
 //        return changed ? ParamValidation.Changed : ParamValidation.Valid;
 //    }
-
     @Override
     public double epsilon(DoubleSeq inparams, int idx) {
 
@@ -334,7 +331,7 @@ public class LtdArimaMapping1 implements LtdArimaMapping {
             }
         }
         // var
-        return 0;
+        return -1;
     }
 
     @Override
@@ -495,7 +492,7 @@ public class LtdArimaMapping1 implements LtdArimaMapping {
                 cp.copyTo(pm, ip + np);
             }
         }
-        pm[2 * np] = vVar ? pall.get(pall.length() - 1) : 1;
+        pm[2 * np] = vVar ? pall.get(pall.length() - 1) : 0;
         return pm;
     }
 
@@ -562,8 +559,9 @@ public class LtdArimaMapping1 implements LtdArimaMapping {
     }
 
     private void setDelta(DataBlock pdelta, IntToDoubleFunction delta) {
-        if (pdelta.isEmpty())
+        if (pdelta.isEmpty()) {
             return;
+        }
         int ip = 0, idelta = 0;
         int p = orders.getP();
         if (p > 0) {
@@ -611,11 +609,11 @@ public class LtdArimaMapping1 implements LtdArimaMapping {
         for (int i = 0; i < np; ++i) {
             p[i] = (p0.get(i) + p1.get(i)) / 2;
         }
-        DataBlock P=DataBlock.of(p, np, np+nd, 1);
-        setDelta(P, i->(p1.get(i) - p0.get(i)));
-        if (vVar)
-            p[np+nd]=model.getVar1();
+        DataBlock P = DataBlock.of(p, np, np + nd, 1);
+        setDelta(P, i -> (p1.get(i) - p0.get(i)));
+        if (vVar) {
+            p[np + nd] = model.getVar1() - 1;
+        }
         return DoubleSeq.of(p);
     }
-
 }

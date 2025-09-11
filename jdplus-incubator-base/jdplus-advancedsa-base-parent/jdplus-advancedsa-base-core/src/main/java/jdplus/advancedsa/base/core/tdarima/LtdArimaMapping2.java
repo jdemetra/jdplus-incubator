@@ -24,9 +24,9 @@ import jdplus.toolkit.base.core.math.functions.ParamValidation;
 import jdplus.toolkit.base.core.sarima.estimation.SarimaMapping;
 
 /**
- * The parameters are organized as follows: p_0 for all sarima parameters,
- * p_1 for all variable sarima parameters (phi, bphi, theta, btheta), true
- * signs + var_end (var_start = 1)
+ * The parameters are organized as follows: p_0 for all sarima parameters, p_1
+ * for all variable sarima parameters (phi, bphi, theta, btheta), true signs +
+ * var_end (var_start = 1)
  *
  * @author Jean Palate
  */
@@ -42,7 +42,6 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
 
 //    static final double MAX = 0.99999;
 //    public static final double STEP = Math.pow(2.220446e-16, 0.5), EVAR = 1e-6;
-
     public static Builder builder(SarimaOrders orders) {
         Builder builder = new Builder();
         builder.orders(orders)
@@ -95,16 +94,16 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
         if (ns == 0 && !vVar) {
             return p0;
         }
-        int np0=p0.length();
+        int np0 = p0.length();
         int np = np0 + ns;
         if (vVar) {
             ++np;
         }
         double[] p = new double[np];
         p0.copyTo(p, 0);
-        
-        DataBlock P=DataBlock.of(p);
-        setP1(P.drop(np, 0), i->p[i]);
+
+        DataBlock P = DataBlock.of(p);
+        setP1(P.drop(np, 0), i -> p[i]);
         if (vVar) {
             p[p.length - 1] = 1;
         }
@@ -139,7 +138,7 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
                 changed = true;
             }
         }
- 
+
         double[] p1 = p1(ioParams);
         ParamValidation v1 = mapping.validate(DataBlock.of(p1));
         if (v1 == ParamValidation.Invalid) {
@@ -522,10 +521,11 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
         DoubleSeq p0 = model.getP0();
         DoubleSeq p1 = model.getP1();
         p0.copyTo(p, 0);
-        DataBlock P=DataBlock.of(p, np0, np0+np1, 1);
-        setP1(P, i->p1.get(i));
-        if (vVar)
-            p[np0+np1]=model.getVar1();
+        DataBlock P = DataBlock.of(p, np0, np0 + np1, 1);
+        setP1(P, i -> p1.get(i));
+        if (vVar) {
+            p[np0 + np1] = model.getVar1();
+        }
         return DoubleSeq.of(p);
     }
 }
