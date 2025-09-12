@@ -20,7 +20,7 @@ import jdplus.stl.base.core.IDataSelector;
 import jdplus.stl.base.core.IPeriodicDataOrganizer;
 import jdplus.stl.base.core.IPeriodicDataSelectors;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *

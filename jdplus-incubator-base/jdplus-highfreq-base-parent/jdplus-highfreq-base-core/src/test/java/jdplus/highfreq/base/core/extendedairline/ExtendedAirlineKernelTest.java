@@ -9,13 +9,14 @@ import jdplus.highfreq.base.core.regarima.HighFreqRegArimaModel;
 import tck.demetra.data.Data;
 import tck.demetra.data.MatrixSerializer;
 import jdplus.toolkit.base.api.timeseries.calendars.EasterRelatedDay;
+
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import jdplus.toolkit.base.api.timeseries.calendars.FixedDay;
 import jdplus.toolkit.base.api.timeseries.calendars.Holiday;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import jdplus.highfreq.base.api.ExtendedAirlineModellingSpec;
 import jdplus.highfreq.base.api.ExtendedAirlineSpec;
 import jdplus.toolkit.base.api.modelling.highfreq.HolidaysSpec;
@@ -74,7 +75,7 @@ public class ExtendedAirlineKernelTest {
                 .build();
         ExtendedAirlineKernel kernel=ExtendedAirlineKernel.of(spec, context);
         HighFreqRegArimaModel rslt = kernel.process(EDF, ProcessingLog.dummy());
-        assertTrue(rslt != null);
+        assertNotSame(rslt, null);
         Map<String, Class> dictionary = rslt.getDictionary();
 //        dictionary.keySet().forEach(v->System.out.println(v));
     }

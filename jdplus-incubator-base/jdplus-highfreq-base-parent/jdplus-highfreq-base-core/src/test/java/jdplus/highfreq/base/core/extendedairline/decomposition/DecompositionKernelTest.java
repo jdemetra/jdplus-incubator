@@ -20,6 +20,8 @@ import jdplus.toolkit.base.api.data.DoubleSeq;
 import tck.demetra.data.Data;
 import tck.demetra.data.MatrixSerializer;
 import jdplus.highfreq.base.api.DecompositionSpec;
+
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
 import jdplus.toolkit.base.api.processing.ProcessingLog;
 
@@ -27,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -61,7 +62,7 @@ public class DecompositionKernelTest {
                 .build();
         DecompositionKernel kernel = new DecompositionKernel(spec);
         ExtendedAirlineDecomposition decomp = kernel.process(EDF.log(), true, ProcessingLog.dummy());
-        assertTrue(decomp != null);
+        assertNotSame(decomp, null);
     }
 
     public static void main(String[] args){

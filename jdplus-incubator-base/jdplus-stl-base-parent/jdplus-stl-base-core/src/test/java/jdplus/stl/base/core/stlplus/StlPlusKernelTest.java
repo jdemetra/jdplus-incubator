@@ -15,7 +15,7 @@
  * limitations under the Licence.
  */
 package jdplus.stl.base.core.stlplus;
-
+import org.junit.jupiter.api.Test;
 import tck.demetra.data.Data;
 import jdplus.toolkit.base.api.modelling.ComponentInformation;
 import jdplus.toolkit.base.api.modelling.regular.ModellingSpec;
@@ -25,7 +25,6 @@ import jdplus.stl.base.api.StlPlusSpec;
 import jdplus.stl.base.api.StlSpec;
 import jdplus.toolkit.base.api.timeseries.TsDataTable;
 import java.util.Arrays;
-import org.junit.Test;
 
 /**
  *

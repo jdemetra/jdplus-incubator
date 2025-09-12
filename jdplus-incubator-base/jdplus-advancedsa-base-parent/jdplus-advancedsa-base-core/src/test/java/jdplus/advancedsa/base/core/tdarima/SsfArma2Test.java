@@ -31,7 +31,8 @@ import jdplus.toolkit.base.core.ssf.univariate.SsfData;
 import jdplus.toolkit.base.core.ssf.utility.DynamicsCoherence;
 import jdplus.toolkit.base.core.ssf.utility.StationaryInitialization;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *

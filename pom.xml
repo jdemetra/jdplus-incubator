@@ -106,12 +106,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>${assertj-core.version}</version>
@@ -187,7 +181,7 @@
                 <plugin>
                     <groupId>com.github.nbbrd.heylogs</groupId>
                     <artifactId>heylogs-maven-plugin</artifactId>
-                    <version>0.13.0</version>
+                    <version>0.14.0</version>
                 </plugin>
                 <plugin>
                     <groupId>io.github.ascopes</groupId>
@@ -436,7 +430,7 @@
                 </executions>
                 <configuration>
                     <versioning>semver</versioning>
-                    <tagPrefix>v</tagPrefix>
+                    <tagging>prefix:v</tagging>
                 </configuration>
             </plugin>
         </plugins>

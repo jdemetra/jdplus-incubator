@@ -19,7 +19,8 @@ package jdplus.sts.base.core;
 import jdplus.toolkit.base.api.ssf.sts.SeasonalModel;
 import jdplus.toolkit.base.core.ucarima.UcarimaModel;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 /**
  *
@@ -41,7 +42,7 @@ public class BsmUtilityTest {
                 .noiseVar(1)
                 .build();
         UcarimaModel ucm=BsmUtility.ucm(bsm, true);
-        assertTrue(ucm != null);
+        assertNotSame(ucm, null);
     }
   
 }

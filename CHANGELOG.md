@@ -56,6 +56,10 @@ This is a feature release of incubator extensions for JDemetra+ v3.
 This is the **initial release** of incubator extensions for JDemetra+ v3.  
 [JDemetra+ v3.0.2 or later](https://github.com/jdemetra/jdplus-main) version is required to run it.
 
+### Added
+
+- Initial release
+
 [Unreleased]: https://github.com/jdemetra/jdplus-incubator/compare/v2.3.0...HEAD
 [2.3.0]: https://github.com/jdemetra/jdplus-incubator/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/jdemetra/jdplus-incubator/compare/v2.1.0...v2.2.0
