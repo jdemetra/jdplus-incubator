@@ -1,3 +1,5 @@
+import jdplus.toolkit.base.api.information.InformationExtractor;
+
 module jdplus.advancedsa.base.core {
 
     requires static lombok;
@@ -12,5 +14,12 @@ module jdplus.advancedsa.base.core {
 
     exports jdplus.advancedsa.base.core.regarima;
     exports jdplus.advancedsa.base.core.movingtd;
-    exports jdplus.advancedsa.base.core.tarima;
+    exports jdplus.advancedsa.base.core.tdarima;
+    exports jdplus.advancedsa.base.core.tdarima.extractors;
+    
+        provides InformationExtractor with
+            jdplus.advancedsa.base.core.tdarima.extractors.LtdArimaResultsExtractor;
+
 }
+
+
