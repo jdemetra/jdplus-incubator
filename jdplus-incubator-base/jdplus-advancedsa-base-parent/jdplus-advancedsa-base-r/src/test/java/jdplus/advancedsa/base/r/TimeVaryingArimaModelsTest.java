@@ -43,7 +43,7 @@ public class TimeVaryingArimaModelsTest {
             System.out.print('\t');
             System.out.print(result.getData("ll1.ll", Double.class));
             System.out.print('\t');
-            System.out.println(result.getModel().getVar1());
+            System.out.println(result.getLtd().getModel().getVar1());
         }
     }
 

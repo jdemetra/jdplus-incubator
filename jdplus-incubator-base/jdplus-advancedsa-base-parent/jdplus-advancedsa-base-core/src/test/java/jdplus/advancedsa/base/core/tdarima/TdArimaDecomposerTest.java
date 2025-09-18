@@ -17,6 +17,7 @@ package jdplus.advancedsa.base.core.tdarima;
 
 import jdplus.toolkit.base.api.arima.SarimaOrders;
 import jdplus.toolkit.base.api.data.DoubleSeq;
+import jdplus.toolkit.base.core.arima.ArimaModel;
 import jdplus.toolkit.base.core.sarima.SarimaModel;
 import jdplus.toolkit.base.core.ssf.composite.CompositeSsf;
 import jdplus.toolkit.base.core.ssf.dk.DkToolkit;
@@ -39,8 +40,9 @@ public class TdArimaDecomposerTest {
         for (int i = 0; i < s.length; ++i) {
             s[i] = Math.log(s[i]);
         }
-        double[] th = linear(s.length, 0.18, -0.98);
-        double[] bth = linear(s.length, -.99, -.1);
+        double[] th = linear(s.length, -0.8, -0.8);
+        double[] bth = linear(s.length, -.5, -.5);
+        double[] var = linear(s.length, 1, 6);
         SarimaOrders spec = new SarimaOrders(12);
         spec.setD(1);
         spec.setQ(1);
@@ -49,10 +51,12 @@ public class TdArimaDecomposerTest {
         long t0 = System.currentTimeMillis();
         TdArimaDecomposer decomposer = new TdArimaDecomposer(12, s.length,
                 i -> {
-                    return SarimaModel.builder(spec)
+                    ArimaModel arima=ArimaModel.of(SarimaModel.builder(spec)
                             .theta(th[i])
                             .btheta(bth[i])
-                            .build();
+                            .build());
+                    arima=arima.scaleVariance(var[i]);
+                    return arima;
                 }
         );
         UcarimaModel[] ucarimaModels = decomposer.ucarimaModels();

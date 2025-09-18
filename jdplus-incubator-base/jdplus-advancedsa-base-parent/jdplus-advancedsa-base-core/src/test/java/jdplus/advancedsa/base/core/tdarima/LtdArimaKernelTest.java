@@ -50,17 +50,17 @@ public class LtdArimaKernelTest {
         long t0 = System.currentTimeMillis();
         for (int i = 1; i < s.length; ++i) {
             LtdArimaResults result = kernel.process(s[i].getValues(), s[i].getAnnualFrequency(), false, null);
-            System.out.print(result.getLl0().getLogLikelihood());
+            System.out.print(result.getStart().getLl().getLogLikelihood());
             System.out.print('\t');
-            System.out.print(result.getLl1().getLogLikelihood());
+            System.out.print(result.getLtd().getLl().getLogLikelihood());
             System.out.print('\t');
 //            System.out.print(result.getStart().parameters());
-            System.out.print(result.getMax().getParameters());
+            System.out.print(result.getLtd().getMax().getParameters());
             System.out.print('\t');
 //
 //            System.out.println(result.getMax().getScore());
 //
-            DoubleSeq t = DoublesMath.divide(result.getMax().getParameters(), LtdArimaKernel.covariance(result.getMax().getInformation()).diagonal().sqrt());
+            DoubleSeq t = DoublesMath.divide(result.getLtd().getMax().getParameters(), LtdArimaKernel.covariance(result.getLtd().getMax().getInformation()).diagonal().sqrt());
 //            System.out.println();
             System.out.println(t);
         }
@@ -88,9 +88,9 @@ public class LtdArimaKernelTest {
         long t0 = System.currentTimeMillis();
         for (int i = 0; i < s.length; ++i) {
             LtdArimaResults result = kernel.process(s[i].log().getValues(), s[i].getAnnualFrequency(), false, null);
-            System.out.print(result.getLl0().getLogLikelihood());
+            System.out.print(result.getStart().getLl().getLogLikelihood());
             System.out.print('\t');
-            System.out.println(result.getLl1().getLogLikelihood());
+            System.out.println(result.getLtd().getLl().getLogLikelihood());
 //            System.out.println(result.getStart().parameters());
 //            System.out.println(result.getModel().getP0());
 //            System.out.println(result.getModel().getP1());

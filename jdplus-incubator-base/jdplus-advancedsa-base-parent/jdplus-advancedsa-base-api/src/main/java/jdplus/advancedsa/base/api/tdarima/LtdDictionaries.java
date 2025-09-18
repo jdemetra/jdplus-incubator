@@ -19,9 +19,9 @@ import jdplus.toolkit.base.api.dictionaries.AtomicDictionary;
 import jdplus.toolkit.base.api.dictionaries.ComplexDictionary;
 import jdplus.toolkit.base.api.dictionaries.Dictionary;
 import jdplus.toolkit.base.api.dictionaries.PrefixedDictionary;
-import static jdplus.toolkit.base.api.dictionaries.RegArimaDictionaries.RESIDUALS;
 import jdplus.toolkit.base.api.dictionaries.ResidualsDictionaries;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
+import jdplus.toolkit.base.api.stats.StatisticalTest;
 
 /**
  *
@@ -32,7 +32,9 @@ public class LtdDictionaries {
     public static final String PARAMETERS_FIXED="pfixed", PARAMETERS_ALL = "pall", PARAMETERS_MEAN="pmean", PARAMETERS_DELTA="pdelta", 
             PARAMETERS_P0="p0", PARAMETERS_P1="p1", 
             PARAMETERS_V0="v0", PARAMETERS_V1="v1",
-            PARAMETERS_FIXED_COV="pfixed_cov", PARAMETERS_COV="pall_cov";
+            PARAMETERS_FIXED_COV="pfixed_cov", PARAMETERS_COV="pall_cov", PARAMETERS_NAMES="pnames",
+            PARAMETERS_DERIVED="pderived", PARAMETERS_DERIVED_COV="pderived_cov", PARAMETERS_DERIVED_NAMES="pderived_names",
+            TEST_STATIONARITY="test_stationarity";
     
     public static final String REGS_COV0="cov0", REGS_COV1="cov1", REGS_C0="c0", REGS_C1="c1", 
             REGS_EFFECT0="effect0", Y_LIN0="y_lin0",
@@ -43,13 +45,20 @@ public class LtdDictionaries {
     public final Dictionary LTDARIMA_MODEL = AtomicDictionary.builder()
             .name("ltdarima")
             .item(AtomicDictionary.Item.builder().name(PARAMETERS_FIXED).description("arima parameters of the fixed model").outputClass(double[].class).build())
+            .item(AtomicDictionary.Item.builder().name(PARAMETERS_ALL).description("parameters of the time-dependent model").outputClass(Double.class).build())
+            .item(AtomicDictionary.Item.builder().name(PARAMETERS_NAMES).description("names of the parameters of the time-dependent model").outputClass(String.class).build())
+            .item(AtomicDictionary.Item.builder().name(PARAMETERS_COV).description("covariance of the parameters of the time-dependent model").outputClass(Matrix.class).build())
+            .item(AtomicDictionary.Item.builder().name(PARAMETERS_DERIVED).description("derived parameters of the time-dependent model").outputClass(Double.class).build())
+            .item(AtomicDictionary.Item.builder().name(PARAMETERS_DERIVED_NAMES).description("names of the derived parameters of the time-dependent model").outputClass(String.class).build())
+            .item(AtomicDictionary.Item.builder().name(PARAMETERS_DERIVED_COV).description("covariance of the derived parameters of the time-dependent model").outputClass(Matrix.class).build())
             .item(AtomicDictionary.Item.builder().name(PARAMETERS_P0).description("arima parameters at the beginning").outputClass(double[].class).build())
             .item(AtomicDictionary.Item.builder().name(PARAMETERS_P1).description("arima parameters at the end").outputClass(double[].class).build())
             .item(AtomicDictionary.Item.builder().name(PARAMETERS_MEAN).description("mean of the arima parameters").outputClass(double[].class).build())
             .item(AtomicDictionary.Item.builder().name(PARAMETERS_DELTA).description("delta of the arima parameters").outputClass(double[].class).build())
             .item(AtomicDictionary.Item.builder().name(PARAMETERS_V0).description("initial variance of the innovation").outputClass(Double.class).build())
             .item(AtomicDictionary.Item.builder().name(PARAMETERS_V1).description("final variance of the innovation").outputClass(Double.class).build())
-            .build();
+            .item(AtomicDictionary.Item.builder().name(TEST_STATIONARITY).description("test of the stationarity of the time-dependent parameters").outputClass(StatisticalTest.class).build())
+           .build();
     
     public final Dictionary LTDARIMA_REG = AtomicDictionary.builder()
             .name("ltdarima_regresion")

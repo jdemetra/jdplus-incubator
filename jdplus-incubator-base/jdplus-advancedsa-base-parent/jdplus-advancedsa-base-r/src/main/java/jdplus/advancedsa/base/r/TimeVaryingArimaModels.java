@@ -37,6 +37,7 @@ import jdplus.toolkit.base.api.data.Parameter;
 import jdplus.toolkit.base.api.data.ParameterType;
 import jdplus.toolkit.base.core.arima.ArimaModel;
 import jdplus.toolkit.base.core.sarima.SarimaModel;
+import jdplus.toolkit.base.core.ssf.SsfException;
 
 /**
  *
@@ -69,30 +70,34 @@ public class TimeVaryingArimaModels {
             orders.setSeasonal(seasonal[0], seasonal[1], seasonal[2]);
         }
         // we suppose that the parameters are correctly ordered (phi, bphi, th, bth)
-        TdArimaDecomposer decomposer = new TdArimaDecomposer(period, data.length, i->{
+        TdArimaDecomposer decomposer = new TdArimaDecomposer(period, data.length, i -> {
             DoubleSeq c = parameters.column(i);
             DoubleSeq p = tdvar ? c.drop(0, 1) : c;
-            SarimaModel sarima=SarimaModel.builder(orders).parameters(p)
+            SarimaModel sarima = SarimaModel.builder(orders).parameters(p)
                     .build();
-            if (! tdvar)
+            if (!tdvar) {
                 return sarima;
-            else{
-                ArimaModel arima=ArimaModel.of(sarima);
+            } else {
+                ArimaModel arima = ArimaModel.of(sarima);
                 return arima.scaleVariance(c.get(p.length()));
             }
         });
         UcarimaModel[] ucarimaModels = decomposer.ucarimaModels();
         CompositeSsf ssf = TdSsfUcarima.of(data.length, i -> ucarimaModels[i]);
         int[] pos = ssf.componentsPosition();
-        DefaultSmoothingResults sf = DkToolkit.smooth(ssf, new SsfData(data), se, true);
-        FastMatrix rslt = FastMatrix.make(data.length, se ? 6 : 3);
-        for (int i = 0; i < 3; ++i) {
-            rslt.column(i).copy(sf.getComponent(pos[i]));
-            if (se) {
-                rslt.column(i + 3).copy(sf.getComponentVariance(pos[i]).sqrt());
+        try {
+            DefaultSmoothingResults sf = DkToolkit.smooth(ssf, new SsfData(data), se, true);
+            FastMatrix rslt = FastMatrix.make(data.length, se ? 6 : 3);
+            for (int i = 0; i < 3; ++i) {
+                rslt.column(i).copy(sf.getComponent(pos[i]));
+                if (se) {
+                    rslt.column(i + 3).copy(sf.getComponentVariance(pos[i]).sqrt());
+                }
             }
+            return rslt;
+        } catch (SsfException err) {
+            return null;
         }
-        return rslt;
     }
 
     public LtdArimaResults estimate(double[] data, int period, boolean mean, Matrix X, int[] regular, int[] seasonal,
