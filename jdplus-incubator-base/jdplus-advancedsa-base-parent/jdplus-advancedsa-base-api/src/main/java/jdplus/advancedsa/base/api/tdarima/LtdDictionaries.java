@@ -34,7 +34,7 @@ public class LtdDictionaries {
             PARAMETERS_V0="v0", PARAMETERS_V1="v1",
             PARAMETERS_FIXED_COV="pfixed_cov", PARAMETERS_COV="pall_cov", PARAMETERS_NAMES="pnames",
             PARAMETERS_DERIVED="pderived", PARAMETERS_DERIVED_STDERR="pderived_stderr", PARAMETERS_DERIVED_NAMES="pderived_names",
-            TEST_STATIONARITY="test_stationarity";
+            TEST_STATIONARITY="test_stationarity", LRTEST="lrtest";
     
     public static final String REGS_COV0="cov0", REGS_COV1="cov1", REGS_C0="c0", REGS_C1="c1", 
             REGS_EFFECT0="effect0", Y_LIN0="y_lin0",
@@ -58,6 +58,7 @@ public class LtdDictionaries {
             .item(AtomicDictionary.Item.builder().name(PARAMETERS_V0).description("initial variance of the innovation").outputClass(Double.class).build())
             .item(AtomicDictionary.Item.builder().name(PARAMETERS_V1).description("final variance of the innovation").outputClass(Double.class).build())
             .item(AtomicDictionary.Item.builder().name(TEST_STATIONARITY).description("test of the stationarity of the time-dependent parameters").outputClass(StatisticalTest.class).build())
+            .item(AtomicDictionary.Item.builder().name(LRTEST).description("likelihood ratio test of the time-dependent model against the fixed model").outputClass(StatisticalTest.class).build())
            .build();
     
     public final Dictionary LTDARIMA_REG = AtomicDictionary.builder()

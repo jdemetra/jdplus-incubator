@@ -19,6 +19,7 @@ import jdplus.advancedsa.base.api.tdarima.LtdArimaSpec;
 import jdplus.toolkit.base.api.arima.SarimaSpec;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.DoublesMath;
+import jdplus.toolkit.base.api.stats.StatisticalTest;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -46,18 +47,18 @@ public class LtdArimaKernelTest {
                 .build();
 
         LtdArimaKernel.ParametersDetails details = new LtdArimaKernel.ParametersDetails(spec);
-        System.out.println(details);
+//        System.out.println(details);
         spec = spec.toBuilder().vVar(true).build();
         details = new LtdArimaKernel.ParametersDetails(spec);
-        System.out.println(details);
-        arima=arima.toBuilder().p(3).build();
+//        System.out.println(details);
+        arima = arima.toBuilder().p(3).build();
         spec = spec.toBuilder().sarimaSpec(arima).build();
         details = new LtdArimaKernel.ParametersDetails(spec);
-        System.out.println(details);
+//        System.out.println(details);
         spec = spec.toBuilder().vVar(false).build();
         details = new LtdArimaKernel.ParametersDetails(spec);
-        System.out.println(details);
-        
+//        System.out.println(details);
+
     }
 
     @Test
@@ -69,26 +70,32 @@ public class LtdArimaKernelTest {
                 .parametrization(LtdArimaSpec.Parametrization.MEAN_DELTA)
                 .vTheta(true)
                 .vBtheta(true)
-                //                .vVar(true)
+                .vVar(true)
                 .build();
 
         LtdArimaKernel kernel = LtdArimaKernel.of(spec);
 
         long t0 = System.currentTimeMillis();
-        for (int i = 1; i < s.length; ++i) {
+        for (int i = 0; i < s.length; ++i) {
             LtdArimaResults result = kernel.process(s[i].getValues(), s[i].getAnnualFrequency(), false, null);
             System.out.print(result.getStart().getLl().getLogLikelihood());
             System.out.print('\t');
             System.out.print(result.getLtd().getLl().getLogLikelihood());
             System.out.print('\t');
 //            System.out.print(result.getStart().parameters());
-            System.out.print(result.getLtd().getParameters());
+            StatisticalTest test = result.getLtd().getStationaryTest();
+            System.out.print(test == null ? Double.NaN : test.getPvalue());
             System.out.print('\t');
+            System.out.print(result.getLtd().getLikelihoodRatioTest().getPvalue());
+            System.out.print('\t');
+//            System.out.print(s[i].length());
+//            System.out.print('\t');
 //
 //            System.out.println(result.getMax().getScore());
 //
-            DoubleSeq t = DoublesMath.divide(result.getLtd().getParameters(), result.getLtd().getParametersCovariance().diagonal().sqrt());
+//            DoubleSeq t = DoublesMath.divide(result.getLtd().getParameters(), result.getLtd().getParametersCovariance().diagonal().sqrt());
 //            System.out.println();
+            DoubleSeq t = result.getLtd().getParameters();
             System.out.println(t);
         }
         long t1 = System.currentTimeMillis();
@@ -117,7 +124,12 @@ public class LtdArimaKernelTest {
             LtdArimaResults result = kernel.process(s[i].log().getValues(), s[i].getAnnualFrequency(), false, null);
             System.out.print(result.getStart().getLl().getLogLikelihood());
             System.out.print('\t');
-            System.out.println(result.getLtd().getLl().getLogLikelihood());
+            System.out.print(result.getLtd().getLl().getLogLikelihood());
+            StatisticalTest test = result.getLtd().getStationaryTest();
+            System.out.print('\t');
+            System.out.print(test == null ? Double.NaN : test.getPvalue());
+            System.out.print('\t');
+            System.out.println(result.getLtd().getLikelihoodRatioTest().getPvalue());
 //            System.out.println(result.getStart().parameters());
 //            System.out.println(result.getModel().getP0());
 //            System.out.println(result.getModel().getP1());

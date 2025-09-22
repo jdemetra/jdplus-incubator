@@ -25,6 +25,7 @@ import jdplus.toolkit.base.core.regarima.RegArimaModel;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
 import jdplus.toolkit.base.api.timeseries.TsResiduals;
+import jdplus.toolkit.base.api.stats.StatisticalTest;
 
 /**
  *
@@ -65,6 +66,8 @@ public class LtdArimaResults implements GenericExplorable {
         private DoubleSeq derivedParameters;
         private DoubleSeq derivedParametersStderr;
         private DoubleSeq linearizedSeries, regsEffect;
+        private StatisticalTest stationaryTest;
+        private StatisticalTest likelihoodRatioTest;
 
         public double var0() {
             return ll.getSsqErr() / (ll.getEffectiveObservationsCount() - ll.getEstimatedParametersCount());

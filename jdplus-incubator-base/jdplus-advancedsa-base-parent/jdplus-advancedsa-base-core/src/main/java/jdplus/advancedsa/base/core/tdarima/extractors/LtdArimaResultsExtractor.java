@@ -23,6 +23,7 @@ import jdplus.toolkit.base.api.dictionaries.RegArimaDictionaries;
 import jdplus.toolkit.base.api.information.InformationExtractor;
 import jdplus.toolkit.base.api.information.InformationMapping;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
+import jdplus.toolkit.base.api.stats.StatisticalTest;
 import jdplus.toolkit.base.api.timeseries.TsResiduals;
 import jdplus.toolkit.base.core.math.matrices.MatrixException;
 import jdplus.toolkit.base.core.stats.likelihood.LikelihoodStatistics;
@@ -44,7 +45,7 @@ public class LtdArimaResultsExtractor extends InformationMapping<LtdArimaResults
 
     public LtdArimaResultsExtractor() {
         set(modelItem(LtdDictionaries.PARAMETERS_FIXED), double[].class, s -> s.getStart().getParameters().toArray());
-        set(modelItem(LtdDictionaries.PARAMETERS_FIXED_COV), Matrix.class, source -> source.getStart().getCovariance());
+        set(modelItem(LtdDictionaries.PARAMETERS_FIXED_COV), Matrix.class, source -> source.getStart().getParametersCovariance());
         set(modelItem(LtdDictionaries.PARAMETERS_NAMES), String[].class, s -> s.getLtd().getParametersNames());
         set(modelItem(LtdDictionaries.PARAMETERS_ALL), double[].class, s -> s.getLtd().getParameters().toArray());
         set(modelItem(LtdDictionaries.PARAMETERS_COV), Matrix.class, source -> source.getLtd().getParametersCovariance());
@@ -67,6 +68,8 @@ public class LtdArimaResultsExtractor extends InformationMapping<LtdArimaResults
         set(modelItem(LtdDictionaries.PARAMETERS_DERIVED_NAMES), String[].class, s -> s.getLtd().getDerivedParametersNames());
         set(modelItem(LtdDictionaries.PARAMETERS_DERIVED), double[].class, s -> s.getLtd().getDerivedParameters().toArray());
         set(modelItem(LtdDictionaries.PARAMETERS_DERIVED_STDERR), double[].class, s -> s.getLtd().getDerivedParametersStderr().toArray());
+        set(modelItem(LtdDictionaries.TEST_STATIONARITY), StatisticalTest.class, s -> s.getLtd().getStationaryTest());
+        set(modelItem(LtdDictionaries.LRTEST), StatisticalTest.class, s -> s.getLtd().getLikelihoodRatioTest());
         //        set(mlItem("information1"), Matrix.class, source -> source.getLtd().getMax().getInformation());
 //        set(mlItem("score1"), double[].class, source -> source.getLtd().getMax().getScore().toArray());
 

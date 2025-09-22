@@ -23,13 +23,18 @@ import jdplus.toolkit.base.api.arima.SarmaOrders;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.DoublesMath;
 import jdplus.toolkit.base.api.dictionaries.ResidualsDictionaries;
+import jdplus.toolkit.base.api.stats.StatisticalTest;
+import jdplus.toolkit.base.api.stats.TestType;
 import jdplus.toolkit.base.api.timeseries.TsResiduals;
 import jdplus.toolkit.base.api.timeseries.regression.ResidualsType;
 import jdplus.toolkit.base.core.data.DataBlock;
+import jdplus.toolkit.base.core.dstats.Chi2;
+import jdplus.toolkit.base.core.dstats.F;
 import jdplus.toolkit.base.core.math.functions.levmar.LevenbergMarquardtMinimizer;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.toolkit.base.core.math.matrices.LowerTriangularMatrix;
 import jdplus.toolkit.base.core.math.matrices.MatrixException;
+import jdplus.toolkit.base.core.math.matrices.SymmetricMatrix;
 import static jdplus.toolkit.base.core.math.matrices.SymmetricMatrix.LtL;
 import static jdplus.toolkit.base.core.math.matrices.SymmetricMatrix.lcholesky;
 import jdplus.toolkit.base.core.regarima.RegArimaEstimation;
@@ -47,7 +52,9 @@ import jdplus.toolkit.base.core.stats.likelihood.ConcentratedLikelihoodWithMissi
 import jdplus.toolkit.base.core.stats.likelihood.DiffuseConcentratedLikelihood;
 import jdplus.toolkit.base.core.stats.likelihood.LikelihoodStatistics;
 import jdplus.toolkit.base.core.stats.likelihood.LogLikelihoodFunction;
+import jdplus.toolkit.base.core.stats.linearmodel.JointTest;
 import jdplus.toolkit.base.core.stats.tests.NiidTests;
+import jdplus.toolkit.base.core.stats.tests.TestsUtility;
 import org.jspecify.annotations.Nullable;
 
 /**
@@ -55,10 +62,10 @@ import org.jspecify.annotations.Nullable;
  * @author Jean Palate
  */
 public class LtdArimaKernel {
-    
+
     private final LtdArimaSpec spec;
     private final ParametersDetails pdetails;
-    
+
     public static LtdArimaKernel of(LtdArimaSpec spec) {
         return new LtdArimaKernel(spec);
     }
@@ -73,44 +80,44 @@ public class LtdArimaKernel {
      * @return
      */
     public LtdArimaResults process(DoubleSeq s, int period, boolean mean, @Nullable FastMatrix X) {
-        
+
         SarimaOrders orders = spec.getSarimaSpec()
                 .withPeriod(period)
                 .orders();
-        
+
         RegArimaModel<SarimaModel> regarima = RegArimaModel.<SarimaModel>builder()
                 .y(s)
                 .meanCorrection(mean)
                 .arima(SarimaModel.builder(orders).build())
                 .addX(X)
                 .build();
-        
+
         SarimaMapping mapping = SarimaMapping.of(orders);
         RegArimaEstimation<SarimaModel> initial = RegSarimaComputer.PROCESSOR.process(regarima, mapping);
-        
+
         ConcentratedLikelihoodWithMissing ll = initial.getConcentratedLikelihood();
         DoubleSeq coefficients0 = ll.coefficients();
         FastMatrix covariance0 = ll.covariance(mapping.getDim(), true);
         LikelihoodStatistics ll0 = initial.statistics();
-        
+
         DoubleSeq e = ll.e();
         TsResiduals res0 = residuals(e, period, ll0, mapping.getDim(), ResidualsType.QR_Transformed);
-        
+
         LtdArimaResults.SarimaResults.Builder builder0 = LtdArimaResults.SarimaResults.builder();
         LtdArimaResults.LtdResults.Builder builder1 = LtdArimaResults.LtdResults.builder();
         builder0.model(initial.getModel().arima())
                 .parameters(initial.getMax().getParameters())
-                .parametersCovariance(covariance(initial.getMax().getInformation()))
+                .parametersCovariance(covariance(initial.getMax().getInformation(), false))
                 .ll(ll0)
                 .residuals(res0)
                 .coefficients(coefficients0)
                 .covariance(covariance0);
-        
+
         RegArimaModel<SarimaModel> model = initial.getModel();
         RegArmaModel<SarimaModel> dmodel = model.differencedModel();
         SarmaOrders storders = orders.doStationary();
         int n = dmodel.getY().length();
-        
+
         LtdArimaMapping ltdmapping = stmapping(storders, n);
         SsfFunction<LtdArimaModel, Ssf> fn = SsfFunction.<LtdArimaModel, Ssf>builder(new SsfData(dmodel.getY()), ltdmapping, lmodel -> lmodel.ssf())
                 .regression(dmodel.getX().isEmpty() ? null : dmodel.getX(), 0)
@@ -120,7 +127,7 @@ public class LtdArimaKernel {
                 .useFastAlgorithm(false)
                 .build();
         int dim = ltdmapping.getDim();
-        
+
         LtdArimaModel m0 = LtdArimaModel.of(SarimaOrders.of(storders, 0, 0), dmodel.getArma().parameters(), n);
         DoubleSeq p = ltdmapping.parametersOf(m0);
         SsfFunctionPoint<LtdArimaModel, Ssf> pt = fn.evaluate(p);
@@ -129,12 +136,12 @@ public class LtdArimaKernel {
                 .build();
         min.minimize(pt);
         pt = (SsfFunctionPoint<LtdArimaModel, Ssf>) min.getResult();
-        
+
         DiffuseConcentratedLikelihood likelihood = pt.getLikelihood();
-        
+
         DoubleSeq coefficients1 = likelihood.coefficients();
         FastMatrix covariance1 = likelihood.covariance(dim, true);
-        
+
         if (X != null && !X.isEmpty()) {
             DataBlock regs0 = DataBlock.make(s.length()), regs1 = DataBlock.make(s.length());
             regs0.product(regarima.variables().rowsIterator(), DataBlock.of(mean ? coefficients0.drop(0, 1) : coefficients0));
@@ -143,14 +150,14 @@ public class LtdArimaKernel {
             regs1.product(regarima.variables().rowsIterator(), DataBlock.of(mean ? coefficients1.drop(0, 1) : coefficients1));
             builder1.regsEffect(regs1);
             builder1.linearizedSeries(DoublesMath.subtract(s, regs1));
-            
+
         } else {
             builder0.regsEffect(DoubleSeq.empty());
             builder0.linearizedSeries(s);
             builder1.regsEffect(DoubleSeq.empty());
             builder1.linearizedSeries(s);
         }
-        
+
         LikelihoodStatistics ll1 = LikelihoodStatistics.statistics(likelihood.logLikelihood(), model.getObservationsCount() - model.getMissingValuesCount())
                 .llAdjustment(0)
                 .differencingOrder(model.arima().getNonStationaryArOrder())
@@ -158,7 +165,7 @@ public class LtdArimaKernel {
                 .parametersCount(dim + model.getVariablesCount() + 1)
                 .ssq(likelihood.ssq())
                 .build();
-        
+
         TsResiduals res1 = residuals(e, period, ll1, dim, ResidualsType.OneStepAHead);
 
 //        double[] gradient = min.gradientAtMinimum().toArray();
@@ -172,9 +179,15 @@ public class LtdArimaKernel {
         LogLikelihoodFunction<LtdArimaModel, DiffuseConcentratedLikelihood> fll = concentratedLogLikelihoodFunction(dmodel);
 //        LogLikelihoodFunction.Point max = new LogLikelihoodFunction.Point(fll, pt.getParameters(), DoubleSeq.of(gradient), hessian);
         LogLikelihoodFunction.Point<LtdArimaModel, DiffuseConcentratedLikelihood> max = fll.point(pt.getParameters());
-        
-        Parameters parameters = new Parameters(max.getParameters(), max.asymptoticCovariance(), n, pdetails, spec.getParametrization());
-        
+        FastMatrix pcovariance = covariance(max.getInformation(), true);
+        Parameters parameters = new Parameters(max.getParameters(), pcovariance, n, pdetails, spec.getParametrization());
+        StatisticalTest test = null;
+        if (pcovariance != null && spec.getParametrization() == LtdArimaSpec.Parametrization.MEAN_DELTA) {
+            test = stationaryTest(max.getParameters().drop(pdetails.n0, 0),
+                    pcovariance.extract(pdetails.n0, pdetails.n1, pdetails.n0, pdetails.n1), likelihood.degreesOfFreedom());
+        }
+        StatisticalTest lrtest = TestsUtility.testOf(2 * (likelihood.logLikelihood() - ll0.getLogLikelihood()),
+                new Chi2(pdetails.n1), TestType.Upper);
         builder1.model((LtdArimaModel) pt.getCore())
                 .coefficients(coefficients1)
                 .covariance(covariance1)
@@ -185,18 +198,19 @@ public class LtdArimaKernel {
                 .parametersNames(pdetails.pnames)
                 .derivedParameters(DoubleSeq.of(parameters.dval))
                 .derivedParametersStderr(DoubleSeq.of(parameters.edval))
-                .derivedParametersNames(pdetails.derivedpnames);
-        
+                .derivedParametersNames(pdetails.derivedpnames)
+                .stationaryTest(test)
+                .likelihoodRatioTest(lrtest);
         return new LtdArimaResults(builder0.build(), builder1.build());
     }
-    
+
     private TsResiduals residuals(DoubleSeq e, int period, LikelihoodStatistics ll, int nhp, ResidualsType type) {
         NiidTests niid = NiidTests.builder()
                 .data(e)
                 .period(period)
                 .hyperParametersCount(nhp)
                 .build();
-        
+
         return TsResiduals.builder()
                 .type(ResidualsType.OneStepAHead)
                 .res(e)
@@ -219,21 +233,21 @@ public class LtdArimaKernel {
                 .test(ResidualsDictionaries.NUDRUNS, niid.upAndDownRunsNumbber())
                 .test(ResidualsDictionaries.LUDRUNS, niid.upAndDownRunsLength())
                 .build();
-        
+
     }
-    
+
     private LtdArimaKernel(LtdArimaSpec spec) {
         this.spec = spec;
         pdetails = new ParametersDetails(spec);
     }
-    
+
     private LogLikelihoodFunction<LtdArimaModel, DiffuseConcentratedLikelihood>
             concentratedLogLikelihoodFunction(RegArmaModel<SarimaModel> dmodel) {
         Function<LtdArimaModel, ConcentratedLikelihood> lfn = m -> {
-            
+
             SarmaOrders storders = dmodel.getArma().orders().doStationary();
             int n = dmodel.getY().length();
-            
+
             LtdArimaMapping ltdmapping = stmapping(storders, n);
             SsfFunction<LtdArimaModel, Ssf> fn = SsfFunction.<LtdArimaModel, Ssf>builder(new SsfData(dmodel.getY()), ltdmapping, lmodel -> lmodel.ssf())
                     .regression(dmodel.getX().isEmpty() ? null : dmodel.getX(), 0)
@@ -247,27 +261,27 @@ public class LtdArimaKernel {
             SsfFunctionPoint pt = fn.evaluate(p);
             return pt.getLikelihood();
         };
-        
+
         LtdArimaMapping ltdmapping = mapping(dmodel.getArma().orders(), dmodel.getY().length());
-        
+
         return new LogLikelihoodFunction(ltdmapping, lfn);
     }
-    
+
     private LtdArimaMapping stmapping(SarmaOrders storders, int n) {
         return mapping(SarimaOrders.of(storders, 0, 0), n, spec.getParametrization());
     }
-    
+
     private LtdArimaMapping stmapping(SarmaOrders storders, int n, LtdArimaSpec.Parametrization parametrization) {
         return mapping(SarimaOrders.of(storders, 0, 0), n, parametrization);
     }
-    
+
     private LtdArimaMapping mapping(SarimaOrders orders, int n) {
         return mapping(orders, n, spec.getParametrization());
     }
-    
+
     private LtdArimaMapping mapping(SarimaOrders orders, int n, LtdArimaSpec.Parametrization parametrization) {
         LtdArimaMapping ltdmapping = null;
-        
+
         if (parametrization == LtdArimaSpec.Parametrization.MEAN_DELTA) {
             ltdmapping = LtdArimaMapping1.builder(orders)
                     .n(n)
@@ -289,41 +303,48 @@ public class LtdArimaKernel {
         }
         return ltdmapping;
     }
-    
-    public static FastMatrix covariance(FastMatrix H) {
+
+    public static FastMatrix covariance(FastMatrix H, boolean nullIfFailed) {
         try {
             FastMatrix lower = H.deepClone();
             lcholesky(lower);
             lower = LowerTriangularMatrix.inverse(lower);
             return LtL(lower);
         } catch (MatrixException e) {
-            FastMatrix I = FastMatrix.square(H.getRowsCount());
-            I.set(Double.NaN);
-            return I;
+            if (nullIfFailed) {
+                return null;
+            } else {
+                FastMatrix I = FastMatrix.square(H.getRowsCount());
+                I.set(Double.NaN);
+                return I;
+            }
         }
     }
-    
+
     private static final String PHI = "phi", BPHI = "bphi", THETA = "theta", BTHETA = "btheta",
             START = "start", END = "end", MEAN = "mean", DELTA = "delta", DERIVED = "[derived]";
-    
+
     @lombok.ToString
     static class ParametersDetails {
-        
-        final int n0, n1, np;
+
+        final int n0, n1, np, nv;
         final String[] pnames, derivedpnames;
         final int[] preorder;
         final boolean[] torescale;
+        final int[] iderived;
 
         // work indexes
         int i, di, k0, k1;
-        
+
         ParametersDetails(LtdArimaSpec spec) {
             this.np = spec.parametersCount();
             n0 = spec.getSarimaSpec().parametersCount();
             n1 = np - n0;
             pnames = new String[np];
-            int nd = n1 + (spec.isVVar() ? n1 - 1 : n1);
+            nv = (spec.isVVar() ? n1 - 1 : n1);
+            int nd = n1 + nv;
             derivedpnames = new String[nd];
+            iderived = new int[nv];
             preorder = new int[np];
             torescale = new boolean[np];
             i = 0;
@@ -354,11 +375,12 @@ public class LtdArimaKernel {
             }
             fillVar(parametrization, spec.isVVar());
         }
-        
+
         private void fillNames(LtdArimaSpec.Parametrization pspec, boolean var, String pname, int o) {
             if (var) {
                 if (pspec == LtdArimaSpec.Parametrization.MEAN_DELTA) {
                     for (int j = 0; j < o; ++j, ++k0, ++k1) {
+                        iderived[di / 2] = i;
                         preorder[i] = k0;
                         pnames[i++] = pname(pname, MEAN, j + 1, false);
                         torescale[i] = true;
@@ -367,6 +389,7 @@ public class LtdArimaKernel {
                     }
                 } else {
                     for (int j = 0; j < o; ++j, ++k0, ++k1) {
+                        iderived[di / 2] = i;
                         preorder[i] = k0;
                         pnames[i++] = pname(pname, START, j + 1, false);
                         preorder[i] = k1;
@@ -380,7 +403,7 @@ public class LtdArimaKernel {
                 }
             }
         }
-        
+
         private void fillDerivedNames(LtdArimaSpec.Parametrization pspec, boolean var, String pname, int o) {
             if (var) {
                 if (pspec == LtdArimaSpec.Parametrization.MEAN_DELTA) {
@@ -396,21 +419,21 @@ public class LtdArimaKernel {
                 }
             }
         }
-        
+
         private void fillVar(LtdArimaSpec.Parametrization pspec, boolean vVar) {
             if (vVar) {
                 preorder[np - 1] = np - 1;
                 if (pspec == LtdArimaSpec.Parametrization.MEAN_DELTA) {
                     pnames[np - 1] = "var-delta";
-                    derivedpnames[n1 - 1] = "var-end[derived]";
+                    derivedpnames[n1 + nv - 1] = "var-end[derived]";
                     torescale[i] = true;
                 } else {
                     pnames[np - 1] = "var-end";
-                    derivedpnames[n1 - 1] = "var-delta[derived]";
+                    derivedpnames[n1 + nv - 1] = "var-delta[derived]";
                 }
             }
         }
-        
+
         private String pname(String prefix, String suffix, int lag, boolean derived) {
             StringBuilder builder = new StringBuilder();
             builder.append(prefix).append('(').append(lag).append(')');
@@ -423,16 +446,16 @@ public class LtdArimaKernel {
             return builder.toString();
         }
     }
-    
+
     @lombok.ToString
     static class Parameters {
-        
+
         double[] val;
         FastMatrix cov;
-        
+
         double[] dval;
         double[] edval;
-        
+
         Parameters(DoubleSeq p, FastMatrix pcov, int m, ParametersDetails details, LtdArimaSpec.Parametrization parametrization) {
             double[] v = p.toArray();
             val = new double[v.length];
@@ -440,16 +463,59 @@ public class LtdArimaKernel {
             // reorder
             for (int i = 0; i < v.length; ++i) {
                 val[i] = v[details.preorder[i]];
-                for (int j = 0; j < v.length; ++j) {
-                    cov.set(i, j, pcov.get(details.preorder[i], details.preorder[j]));
+                if (pcov != null) {
+                    for (int j = 0; j < v.length; ++j) {
+                        cov.set(i, j, pcov.get(details.preorder[i], details.preorder[j]));
+                    }
+                } else {
+                    cov.set(Double.NaN);
                 }
             }
             //derived
             int nd = details.derivedpnames.length;
+            int ndc = details.nv;
             dval = new double[nd];
             edval = new double[nd];
-            //rescale
             double m1 = m - 1;
+
+            if (parametrization == LtdArimaSpec.Parametrization.MEAN_DELTA) {
+                int j = 0;
+                for (int i = 0; i < ndc; ++i) {
+                    int k = details.iderived[i];
+                    dval[j] = val[k] - val[k + 1] / 2;
+                    double var = cov.get(k, k) + cov.get(k + 1, k + 1) / 4 - cov.get(k, k + 1);
+                    edval[j++] = var > 0 ? Math.sqrt(var) : Double.NaN;
+                    dval[j] = val[k] + val[k + 1] / 2;
+                    var = cov.get(k, k) + cov.get(k + 1, k + 1) / 4 + cov.get(k, k + 1);
+                    edval[j++] = var > 0 ? Math.sqrt(var) : Double.NaN;
+                }
+                if (j < nd) {
+                    dval[j] = 1 + val[j];
+                    double var = cov.get(j, j);
+                    edval[j] = var > 0 ? Math.sqrt(var) : Double.NaN;
+                }
+            } else {
+                int j = 0;
+                for (int i = 0; i < ndc; ++i) {
+                    int k = details.iderived[i];
+                    dval[j] = (val[k] + val[k + 1]) / 2;
+                    double var = (cov.get(k, k) + cov.get(k + 1, k + 1) + 2 * cov.get(k, k + 1)) / 4;
+                    edval[j++] = var > 0 ? Math.sqrt(var) : Double.NaN;
+                    dval[j] = val[k + 1] - val[k];
+                    var = cov.get(k, k) + cov.get(k + 1, k + 1) - 2 * cov.get(k, k + 1);
+                    edval[j++] = var > 0 ? Math.sqrt(var) : Double.NaN;
+                }
+                if (j < nd) {
+                    dval[j] = val[j] - 1;
+                    double var = cov.get(j, j);
+                    edval[j] = var > 0 ? Math.sqrt(var) : Double.NaN;
+                    if (parametrization == LtdArimaSpec.Parametrization.START_END) {
+                        dval[j] /= m1;
+                        edval[j] /= m1;
+                    }
+                }
+            }
+            //rescale
             for (int i = 0; i < v.length; ++i) {
                 if (details.torescale[i]) {
                     val[i] /= m1;
@@ -457,7 +523,24 @@ public class LtdArimaKernel {
                     cov.row(i).div(m1);
                 }
             }
+            if (parametrization == LtdArimaSpec.Parametrization.START_END) {
+                for (int i = 1; i < dval.length; i += 2) {
+                    dval[i] /= m1;
+                    edval[i] /= m1;
+                }
+            }
+
         }
     }
-    
+
+    private StatisticalTest stationaryTest(DoubleSeq z, FastMatrix cov, int df) {
+        FastMatrix V = cov.deepClone();
+        DataBlock Z = DataBlock.of(z);
+        SymmetricMatrix.lcholesky(V);
+        LowerTriangularMatrix.solveLx(V, Z);
+        double f = (Z.ssq() / Z.length());
+        F fdist = new F(Z.length(), df);
+        return TestsUtility.testOf(f, fdist, TestType.Upper);
+
+    }
 }
