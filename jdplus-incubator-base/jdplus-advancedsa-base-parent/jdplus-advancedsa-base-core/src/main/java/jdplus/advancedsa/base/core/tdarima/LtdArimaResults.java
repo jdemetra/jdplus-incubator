@@ -43,7 +43,8 @@ public class LtdArimaResults implements GenericExplorable {
         private DoubleSeq coefficients;
         private Matrix covariance;
         private TsResiduals residuals;
-        private LogLikelihoodFunction.Point<RegArimaModel<SarimaModel>, ConcentratedLikelihoodWithMissing> max;
+        private DoubleSeq parameters;
+        private Matrix parametersCovariance;
         private DoubleSeq linearizedSeries, regsEffect;
 
     }
@@ -53,16 +54,16 @@ public class LtdArimaResults implements GenericExplorable {
     public static class LtdResults {
 
         private LtdArimaModel model;
-        private LogLikelihoodFunction.Point<LtdArimaModel, DiffuseConcentratedLikelihood> max;
         private LikelihoodStatistics ll;
         private DoubleSeq coefficients;
         private Matrix covariance;
         private TsResiduals residuals;
-
         private String[] parametersNames;
-        private DoubleSeq derivedParameters;
-        private Matrix derivedParametersCovariance;
+        private DoubleSeq parameters;
+        private Matrix parametersCovariance;
         private String[] derivedParametersNames;
+        private DoubleSeq derivedParameters;
+        private DoubleSeq derivedParametersStderr;
         private DoubleSeq linearizedSeries, regsEffect;
 
         public double var0() {

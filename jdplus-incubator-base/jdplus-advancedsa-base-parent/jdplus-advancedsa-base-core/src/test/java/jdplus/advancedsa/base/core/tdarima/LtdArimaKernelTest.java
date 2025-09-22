@@ -34,6 +34,33 @@ public class LtdArimaKernelTest {
     }
 
     @Test
+    public void testDetails() {
+
+        SarimaSpec arima = SarimaSpec.airline();
+        LtdArimaSpec spec = LtdArimaSpec.builder()
+                .sarimaSpec(arima)
+                .parametrization(LtdArimaSpec.Parametrization.MEAN_DELTA)
+                .vTheta(true)
+                .vBtheta(true)
+                //                .vVar(true)
+                .build();
+
+        LtdArimaKernel.ParametersDetails details = new LtdArimaKernel.ParametersDetails(spec);
+        System.out.println(details);
+        spec = spec.toBuilder().vVar(true).build();
+        details = new LtdArimaKernel.ParametersDetails(spec);
+        System.out.println(details);
+        arima=arima.toBuilder().p(3).build();
+        spec = spec.toBuilder().sarimaSpec(arima).build();
+        details = new LtdArimaKernel.ParametersDetails(spec);
+        System.out.println(details);
+        spec = spec.toBuilder().vVar(false).build();
+        details = new LtdArimaKernel.ParametersDetails(spec);
+        System.out.println(details);
+        
+    }
+
+    @Test
     public void testAirline() {
         TsData[] s = Data.retail_us();
 
@@ -55,12 +82,12 @@ public class LtdArimaKernelTest {
             System.out.print(result.getLtd().getLl().getLogLikelihood());
             System.out.print('\t');
 //            System.out.print(result.getStart().parameters());
-            System.out.print(result.getLtd().getMax().getParameters());
+            System.out.print(result.getLtd().getParameters());
             System.out.print('\t');
 //
 //            System.out.println(result.getMax().getScore());
 //
-            DoubleSeq t = DoublesMath.divide(result.getLtd().getMax().getParameters(), LtdArimaKernel.covariance(result.getLtd().getMax().getInformation()).diagonal().sqrt());
+            DoubleSeq t = DoublesMath.divide(result.getLtd().getParameters(), result.getLtd().getParametersCovariance().diagonal().sqrt());
 //            System.out.println();
             System.out.println(t);
         }
@@ -68,12 +95,12 @@ public class LtdArimaKernelTest {
         System.out.println(t1 - t0);
     }
 
-   @Test
+    @Test
     public void test311011() {
         TsData[] s = Data.retail_us();
         SarimaSpec airline = SarimaSpec.airline();
         SarimaSpec aspec = airline.toBuilder().p(3).build();
-        
+
         LtdArimaSpec spec = LtdArimaSpec.builder()
                 .parametrization(LtdArimaSpec.Parametrization.MEAN_DELTA)
                 .sarimaSpec(aspec)

@@ -43,9 +43,11 @@ public class LtdArimaResultsExtractor extends InformationMapping<LtdArimaResults
     }
 
     public LtdArimaResultsExtractor() {
-        set(modelItem(LtdDictionaries.PARAMETERS_FIXED), double[].class, s -> s.getStart().getMax().getParameters().toArray());
-        set(modelItem(LtdDictionaries.PARAMETERS_ALL), double[].class, s -> s.getLtd().getMax().getParameters().toArray());
+        set(modelItem(LtdDictionaries.PARAMETERS_FIXED), double[].class, s -> s.getStart().getParameters().toArray());
+        set(modelItem(LtdDictionaries.PARAMETERS_FIXED_COV), Matrix.class, source -> source.getStart().getCovariance());
         set(modelItem(LtdDictionaries.PARAMETERS_NAMES), String[].class, s -> s.getLtd().getParametersNames());
+        set(modelItem(LtdDictionaries.PARAMETERS_ALL), double[].class, s -> s.getLtd().getParameters().toArray());
+        set(modelItem(LtdDictionaries.PARAMETERS_COV), Matrix.class, source -> source.getLtd().getParametersCovariance());
         set(modelItem(LtdDictionaries.PARAMETERS_V0), Double.class, s -> s.getLtd().var0());
         set(modelItem(LtdDictionaries.PARAMETERS_V1), Double.class, s -> s.getLtd().var1());
         set(modelItem(LtdDictionaries.PARAMETERS_P0), double[].class, s -> s.getLtd().getModel().getP0().toArray());
@@ -62,23 +64,11 @@ public class LtdArimaResultsExtractor extends InformationMapping<LtdArimaResults
             int n = s.getLtd().getModel().getN() - 1;
             return DoubleSeq.onMapping(p0.length(), i -> (p1.get(i) - p0.get(i)) / n).toArray();
         });
-        set(modelItem(LtdDictionaries.PARAMETERS_COV), Matrix.class, source -> {
-            try {
-                return source.getLtd().getMax().asymptoticCovariance();
-            } catch (MatrixException err) {
-                return null;
-            }
-        });
-        
-        set(mlItem("information1"), Matrix.class, source -> source.getLtd().getMax().getInformation());
-        set(mlItem("score1"), double[].class, source -> source.getLtd().getMax().getScore().toArray());
-        set(modelItem(LtdDictionaries.PARAMETERS_FIXED_COV), Matrix.class, source -> {
-            try {
-                return source.getStart().getMax().asymptoticCovariance();
-            } catch (MatrixException err) {
-                return null;
-            }
-        });
+        set(modelItem(LtdDictionaries.PARAMETERS_DERIVED_NAMES), String[].class, s -> s.getLtd().getDerivedParametersNames());
+        set(modelItem(LtdDictionaries.PARAMETERS_DERIVED), double[].class, s -> s.getLtd().getDerivedParameters().toArray());
+        set(modelItem(LtdDictionaries.PARAMETERS_DERIVED_STDERR), double[].class, s -> s.getLtd().getDerivedParametersStderr().toArray());
+        //        set(mlItem("information1"), Matrix.class, source -> source.getLtd().getMax().getInformation());
+//        set(mlItem("score1"), double[].class, source -> source.getLtd().getMax().getScore().toArray());
 
         delegate("ll0", LikelihoodStatistics.class, source -> source.getStart().getLl());
         delegate("ll1", LikelihoodStatistics.class, source -> source.getLtd().getLl());
@@ -91,10 +81,10 @@ public class LtdArimaResultsExtractor extends InformationMapping<LtdArimaResults
         set(regItem(LtdDictionaries.REGS_COV1), Matrix.class, s -> s.getLtd().getCovariance().isEmpty() ? null : s.getLtd().getCovariance());
         set(regItem(LtdDictionaries.REGS_EFFECT1), double[].class, s -> s.getLtd().getRegsEffect().isEmpty() ? null : s.getLtd().getRegsEffect().toArray());
         set(regItem(LtdDictionaries.Y_LIN1), double[].class, s -> s.getLtd().getLinearizedSeries().toArray());
-        
+
         delegate("res0", TsResiduals.class, source -> source.getStart().getResiduals());
         delegate("res1", TsResiduals.class, source -> source.getLtd().getResiduals());
-        
+
     }
 
     private String mlItem(String key) {
@@ -104,7 +94,7 @@ public class LtdArimaResultsExtractor extends InformationMapping<LtdArimaResults
     private String regItem(String key) {
         return Dictionary.concatenate(LtdDictionaries.REGRESSION, key);
     }
-    
+
     private String modelItem(String key) {
         return Dictionary.concatenate(LtdDictionaries.MODEL, key);
     }
