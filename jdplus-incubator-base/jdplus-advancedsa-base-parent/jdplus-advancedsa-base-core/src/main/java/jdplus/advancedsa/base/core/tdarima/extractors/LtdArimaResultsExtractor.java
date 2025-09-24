@@ -67,7 +67,7 @@ public class LtdArimaResultsExtractor extends InformationMapping<LtdArimaResults
         });
         set(modelItem(LtdDictionaries.PARAMETERS_DERIVED_NAMES), String[].class, s -> s.getLtd().getDerivedParametersNames());
         set(modelItem(LtdDictionaries.PARAMETERS_DERIVED), double[].class, s -> s.getLtd().getDerivedParameters().toArray());
-        set(modelItem(LtdDictionaries.PARAMETERS_DERIVED_STDERR), double[].class, s -> s.getLtd().getDerivedParametersStderr().toArray());
+        set(modelItem(LtdDictionaries.PARAMETERS_DERIVED_COV), Matrix.class, s -> s.getLtd().getDerivedParametersCovariance());
         set(modelItem(LtdDictionaries.TEST_STATIONARITY), StatisticalTest.class, s -> s.getLtd().getStationaryTest());
         set(modelItem(LtdDictionaries.LRTEST), StatisticalTest.class, s -> s.getLtd().getLikelihoodRatioTest());
         //        set(mlItem("information1"), Matrix.class, source -> source.getLtd().getMax().getInformation());

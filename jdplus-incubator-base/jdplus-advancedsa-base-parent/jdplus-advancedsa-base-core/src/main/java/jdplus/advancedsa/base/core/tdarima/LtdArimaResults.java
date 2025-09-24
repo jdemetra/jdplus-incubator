@@ -64,7 +64,7 @@ public class LtdArimaResults implements GenericExplorable {
         private Matrix parametersCovariance;
         private String[] derivedParametersNames;
         private DoubleSeq derivedParameters;
-        private DoubleSeq derivedParametersStderr;
+        private Matrix derivedParametersCovariance;
         private DoubleSeq linearizedSeries, regsEffect;
         private StatisticalTest stationaryTest;
         private StatisticalTest likelihoodRatioTest;

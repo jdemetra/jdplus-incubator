@@ -34,6 +34,7 @@ import jdplus.toolkit.base.core.math.functions.levmar.LevenbergMarquardtMinimize
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.toolkit.base.core.math.matrices.LowerTriangularMatrix;
 import jdplus.toolkit.base.core.math.matrices.MatrixException;
+import jdplus.toolkit.base.core.math.matrices.MatrixFactory;
 import jdplus.toolkit.base.core.math.matrices.SymmetricMatrix;
 import static jdplus.toolkit.base.core.math.matrices.SymmetricMatrix.LtL;
 import static jdplus.toolkit.base.core.math.matrices.SymmetricMatrix.lcholesky;
@@ -182,9 +183,20 @@ public class LtdArimaKernel {
         FastMatrix pcovariance = covariance(max.getInformation(), true);
         Parameters parameters = new Parameters(max.getParameters(), pcovariance, n, pdetails, spec.getParametrization());
         StatisticalTest test = null;
-        if (pcovariance != null && spec.getParametrization() == LtdArimaSpec.Parametrization.MEAN_DELTA) {
-            test = stationaryTest(max.getParameters().drop(pdetails.n0, 0),
-                    pcovariance.extract(pdetails.n0, pdetails.n1, pdetails.n0, pdetails.n1), likelihood.degreesOfFreedom());
+        if (pcovariance != null) {
+            if (spec.getParametrization() == LtdArimaSpec.Parametrization.MEAN_DELTA) {
+                test = stationaryTest(max.getParameters().drop(pdetails.n0, 0),
+                        pcovariance.extract(pdetails.n0, pdetails.n1, pdetails.n0, pdetails.n1), null, likelihood.degreesOfFreedom());
+            } else {
+                int[] sel = new int[pdetails.n1];
+                for (int i = 0, j = 1; i < pdetails.nv; ++i, j += 2) {
+                    sel[i] = j;
+                }
+                if (spec.isVVar()) {
+                    sel[pdetails.nv] = 2 * pdetails.nv;
+                }
+                test = stationaryTest(DoubleSeq.of(parameters.dval), parameters.dcov, sel, likelihood.degreesOfFreedom());
+            }
         }
         StatisticalTest lrtest = TestsUtility.testOf(2 * (likelihood.logLikelihood() - ll0.getLogLikelihood()),
                 new Chi2(pdetails.n1), TestType.Upper);
@@ -197,7 +209,7 @@ public class LtdArimaKernel {
                 .parametersCovariance(parameters.cov)
                 .parametersNames(pdetails.pnames)
                 .derivedParameters(DoubleSeq.of(parameters.dval))
-                .derivedParametersStderr(DoubleSeq.of(parameters.edval))
+                .derivedParametersCovariance(parameters.dcov)
                 .derivedParametersNames(pdetails.derivedpnames)
                 .stationaryTest(test)
                 .likelihoodRatioTest(lrtest);
@@ -451,10 +463,8 @@ public class LtdArimaKernel {
     static class Parameters {
 
         double[] val;
-        FastMatrix cov;
-
         double[] dval;
-        double[] edval;
+        FastMatrix cov, dcov;
 
         Parameters(DoubleSeq p, FastMatrix pcov, int m, ParametersDetails details, LtdArimaSpec.Parametrization parametrization) {
             double[] v = p.toArray();
@@ -475,46 +485,44 @@ public class LtdArimaKernel {
             int nd = details.derivedpnames.length;
             int ndc = details.nv;
             dval = new double[nd];
-            edval = new double[nd];
+            dcov = FastMatrix.square(nd);
             double m1 = m - 1;
 
+            // compute also the full dcov: apply the same transformation on the columns and then on the rows
+            FastMatrix R = FastMatrix.make(nd, details.np);
             if (parametrization == LtdArimaSpec.Parametrization.MEAN_DELTA) {
                 int j = 0;
-                for (int i = 0; i < ndc; ++i) {
+                for (int i = 0; i < ndc; ++i, j += 2) {
                     int k = details.iderived[i];
                     dval[j] = val[k] - val[k + 1] / 2;
-                    double var = cov.get(k, k) + cov.get(k + 1, k + 1) / 4 - cov.get(k, k + 1);
-                    edval[j++] = var > 0 ? Math.sqrt(var) : Double.NaN;
-                    dval[j] = val[k] + val[k + 1] / 2;
-                    var = cov.get(k, k) + cov.get(k + 1, k + 1) / 4 + cov.get(k, k + 1);
-                    edval[j++] = var > 0 ? Math.sqrt(var) : Double.NaN;
+                    dval[j + 1] = val[k] + val[k + 1] / 2;
+                    R.set(j, k, 1);
+                    R.set(j, k + 1, -0.5);
+                    R.set(j + 1, k, 1);
+                    R.set(j + 1, k + 1, 0.5);
                 }
                 if (j < nd) {
+                    R.set(j, details.np - 1, 1);
                     dval[j] = 1 + val[j];
-                    double var = cov.get(j, j);
-                    edval[j] = var > 0 ? Math.sqrt(var) : Double.NaN;
                 }
             } else {
                 int j = 0;
-                for (int i = 0; i < ndc; ++i) {
+                for (int i = 0; i < ndc; ++i, j += 2) {
                     int k = details.iderived[i];
                     dval[j] = (val[k] + val[k + 1]) / 2;
-                    double var = (cov.get(k, k) + cov.get(k + 1, k + 1) + 2 * cov.get(k, k + 1)) / 4;
-                    edval[j++] = var > 0 ? Math.sqrt(var) : Double.NaN;
-                    dval[j] = val[k + 1] - val[k];
-                    var = cov.get(k, k) + cov.get(k + 1, k + 1) - 2 * cov.get(k, k + 1);
-                    edval[j++] = var > 0 ? Math.sqrt(var) : Double.NaN;
+                    dval[j + 1] = val[k + 1] - val[k];
+                    R.set(j, k, 0.5);
+                    R.set(j, k + 1, 0.5);
+                    R.set(j + 1, k, -1);
+                    R.set(j + 1, k + 1, 1);
                 }
                 if (j < nd) {
                     dval[j] = val[j] - 1;
-                    double var = cov.get(j, j);
-                    edval[j] = var > 0 ? Math.sqrt(var) : Double.NaN;
-                    if (parametrization == LtdArimaSpec.Parametrization.START_END) {
-                        dval[j] /= m1;
-                        edval[j] /= m1;
-                    }
+                    R.set(j, details.np - 1, 1);
                 }
             }
+            dcov = SymmetricMatrix.XSXt(cov, R);
+
             //rescale
             for (int i = 0; i < v.length; ++i) {
                 if (details.torescale[i]) {
@@ -524,18 +532,31 @@ public class LtdArimaKernel {
                 }
             }
             if (parametrization == LtdArimaSpec.Parametrization.START_END) {
-                for (int i = 1; i < dval.length; i += 2) {
+                for (int i = 1; i < nd; i += 2) {
                     dval[i] /= m1;
-                    edval[i] /= m1;
+                    dcov.column(i).div(m1);
+                    dcov.row(i).div(m1);
+                }
+                if (nd % 2 == 1) {
+                    dval[nd - 1] /= m1;
+                    dcov.column(nd - 1).div(m1);
+                    dcov.row(nd - 1).div(m1);
                 }
             }
 
         }
     }
 
-    private StatisticalTest stationaryTest(DoubleSeq z, FastMatrix cov, int df) {
-        FastMatrix V = cov.deepClone();
-        DataBlock Z = DataBlock.of(z);
+    private StatisticalTest stationaryTest(DoubleSeq z, FastMatrix cov, int[] sel, int df) {
+        FastMatrix V;
+        DataBlock Z;
+        if (sel == null) {
+            V = cov.deepClone();
+            Z = DataBlock.of(z);
+        } else {
+            V = MatrixFactory.select(cov, sel, sel);
+            Z = DataBlock.of(sel.length, i -> z.get(sel[i]));
+        }
         SymmetricMatrix.lcholesky(V);
         LowerTriangularMatrix.solveLx(V, Z);
         double f = (Z.ssq() / Z.length());

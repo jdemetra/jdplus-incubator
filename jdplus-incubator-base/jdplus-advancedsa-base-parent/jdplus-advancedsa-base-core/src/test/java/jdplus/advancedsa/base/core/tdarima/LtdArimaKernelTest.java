@@ -70,7 +70,7 @@ public class LtdArimaKernelTest {
                 .parametrization(LtdArimaSpec.Parametrization.MEAN_DELTA)
                 .vTheta(true)
                 .vBtheta(true)
-                .vVar(true)
+                .vVar(false)
                 .build();
 
         LtdArimaKernel kernel = LtdArimaKernel.of(spec);
@@ -109,7 +109,7 @@ public class LtdArimaKernelTest {
         SarimaSpec aspec = airline.toBuilder().p(3).build();
 
         LtdArimaSpec spec = LtdArimaSpec.builder()
-                .parametrization(LtdArimaSpec.Parametrization.MEAN_DELTA)
+                .parametrization(LtdArimaSpec.Parametrization.START_END)
                 .sarimaSpec(aspec)
                 .vTheta(true)
                 .vBtheta(true)

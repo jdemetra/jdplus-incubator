@@ -33,7 +33,7 @@ public class LtdDictionaries {
             PARAMETERS_P0="p0", PARAMETERS_P1="p1", 
             PARAMETERS_V0="v0", PARAMETERS_V1="v1",
             PARAMETERS_FIXED_COV="pfixed_cov", PARAMETERS_COV="pall_cov", PARAMETERS_NAMES="pnames",
-            PARAMETERS_DERIVED="pderived", PARAMETERS_DERIVED_STDERR="pderived_stderr", PARAMETERS_DERIVED_NAMES="pderived_names",
+            PARAMETERS_DERIVED="pderived", PARAMETERS_DERIVED_COV="pderived_cov", PARAMETERS_DERIVED_NAMES="pderived_names",
             TEST_STATIONARITY="test_stationarity", LRTEST="lrtest";
     
     public static final String REGS_COV0="cov0", REGS_COV1="cov1", REGS_C0="c0", REGS_C1="c1", 
@@ -50,7 +50,7 @@ public class LtdDictionaries {
             .item(AtomicDictionary.Item.builder().name(PARAMETERS_COV).description("covariance of the parameters of the time-dependent model").outputClass(Matrix.class).build())
             .item(AtomicDictionary.Item.builder().name(PARAMETERS_DERIVED).description("derived parameters of the time-dependent model").outputClass(Double.class).build())
             .item(AtomicDictionary.Item.builder().name(PARAMETERS_DERIVED_NAMES).description("names of the derived parameters of the time-dependent model").outputClass(String.class).build())
-            .item(AtomicDictionary.Item.builder().name(PARAMETERS_DERIVED_STDERR).description("stderr of the derived parameters of the time-dependent model").outputClass(double[].class).build())
+            .item(AtomicDictionary.Item.builder().name(PARAMETERS_DERIVED_COV).description("covariance of the derived parameters of the time-dependent model").outputClass(Matrix.class).build())
             .item(AtomicDictionary.Item.builder().name(PARAMETERS_P0).description("arima parameters at the beginning").outputClass(double[].class).build())
             .item(AtomicDictionary.Item.builder().name(PARAMETERS_P1).description("arima parameters at the end").outputClass(double[].class).build())
             .item(AtomicDictionary.Item.builder().name(PARAMETERS_MEAN).description("mean of the arima parameters").outputClass(double[].class).build())
