@@ -65,7 +65,7 @@ public class LtdArimaMapping1 implements LtdArimaMapping {
                 .spec(orders)
                 .p0(DoubleSeq.of(pmodels, 0, np))
                 .p1(DoubleSeq.of(pmodels, np, np))
-                .var1(1 + pmodels[pmodels.length - 1])
+                .var1(pmodels[pmodels.length - 1])
                 .build();
     }
 
@@ -332,6 +332,7 @@ public class LtdArimaMapping1 implements LtdArimaMapping {
         }
         // var
         return -1;
+        //return Double.NEGATIVE_INFINITY;
     }
 
     @Override
@@ -492,7 +493,13 @@ public class LtdArimaMapping1 implements LtdArimaMapping {
                 cp.copyTo(pm, ip + np);
             }
         }
-        pm[2 * np] = vVar ? pall.get(pall.length() - 1) : 0;
+        if (vVar) {
+            double e = 1 + pall.get(pall.length() - 1);
+            pm[2 * np] = e * e;
+        }else{
+            pm[2 * np] = 1;
+            
+        }
         return pm;
     }
 
@@ -612,7 +619,7 @@ public class LtdArimaMapping1 implements LtdArimaMapping {
         DataBlock P = DataBlock.of(p, np, np + nd, 1);
         setDelta(P, i -> (p1.get(i) - p0.get(i)));
         if (vVar) {
-            p[np + nd] = model.getVar1() - 1;
+            p[np + nd] = Math.sqrt(model.getVar1()) - 1;
         }
         return DoubleSeq.of(p);
     }

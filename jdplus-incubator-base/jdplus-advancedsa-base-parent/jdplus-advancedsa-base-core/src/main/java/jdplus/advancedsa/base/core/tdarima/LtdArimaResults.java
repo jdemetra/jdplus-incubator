@@ -25,38 +25,59 @@ import jdplus.toolkit.base.core.regarima.RegArimaModel;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
 import jdplus.toolkit.base.api.timeseries.TsResiduals;
+import jdplus.toolkit.base.api.stats.StatisticalTest;
 
 /**
  *
  * @author Jean Palate
  */
-@lombok.Builder(builderClassName = "Builder")
+@lombok.AllArgsConstructor
 @lombok.Value
 public class LtdArimaResults implements GenericExplorable {
-    
-    private DoubleSeq linearizedSeries0, regsEffect0;
-    private DoubleSeq linearizedSeries1, regsEffect1;
 
-    private SarimaModel start;
-    private LogLikelihoodFunction.Point<RegArimaModel<SarimaModel>, ConcentratedLikelihoodWithMissing> startMax;
-    private LikelihoodStatistics ll0;
-    private DoubleSeq coefficients0;
-    private Matrix covariance0;
-    private TsResiduals residuals0;
+    @lombok.Value
+    @lombok.Builder(builderClassName = "Builder")
+    public static class SarimaResults {
 
-    private LtdArimaModel model;
-    private LogLikelihoodFunction.Point<LtdArimaModel, DiffuseConcentratedLikelihood> max;
-    private LikelihoodStatistics ll1;
-    private DoubleSeq coefficients1;
-    private Matrix covariance1;
-    private TsResiduals residuals1;
+        private SarimaModel model;
+        private LikelihoodStatistics ll;
+        private DoubleSeq coefficients;
+        private Matrix covariance;
+        private TsResiduals residuals;
+        private DoubleSeq parameters;
+        private Matrix parametersCovariance;
+        private DoubleSeq linearizedSeries, regsEffect;
 
-    public double v0() {
-        return ll1.getSsqErr() / (ll1.getEffectiveObservationsCount() - ll1.getEstimatedParametersCount());
     }
 
-    public double v1() {
-        return model.getVar1() * ll1.getSsqErr() / (ll1.getEffectiveObservationsCount() - ll1.getEstimatedParametersCount());
+    @lombok.Builder(builderClassName = "Builder")
+    @lombok.Value
+    public static class LtdResults {
+
+        private LtdArimaModel model;
+        private LikelihoodStatistics ll;
+        private DoubleSeq coefficients;
+        private Matrix covariance;
+        private TsResiduals residuals;
+        private String[] parametersNames;
+        private DoubleSeq parameters;
+        private Matrix parametersCovariance;
+        private String[] derivedParametersNames;
+        private DoubleSeq derivedParameters;
+        private Matrix derivedParametersCovariance;
+        private DoubleSeq linearizedSeries, regsEffect;
+        private StatisticalTest stationaryTest;
+        private StatisticalTest likelihoodRatioTest;
+
+        public double var0() {
+            return ll.getSsqErr() / (ll.getEffectiveObservationsCount() - ll.getEstimatedParametersCount());
+        }
+
+        public double var1() {
+            return model.getVar1() * ll.getSsqErr() / (ll.getEffectiveObservationsCount() - ll.getEstimatedParametersCount());
+        }
     }
-    
+
+    SarimaResults start;
+    LtdResults ltd;
 }

@@ -51,7 +51,9 @@ public class LtdArimaModel {
             SarimaModel sarima = SarimaModel.builder(spec)
                     .parameters(q)
                     .build();
-            return new ArimaModel(sarima.getStationaryAr(), sarima.getNonStationaryAr(), sarima.getMa(), 1 + (i * r) * (var1 - 1));
+            double e1=Math.sqrt(var1);
+            double et=1+(i*r)*(e1-1);
+            return new ArimaModel(sarima.getStationaryAr(), sarima.getNonStationaryAr(), sarima.getMa(), et*et);
         });
     }
     

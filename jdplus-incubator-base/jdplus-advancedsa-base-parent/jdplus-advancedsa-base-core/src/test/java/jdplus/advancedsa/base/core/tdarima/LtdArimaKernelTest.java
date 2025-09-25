@@ -19,6 +19,7 @@ import jdplus.advancedsa.base.api.tdarima.LtdArimaSpec;
 import jdplus.toolkit.base.api.arima.SarimaSpec;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.DoublesMath;
+import jdplus.toolkit.base.api.stats.StatisticalTest;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,6 +35,33 @@ public class LtdArimaKernelTest {
     }
 
     @Test
+    public void testDetails() {
+
+        SarimaSpec arima = SarimaSpec.airline();
+        LtdArimaSpec spec = LtdArimaSpec.builder()
+                .sarimaSpec(arima)
+                .parametrization(LtdArimaSpec.Parametrization.MEAN_DELTA)
+                .vTheta(true)
+                .vBtheta(true)
+                //                .vVar(true)
+                .build();
+
+        LtdArimaKernel.ParametersDetails details = new LtdArimaKernel.ParametersDetails(spec);
+//        System.out.println(details);
+        spec = spec.toBuilder().vVar(true).build();
+        details = new LtdArimaKernel.ParametersDetails(spec);
+//        System.out.println(details);
+        arima = arima.toBuilder().p(3).build();
+        spec = spec.toBuilder().sarimaSpec(arima).build();
+        details = new LtdArimaKernel.ParametersDetails(spec);
+//        System.out.println(details);
+        spec = spec.toBuilder().vVar(false).build();
+        details = new LtdArimaKernel.ParametersDetails(spec);
+//        System.out.println(details);
+
+    }
+
+    @Test
     public void testAirline() {
         TsData[] s = Data.retail_us();
 
@@ -42,40 +70,46 @@ public class LtdArimaKernelTest {
                 .parametrization(LtdArimaSpec.Parametrization.MEAN_DELTA)
                 .vTheta(true)
                 .vBtheta(true)
-                //                .vVar(true)
+                .vVar(false)
                 .build();
 
         LtdArimaKernel kernel = LtdArimaKernel.of(spec);
 
         long t0 = System.currentTimeMillis();
-        for (int i = 1; i < s.length; ++i) {
+        for (int i = 0; i < s.length; ++i) {
             LtdArimaResults result = kernel.process(s[i].getValues(), s[i].getAnnualFrequency(), false, null);
-            System.out.print(result.getLl0().getLogLikelihood());
+            System.out.print(result.getStart().getLl().getLogLikelihood());
             System.out.print('\t');
-            System.out.print(result.getLl1().getLogLikelihood());
+            System.out.print(result.getLtd().getLl().getLogLikelihood());
             System.out.print('\t');
 //            System.out.print(result.getStart().parameters());
-            System.out.print(result.getMax().getParameters());
+            StatisticalTest test = result.getLtd().getStationaryTest();
+            System.out.print(test == null ? Double.NaN : test.getPvalue());
             System.out.print('\t');
+            System.out.print(result.getLtd().getLikelihoodRatioTest().getPvalue());
+            System.out.print('\t');
+//            System.out.print(s[i].length());
+//            System.out.print('\t');
 //
 //            System.out.println(result.getMax().getScore());
 //
-            DoubleSeq t = DoublesMath.divide(result.getMax().getParameters(), LtdArimaKernel.covariance(result.getMax().getInformation()).diagonal().sqrt());
+//            DoubleSeq t = DoublesMath.divide(result.getLtd().getParameters(), result.getLtd().getParametersCovariance().diagonal().sqrt());
 //            System.out.println();
+            DoubleSeq t = result.getLtd().getParameters();
             System.out.println(t);
         }
         long t1 = System.currentTimeMillis();
         System.out.println(t1 - t0);
     }
 
-   @Test
+    @Test
     public void test311011() {
         TsData[] s = Data.retail_us();
         SarimaSpec airline = SarimaSpec.airline();
         SarimaSpec aspec = airline.toBuilder().p(3).build();
-        
+
         LtdArimaSpec spec = LtdArimaSpec.builder()
-                .parametrization(LtdArimaSpec.Parametrization.MEAN_DELTA)
+                .parametrization(LtdArimaSpec.Parametrization.START_END)
                 .sarimaSpec(aspec)
                 .vTheta(true)
                 .vBtheta(true)
@@ -88,9 +122,14 @@ public class LtdArimaKernelTest {
         long t0 = System.currentTimeMillis();
         for (int i = 0; i < s.length; ++i) {
             LtdArimaResults result = kernel.process(s[i].log().getValues(), s[i].getAnnualFrequency(), false, null);
-            System.out.print(result.getLl0().getLogLikelihood());
+            System.out.print(result.getStart().getLl().getLogLikelihood());
             System.out.print('\t');
-            System.out.println(result.getLl1().getLogLikelihood());
+            System.out.print(result.getLtd().getLl().getLogLikelihood());
+            StatisticalTest test = result.getLtd().getStationaryTest();
+            System.out.print('\t');
+            System.out.print(test == null ? Double.NaN : test.getPvalue());
+            System.out.print('\t');
+            System.out.println(result.getLtd().getLikelihoodRatioTest().getPvalue());
 //            System.out.println(result.getStart().parameters());
 //            System.out.println(result.getModel().getP0());
 //            System.out.println(result.getModel().getP1());

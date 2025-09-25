@@ -118,10 +118,11 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
         if (!mapping.checkBoundaries(DoubleSeq.of(p, 0, np))) {
             return false;
         }
-        if (!mapping.checkBoundaries(DoubleSeq.of(p, np, np))) {
-            return false;
-        }
-        return p[2 * np] >= 0;
+        return mapping.checkBoundaries(DoubleSeq.of(p, np, np));
+//        if (!mapping.checkBoundaries(DoubleSeq.of(p, np, np))) {
+//            return false;
+//        }
+        //return p[2 * np] >= 0;
     }
 
     @Override
@@ -131,13 +132,13 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
         // step 1: with validate p0 and var
         ParamValidation v0 = mapping.validate(ioParams.range(0, np));
         boolean changed = v0 == ParamValidation.Changed;
-        if (vVar) {
-            double v = ioParams.getLast();
-            if (v < 0) {
-                ioParams.setLast(-1 / v);
-                changed = true;
-            }
-        }
+//        if (vVar) {
+//            double v = ioParams.getLast();
+//            if (v < 0) {
+//                ioParams.setLast(-1 / v);
+//                changed = true;
+//            }
+//        }
 
         double[] p1 = p1(ioParams);
         ParamValidation v1 = mapping.validate(DataBlock.of(p1));
@@ -271,7 +272,8 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
             }
         }
         // var
-        return 0;
+        // return 0;
+        return Double.NEGATIVE_INFINITY;
     }
 
     @Override
@@ -431,7 +433,14 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
                 cp.copyTo(pm, ip + np);
             }
         }
-        pm[2 * np] = vVar ? pall.get(pall.length() - 1) : 1;
+        if (vVar) {
+            double e = pall.get(pall.length() - 1);
+            pm[2 * np] = e * e;
+        } else {
+            pm[2 * np] = 1;
+        }
+
+//        pm[2 * np] = vVar ? pall.get(pall.length() - 1) : 1;
         return pm;
     }
 
@@ -524,7 +533,7 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
         DataBlock P = DataBlock.of(p, np0, np0 + np1, 1);
         setP1(P, i -> p1.get(i));
         if (vVar) {
-            p[np0 + np1] = model.getVar1();
+            p[np0 + np1] = Math.sqrt(model.getVar1());
         }
         return DoubleSeq.of(p);
     }
