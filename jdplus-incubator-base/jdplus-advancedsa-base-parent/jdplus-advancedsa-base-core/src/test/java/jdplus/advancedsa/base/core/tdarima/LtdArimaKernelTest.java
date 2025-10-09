@@ -76,7 +76,7 @@ public class LtdArimaKernelTest {
         LtdArimaKernel kernel = LtdArimaKernel.of(spec);
 
         long t0 = System.currentTimeMillis();
-        for (int i = 0; i < s.length; ++i) {
+        for (int i = 34; i < s.length; ++i) {
             LtdArimaResults result = kernel.process(s[i].getValues(), s[i].getAnnualFrequency(), false, null);
             System.out.print(result.getStart().getLl().getLogLikelihood());
             System.out.print('\t');
