@@ -275,6 +275,10 @@ public class BsmKernel {
     public boolean hasConverged() {
         return converged;
     }
+    
+    public Component fixedVariance(){
+        return fixedVar;
+    }
 
     public static final double RVAR = 5;
 
