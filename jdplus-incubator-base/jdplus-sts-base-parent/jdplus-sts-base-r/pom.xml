@@ -53,5 +53,5 @@
             <scope>test</scope>
             <version>${jd2.version}</version>
          </dependency>
-     </dependencies>
+    </dependencies>
 </project>
