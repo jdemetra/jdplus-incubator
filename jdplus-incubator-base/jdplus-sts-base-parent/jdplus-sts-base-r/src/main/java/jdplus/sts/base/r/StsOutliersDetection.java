@@ -242,7 +242,6 @@ public class StsOutliersDetection {
         }
         SsfData data = new SsfData(y);
 
-        DiffuseConcentratedLikelihood ll0 = od.getInitialLikelihood();
         BsmData model0 = od.getInitialModel();
         SsfBsm ssf0 = SsfBsm.of(model0);
         Ssf xssf = x == null ? ssf0 : RegSsf.ssf(ssf0, FastMatrix.of(x));

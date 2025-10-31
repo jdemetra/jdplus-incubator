@@ -35,11 +35,11 @@ import org.junit.jupiter.api.Test;
  */
 public class SsfBsmTest {
 
-    static final int N = 50000;
+    static final int N = 1000;
 
     static final SsfBsm2 BSM;
-    
-    static{
+
+    static {
         BsmSpec mspec = BsmSpec.builder()
                 .seasonal(SeasonalModel.Crude, Parameter.fixed(100))
                 .build();
@@ -94,8 +94,37 @@ public class SsfBsmTest {
         System.out.println("ckms filter");
         System.out.println(t1 - t0);
     }
-    
-    public static void main(String[] args){
-        stressTestBsm();
+
+    public static void main(String[] args) {
+//        stressTestBsm();
+        SsfData data = new SsfData(Data.RETAIL_BOOKSTORES);
+        long t0 = System.currentTimeMillis();
+        for (int i = 0; i < N; ++i) {
+            DkToolkit.sqrtSmooth(BSM, data, true, true);
+        }
+        long t1 = System.currentTimeMillis();
+        System.out.println("dk filter (sqr)");
+        System.out.println(t1 - t0);
+        t0 = System.currentTimeMillis();
+        for (int i = 0; i < N; ++i) {
+            DkToolkit.smooth(BSM, data, true, true);
+        }
+        t1 = System.currentTimeMillis();
+        System.out.println("dk filter");
+        System.out.println(t1 - t0);
+        t0 = System.currentTimeMillis();
+        for (int i = 0; i < N; ++i) {
+            AkfToolkit.smooth(BSM, data, true, true, true);
+        }
+        t1 = System.currentTimeMillis();
+        System.out.println("akf filter");
+        System.out.println(t1 - t0);
+        t0 = System.currentTimeMillis();
+        for (int i = 0; i < N; ++i) {
+            AkfToolkit.smooth(BSM, data, true, true, false);
+        }
+        t1 = System.currentTimeMillis();
+        System.out.println("akf filter (no collapsing)");
+        System.out.println(t1 - t0);
     }
 }

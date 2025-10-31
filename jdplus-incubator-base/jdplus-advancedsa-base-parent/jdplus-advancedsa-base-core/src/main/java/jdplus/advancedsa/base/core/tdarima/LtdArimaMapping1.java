@@ -19,7 +19,6 @@ import java.util.function.IntToDoubleFunction;
 import jdplus.toolkit.base.api.arima.SarimaOrders;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.core.data.DataBlock;
-import jdplus.toolkit.base.core.math.functions.IParametricMapping;
 import jdplus.toolkit.base.core.math.functions.ParamValidation;
 import jdplus.toolkit.base.core.sarima.estimation.SarimaMapping;
 
@@ -124,7 +123,6 @@ public class LtdArimaMapping1 implements LtdArimaMapping {
     public ParamValidation validate(DataBlock ioParams) {
         SarimaMapping mapping = new SarimaMapping(orders, eps, true);
         int np = orders.getParametersCount();
-        int nd = deltaParamsCount();
         // step 1: we validate the mean
         ParamValidation v0 = mapping.validate(ioParams.range(0, np));
 

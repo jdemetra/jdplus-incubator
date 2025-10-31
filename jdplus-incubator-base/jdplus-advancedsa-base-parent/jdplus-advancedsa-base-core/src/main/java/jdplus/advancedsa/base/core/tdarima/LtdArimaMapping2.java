@@ -19,7 +19,6 @@ import java.util.function.IntToDoubleFunction;
 import jdplus.toolkit.base.api.arima.SarimaOrders;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.core.data.DataBlock;
-import jdplus.toolkit.base.core.math.functions.IParametricMapping;
 import jdplus.toolkit.base.core.math.functions.ParamValidation;
 import jdplus.toolkit.base.core.sarima.estimation.SarimaMapping;
 
@@ -132,13 +131,13 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
         // step 1: with validate p0 and var
         ParamValidation v0 = mapping.validate(ioParams.range(0, np));
         boolean changed = v0 == ParamValidation.Changed;
-//        if (vVar) {
-//            double v = ioParams.getLast();
-//            if (v < 0) {
-//                ioParams.setLast(-1 / v);
-//                changed = true;
-//            }
-//        }
+        if (vVar) {
+            double v = ioParams.getLast();
+            if (v < 0) {
+                ioParams.setLast(-1 / v);
+                changed = true;
+            }
+        }
 
         double[] p1 = p1(ioParams);
         ParamValidation v1 = mapping.validate(DataBlock.of(p1));

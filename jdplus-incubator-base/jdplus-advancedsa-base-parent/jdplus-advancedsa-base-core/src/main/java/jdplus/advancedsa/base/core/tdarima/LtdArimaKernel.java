@@ -323,6 +323,8 @@ public class LtdArimaKernel {
             lower = LowerTriangularMatrix.inverse(lower);
             return LtL(lower);
         } catch (MatrixException e) {
+//                DoubleSeq diag = H.diagonal();
+//                return FastMatrix.diagonal(DoubleSeq.onMapping(diag.length(), i->1/Math.abs(diag.get(i))));
             if (nullIfFailed) {
                 return null;
             } else {

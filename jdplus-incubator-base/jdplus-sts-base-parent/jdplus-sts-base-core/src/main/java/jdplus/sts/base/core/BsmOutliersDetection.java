@@ -5,26 +5,22 @@
  */
 package jdplus.sts.base.core;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.DoublesMath;
 import jdplus.sts.base.api.BsmEstimationSpec;
 import nbbrd.design.BuilderPattern;
 import jdplus.sts.base.api.BsmSpec;
 import jdplus.sts.base.api.Component;
-import jdplus.toolkit.base.api.util.IntList;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.stats.likelihood.DiffuseConcentratedLikelihood;
 import jdplus.toolkit.base.core.math.linearsystem.LinearSystemSolver;
 import jdplus.toolkit.base.core.math.functions.IFunctionDerivatives;
-import jdplus.toolkit.base.core.math.matrices.LowerTriangularMatrix;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
-import jdplus.toolkit.base.core.math.matrices.MatrixFactory;
-import jdplus.toolkit.base.core.math.matrices.SymmetricMatrix;
-import jdplus.toolkit.base.core.ssf.akf.SmoothationsComputer;
 import jdplus.toolkit.base.core.ssf.dk.SsfFunction;
 import jdplus.toolkit.base.core.ssf.dk.SsfFunctionPoint;
-import jdplus.toolkit.base.core.ssf.basic.RegSsf;
-import jdplus.toolkit.base.core.ssf.univariate.Ssf;
 import jdplus.toolkit.base.core.ssf.univariate.SsfData;
 import jdplus.toolkit.base.core.stats.RobustStandardDeviationComputer;
 
@@ -32,7 +28,7 @@ import jdplus.toolkit.base.core.stats.RobustStandardDeviationComputer;
  *
  * @author PALATEJ
  */
-public class OutliersDetection {
+public class BsmOutliersDetection {
 
     public static enum Estimation {
         Full, Score, Point;
@@ -40,21 +36,22 @@ public class OutliersDetection {
 
     private final BsmSpec spec;
     private final boolean ao, ls, so;
-    private final double cv, tcv;
+    private final double cv;
     private final int maxIter;
     private final Estimation forwardEstimation, backwardEstimation;
     private final double eps, eps2, fullEstimationThreshold;
+    private final SsfOutlierDetector sod;
 
-    @BuilderPattern(OutliersDetection.class)
+    @BuilderPattern(BsmOutliersDetection.class)
     public static class Builder {
 
         private BsmSpec spec;
         private boolean ao = true, ls = true, so = false;
         private double cv = 0;
-        private double tcv = 0;
-        private int maxIter = 20;
+        private int maxIter = 50;
         private double precision = 1e-5;
         private double fullEstimationThreshold = 5;
+        private boolean mad = true;
         private Estimation forwardEstimation = Estimation.Score, backwardEstimation = Estimation.Point;
 
         public Builder bsm(BsmSpec spec) {
@@ -77,13 +74,13 @@ public class OutliersDetection {
             return this;
         }
 
-        public Builder criticalValue(double cv) {
-            this.cv = cv;
+        public Builder mad(boolean mad) {
+            this.mad = mad;
             return this;
         }
 
-        public Builder tcriticalValue(double tcv) {
-            this.tcv = tcv;
+        public Builder criticalValue(double cv) {
+            this.cv = cv;
             return this;
         }
 
@@ -112,8 +109,8 @@ public class OutliersDetection {
             return this;
         }
 
-        public OutliersDetection build() {
-            return new OutliersDetection(spec, ao, ls, so, cv, tcv, maxIter, forwardEstimation, backwardEstimation, precision, fullEstimationThreshold);
+        public BsmOutliersDetection build() {
+            return new BsmOutliersDetection(spec, ao, ls, so, cv, mad, maxIter, forwardEstimation, backwardEstimation, precision, fullEstimationThreshold);
         }
     }
 
@@ -121,23 +118,42 @@ public class OutliersDetection {
         return new Builder();
     }
 
-    private OutliersDetection(BsmSpec spec, boolean ao, boolean ls, boolean so, double cv, double tcv,
+    private BsmOutliersDetection(BsmSpec spec, boolean ao, boolean ls, boolean so, double cv, boolean mad,
             int maxIter, Estimation forwardEstimation, Estimation backwardEstimation, double eps, double ft) {
         this.spec = spec;
         this.ao = ao;
         this.ls = ls;
         this.so = so;
         this.cv = cv;
-        this.tcv = tcv;
         this.maxIter = maxIter;
         this.forwardEstimation = forwardEstimation;
         this.backwardEstimation = backwardEstimation;
         this.eps = eps;
         this.eps2 = Math.sqrt(eps);
         this.fullEstimationThreshold = ft;
+        sod = new SsfOutlierDetector(mad ? RobustStandardDeviationComputer.mad() : null);
     }
 
     public boolean process(DoubleSeq y, FastMatrix X, int period) {
+        int n = y.length();
+        sod.prepare(n);
+        if (!ao) {
+            sod.excludeType(0);
+        }
+        if (!ls) {
+            sod.excludeType(1);
+         } else {
+            sod.exclude(0, 1);
+            sod.exclude(n - 1, 1);
+       }
+        if (!so) {
+            sod.excludeType(2);
+        }else{
+            for (int i=0, j=n-1; i<period; ++i, --j){
+                sod.exclude(i, 2);
+                sod.exclude(j, 2);
+            }
+        }
         clear();
         int i = 0;
         this.period = period;
@@ -147,11 +163,11 @@ public class OutliersDetection {
         }
         initialModel = model;
         initialLikelihood = getLikelihood();
-        double curcv = criticalValue(y.length());
+        double cvcur = cv == 0 ? criticalValue(y.length()) : cv;
+        double tcur= Math.sqrt(cvcur);
         // forward recursion
         while (i++ < maxIter) {
-            sig = robustSigma();
-            if (!iterate(y, regressors, curcv)) {
+            if (!iterate(y, regressors, cvcur)) {
                 break;
             }
             regressors = x(y.length(), X);
@@ -166,7 +182,6 @@ public class OutliersDetection {
         if (!fullEstimation(y, regressors, period, eps)) {
             return false;
         }
-        double tcvcur = tcriticalValue(y.length());
         do {
             if (regressors == null) {
                 break;
@@ -184,21 +199,15 @@ public class OutliersDetection {
                     jmin = j - nx;
                 }
             }
-            if (tmin > tcvcur) {
+            if (tmin > tcur) {
                 break;
             }
-            if (jmin < aoPositions.size()) {
-                aoPositions.remove(jmin);
-            } else if (jmin < aoPositions.size() + lsPositions.size()) {
-                lsPositions.remove(jmin - aoPositions.size());
-            } else {
-                soPositions.remove(jmin - aoPositions.size() - lsPositions.size());
-            }
+            outliers.remove(jmin);
             regressors = x(y.length(), X);
             if (!estimate(y, regressors, backwardEstimation)) {
                 break;
             }
-        } while (!aoPositions.isEmpty() || !lsPositions.isEmpty());
+        } while (!outliers.isEmpty());
 
         return true;
 
@@ -206,16 +215,14 @@ public class OutliersDetection {
 
     private void clear() {
         period = 0;
-        aoPositions.clear();
-        lsPositions.clear();
-        soPositions.clear();
+        outliers.clear();
         model = null;
         likelihood = null;
         initialModel = null;
         initialLikelihood = null;
         regressors = null;
         curp = null;
-        sig = 0;
+        curfixed = null;
         full = false;
     }
 
@@ -225,91 +232,31 @@ public class OutliersDetection {
         }
         int no = (ao ? 1 : 0) + (ls ? 1 : 0) + (so ? 1 : 0);
         return switch (no) {
-            case 3 -> defaultCriticalValue3(n);
-            case 2 -> defaultCriticalValue2(n);
-            default -> defaultCriticalValue(n);
+            case 3 ->
+                defaultCriticalValue3(n);
+            case 2 ->
+                defaultCriticalValue2(n);
+            default ->
+                defaultCriticalValue(n);
         };
-    }
-
-    private double tcriticalValue(int n) {
-        if (tcv != 0) {
-            return tcv;
-        }
-        return Math.sqrt(defaultCriticalValue(n));
     }
 
     private boolean iterate(DoubleSeq y, FastMatrix W, double curcv) {
         full = false;
-        SsfBsm ssf = SsfBsm.of(model);
-        Ssf wssf = W == null ? ssf : RegSsf.ssf(ssf, W);
-        SsfData data = new SsfData(y);
-        int n = data.length();
-        double sig2 = sig * sig;
-        SmoothationsComputer computer = new SmoothationsComputer();
-        computer.process(wssf, data);
-        int imax = -1;
-        double smax = 0;
-        int type = -1;
-        int ncmp = SsfBsm.searchPosition(model, Component.Noise);
-        int lcmp = SsfBsm.searchPosition(model, Component.Level);
-        int scmp = SsfBsm.searchPosition(model, Component.Seasonal);
-        for (int i = 0; i < n; ++i) {
-            try {
-                DataBlock R = computer.R(i);
-                FastMatrix Rvar = computer.Rvar(i);
-                double sao = 0, sls = 0, sso = 0, sall = 0;
-                IntList sel = new IntList();
-                if (ao && ncmp >= 0 && !aoPositions.contains(i)) {
-                    double r = R.get(ncmp), v = Rvar.get(ncmp, ncmp);
-                    if (v > 0) {
-                        sao = r * r / (v * sig2);
-                    }
-                    sel.add(ncmp);
-                }
-                if (ls && lcmp >= 0 && !lsPositions.contains(i)) {
-                    double r = R.get(lcmp), v = Rvar.get(lcmp, lcmp);
-                    if (v > 0) {
-                        sls = r * r / (v * sig2);
-                    }
-                    sel.add(lcmp);
-                }
-                if (so && scmp >= 0 && !soPositions.contains(i)) {
-                    double r = R.get(scmp), v = Rvar.get(scmp, scmp);
-                    if (v > 0) {
-                        sso = r * r / (v * sig2);
-                    }
-                    sel.add(scmp);
-                }
-
-                FastMatrix S = MatrixFactory.select(Rvar, sel, sel);
-                DataBlock ur = DataBlock.of(R.select(sel));
-                SymmetricMatrix.lcholesky(S, 1e-9);
-                LowerTriangularMatrix.solveLx(S, ur, 1e-9);
-                sall = ur.ssq() / sig2;
-
-                if (sall > smax) {
-                    imax = i;
-                    smax = sall;
-                    if (sao > sls && sao > sso) {
-                        type = 0;
-                    } else if (sls > sao && sls > sso) {
-                        type = 1;
-                    } else {
-                        type = 2;
-                    }
-                }
-            } catch (Exception err) {
-            }
+        if (!sod.process(y, model, W, 0)) {
+            return false;
         }
+
+        double smax = sod.getMaxTau();
         if (smax < curcv) {
             return false;
         }
-        full = smax > fullEstimationThreshold * curcv;
-        switch (type) {
-            case 0 -> aoPositions.add(imax);
-            case 1 -> lsPositions.add(imax);
-            case 2 -> soPositions.add(imax);
-        }
+        int type = sod.getMaxOutlierType(), imax = sod.getMaxOutlierPosition();
+
+        double gmax = sod.getMaxGlobalTau();
+        full = gmax > fullEstimationThreshold * curcv;
+
+        outliers.add(new int[]{imax, type});
         return true;
     }
 
@@ -321,6 +268,7 @@ public class OutliersDetection {
         BsmKernel monitor = new BsmKernel(espec);
         monitor.process(y, W, period, spec);
         curp = monitor.maxLikelihoodFunction().getParameters();
+        curfixed = monitor.fixedVariance();
         model = monitor.result(true);
         curSpec = monitor.finalSpecification(true);
         likelihood = monitor.getLikelihood();
@@ -376,14 +324,9 @@ public class OutliersDetection {
         }
     }
 
-    private double robustSigma() {
-        DoubleSeq errors = getLikelihood().e();
-        return RobustStandardDeviationComputer.mad().compute(errors);
-    }
-
     private FastMatrix x(int m, FastMatrix X) {
         int nx = X == null ? 0 : X.getColumnsCount();
-        int nw = nx + aoPositions.size() + lsPositions.size() + soPositions.size();
+        int nw = nx + outliers.size();
         if (nw == 0) {
             return null;
         }
@@ -393,22 +336,23 @@ public class OutliersDetection {
             W.extract(0, m, 0, nx).copy(X);
             p = nx;
         }
-        for (int i = 0; i < aoPositions.size(); ++i, ++p) {
-            W.set(aoPositions.get(i), p, 1);
-        }
-        for (int i = 0; i < lsPositions.size(); ++i, ++p) {
-            W.column(p).drop(lsPositions.get(i), 0).set(1);
-        }
-        for (int i = 0; i < soPositions.size(); ++i, ++p) {
-            DataBlock c = W.column(p).drop(soPositions.get(i), 0);
-            c.set(-1.0 / period);
-            c.extract(0, -1, period).add(1);
+
+        for (int[] o : outliers) {
+            DataBlock col = W.column(p++);
+            switch (o[1]) {
+                case 0 ->
+                    col.set(o[0], 1);
+                case 1 ->
+                    col.drop(o[0], 0).set(1);
+                case 2 ->
+                    col.drop(o[0], 0).extract(0, -1, period).set(1);
+            }
         }
         return W;
     }
 
     SsfFunction<BsmData, SsfBsm2> currentFunction(DoubleSeq y, FastMatrix W) {
-        BsmMapping mapper = new BsmMapping(curSpec == null ? spec : curSpec, model.getPeriod(), null);
+        BsmMapping mapper = new BsmMapping(curSpec == null ? spec : curSpec, model.getPeriod(), curfixed);
         return SsfFunction.builder(new SsfData(y), mapper, bsmmodel -> SsfBsm2.of(bsmmodel))
                 .regression(W, W != null ? W.getColumnsCount() : 0)
                 .useFastAlgorithm(true)
@@ -418,37 +362,21 @@ public class OutliersDetection {
                 .build();
     }
 
-    private final IntList aoPositions = new IntList();
-    private final IntList lsPositions = new IntList();
-    private final IntList soPositions = new IntList();
+    private final List<int[]> outliers = new ArrayList<>();
     private int period;
     private BsmData initialModel, model;
     private BsmSpec curSpec;
     private DiffuseConcentratedLikelihood initialLikelihood, likelihood;
     private DoubleSeq curp;
+    private Component curfixed;
     private FastMatrix regressors;
-    private double sig;
     private boolean full;
 
     /**
      * @return the aoPositions
      */
-    public int[] getAoPositions() {
-        return aoPositions.toArray();
-    }
-
-    /**
-     * @return the lsPositions
-     */
-    public int[] getLsPositions() {
-        return lsPositions.toArray();
-    }
-
-    /**
-     * @return the lsPositions
-     */
-    public int[] getSoPositions() {
-        return soPositions.toArray();
+    public List<int[]> outliers() {
+        return Collections.unmodifiableList(outliers);
     }
 
     /**
@@ -495,6 +423,6 @@ public class OutliersDetection {
     }
 
     public static double defaultCriticalValue3(int n) {
-        return 1 / (0.04400659 + 1.60844248 / n - -23.64272642 / (n * n));
+        return 1 / (0.04400659 + 1.60844248 / n - 23.64272642 / (n * n));
     }
 }
