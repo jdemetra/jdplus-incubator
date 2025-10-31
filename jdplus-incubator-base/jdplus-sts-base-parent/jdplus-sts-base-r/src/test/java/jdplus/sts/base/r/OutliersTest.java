@@ -54,7 +54,7 @@ public class OutliersTest {
                 .theta(-.6)
                 .btheta(-.6)
                 .build();
-        Matrix all = Outliers.tramoOutliers(y, sarima, false, null, 3, new String[]{"ao", "ls"}, false, true);
+        Matrix all = Outliers.tramoOutliers(y, sarima, false, null, 3, new String[]{"ao", "ls"}, false, true, false);
         System.out.println(all);
     }
 

@@ -145,12 +145,13 @@ public class Outliers {
         return MatrixFactory.columnBind(sod.getCoefficients(), sod.getTau());
     }
 
-    public Matrix tramoOutliers(double[] y, SarimaModel sarima, boolean mean, Matrix X, double cv, String[] outliers, boolean ml, boolean mad) {
+    public Matrix tramoOutliers(double[] y, SarimaModel sarima, boolean mean, Matrix X, double cv, String[] outliers, boolean ml, boolean mad, boolean regc) {
         int period = sarima.getPeriod();
         if (cv == 0) {
             cv = CriticalValueComputer.simpleComputer().applyAsDouble(y.length);
         }
-        SingleOutlierDetector<SarimaModel> sod = new FastOutlierDetector<>(mad ? RobustStandardDeviationComputer.mad() : null);
+        SingleOutlierDetector<SarimaModel> sod = regc ? new FastOutlierDetector<>(mad ? RobustStandardDeviationComputer.mad() : null) : 
+                new FastOutlierDetector2<>(mad ? RobustStandardDeviationComputer.mad() : null, ArmaFilter.kalman(true), null);
         sod.setOutlierFactories(factories(outliers, period));
         FastOutliersDetector od = FastOutliersDetector.builder()
                 .singleOutlierDetector(sod)
