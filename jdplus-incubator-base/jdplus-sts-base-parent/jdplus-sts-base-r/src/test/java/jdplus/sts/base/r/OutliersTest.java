@@ -16,8 +16,8 @@
 package jdplus.sts.base.r;
 
 import jdplus.sts.base.api.BsmSpec;
+import jdplus.sts.base.core.BsmData;
 import jdplus.toolkit.base.api.arima.SarimaOrders;
-import jdplus.toolkit.base.api.arima.SarimaSpec;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
 import jdplus.toolkit.base.api.ssf.sts.SeasonalModel;
 import jdplus.toolkit.base.core.sarima.SarimaModel;
@@ -79,7 +79,22 @@ public class OutliersTest {
                 .seasonal(SeasonalModel.HarrisonStevens)
                 .cycle(false)
                 .build();
-        Matrix all = Outliers.bsmOutliers(y, 12, spec, null, 3.2*3.2, true, true, false, true, "Full", "Point");
+        Matrix all = Outliers.bsmOutliers(y, 12, spec, null, 2.7*2.7, true, true, false, true, "Full", "Point");
+        System.out.println(all);
+    }
+
+    @Test
+    public void testBsm2() {
+        double[] y = Data.RETAIL_BOOKSTORES;
+        BsmData model = BsmData.builder(12)
+                .noiseVar(1)
+                .levelVar(1)
+                .slopeVar(1)
+                .seasonalVar(1)
+                .seasonalModel(SeasonalModel.HarrisonStevens)
+                .build();
+        BsmSpec spec = Bsm.specOf(model, false, true);
+        Matrix all = Outliers.bsmOutliers(y, 12, spec, null, 2.5*2.5, true, true, false, true, "Full", "Point");
         System.out.println(all);
     }
 

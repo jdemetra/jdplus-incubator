@@ -15,17 +15,16 @@
  */
 package jdplus.sts.base.r;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import jdplus.sts.base.api.BsmSpec;
 import jdplus.sts.base.core.BsmData;
 import jdplus.sts.base.core.BsmOutliersDetection;
+import jdplus.sts.base.core.BsmOutliersDetection2;
 import jdplus.sts.base.core.SsfOutlierDetector;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
-import jdplus.toolkit.base.core.arima.IArimaModel;
 import jdplus.toolkit.base.core.modelling.regression.AdditiveOutlierFactory;
 import jdplus.toolkit.base.core.modelling.regression.IOutlierFactory;
 import jdplus.toolkit.base.core.modelling.regression.LevelShiftFactory;
@@ -38,12 +37,14 @@ import jdplus.toolkit.base.core.regarima.outlier.ExactSingleOutlierDetector;
 import jdplus.toolkit.base.core.stats.RobustStandardDeviationComputer;
 import jdplus.toolkit.base.core.arima.IArimaModel;
 import jdplus.toolkit.base.core.arima.estimation.ArmaFilter;
+import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.toolkit.base.core.math.matrices.MatrixFactory;
 import jdplus.toolkit.base.core.regarima.RegArimaModel;
 import jdplus.toolkit.base.core.regarima.RegArimaUtility;
 import jdplus.toolkit.base.core.regarima.estimation.ConcentratedLikelihoodComputer;
 import jdplus.toolkit.base.core.regarima.outlier.CriticalValueComputer;
+import jdplus.toolkit.base.core.regarima.outlier.FastOutlierDetector2;
 import jdplus.toolkit.base.core.regsarima.ami.ExactOutliersDetector;
 import jdplus.toolkit.base.core.regsarima.ami.FastOutliersDetector;
 import jdplus.toolkit.base.core.sarima.SarimaModel;
@@ -64,11 +65,18 @@ public class Outliers {
             case "fast" -> {
                 sod = new FastOutlierDetector<>(mad ? RobustStandardDeviationComputer.mad() : null);
             }
+            case "fastc" -> {
+                if (X == null && !mean) {
+                    sod = new FastOutlierDetector<>(mad ? RobustStandardDeviationComputer.mad() : null);
+                } else {
+                    sod = new FastOutlierDetector2(mad ? RobustStandardDeviationComputer.mad() : null, ArmaFilter.kalman(true), null);
+                }
+            }
             case "ansley" -> {
                 sod = new ExactSingleOutlierDetector<>(mad ? RobustStandardDeviationComputer.mad() : null, ArmaFilter.ansley(), null);
             }
             case "kalman" -> {
-                sod = new ExactSingleOutlierDetector<>(mad ? RobustStandardDeviationComputer.mad() : null, ArmaFilter.kalman(), null);
+                sod = new ExactSingleOutlierDetector<>(mad ? RobustStandardDeviationComputer.mad() : null, ArmaFilter.kalman(true), null);
             }
             case "ljungbox" -> {
                 sod = new ExactSingleOutlierDetector<>(mad ? RobustStandardDeviationComputer.mad() : null, ArmaFilter.ljungBox(false), null);
@@ -148,7 +156,7 @@ public class Outliers {
                 .singleOutlierDetector(sod)
                 .criticalValue(cv)
                 .maximumLikelihood(ml)
-                .processor(RegArimaUtility.processor(true, 1e-5))
+                .processor(RegArimaUtility.processor(true, 1e-6))
                 .build();
         od.prepare(y.length);
         od.setBounds(0, y.length);
@@ -186,7 +194,7 @@ public class Outliers {
         ExactOutliersDetector od = ExactOutliersDetector.builder()
                 .singleOutlierDetector(sod)
                 .criticalValue(cv)
-                .processor(RegArimaUtility.processor(true, 1e-5))
+                .processor(RegArimaUtility.processor(true, 1e-6))
                 .build();
         od.prepare(y.length);
         od.setBounds(0, y.length);
@@ -226,15 +234,46 @@ public class Outliers {
                 .forwardEstimation(BsmOutliersDetection.Estimation.valueOf(forward))
                 .backardEstimation(BsmOutliersDetection.Estimation.valueOf(backward))
                 .build();
-        
+
         if (od.process(DoubleSeq.of(y), FastMatrix.of(X), period)) {
             DiffuseConcentratedLikelihood ll = od.getLikelihood();
             List<int[]> outliers = od.outliers();
             FastMatrix rslt = FastMatrix.make(outliers.size(), 4);
             int row = 0;
             for (int[] o : outliers) {
-                rslt.set(row, 0, o[0]);
-                rslt.set(row, 1, o[1]);
+                DataBlock r = rslt.row(row++);
+                r.set(0, o[0]);
+                r.set(1, o[1]);
+            }
+            int nx = X == null ? 0 : X.getColumnsCount();
+            rslt.column(2).copy(ll.coefficients().drop(nx, 0));
+            rslt.column(3).copyFrom(ll.tstats(0, true), nx);
+            return rslt;
+        } else {
+            return null;
+        }
+    }
+
+    public Matrix bsmOutliers2(double[] y, int period, BsmSpec spec, Matrix X, double cv,
+            boolean ao, boolean ls, boolean so, boolean mad) {
+        BsmOutliersDetection2 od = BsmOutliersDetection2.builder()
+                .bsm(spec)
+                .mad(mad)
+                .ao(ao)
+                .ls(ls)
+                .so(so)
+                .criticalValue(cv)
+                .build();
+
+        if (od.process(DoubleSeq.of(y), FastMatrix.of(X), period)) {
+            DiffuseConcentratedLikelihood ll = od.getLikelihood();
+            List<int[]> outliers = od.outliers();
+            FastMatrix rslt = FastMatrix.make(outliers.size(), 4);
+            int row = 0;
+            for (int[] o : outliers) {
+                DataBlock r = rslt.row(row++);
+                r.set(0, o[0]);
+                r.set(1, o[1]);
             }
             int nx = X == null ? 0 : X.getColumnsCount();
             rslt.column(2).copy(ll.coefficients().drop(nx, 0));
@@ -253,4 +292,19 @@ public class Outliers {
 
     }
 
+    public double[] outlier(String id, int period, int n, int pos) {
+        IOutlierFactory f = outlierFactoryFor(id, period);
+        double[] O = new double[n];
+        f.fill(pos, DataBlock.of(O));
+        return O;
+    }
+
+    public Matrix outliers(String[] ids, int period, int n, int[] pos) {
+        FastMatrix O = FastMatrix.make(n, ids.length);
+        for (int i = 0; i < ids.length; ++i) {
+            IOutlierFactory f = outlierFactoryFor(ids[i], period);
+            f.fill(pos[i], O.column(i));
+        }
+        return O;
+    }
 }

@@ -284,27 +284,27 @@ public class Bsm {
         } else {
             double v = bsm.getNoiseVar(), w;
             if (v >= 0) {
-                builder.noise(Parameter.initial(v));
+                builder.noise(true);
             }
             v = bsm.getLevelVar();
             w = bsm.getSlopeVar();
             if (v >= 0) {
                 if (w < 0) {
-                    builder.level(Parameter.initial(v), null);
+                    builder.level(true, false);
                 } else {
-                    builder.level(Parameter.initial(v), Parameter.fixed(w));
+                    builder.level(true, true);
                 }
             }
             v = bsm.getSeasonalVar();
             if (v >= 0) {
-                builder.seasonal(bsm.getSeasonalModel(), Parameter.initial(v));
+                builder.seasonal(bsm.getSeasonalModel());
             }
             v = bsm.getCycleVar();
             if (v >= 0) {
                 double cdump = bsm.getCycleDumpingFactor(), clen = bsm.getCycleDumpingFactor();
-                builder.cycle(Parameter.initial(v),
-                        fixedCycle ? Parameter.fixed(cdump) : Parameter.initial(cdump),
-                        fixedCycle ? Parameter.fixed(clen) : Parameter.initial(clen));
+                builder.cycle(Parameter.undefined(),
+                        fixedCycle ? Parameter.fixed(cdump) : Parameter.undefined(),
+                        fixedCycle ? Parameter.fixed(clen) : Parameter.undefined());
             }
         }
         return builder.build();
