@@ -224,14 +224,11 @@ public class OutliersDetection {
             return cv;
         }
         int no = (ao ? 1 : 0) + (ls ? 1 : 0) + (so ? 1 : 0);
-        switch (no) {
-            case 3:
-                return defaultCriticalValue3(n);
-            case 2:
-                return defaultCriticalValue2(n);
-            default:
-                return defaultCriticalValue(n);
-        }
+        return switch (no) {
+            case 3 -> defaultCriticalValue3(n);
+            case 2 -> defaultCriticalValue2(n);
+            default -> defaultCriticalValue(n);
+        };
     }
 
     private double tcriticalValue(int n) {
@@ -309,15 +306,9 @@ public class OutliersDetection {
         }
         full = smax > fullEstimationThreshold * curcv;
         switch (type) {
-            case 0:
-                aoPositions.add(imax);
-                break;
-            case 1:
-                lsPositions.add(imax);
-                break;
-            case 2:
-                soPositions.add(imax);
-                break;
+            case 0 -> aoPositions.add(imax);
+            case 1 -> lsPositions.add(imax);
+            case 2 -> soPositions.add(imax);
         }
         return true;
     }
@@ -368,14 +359,17 @@ public class OutliersDetection {
         }
         try {
             switch (method) {
-                case Point:
+                case Point -> {
                     pointEstimation(y, W);
                     return true;
-                case Score:
+                }
+                case Score -> {
                     scoreEstimation(y, W);
                     return true;
-                default:
+                }
+                default -> {
                     return fullEstimation(y, W, model.getPeriod(), eps2);
+                }
             }
         } catch (Exception err) {
             return false;

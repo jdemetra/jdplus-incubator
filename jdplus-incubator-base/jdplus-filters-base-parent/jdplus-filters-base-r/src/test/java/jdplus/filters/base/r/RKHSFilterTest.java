@@ -18,10 +18,10 @@ public class RKHSFilterTest {
     @Test
     public void testOptimalCriteria() {
     	DoubleUnaryOperator ocsym = RKHSFilters.optimalCriteria(6, 6, 2, "BiWeight", "Timeliness", true, Math.PI/8);
-  
-        
-        assertEquals(ocsym.applyAsDouble(6), 0, 1e-6);
-        assertEquals(ocsym.applyAsDouble(7), 0, 1e-6);
-        assertEquals(ocsym.applyAsDouble(6*3), 0, 1e-6);
+
+
+        assertEquals(0, ocsym.applyAsDouble(6), 1e-6);
+        assertEquals(0, ocsym.applyAsDouble(7), 1e-6);
+        assertEquals(0, ocsym.applyAsDouble(6 * 3), 1e-6);
     }
 }

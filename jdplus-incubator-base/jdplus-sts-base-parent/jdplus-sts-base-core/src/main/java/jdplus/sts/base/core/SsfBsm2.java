@@ -289,15 +289,9 @@ public class SsfBsm2 extends Ssf {
             }
             if (data.seasVar > 0) {
                 switch (data.seasModel) {
-                    case Dummy:
-                        s.set(i + data.period - 2, j, Math.sqrt(data.seasVar));
-                        break;
-                    case Crude:
-                        s.extract(i, data.period - 1, j, 1).set(Math.sqrt(data.seasVar));
-                        break;
-                    default:
-                        s.extract(i, data.period - 1, j, data.period - 1).copy(data.ltsvar);
-                        break;
+                    case Dummy -> s.set(i + data.period - 2, j, Math.sqrt(data.seasVar));
+                    case Crude -> s.extract(i, data.period - 1, j, 1).set(Math.sqrt(data.seasVar));
+                    default -> s.extract(i, data.period - 1, j, data.period - 1).copy(data.ltsvar);
                 }
             }
         }
@@ -324,15 +318,9 @@ public class SsfBsm2 extends Ssf {
             }
             if (data.seasVar > 0) {
                 switch (data.seasModel) {
-                    case Dummy:
-                        x.add(i + data.period - 2, u.get(j) * Math.sqrt(data.seasVar));
-                        break;
-                    case Crude:
-                        x.range(i, i + data.period - 1).add(Math.sqrt(data.seasVar) * u.get(j));
-                        break;
-                    default:
-                        x.range(i, i + data.period - 1).addProduct(data.ltsvar.rowsIterator(), u.range(j, j + data.period - 1));
-                        break;
+                    case Dummy -> x.add(i + data.period - 2, u.get(j) * Math.sqrt(data.seasVar));
+                    case Crude -> x.range(i, i + data.period - 1).add(Math.sqrt(data.seasVar) * u.get(j));
+                    default -> x.range(i, i + data.period - 1).addProduct(data.ltsvar.rowsIterator(), u.range(j, j + data.period - 1));
                 }
             }
         }
@@ -472,20 +460,17 @@ public class SsfBsm2 extends Ssf {
             }
             if (data.seasVar > 0) {
                 switch (data.seasModel) {
-                    case Dummy: {
+                    case Dummy ->  {
                         int j = i + data.period - 2;
                         p.add(j, j, data.seasVar);
-                        break;
                     }
-                    case Crude: {
+                    case Crude ->  {
                         int j = data.tsvar.getRowsCount();
                         p.extract(i, j, i, j).add(data.seasVar);
-                        break;
                     }
-                    default: {
+                    default ->  {
                         int j = data.tsvar.getRowsCount();
                         p.extract(i, j, i, j).add(data.tsvar);
-                        break;
                     }
                 }
             }

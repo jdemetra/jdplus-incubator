@@ -62,7 +62,7 @@ public final class BsmSpec {
         }
 
         public Builder level(Parameter lvar, Parameter svar) {
-            if (lvar == null && lvar != null) {
+            if (lvar == null && svar != null) {
                 throw new IllegalArgumentException();
             }
             levelVar = lvar;

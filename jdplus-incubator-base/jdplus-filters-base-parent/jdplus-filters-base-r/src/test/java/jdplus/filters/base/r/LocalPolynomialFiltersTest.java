@@ -18,9 +18,9 @@ package jdplus.filters.base.r;
 
 import tck.demetra.data.Data;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 /**
  *
@@ -35,13 +35,13 @@ public class LocalPolynomialFiltersTest {
     public void testHenderson() {
 //        System.out.println(DoubleSeq.of(Data.NILE));
         double[] rslt = LocalPolynomialFilters.filter(Data.NILE, 9, 3, "Henderson", "LC", .5, 0, 0);
-        assertTrue(rslt != null);
+        assertNotSame(rslt, null);
 //       System.out.println(DoubleSeq.of(rslt));
         rslt = LocalPolynomialFilters.filter(Data.NILE, 9, 3, "Henderson", "CC", .5, 10, Math.PI / 8);
-        assertTrue(rslt != null);
+        assertNotSame(rslt, null);
 //        System.out.println(DoubleSeq.of(rslt));
         rslt = LocalPolynomialFilters.filter(Data.NILE, 9, 3, "Henderson", "DAF", .5, 0,0);
-        assertTrue(rslt != null);
+        assertNotSame(rslt, null);
 //        System.out.println(DoubleSeq.of(rslt));
     }
 

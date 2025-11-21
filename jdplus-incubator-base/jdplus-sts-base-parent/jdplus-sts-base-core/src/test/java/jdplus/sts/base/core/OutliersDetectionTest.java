@@ -12,6 +12,7 @@ import jdplus.toolkit.base.api.ssf.sts.SeasonalModel;
 import jdplus.toolkit.base.api.timeseries.TsPeriod;
 import jdplus.toolkit.base.api.timeseries.calendars.DayClustering;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.data.DataBlockIterator;
@@ -37,30 +38,69 @@ import org.junit.jupiter.api.Test;
  * @author PALATEJ
  */
 public class OutliersDetectionTest {
-
+    
     public OutliersDetectionTest() {
     }
-
+    
     @Test
     public void testNile() {
         BsmSpec spec = BsmSpec.builder()
                 .seasonal(null)
                 .build();
-
+        
         OutliersDetection od = OutliersDetection.builder()
                 .bsm(spec)
+                .criticalValue(5)
+                .forwardEstimation(OutliersDetection.Estimation.Full)
                 .build();
         DoubleSeq Y = DoubleSeq.of(Data.NILE);
-
+        
         od.process(Y, null, 1);
         int[] ao = od.getAoPositions();
+        System.out.print("AO:");
+        for (int i = 0; i < ao.length; ++i) {
+            System.out.print('\t');
+            System.out.print(ao[i] + 1);
+        }
+        System.out.println();
+        int[] ls = od.getLsPositions();
+        System.out.print("LS:");
+        for (int i = 0; i < ls.length; ++i) {
+            System.out.print('\t');
+            System.out.print(ls[i] + 1);
+        }
+        System.out.println();
+    }
+    
+    @Test
+    public void testNile2() {
+        BsmSpec spec = BsmSpec.builder()
+                .seasonal(null)
+                .build();
+        
+        BsmOutliersDetection od = BsmOutliersDetection.builder()
+                .bsm(spec)
+                .mad(true)
+                .forwardEstimation(BsmOutliersDetection.Estimation.Full)
+                .criticalValue(5)
+                .build();
+        DoubleSeq Y = DoubleSeq.of(Data.NILE);
+        
+        od.process(Y, null, 1);
+        List<int[]> outliers = od.outliers();
+        for (int[] o : outliers) {
+            System.out.print(o[0]);
+            System.out.print('\t');
+            System.out.println(o[1]);
+        }
+//        int[] ao = od.getAoPositions();
 //        System.out.print("AO:");
 //        for (int i = 0; i < ao.length; ++i) {
 //            System.out.print('\t');
 //            System.out.print(ao[i] + 1);
 //        }
 //        System.out.println();
-        int[] ls = od.getLsPositions();
+//        int[] ls = od.getLsPositions();
 //        System.out.print("LS:");
 //        for (int i = 0; i < ls.length; ++i) {
 //            System.out.print('\t');
@@ -68,13 +108,13 @@ public class OutliersDetectionTest {
 //        }
 //        System.out.println();
     }
-
+    
     @Test
     public void testProd() {
         BsmSpec spec = BsmSpec.builder()
                 .seasonal(SeasonalModel.HarrisonStevens)
                 .build();
-
+        
         long t0 = System.currentTimeMillis();
         OutliersDetection od = OutliersDetection.builder()
                 .bsm(spec)
@@ -84,34 +124,66 @@ public class OutliersDetectionTest {
         A[14] *= 1.3;
         A[55] *= .7;
         DoubleSeq Y = DoubleSeq.of(A);
-
+        
         FastMatrix days = FastMatrix.make(A.length, 7);
         GenericTradingDaysFactory.fillTradingDaysMatrix(TsPeriod.monthly(1967, 1), false, days);
         FastMatrix td = GenericTradingDaysFactory.generateContrasts(DayClustering.TD3, days);
         od.process(Y.log(), td, 12);
         long t1 = System.currentTimeMillis();
         int[] ao = od.getAoPositions();
-//        System.out.print("AO:");
-//        for (int i = 0; i < ao.length; ++i) {
-//            System.out.print('\t');
-//            System.out.print(ao[i] + 1);
-//        }
-//        System.out.println();
+        System.out.print("AO:");
+        for (int i = 0; i < ao.length; ++i) {
+            System.out.print('\t');
+            System.out.print(ao[i] + 1);
+        }
+        System.out.println();
         int[] ls = od.getLsPositions();
-//        System.out.print("LS:");
-//        for (int i = 0; i < ls.length; ++i) {
-//            System.out.print('\t');
-//            System.out.print(ls[i] + 1);
-//        }
-//        System.out.println();
+        System.out.print("LS:");
+        for (int i = 0; i < ls.length; ++i) {
+            System.out.print('\t');
+            System.out.print(ls[i] + 1);
+        }
+        System.out.println();
         System.out.println(t1 - t0);
 //        System.out.println(DoubleSeq.of(A));
     }
-
+    
+    @Test
+    public void testProd2() {
+        BsmSpec spec = BsmSpec.builder()
+                .seasonal(SeasonalModel.HarrisonStevens)
+                .build();
+        
+        BsmOutliersDetection od = BsmOutliersDetection.builder()
+                .bsm(spec)
+                .criticalValue(8)
+                .mad(true)
+                .so(false)
+                .forwardEstimation(BsmOutliersDetection.Estimation.Full)
+                .build();
+        double[] A = Data.PROD.clone();
+        A[14] *= 1.3;
+        A[55] *= .7;
+        A[114] *= 1.1;
+        A[155] *= .9;
+        DoubleSeq Y = DoubleSeq.of(A);
+        
+        FastMatrix days = FastMatrix.make(A.length, 7);
+        GenericTradingDaysFactory.fillTradingDaysMatrix(TsPeriod.monthly(1967, 1), false, days);
+        FastMatrix td = GenericTradingDaysFactory.generateContrasts(DayClustering.TD3, days);
+        od.process(Y.log(), td, 12);
+        List<int[]> outliers = od.outliers();
+        for (int[] o : outliers) {
+            System.out.print(o[0]);
+            System.out.print('\t');
+            System.out.println(o[1]);
+        }
+    }
+    
     public static void main(String[] args) {
         stressTest();
     }
-
+    
     public static void stressTest() {
         int K = 1000;
         BsmSpec spec = BsmSpec.builder()
@@ -124,12 +196,12 @@ public class OutliersDetectionTest {
         FastMatrix days = FastMatrix.make(A.length, 7);
         GenericTradingDaysFactory.fillTradingDaysMatrix(TsPeriod.monthly(1967, 1), false, days);
         FastMatrix td = GenericTradingDaysFactory.generateContrasts(DayClustering.TD3, days);
-
+        
         int[] length = new int[]{60, 120, 180, 240, 300, 336};
         for (int l = 0; l < length.length; ++l) {
             long t0 = System.currentTimeMillis();
             for (int k = 0; k < 10; ++k) {
-                OutliersDetection od = OutliersDetection.builder()
+                BsmOutliersDetection od = BsmOutliersDetection.builder()
                         .bsm(spec)
                         .build();
                 od.process(Y.log().range(0, length[l]), td.extract(0, length[l], 0, td.getColumnsCount()), 12);
@@ -152,7 +224,7 @@ public class OutliersDetectionTest {
             System.out.println(t1 - t0);
         }
     }
-
+    
     public static void simulation() {
         int K = 100000;
         int[] NN = new int[]{/*20, 40, 60, 80, 100, 120, 180, 240, 300, */360, 420, 480, 540, 600};
@@ -161,12 +233,12 @@ public class OutliersDetectionTest {
             System.out.println(N);
             System.out.println("");
             for (int q = 0; q < 3; ++q) {
-
+                
                 BsmSpec spec = BsmSpec.builder()
                         .seasonal(SeasonalModel.HarrisonStevens)
                         .build();
                 int period = 4;
-
+                
                 FastMatrix M = FastMatrix.make(N, K);
                 double[] SAO = new double[K];
                 double[] SLS = new double[K];
@@ -238,13 +310,13 @@ public class OutliersDetectionTest {
             System.out.println("");
         }
     }
-
+    
     public static BsmData[] randomBsm(BsmSpec spec, int period, FastMatrix simul) {
         double[] p = new double[spec.getFreeParametersCount()];
         Random rnd = new Random();
         BsmMapping mapping = new BsmMapping(spec, period, null);
         BsmData[] models = new BsmData[simul.getColumnsCount()];
-
+        
         DataBlockIterator cols = simul.columnsIterator();
         int i = 0;
         while (cols.hasNext()) {
@@ -259,9 +331,9 @@ public class OutliersDetectionTest {
         }
         return models;
     }
-
+    
     private static final RandomNumberGenerator RNG = JdkRNG.newRandom();
-
+    
     private static boolean forwardstep(BsmData model, DoubleSeq y, FastMatrix W) {
         SsfBsm ssf = SsfBsm.of(model);
         Ssf wssf = W == null ? ssf : RegSsf.ssf(ssf, W);

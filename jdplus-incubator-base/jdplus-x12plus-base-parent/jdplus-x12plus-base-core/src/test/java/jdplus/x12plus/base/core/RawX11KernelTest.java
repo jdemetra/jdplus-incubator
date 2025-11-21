@@ -46,7 +46,7 @@ import jdplus.x12plus.base.api.X11plusSpec;
 //import jdplus.experimentalsa.base.core.rkhs.RKHSFilterFactory;
 //import jdplus.experimentalsa.base.core.rkhs.RKHSFilterSpec;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *

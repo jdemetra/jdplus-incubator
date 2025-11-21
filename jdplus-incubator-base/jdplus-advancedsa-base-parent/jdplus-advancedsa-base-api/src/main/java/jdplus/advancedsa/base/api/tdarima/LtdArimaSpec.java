@@ -1,0 +1,73 @@
+/*
+ * Copyright 2025 JDemetra+.
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved
+ * by the European Commission - subsequent versions of the EUPL (the "Licence");
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at:
+ *
+ *      https://joinup.ec.europa.eu/software/page/eupl
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the Licence is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the Licence for the specific language governing permissions and
+ * limitations under the Licence.
+ */
+package jdplus.advancedsa.base.api.tdarima;
+
+import jdplus.toolkit.base.api.arima.SarimaSpec;
+
+/**
+ *
+ * @author Jean Palate
+ */
+@lombok.Builder(toBuilder = true, builderClassName = "Builder")
+@lombok.Value
+public class LtdArimaSpec {
+
+    public enum Parametrization {
+        START_END, MEAN_DELTA;
+    }
+
+    public static final double DEF_PRECISION = 1e-9;
+
+    public static final Parametrization DEF_PARAMETRIZATION = Parametrization.MEAN_DELTA;
+
+    @lombok.With
+    private final SarimaSpec sarimaSpec;
+    private final boolean vPhi, vBphi, vTheta, vBtheta, vVar;
+
+    @lombok.With
+    private double precision;
+
+    @lombok.With
+    private Parametrization parametrization;
+
+    public static Builder builder() {
+        return new Builder().precision(DEF_PRECISION).parametrization(DEF_PARAMETRIZATION);
+    }
+
+    public int parametersCount() {
+        int n = 0;
+        int o = sarimaSpec.getP();
+        if (o > 0) {
+            n += vPhi ? 2 * o : o;
+        }
+        o = sarimaSpec.getBp();
+        if (o > 0) {
+            n += vBphi ? 2 * o : o;
+        }
+        o = sarimaSpec.getQ();
+        if (o > 0) {
+            n += vTheta ? 2 * o : o;
+        }
+        o = sarimaSpec.getBq();
+        if (o > 0) {
+            n += vBtheta ? 2 * o : o;
+        }
+        if (vVar) {
+            ++n;
+        }
+        return n;
+    }
+}

@@ -17,7 +17,8 @@ package jdplus.sts.base.core.splines;
 
 import jdplus.sts.base.core.splines.SplineData.CycleInformation;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -37,7 +38,7 @@ public class SplineDataTest {
             CycleInformation info = data.informationForCycle(i);
             n += info.Z.getRowsCount();
         }
-        assertTrue(n == 250);
+        assertEquals(250, n);
     }
 
     @Test
@@ -49,7 +50,7 @@ public class SplineDataTest {
             CycleInformation info = data.informationForCycle(i);
             n += info.Z.getRowsCount();
         }
-        assertTrue(n == 246);
+        assertEquals(246, n);
     }
 
 }

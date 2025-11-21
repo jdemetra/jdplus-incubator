@@ -13,7 +13,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package jdplus.advancedsa.base.core.tarima;
+package jdplus.advancedsa.base.core.tdarima;
 
 import java.util.function.IntFunction;
 import jdplus.toolkit.base.api.data.DoubleSeq;
@@ -27,24 +27,41 @@ import jdplus.toolkit.base.core.ssf.ISsfLoading;
 import jdplus.toolkit.base.core.ssf.StateComponent;
 import jdplus.toolkit.base.core.ssf.basic.IntegratedInitialization;
 import jdplus.toolkit.base.core.ssf.basic.Loading;
+import jdplus.toolkit.base.core.ssf.univariate.Ssf;
 
 /**
  *
  * @author Jean Palate
  */
 @lombok.experimental.UtilityClass
-public class TimeVaryingSsfArima {
-    
+public class TdSsfArima2 {
+
+    public Ssf ssf(int n, IntFunction<IArimaModel> fn) {
+        StateComponent cmp = of(n, fn);
+        IArimaModel arima = fn.apply(0);
+        if (arima.isStationary()) {
+            int[] pos = new int[arima.getMaOrder()+1];
+            for (int i = 0; i < pos.length; ++i) {
+                pos[i] = i;
+            }
+
+            TdLoading loading = new TdLoading(n, i -> Loading.from(pos, fn.apply(i).getMa().coefficients().toArray()));
+            return Ssf.of(cmp, loading);
+        } else {
+            return Ssf.of(cmp, Loading.fromPosition(0));
+        }
+    }
+
     public StateComponent of(int n, IntFunction<IArimaModel> fn) {
-        
+
         IArimaModel m0 = fn.apply(0);
         ISsfInitialization initialization = new SsfArima2.MaInitialization(m0.getMaOrder(), m0.getInnovationVariance());
         TimeVaryingArimaData data = new TimeVaryingArimaData(n, fn);
         ISsfDynamics dynamics = new MaDynamics(data.var);
-        
+
         if (m0.isStationary()) {
             return new StateComponent(initialization, dynamics);
-            
+
         } else {
             ISsfLoading[] loading = new ISsfLoading[n];
             for (int i = 0; i < n; ++i) {
@@ -55,26 +72,25 @@ public class TimeVaryingSsfArima {
                 for (int j = 0; j <= q; ++j) {
                     pos[j] = j;
                 }
-                
                 loading[i] = Loading.from(pos, th);
             }
             DoubleSeq d = m0.getNonStationaryAr().coefficients().drop(1, 0);
             IntegratedDynamics idyn = new IntegratedDynamics(dynamics, loading, d);
             IntegratedInitialization iinit = new IntegratedInitialization(initialization, d);
             return new StateComponent(iinit, idyn);
-            
+
         }
     }
-    
+
     static class TimeVaryingArimaData {
-        
+
         final double[] var, se;
         final FastMatrix phi, theta;
-        
+
         TimeVaryingArimaData(int n, IntFunction<IArimaModel> fn) {
             var = new double[n];
             se = new double[n];
-            
+
             IArimaModel arima = fn.apply(0);
             int p = arima.getStationaryArOrder(), q = arima.getMaOrder();
             phi = FastMatrix.make(n, p);
@@ -88,121 +104,125 @@ public class TimeVaryingSsfArima {
                 if (!phi.isEmpty()) {
                     phi.row(i).copy(ar.coefficients().drop(1, 0));
                 }
-                theta.row(i).copy(ma.coefficients());
+                DoubleSeq c = ma.coefficients();
+                theta.row(i).range(0, c.length()).copy(c);
             }
         }
     }
-    
+   
+    /**
+     * state(t) = e(t), e(t-1)..., e(t-q)
+     */
     static class MaDynamics implements ISsfDynamics {
-        
+
         final double[] var;
-        
+
         MaDynamics(double[] var) {
             this.var = var;
         }
-        
+
         @Override
         public int getInnovationsDim() {
             return 1;
         }
-        
+
         @Override
         public void V(int pos, FastMatrix qm) {
             qm.set(0, 0, var[pos]);
         }
-        
+
         @Override
         public void S(int pos, FastMatrix cm) {
             cm.set(0, 0, Math.sqrt(var[pos]));
         }
-        
+
         @Override
         public boolean hasInnovations(int pos) {
             return true;
         }
-        
+
         @Override
         public boolean areInnovationsTimeInvariant() {
             return false;
         }
-        
+
         @Override
         public void T(int pos, FastMatrix tr) {
             tr.subDiagonal(-1).set(1);
         }
-        
+
         @Override
         public void TX(int pos, DataBlock x) {
             x.fshiftAndZero();
         }
-        
+
         @Override
         public void addSU(int pos, DataBlock x, DataBlock u) {
             x.add(0, Math.sqrt(var[pos]) * u.get(0));
         }
-        
+
         @Override
         public void addV(int pos, FastMatrix p) {
             p.add(0, 0, var[pos]);
         }
-        
+
         @Override
         public void XT(int pos, DataBlock x) {
             x.bshiftAndZero();
         }
-        
+
         @Override
         public void XS(int pos, DataBlock x, DataBlock xs) {
             xs.mul(0, Math.sqrt(var[pos]));
         }
-        
+
         @Override
         public boolean isTimeInvariant() {
             return false;
         }
     }
-    
+
     static class IntegratedDynamics implements ISsfDynamics {
-        
+
         private final ISsfDynamics dynamics;
         private final ISsfLoading[] loading;
         private final DoubleSeq delta;
-        
+
         public IntegratedDynamics(final ISsfDynamics dynamics, final ISsfLoading[] loading, final DoubleSeq delta) {
             this.dynamics = dynamics;
             this.loading = loading;
             this.delta = delta;
         }
-        
+
         private int order() {
             return delta.length();
         }
-        
+
         @Override
         public int getInnovationsDim() {
             return dynamics.getInnovationsDim();
         }
-        
+
         @Override
         public void V(int pos, FastMatrix qm) {
             dynamics.V(pos, qm.dropTopLeft(order(), order()));
         }
-        
+
         @Override
         public void S(int pos, FastMatrix cm) {
             dynamics.S(pos, cm.dropTopLeft(order(), 0));
         }
-        
+
         @Override
         public boolean hasInnovations(int pos) {
             return dynamics.hasInnovations(pos);
         }
-        
+
         @Override
         public boolean areInnovationsTimeInvariant() {
             return dynamics.areInnovationsTimeInvariant();
         }
-        
+
         @Override
         public void T(int pos, FastMatrix tr) {
             int d = order();
@@ -213,7 +233,7 @@ public class TimeVaryingSsfArima {
             loading[pos].Z(pos, r0.drop(d, 0));
             dynamics.T(pos, tr.dropTopLeft(d, d));
         }
-        
+
         @Override
         public void TX(int pos, DataBlock x) {
             int d = order();
@@ -224,20 +244,20 @@ public class TimeVaryingSsfArima {
             x0.set(0, z);
             dynamics.TX(pos, x1);
         }
-        
+
         @Override
         public void addSU(int pos, DataBlock x, DataBlock u) {
             int d = order();
             DataBlock x1 = x.drop(d, 0);
             dynamics.addSU(pos, x1, u);
         }
-        
+
         @Override
         public void addV(int pos, FastMatrix p) {
             int d = order();
             dynamics.addV(pos, p.dropTopLeft(d, d));
         }
-        
+
         @Override
         public void XT(int pos, DataBlock x) {
             int d = order();
@@ -249,7 +269,7 @@ public class TimeVaryingSsfArima {
             x0.bshiftAndZero();
             x0.addAY(-w, delta);
         }
-        
+
         @Override
         public void XS(int pos, DataBlock x, DataBlock xs) {
             int d = order();
@@ -257,12 +277,12 @@ public class TimeVaryingSsfArima {
             DataBlock x1 = x.drop(d, 0);
             dynamics.XS(pos, x1, xs.drop(d, 0));
         }
-        
+
         @Override
         public boolean isTimeInvariant() {
             return false;
         }
-        
+
     }
-    
+
 }

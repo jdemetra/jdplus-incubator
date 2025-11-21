@@ -13,7 +13,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package jdplus.advancedsa.base.core.tarima;
+package jdplus.advancedsa.base.core.tdarima;
 
 import java.util.function.IntFunction;
 import jdplus.toolkit.base.core.ssf.basic.Loading;
@@ -25,15 +25,15 @@ import jdplus.toolkit.base.core.ucarima.UcarimaModel;
  * @author Jean Palate
  */
 @lombok.experimental.UtilityClass
-public class TimeVaryingSsfUcarima {
+public class TdSsfUcarima {
     
         public CompositeSsf of(int n, IntFunction<UcarimaModel> fn) {
             int m = fn.apply(0).getComponentsCount();
         CompositeSsf.Builder builder = CompositeSsf.builder();
         for (int i = 0; i < m; ++i) {
             int cmp=i;
-            builder.add(TimeVaryingSsfArima.of(n, k->fn.apply(k).getComponent(cmp)), Loading.fromPosition(0));
-//            builder.add(SsfArima2.stateComponent(fn.apply(0).getComponent(cmp)), Loading.fromPosition(0));
+//            builder.add(TimeVaryingSsfArima.stateComponent(n, k->fn.apply(k).getComponent(cmp)), Loading.fromPosition(0));
+            builder.add(TdSsfArima.stateComponent(n, k->fn.apply(k).getComponent(cmp)), Loading.fromPosition(0));
         }
         return builder.build();
     }

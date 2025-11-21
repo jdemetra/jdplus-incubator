@@ -13,7 +13,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package jdplus.advancedsa.base.core.tarima;
+package jdplus.advancedsa.base.core.tdarima;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @author Jean Palate
  */
-public class TimeVaryingSsfUcarimaTest {
+public class TdSsfUcarimaTest {
     
-    public TimeVaryingSsfUcarimaTest() {
+    public TdSsfUcarimaTest() {
     }
 
     @Test

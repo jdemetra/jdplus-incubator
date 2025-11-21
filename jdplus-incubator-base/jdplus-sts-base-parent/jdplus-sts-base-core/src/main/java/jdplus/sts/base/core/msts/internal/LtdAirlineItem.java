@@ -50,8 +50,13 @@ public class LtdAirlineItem extends StateItem {
         this.period = period;
         pth0 = new MAInterpreter("th0", th0, fixedth);
         pth1 = new MAInterpreter("th1", th1, fixedth);
-        pbth0 = new MAInterpreter("bth0", bth0, fixedth);
-        pbth1 = new MAInterpreter("bth1", bth1, fixedth);
+        if (period > 1) {
+            pbth0 = new MAInterpreter("bth0", bth0, fixedth);
+            pbth1 = new MAInterpreter("bth1", bth1, fixedth);
+        } else {
+            pbth0 = null;
+            pbth1 = null;
+        }
         v = new VarianceInterpreter(name + ".var", var, fixedvar, true);
     }
 
@@ -61,8 +66,8 @@ public class LtdAirlineItem extends StateItem {
         this.period = item.period;
         this.pth0 = item.pth0.duplicate();
         this.pth1 = item.pth1.duplicate();
-        this.pbth0 = item.pbth0.duplicate();
-        this.pbth1 = item.pbth1.duplicate();
+        this.pbth0 = item.pbth0 == null ? null : item.pbth0.duplicate();
+        this.pbth1 = item.pbth1 == null ? null : item.pbth1.duplicate();
         this.v = item.v.duplicate();
     }
 
@@ -75,35 +80,25 @@ public class LtdAirlineItem extends StateItem {
     public void addTo(MstsMapping mapping) {
         mapping.add(pth0);
         mapping.add(pth1);
-        mapping.add(pbth0);
-        mapping.add(pbth1);
+        if (period > 1) {
+            mapping.add(pbth0);
+            mapping.add(pbth1);
+        }
         mapping.add(v);
         mapping.add((p, builder) -> {
-            double th0 = p.get(0);
-            double th1 = p.get(1);
-            double bth0 = p.get(2);
-            double bth1 = p.get(3);
-            double var = p.get(4);
-            double[] th = linear(th0, th1);
-            double[] bth = linear(bth0, bth1);
-            StateComponent sc = TimeVaryingSsfArima.of(n,
-                    (int idx) -> {
-                        SarimaModel airline = SarimaModel.builder(SarimaOrders.airline(period))
-                                .theta(th[idx])
-                                .btheta(bth[idx])
-                                .build();
-                        return new ArimaModel(BackFilter.ONE,
-                                airline.getNonStationaryAr(),
-                                airline.getMa(), var);
-                    });
+            StateComponent sc = build(p);
             builder.add(name, sc, Loading.fromPosition(0));
-            return 5;
+            return parametersCount();
         });
     }
 
     @Override
     public List<ParameterInterpreter> parameters() {
-        return Arrays.asList(pth0, pth1, pbth0, pbth1, v);
+        if (period > 1) {
+            return Arrays.asList(pth0, pth1, pbth0, pbth1, v);
+        } else {
+            return Arrays.asList(pth0, pth1, v);
+        }
     }
 
     @Override
@@ -112,24 +107,37 @@ public class LtdAirlineItem extends StateItem {
         if (p == null) {
             th0 = pth0.value();
             th1 = pth1.value();
-            bth0 = pbth0.value();
-            bth1 = pbth1.value();
+            if (period > 1) {
+                bth0 = pbth0.value();
+                bth1 = pbth1.value();
+            } else {
+                bth0 = Double.NaN;
+                bth1 = Double.NaN;
+            }
             var = v.variance();
         } else {
             th0 = p.get(0);
             th1 = p.get(1);
-            bth0 = p.get(2);
-            bth1 = p.get(3);
-            var = p.get(4);
+            if (period > 1) {
+                bth0 = p.get(2);
+                bth1 = p.get(3);
+                var = p.get(4);
+            } else {
+                bth0 = Double.NaN;
+                bth1 = Double.NaN;
+                var = p.get(2);
+            }
         }
         double[] th = linear(th0, th1);
-        double[] bth = linear(bth0, bth1);
+        double[] bth = period > 1 ? linear(bth0, bth1) : null;
         return TimeVaryingSsfArima.of(n,
                 (int idx) -> {
-                    SarimaModel airline = SarimaModel.builder(SarimaOrders.airline(period))
-                            .theta(th[idx])
-                            .btheta(bth[idx])
-                            .build();
+                    SarimaModel.Builder bairline = SarimaModel.builder(SarimaOrders.airline(period))
+                            .theta(th[idx]);
+                    if (period > 1) {
+                        bairline.btheta(bth[idx]);
+                    }
+                    SarimaModel airline = bairline.build();
                     return new ArimaModel(BackFilter.ONE,
                             airline.getNonStationaryAr(),
                             airline.getMa(), var);
@@ -139,7 +147,7 @@ public class LtdAirlineItem extends StateItem {
 
     @Override
     public int parametersCount() {
-        return 5;
+        return period > 1 ? 5 : 3;
     }
 
     @Override

@@ -12,7 +12,7 @@ import jdplus.toolkit.base.core.math.linearfilters.SymmetricFilter;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.toolkit.base.core.stats.Kernels;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -46,12 +46,12 @@ public class KernelsUtilityTest {
         double c1 = KernelsUtility.optimalBandWidth(HighOrderKernels.kernel(Kernels.TRIWEIGHT, 3), 4, 2);
         double c2 = KernelsUtility.optimalBandWidth(HighOrderKernels.kernel(Kernels.TRIWEIGHT, 3), 6, 2);
         double c3 = KernelsUtility.optimalBandWidth(HighOrderKernels.kernel(Kernels.TRIWEIGHT, 3), 11, 2);
-        assertEquals(b1, 4.927, 1e-3);
-        assertEquals(b2, 6.951, 1e-3);
-        assertEquals(b3, 11.973, 1e-3);
-        assertEquals(c1, 5.102, 1e-3);
-        assertEquals(c2, 7.122, 1e-3);
-        assertEquals(c3, 12.139, 1e-3);
+        assertEquals(4.927, b1, 1e-3);
+        assertEquals(6.951, b2, 1e-3);
+        assertEquals(11.973, b3, 1e-3);
+        assertEquals(5.102, c1, 1e-3);
+        assertEquals(7.122, c2, 1e-3);
+        assertEquals(12.139, c3, 1e-3);
     }
 
     public static void main(String[] args) {

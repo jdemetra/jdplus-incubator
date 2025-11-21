@@ -24,6 +24,7 @@ public class StsOutliersDetectionTest {
     @Test
     public void testSomeMethod() {
 //        TsData y = TsData.of(TsPeriod.monthly(1974, 1), sugar);
+//       long t0 = System.currentTimeMillis();
         double[] z = Data.RETAIL_JEWELRYSTORES;
         for (int i = 0; i < 12; ++i) {
             z[i] = Double.NaN;
@@ -41,6 +42,8 @@ public class StsOutliersDetectionTest {
 //        System.out.println(rslt.getRegressors());
 //        System.out.println("");
 //        System.out.println(rslt.getLinearized());
+//       long t1 = System.currentTimeMillis();
+//        System.out.println(t1-t0);
     }
 
     double[] sugar = new double[]{34.8, 21, 32.2, 22.4, 18.2, 15.9, 13.3, 16.7, 19, 91.5, 246.5, 258.3, 126.5, 19.7, 24.8, 16.7, 12.2, 14.3, 10.9, 14.9, 17.6, 211.7, 358.3, 201,

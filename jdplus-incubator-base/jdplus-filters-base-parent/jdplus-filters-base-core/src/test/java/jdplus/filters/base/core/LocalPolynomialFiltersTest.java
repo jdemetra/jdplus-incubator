@@ -19,6 +19,7 @@ package jdplus.filters.base.core;
 import jdplus.toolkit.base.core.data.analysis.DiscreteKernel;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import java.util.function.DoubleUnaryOperator;
 import jdplus.toolkit.base.core.math.linearfilters.AsymmetricFiltersFactory;
@@ -58,7 +59,7 @@ public class LocalPolynomialFiltersTest {
         int h = 11;
         for (int i = 0; i <= h; ++i) {
             FiniteFilter f = LocalPolynomialFilters.directAsymmetricFilter(h, i, 3, DiscreteKernel.henderson(h));
-            assertEquals(DoubleSeq.of(f.weightsToArray()).sum(), 1, 1e-9);
+            assertEquals(1, DoubleSeq.of(f.weightsToArray()).sum(), 1e-9);
 //            System.out.println(DoubleSequence.ofInternal(f.weightsToArray()));
         }
 //        SymmetricFilter lp = LocalPolynomialFilterFactory.ofDefault(h, 3, DiscreteKernels.henderson(h));
@@ -70,7 +71,7 @@ public class LocalPolynomialFiltersTest {
         int h = 11;
         for (int i = 0; i <= h; ++i) {
             FiniteFilter f = LocalPolynomialFilters.directAsymmetricFilter(h, i, 1, DiscreteKernel.tricube(h));
-            assertEquals(DoubleSeq.of(f.weightsToArray()).sum(), 1, 1e-9);
+            assertEquals(1, DoubleSeq.of(f.weightsToArray()).sum(), 1e-9);
 //           System.out.println(DoubleSequence.ofInternal(f.weightsToArray()));
         }
 //        SymmetricFilter lp = LocalPolynomialFilterFactory.ofDefault(h, 3, DiscreteKernels.biweight(h));
@@ -81,7 +82,7 @@ public class LocalPolynomialFiltersTest {
     public void testZ() {
         FastMatrix Z = LocalPolynomialFilters.createZ(12, 3);
         FastMatrix z = LocalPolynomialFilters.z(Z, -12, 2, 0, 3);
-        assertTrue(z.sum() != 0);
+        assertNotSame(z.sum(), 0);
     }
 
     @Test
@@ -93,7 +94,7 @@ public class LocalPolynomialFiltersTest {
             IFiniteFilter f2 = AsymmetricFiltersFactory.mmsreFilter2(lp, i, 0, new double[]{.4}, DiscreteKernel.triweight(h));
             DoubleSeq c1 = DoubleSeq.of(f1.weightsToArray());
             DoubleSeq c2 = DoubleSeq.of(f2.weightsToArray());
-            assertEquals(DoubleSeq.of(f1.weightsToArray()).sum(), 1, 1e-9);
+            assertEquals(1, DoubleSeq.of(f1.weightsToArray()).sum(), 1e-9);
             assertTrue(c1.distance(c2) < 1e-9);
         }
         for (int i = 0; i <= h; ++i) {
@@ -101,7 +102,7 @@ public class LocalPolynomialFiltersTest {
             IFiniteFilter f2 = AsymmetricFiltersFactory.mmsreFilter2(lp, i, 0, new double[0], DiscreteKernel.triweight(h));
             DoubleSeq c1 = DoubleSeq.of(f1.weightsToArray());
             DoubleSeq c2 = DoubleSeq.of(f2.weightsToArray());
-            assertEquals(DoubleSeq.of(f1.weightsToArray()).sum(), 1, 1e-9);
+            assertEquals(1, DoubleSeq.of(f1.weightsToArray()).sum(), 1e-9);
             assertTrue(c1.distance(c2) < 1e-9);
         }
         for (int i = 0; i <= h; ++i) {
@@ -109,7 +110,7 @@ public class LocalPolynomialFiltersTest {
             IFiniteFilter f2 = AsymmetricFiltersFactory.mmsreFilter2(lp, i, 1, new double[0], DiscreteKernel.triweight(h));
             DoubleSeq c1 = DoubleSeq.of(f1.weightsToArray());
             DoubleSeq c2 = DoubleSeq.of(f2.weightsToArray());
-            assertEquals(DoubleSeq.of(f1.weightsToArray()).sum(), 1, 1e-9);
+            assertEquals(1, DoubleSeq.of(f1.weightsToArray()).sum(), 1e-9);
             assertTrue(c1.distance(c2) < 1e-9);
         }
         for (int i = 0; i <= h; ++i) {
@@ -117,7 +118,7 @@ public class LocalPolynomialFiltersTest {
             IFiniteFilter f2 = AsymmetricFiltersFactory.mmsreFilter2(lp, i, 2, new double[0], DiscreteKernel.triweight(h));
             DoubleSeq c1 = DoubleSeq.of(f1.weightsToArray());
             DoubleSeq c2 = DoubleSeq.of(f2.weightsToArray());
-            assertEquals(DoubleSeq.of(f1.weightsToArray()).sum(), 1, 1e-9);
+            assertEquals(1, DoubleSeq.of(f1.weightsToArray()).sum(), 1e-9);
             assertTrue(c1.distance(c2) < 1e-9);
         }
     }

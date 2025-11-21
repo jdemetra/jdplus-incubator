@@ -8,8 +8,6 @@ package jdplus.sts.base.r;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.Parameter;
 import jdplus.toolkit.base.api.data.ParametersEstimation;
-import jdplus.sts.base.core.BasicStructuralModel;
-import jdplus.sts.base.core.BsmEstimation;
 import jdplus.sts.base.api.BsmEstimationSpec;
 import jdplus.sts.base.api.BsmSpec;
 import jdplus.sts.base.core.LightBasicStructuralModel;
@@ -49,6 +47,48 @@ import jdplus.toolkit.base.api.math.matrices.Matrix;
 @lombok.experimental.UtilityClass
 public class Bsm {
 
+    public BsmData bsm(int period, double nvar, double lvar, double svar, double seasvar, String seasmodel, double cvar, double cdump, double clength) {
+        return BsmData.builder(period)
+                .noiseVar(nvar)
+                .levelVar(lvar)
+                .slopeVar(svar)
+                .seasonalVar(seasvar)
+                .seasonalModel(SeasonalModel.valueOf(seasmodel))
+                .cycleVar(cvar)
+                .cycleDumpingFactor(cdump)
+                .cycleLength(clength)
+                .build();
+    }
+
+    private Parameter of(double v, boolean fixed) {
+        if (Double.isNaN(v)) {
+            return Parameter.undefined();
+        }
+        if (v < 0) {
+            return null;
+        }
+        if (v < 0) {
+            return null;
+        }
+        return fixed ? Parameter.fixed(v) : Parameter.initial(v);
+    }
+
+    public BsmSpec bsmSpec(double[] v, boolean[] vfixed, String seasonal, double cdump, double clength) {
+        BsmSpec.Builder builder = BsmSpec.builder()
+                .noise(of(v[0], vfixed[0]))
+                .level(of(v[1], vfixed[1]), of(v[2], vfixed[2]));
+        Parameter seas = of(v[3], vfixed[3]);
+        Parameter cycle = of(v[4], vfixed[4]);
+        if (seas != null) {
+            builder.seasonal(SeasonalModel.valueOf(seasonal), seas);
+        }
+        if (cycle != null) {
+            builder.cycle(cycle, cdump > 0 ? Parameter.fixed(cdump) : Parameter.undefined(),
+                    clength > 0 ? Parameter.fixed(clength) : Parameter.undefined());
+        }
+        return builder.build();
+    }
+
     public LightBasicStructuralModel process(TsData y, Matrix X, int level, int slope, int cycle, int noise, String seasmodel, boolean diffuse, double tol) {
         SeasonalModel sm = seasmodel == null || seasmodel.equalsIgnoreCase("none") ? null : SeasonalModel.valueOf(seasmodel);
         BsmSpec mspec = BsmSpec.builder()
@@ -68,9 +108,9 @@ public class Bsm {
         }
         BsmSpec fspec = kernel.finalSpecification(true);
         int nhp = fspec.getFreeParametersCount();
-        BsmMapping mapping=new BsmMapping(fspec, y.getAnnualFrequency(), null);
+        BsmMapping mapping = new BsmMapping(fspec, y.getAnnualFrequency(), null);
         DoubleSeq params = mapping.map(kernel.result(true));
-        ParametersEstimation parameters=new ParametersEstimation(params, "bsm");
+        ParametersEstimation parameters = new ParametersEstimation(params, "bsm");
 
         DoubleSeq coef = kernel.getLikelihood().coefficients();
         LightBasicStructuralModel.Estimation estimation = LightBasicStructuralModel.Estimation.builder()
@@ -82,12 +122,12 @@ public class Bsm {
                 .residuals(kernel.getLikelihood().e())
                 .statistics(StsKernel.lstats(kernel.getLikelihood().stats(0, nhp)))
                 .build();
-        
-        Variable[] vars= X == null ? new Variable[0] : new Variable[X.getColumnsCount()];
+
+        Variable[] vars = X == null ? new Variable[0] : new Variable[X.getColumnsCount()];
         TsPeriod start = y.getStart();
-        for (int i=0; i<vars.length; ++i){
-            UserVariable uvar=new UserVariable("var-"+(i+1), TsData.of(start, X.column(i)));
-            vars[i]=Variable.variable("var-"+(i+1), uvar).withCoefficient(Parameter.estimated(coef.get(i)));
+        for (int i = 0; i < vars.length; ++i) {
+            UserVariable uvar = new UserVariable("var-" + (i + 1), TsData.of(start, X.column(i)));
+            vars[i] = Variable.variable("var-" + (i + 1), uvar).withCoefficient(Parameter.estimated(coef.get(i)));
         }
         LightBasicStructuralModel.Description description = LightBasicStructuralModel.Description.builder()
                 .series(y)
@@ -96,19 +136,19 @@ public class Bsm {
                 .specification(kernel.finalSpecification(false))
                 .variables(vars)
                 .build();
-        
+
         return LightBasicStructuralModel.builder()
                 .description(description)
                 .estimation(estimation)
                 .bsmDecomposition(kernel.decompose())
                 .build();
     }
-    
-    public byte[] toBuffer(LightBasicStructuralModel.Estimation estimation){
+
+    public byte[] toBuffer(LightBasicStructuralModel.Estimation estimation) {
         return StsProtosUtility.convert(estimation).toByteArray();
     }
 
-    public byte[] toBuffer(LightBasicStructuralModel bsm){
+    public byte[] toBuffer(LightBasicStructuralModel bsm) {
         return StsProtosUtility.convert(bsm).toByteArray();
     }
 
@@ -123,13 +163,13 @@ public class Bsm {
     }
 
     public Matrix forecast(TsData series, String model, int nf) {
-        int period=series.getAnnualFrequency();
-        BsmSpec spec=BsmSpec.DEFAULT;
-        if (period == 1){
-            spec=spec.toBuilder()
+        int period = series.getAnnualFrequency();
+        BsmSpec spec = BsmSpec.DEFAULT;
+        if (period == 1) {
+            spec = spec.toBuilder()
                     .seasonal(null)
                     .build();
-            model="none";
+            model = "none";
         }
         double[] y = extend(series, nf);
         FastMatrix X = variables(model, series.getDomain().extend(0, nf));
@@ -215,5 +255,58 @@ public class Bsm {
             return null;
         }
         return Regression.matrix(domain, variables);
+    }
+
+    public BsmSpec specOf(BsmData bsm, boolean fixed, boolean fixedCycle) {
+        BsmSpec.Builder builder = BsmSpec.builder();
+        if (fixed) {
+            double v = bsm.getNoiseVar(), w;
+            if (v > 0) {
+                builder.noise(Parameter.fixed(v));
+            }
+            v = bsm.getLevelVar();
+            w = bsm.getSlopeVar();
+            if (v >= 0) {
+                if (w < 0) {
+                    builder.level(Parameter.fixed(v), null);
+                } else {
+                    builder.level(Parameter.fixed(v), Parameter.fixed(w));
+                }
+            }
+            v = bsm.getSeasonalVar();
+            if (v >= 0) {
+                builder.seasonal(bsm.getSeasonalModel(), Parameter.fixed(v));
+            }
+            v = bsm.getCycleVar();
+            if (v >= 0) {
+                builder.cycle(Parameter.fixed(v), Parameter.fixed(bsm.getCycleDumpingFactor()), Parameter.fixed(bsm.getCycleLength()));
+            }
+        } else {
+            double v = bsm.getNoiseVar(), w;
+            if (v >= 0) {
+                builder.noise(true);
+            }
+            v = bsm.getLevelVar();
+            w = bsm.getSlopeVar();
+            if (v >= 0) {
+                if (w < 0) {
+                    builder.level(true, false);
+                } else {
+                    builder.level(true, true);
+                }
+            }
+            v = bsm.getSeasonalVar();
+            if (v >= 0) {
+                builder.seasonal(bsm.getSeasonalModel());
+            }
+            v = bsm.getCycleVar();
+            if (v >= 0) {
+                double cdump = bsm.getCycleDumpingFactor(), clen = bsm.getCycleDumpingFactor();
+                builder.cycle(Parameter.undefined(),
+                        fixedCycle ? Parameter.fixed(cdump) : Parameter.undefined(),
+                        fixedCycle ? Parameter.fixed(clen) : Parameter.undefined());
+            }
+        }
+        return builder.build();
     }
 }

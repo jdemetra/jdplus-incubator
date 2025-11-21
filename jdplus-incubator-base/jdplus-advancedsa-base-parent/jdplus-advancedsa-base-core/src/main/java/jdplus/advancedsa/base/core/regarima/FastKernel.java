@@ -37,7 +37,7 @@ import jdplus.toolkit.base.core.regsarima.regular.RegSarimaModel;
 import jdplus.toolkit.base.core.regsarima.regular.RegressionVariablesTest;
 import jdplus.toolkit.base.core.sarima.SarimaModel;
 import nbbrd.design.BuilderPattern;
-import org.checkerframework.checker.nullness.qual.NonNull;
+import lombok.NonNull;
 
 /**
  *

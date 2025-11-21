@@ -11,7 +11,7 @@ import jdplus.toolkit.base.core.ssf.StateComponent;
 import java.util.Random;
 import java.util.function.DoubleSupplier;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
 import org.junit.jupiter.api.Test;

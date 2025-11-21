@@ -25,7 +25,8 @@ import jdplus.toolkit.base.core.ssf.dk.DkToolkit;
 import jdplus.toolkit.base.core.ssf.likelihood.DiffuseLikelihood;
 import jdplus.toolkit.base.core.ssf.univariate.DefaultSmoothingResults;
 import jdplus.toolkit.base.core.ssf.univariate.SsfData;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
 /**

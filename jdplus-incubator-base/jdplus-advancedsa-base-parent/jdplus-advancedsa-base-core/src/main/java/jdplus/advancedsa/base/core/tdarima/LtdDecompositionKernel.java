@@ -13,19 +13,12 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package jdplus.advancedsa.base.core.tarima;
-
-import tck.demetra.data.Data;
+package jdplus.advancedsa.base.core.tdarima;
 
 /**
  *
  * @author Jean Palate
  */
-public class LtdAirlineItemTest {
-
-//    double[] s = DoubleSeq.of(Data.RETAIL_ALLHOME).log().toArray();
-
-    public LtdAirlineItemTest() {
-    }
-
+public class LtdDecompositionKernel {
+    
 }

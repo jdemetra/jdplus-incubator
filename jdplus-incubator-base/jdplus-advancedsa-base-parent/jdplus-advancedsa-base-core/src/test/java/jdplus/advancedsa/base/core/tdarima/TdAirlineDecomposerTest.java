@@ -13,7 +13,7 @@
  * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
-package jdplus.advancedsa.base.core.tarima;
+package jdplus.advancedsa.base.core.tdarima;
 
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.core.ssf.composite.CompositeSsf;
@@ -28,32 +28,32 @@ import tck.demetra.data.Data;
  *
  * @author Jean Palate
  */
-public class TimeVaryingAirlineDecomposerTest {
+public class TdAirlineDecomposerTest {
 
-    public TimeVaryingAirlineDecomposerTest() {
+    public TdAirlineDecomposerTest() {
     }
 
     @Test
     public void testLinear() {
-        double[] s = Data.RETAIL_BOOKSTORES.clone();
+        double[] s = Data.RETAIL_GASOLINE.clone();
         for (int i=0; i<s.length; ++i)
             s[i]=Math.log(s[i]);
-        double[] th = linear(s.length, 0.3, -0.6);
-        double[] bth = linear(s.length, -0.1, -0.8);
+        double[] th = linear(s.length, -0.135, 0.618);
+        double[] bth = linear(s.length, -.999, -.1);
         long t0 = System.currentTimeMillis();
-        TimeVaryingAirlineDecomposer decomposer = new TimeVaryingAirlineDecomposer(12, th, bth);
+        TdAirlineDecomposer decomposer = new TdAirlineDecomposer(12, th, bth);
         UcarimaModel[] ucarimaModels = decomposer.ucarimaModels();
         
-        CompositeSsf ssf = TimeVaryingSsfUcarima.of(s.length, i->ucarimaModels[i]);
+        CompositeSsf ssf = TdSsfUcarima.of(s.length, i->ucarimaModels[i]);
         
-        DefaultSmoothingResults sf = DkToolkit.smooth(ssf, new SsfData(s), false, false);
+        DefaultSmoothingResults sf = DkToolkit.sqrtSmooth(ssf, new SsfData(s), false, false);
         long t1 = System.currentTimeMillis();
         System.out.println(t1 - t0);
         int[] pos = ssf.componentsPosition();
-        System.out.println(sf.item(pos[0]));
-        System.out.println(sf.item(pos[1]));
-        System.out.println(sf.item(pos[2]));
-        System.out.println(DoubleSeq.of(s));
+//        System.out.println(sf.item(pos[0]));
+//        System.out.println(sf.item(pos[1]));
+//        System.out.println(sf.item(pos[2]));
+//        System.out.println(DoubleSeq.of(s));
 //        for (int i = 0; i < ucarimaModels.length; ++i) {
 //            UcarimaModel ucm = ucarimaModels[i];
 //            for (int j = 0; j < ucm.getComponentsCount(); ++j) {

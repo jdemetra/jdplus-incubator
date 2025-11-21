@@ -8,7 +8,8 @@ package jdplus.sts.base.core.msts.internal;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.ssf.StateComponent;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -28,7 +29,7 @@ public class ArItemTest {
         
         StateComponent s = item.build(p);
         int dim=s.dim();
-        assertTrue(dim==item.stateDim());
+        assertEquals(dim, item.stateDim());
     }
     
     @Test
@@ -40,6 +41,6 @@ public class ArItemTest {
         
         StateComponent s = item.build(p);
         int dim=s.dim();
-        assertTrue(dim==item.stateDim());
+        assertEquals(dim, item.stateDim());
     }
 }

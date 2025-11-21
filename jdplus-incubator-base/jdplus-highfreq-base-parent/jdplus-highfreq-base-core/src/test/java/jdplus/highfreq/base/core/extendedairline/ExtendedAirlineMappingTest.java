@@ -20,8 +20,10 @@ import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.Parameter;
 import jdplus.highfreq.base.api.ExtendedAirlineSpec;
 import jdplus.toolkit.base.core.arima.ArimaModel;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *

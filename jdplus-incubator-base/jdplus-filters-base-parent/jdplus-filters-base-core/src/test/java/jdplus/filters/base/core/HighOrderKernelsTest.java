@@ -18,7 +18,8 @@ import jdplus.toolkit.base.core.math.polynomials.Polynomial;
 import jdplus.toolkit.base.core.stats.Kernel;
 import jdplus.toolkit.base.core.stats.Kernels;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
@@ -32,7 +33,7 @@ public class HighOrderKernelsTest {
     @Test
     public void testBiWeight() {
         FastMatrix H = HighOrderKernels.hankel(Kernels.BIWEIGHT, 0, 4);
-        assertEquals(SymmetricMatrix.determinant(H), 2.243734e-05, 1e-12);
+        assertEquals(2.243734e-05, SymmetricMatrix.determinant(H), 1e-12);
     }
 
     @Test
@@ -62,7 +63,7 @@ public class HighOrderKernelsTest {
     @Test
     public void testTriWeight() {
         FastMatrix H = HighOrderKernels.hankel(Kernels.TRIWEIGHT, 0, 4);
-        assertEquals(SymmetricMatrix.determinant(H), 6.765031e-06, 1e-12);
+        assertEquals(6.765031e-06, SymmetricMatrix.determinant(H), 1e-12);
     }
 
     @Test
