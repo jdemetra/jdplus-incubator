@@ -7,10 +7,16 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.4.0] - 2025-11-21
+
+This is a feature release of incubator extensions for JDemetra+ v3.  
+[JDemetra+ v3.6.0 or later](https://github.com/jdemetra/jdplus-main) version is required to run it.
+
 ### Changed
 
 - ![OTHER] Migrate OSSRH to Central Portal
 - ![OTHER] Migrate protobuf-maven-plugin from org.xolstice.maven.plugins to io.github.ascopes
+- ![OTHER] Bump jdplus-main from 3.5.0 to [3.6.0](https://github.com/jdemetra/jdplus-main/releases/tag/v3.6.0)
 
 ## [2.3.0] - 2025-04-09
 
@@ -60,7 +66,8 @@ This is the **initial release** of incubator extensions for JDemetra+ v3.
 
 - Initial release
 
-[Unreleased]: https://github.com/jdemetra/jdplus-incubator/compare/v2.3.0...HEAD
+[Unreleased]: https://github.com/jdemetra/jdplus-incubator/compare/v2.4.0...HEAD
+[2.4.0]: https://github.com/jdemetra/jdplus-incubator/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/jdemetra/jdplus-incubator/compare/v2.2.0...v2.3.0
 [2.2.0]: https://github.com/jdemetra/jdplus-incubator/compare/v2.1.0...v2.2.0
 [2.1.0]: https://github.com/jdemetra/jdplus-incubator/compare/v2.0.0...v2.1.0
