@@ -35,9 +35,13 @@ import jdplus.toolkit.base.api.arima.SarimaSpec;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.Parameter;
 import jdplus.toolkit.base.api.data.ParameterType;
+import jdplus.toolkit.base.api.information.GenericExplorable;
 import jdplus.toolkit.base.core.arima.ArimaModel;
+import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.sarima.SarimaModel;
 import jdplus.toolkit.base.core.ssf.SsfException;
+import jdplus.toolkit.base.core.ssf.likelihood.DiffuseLikelihood;
+import jdplus.toolkit.base.core.ssf.univariate.Ssf;
 
 /**
  *
@@ -45,6 +49,14 @@ import jdplus.toolkit.base.core.ssf.SsfException;
  */
 @lombok.experimental.UtilityClass
 public class TimeVaryingArimaModels {
+
+    @lombok.Getter
+    @lombok.AllArgsConstructor
+    public static class DecompositionResults implements GenericExplorable {
+
+        private Matrix components, componentsStdev;
+        private DiffuseLikelihood directLikelihood, decompositionLikelihood;
+    }
 
     public Matrix airlineDecomposition(double[] data, int period, double[] th, double[] bth, boolean se) {
         TdAirlineDecomposer decomposer = new TdAirlineDecomposer(period, th, bth);
@@ -62,40 +74,51 @@ public class TimeVaryingArimaModels {
         return rslt;
     }
 
-    public Matrix arimaDecomposition(double[] data, int period, int[] regular, int[] seasonal, boolean tdvar, Matrix parameters, boolean se) {
-        SarimaOrders orders = new SarimaOrders(period);
-        orders.setP(regular[0]);
-        orders.setRegular(regular[0], regular[1], regular[2]);
-        if (period > 1 && seasonal != null) {
-            orders.setSeasonal(seasonal[0], seasonal[1], seasonal[2]);
-        }
-        // we suppose that the parameters are correctly ordered (phi, bphi, th, bth)
-        TdArimaDecomposer decomposer = new TdArimaDecomposer(period, data.length, i -> {
-            DoubleSeq c = parameters.column(i);
-            DoubleSeq p = tdvar ? c.drop(0, 1) : c;
-            SarimaModel sarima = SarimaModel.builder(orders).parameters(p)
-                    .build();
-            if (!tdvar) {
-                return sarima;
-            } else {
-                ArimaModel arima = ArimaModel.of(sarima);
-                return arima.scaleVariance(c.get(p.length()));
-            }
-        });
-        UcarimaModel[] ucarimaModels = decomposer.ucarimaModels();
-        CompositeSsf ssf = TdSsfUcarima.of(data.length, i -> ucarimaModels[i]);
-        int[] pos = ssf.componentsPosition();
+    public DecompositionResults arimaDecomposition(double[] data, int period, int[] regular, int[] seasonal, boolean tdvar, Matrix parameters, boolean se) {
         try {
+            SarimaOrders orders = new SarimaOrders(period);
+            orders.setP(regular[0]);
+            orders.setRegular(regular[0], regular[1], regular[2]);
+            if (period > 1 && seasonal != null) {
+                orders.setSeasonal(seasonal[0], seasonal[1], seasonal[2]);
+            }
+            // we suppose that the parameters are correctly ordered (phi, bphi, th, bth)
+            TdArimaDecomposer decomposer = new TdArimaDecomposer(period, data.length, i -> {
+                DoubleSeq c = parameters.column(i);
+                DoubleSeq p = tdvar ? c.drop(0, 1) : c;
+                SarimaModel sarima = SarimaModel.builder(orders).parameters(p)
+                        .build();
+                if (!tdvar) {
+                    return sarima;
+                } else {
+                    ArimaModel arima = ArimaModel.of(sarima);
+                    return arima.scaleVariance(c.get(p.length()));
+                }
+            });
+            UcarimaModel[] ucarimaModels = decomposer.ucarimaModels();
+            CompositeSsf ssf = TdSsfUcarima.of(data.length, i -> ucarimaModels[i]);
+            int[] dim = ssf.componentsDimension();
+
+            DataBlock Z = DataBlock.make(ssf.getStateDim());
+            ssf.loading().Z(0, Z);
+
             DefaultSmoothingResults sf = DkToolkit.smooth(ssf, new SsfData(data), se, true);
-            FastMatrix rslt = FastMatrix.make(data.length, se ? 6 : 3);
-            for (int i = 0; i < 3; ++i) {
-                rslt.column(i).copy(sf.getComponent(pos[i]));
+            FastMatrix cmps = FastMatrix.make(data.length, 3);
+            FastMatrix ecmps = se ? FastMatrix.make(data.length, 3) : null;
+            for (int i = 0, j = 0; i < 3; ++i) {
+                double[] z = new double[Z.length()];
+                Z.extract(j, dim[i]).copyTo(z, j);
+                j += dim[i];
+                cmps.column(i).copy(sf.zcomponent(DoubleSeq.of(z)));
                 if (se) {
-                    rslt.column(i + 3).copy(sf.getComponentVariance(pos[i]).sqrt());
+                    ecmps.column(i).copy(sf.zvariance(DoubleSeq.of(z)).sqrt());
                 }
             }
-            return rslt;
-        } catch (SsfException err) {
+            DiffuseLikelihood decompositionLl = DkToolkit.likelihoodComputer(true, true, true).compute(ssf, new SsfData(data));
+            Ssf model = decomposer.model();
+            DiffuseLikelihood directLl = DkToolkit.likelihoodComputer(true, true, true).compute(model, new SsfData(data));
+            return new DecompositionResults(cmps, ecmps, directLl, decompositionLl);
+        } catch (Exception err) {
             return null;
         }
     }

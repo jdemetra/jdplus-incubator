@@ -17,11 +17,7 @@ package jdplus.advancedsa.base.core.tdarima;
 
 import jdplus.toolkit.base.api.information.GenericExplorable;
 import jdplus.toolkit.base.core.sarima.SarimaModel;
-import jdplus.toolkit.base.core.stats.likelihood.ConcentratedLikelihoodWithMissing;
 import jdplus.toolkit.base.core.stats.likelihood.LikelihoodStatistics;
-import jdplus.toolkit.base.core.stats.likelihood.DiffuseConcentratedLikelihood;
-import jdplus.toolkit.base.core.stats.likelihood.LogLikelihoodFunction;
-import jdplus.toolkit.base.core.regarima.RegArimaModel;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
 import jdplus.toolkit.base.api.timeseries.TsResiduals;

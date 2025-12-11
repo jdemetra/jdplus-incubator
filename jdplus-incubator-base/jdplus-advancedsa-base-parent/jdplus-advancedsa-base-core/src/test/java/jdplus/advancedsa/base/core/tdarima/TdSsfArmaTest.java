@@ -18,6 +18,7 @@ package jdplus.advancedsa.base.core.tdarima;
 import java.util.Random;
 import jdplus.toolkit.base.api.arima.SarimaOrders;
 import jdplus.toolkit.base.api.arima.SarmaOrders;
+import jdplus.toolkit.base.core.arima.ArimaModel;
 import jdplus.toolkit.base.core.arima.IArimaModel;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.sarima.SarimaModel;
@@ -61,7 +62,7 @@ public class TdSsfArmaTest {
                     .theta(th0)
                     .btheta(bth0)
                     .build();
-            models[i] = arma;
+            models[i] = ArimaModel.of(arma);//.scaleVariance(0.25);
             th0 += dth;
             bth0 += dbth;
         }
