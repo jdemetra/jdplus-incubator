@@ -25,7 +25,6 @@ import jdplus.toolkit.base.api.information.InformationMapping;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
 import jdplus.toolkit.base.api.stats.StatisticalTest;
 import jdplus.toolkit.base.api.timeseries.TsResiduals;
-import jdplus.toolkit.base.core.math.matrices.MatrixException;
 import jdplus.toolkit.base.core.stats.likelihood.LikelihoodStatistics;
 import nbbrd.design.Development;
 import nbbrd.service.ServiceProvider;

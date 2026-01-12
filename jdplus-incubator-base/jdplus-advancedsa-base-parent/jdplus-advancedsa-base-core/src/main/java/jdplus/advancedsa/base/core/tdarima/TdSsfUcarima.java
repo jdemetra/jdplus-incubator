@@ -16,8 +16,8 @@
 package jdplus.advancedsa.base.core.tdarima;
 
 import java.util.function.IntFunction;
-import jdplus.toolkit.base.core.ssf.basic.Loading;
 import jdplus.toolkit.base.core.ssf.composite.CompositeSsf;
+import jdplus.toolkit.base.core.ssf.univariate.Ssf;
 import jdplus.toolkit.base.core.ucarima.UcarimaModel;
 
 /**
@@ -26,14 +26,15 @@ import jdplus.toolkit.base.core.ucarima.UcarimaModel;
  */
 @lombok.experimental.UtilityClass
 public class TdSsfUcarima {
-    
-        public CompositeSsf of(int n, IntFunction<UcarimaModel> fn) {
-            int m = fn.apply(0).getComponentsCount();
+
+    public CompositeSsf of(int n, IntFunction<UcarimaModel> fn) {
+        int m = fn.apply(0).getComponentsCount();
         CompositeSsf.Builder builder = CompositeSsf.builder();
         for (int i = 0; i < m; ++i) {
-            int cmp=i;
+            int cmp = i;
 //            builder.add(TimeVaryingSsfArima.stateComponent(n, k->fn.apply(k).getComponent(cmp)), Loading.fromPosition(0));
-            builder.add(TdSsfArima.stateComponent(n, k->fn.apply(k).getComponent(cmp)), Loading.fromPosition(0));
+            Ssf ssf = TdSsfArima.ssf(n, k -> fn.apply(k).getComponent(cmp));
+            builder.add(ssf.asComponent(), ssf.loading());
         }
         return builder.build();
     }

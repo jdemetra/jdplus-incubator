@@ -18,9 +18,8 @@ package jdplus.advancedsa.base.r;
 import jdplus.advancedsa.base.core.tdarima.LtdArimaResults;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.DoublesMath;
-import jdplus.toolkit.base.api.math.matrices.Matrix;
 import jdplus.toolkit.base.api.timeseries.TsData;
-import jdplus.toolkit.base.core.data.DataBlock;
+import jdplus.toolkit.base.api.timeseries.TsPeriod;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.toolkit.base.core.math.matrices.MatrixFactory;
 import org.junit.jupiter.api.Test;
@@ -55,14 +54,14 @@ public class TimeVaryingArimaModelsTest {
 
     @Test
     public void testDecomposition() {
-        TsData s = Data.TS_ABS_RETAIL;
+        TsData s = TsData.ofInternal(TsPeriod.monthly(1992,1) , Data.RETAIL_HARDWARESTORE).log();
         int n = s.length();
         int[] regular = new int[]{0, 1, 1};
         int[] seasonal = new int[]{0, 1, 1};
-        boolean vvar = true;
-        LtdArimaResults result = TimeVaryingArimaModels.estimate(s.log().getValues().toArray(), s.getAnnualFrequency(), true, null, regular, seasonal, true, true, false, false, !vvar, 1e-7, "mean_delta");
+        boolean vvar = false;
+        LtdArimaResults result = TimeVaryingArimaModels.estimate(s.getValues().toArray(), s.getAnnualFrequency(), false, null, regular, seasonal, true, true, false, false, !vvar, 1e-15, "mean_delta");
         assertTrue(result != null);
-        FastMatrix parameters = parameters(result.getLtd().getModel().getP0(), result.getLtd().getModel().getP1(), n);
+        FastMatrix parameters = parameters(result.getLtd().getModel().getP0(), result.getLtd().getModel().getP1(), n, 13);
         if (vvar) {
             FastMatrix V = FastMatrix.make(1, n);
             double var1 = result.getLtd().getModel().getVar1();
@@ -74,18 +73,22 @@ public class TimeVaryingArimaModelsTest {
             parameters = MatrixFactory.rowBind(parameters, V);
         }
 
-        Matrix sa = TimeVaryingArimaModels.arimaDecomposition(s.log().getValues().toArray(), s.getAnnualFrequency(), regular, seasonal, vvar, parameters, true);
-        System.out.println(sa);
+        TimeVaryingArimaModels.DecompositionResults arimaDecomposition = TimeVaryingArimaModels.arimaDecomposition(s.getValues().toArray(), s.getAnnualFrequency(), regular, seasonal, vvar, parameters, true);
+        System.out.println(arimaDecomposition.getDirectLikelihood());
+        System.out.println(arimaDecomposition.getDecompositionLikelihood());
+        System.out.println(arimaDecomposition.getDirectLikelihood().e());
+        System.out.println(arimaDecomposition.getDecompositionLikelihood().e());
+        double[] data = arimaDecomposition.getData("direct_res", double[].class);
     }
 
-    private FastMatrix parameters(DoubleSeq p0, DoubleSeq p1, int n) {
+    private FastMatrix parameters(DoubleSeq p0, DoubleSeq p1, int n, int nd) {
         DoubleSeq delta = DoublesMath.subtract(p1, p0);
-        double d = n - 1;
+        double d = n -nd - 1;
 
         FastMatrix P = FastMatrix.make(p0.length(), n);
         for (int i = 0; i < n; ++i) {
             int cur = i;
-            P.column(i).set(j -> p0.get(j) + delta.get(j) * cur / d);
+            P.column(i).set(j -> cur<nd ? p0.get(j) : p0.get(j) + delta.get(j) * (cur-nd) / d);
         }
         return P;
     }

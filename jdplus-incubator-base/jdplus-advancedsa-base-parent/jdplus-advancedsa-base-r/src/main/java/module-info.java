@@ -1,3 +1,5 @@
+import jdplus.toolkit.base.api.information.InformationExtractor;
+
 module jdplus.advancedsa.base.r {
 
     requires static lombok;
@@ -11,4 +13,10 @@ module jdplus.advancedsa.base.r {
     requires jdplus.toolkit.base.r;
 
     exports jdplus.advancedsa.base.r;
+    
+    provides InformationExtractor with
+            jdplus.advancedsa.base.r.TdArimaDecompositionExtractor;
+
 }
+
+
