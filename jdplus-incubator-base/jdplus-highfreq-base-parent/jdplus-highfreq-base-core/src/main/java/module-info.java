@@ -1,5 +1,5 @@
 import jdplus.highfreq.base.core.extractors.ExtendedAirlineResultsExtractor;
-import jdplus.highfreq.base.core.extractors.ExtendedAirlineDecompositionExtractor;
+import jdplus.highfreq.base.core.extractors.LighExtendedAirlineDecompositionExtractor;
 import jdplus.highfreq.base.core.extractors.ExtendedAirlineEstimationExtractor;
 import jdplus.highfreq.base.core.extractors.ExtendedAirlineExtractor;
 import jdplus.highfreq.base.core.extractors.HighFreqRegArimaExtractor;
@@ -28,7 +28,7 @@ module jdplus.highfreq.base.core {
     provides InformationExtractor with
             ExtendedAirlineExtractor,
             ExtendedAirlineResultsExtractor,
-            ExtendedAirlineDecompositionExtractor,
+            LighExtendedAirlineDecompositionExtractor,
             HighFreqRegArimaExtractor,
             ExtendedAirlineEstimationExtractor,
             LightExtendedAirlineEstimationExtractor;
