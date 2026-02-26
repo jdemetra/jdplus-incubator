@@ -9,8 +9,10 @@ import tck.demetra.data.Data;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.api.timeseries.TsPeriod;
 import java.util.Random;
+import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -62,7 +64,8 @@ public class StsOutliersDetectionTest {
     public void testSeasonalBreaks() {
         TsData y = TsData.ofInternal(TsPeriod.monthly(1974, 1), sugar);
         double[] rslt = StsOutliersDetection.seasonalBreaks(y.multiply(.100), 1, 1, 1, "HarrisonStevens", null);
-//        System.out.println(DoubleSeq.of(rslt));
+        assertTrue(rslt != null);
+        System.out.println(DoubleSeq.of(rslt));
     }
 
 }

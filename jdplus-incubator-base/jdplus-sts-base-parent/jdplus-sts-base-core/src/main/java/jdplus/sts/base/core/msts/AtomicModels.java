@@ -24,6 +24,7 @@ import jdplus.sts.base.core.msts.internal.ArItem2;
 import jdplus.sts.base.core.msts.internal.ArVarItem;
 import jdplus.sts.base.core.msts.internal.ArimaItem;
 import jdplus.sts.base.core.msts.internal.ArmaItem;
+import jdplus.sts.base.core.msts.internal.ArmaItem2;
 import jdplus.sts.base.core.msts.internal.CycleItem;
 import jdplus.sts.base.core.msts.internal.LocalLevelItem;
 import jdplus.sts.base.core.msts.internal.LocalLinearTrendItem;
@@ -58,6 +59,10 @@ public class AtomicModels {
 
     public StateItem arma(final String name, double[] ar, boolean fixedar, double[] ma, boolean fixedma, double var, boolean fixedvar) {
         return new ArmaItem(name, ar, fixedar, ma, fixedma, var, fixedvar);
+    }
+
+    public StateItem arma2(final String name, double[] ar, boolean fixedar, double[] ma, boolean fixedma, double var, boolean fixedvar) {
+        return new ArmaItem2(name, ar, fixedar, ma, fixedma, var, fixedvar);
     }
 
     public StateItem sarima(final String name, int period, int[] orders, int[] seasonal, double[] parameters, boolean fixed, double var, boolean fixedvar) {

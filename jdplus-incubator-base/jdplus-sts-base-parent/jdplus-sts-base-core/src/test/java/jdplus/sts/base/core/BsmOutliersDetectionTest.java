@@ -37,43 +37,13 @@ import org.junit.jupiter.api.Test;
  *
  * @author PALATEJ
  */
-public class OutliersDetectionTest {
+public class BsmOutliersDetectionTest {
     
-    public OutliersDetectionTest() {
+    public BsmOutliersDetectionTest() {
     }
     
     @Test
     public void testNile() {
-        BsmSpec spec = BsmSpec.builder()
-                .seasonal(null)
-                .build();
-        
-        OutliersDetection od = OutliersDetection.builder()
-                .bsm(spec)
-                .criticalValue(5)
-                .forwardEstimation(OutliersDetection.Estimation.Full)
-                .build();
-        DoubleSeq Y = DoubleSeq.of(Data.NILE);
-        
-        od.process(Y, null, 1);
-        int[] ao = od.getAoPositions();
-        System.out.print("AO:");
-        for (int i = 0; i < ao.length; ++i) {
-            System.out.print('\t');
-            System.out.print(ao[i] + 1);
-        }
-        System.out.println();
-        int[] ls = od.getLsPositions();
-        System.out.print("LS:");
-        for (int i = 0; i < ls.length; ++i) {
-            System.out.print('\t');
-            System.out.print(ls[i] + 1);
-        }
-        System.out.println();
-    }
-    
-    @Test
-    public void testNile2() {
         BsmSpec spec = BsmSpec.builder()
                 .seasonal(null)
                 .build();
@@ -107,45 +77,6 @@ public class OutliersDetectionTest {
 //            System.out.print(ls[i] + 1);
 //        }
 //        System.out.println();
-    }
-    
-    @Test
-    public void testProd() {
-        BsmSpec spec = BsmSpec.builder()
-                .seasonal(SeasonalModel.HarrisonStevens)
-                .build();
-        
-        long t0 = System.currentTimeMillis();
-        OutliersDetection od = OutliersDetection.builder()
-                .bsm(spec)
-                .forwardEstimation(OutliersDetection.Estimation.Full)
-                .build();
-        double[] A = Data.PROD.clone();
-        A[14] *= 1.3;
-        A[55] *= .7;
-        DoubleSeq Y = DoubleSeq.of(A);
-        
-        FastMatrix days = FastMatrix.make(A.length, 7);
-        GenericTradingDaysFactory.fillTradingDaysMatrix(TsPeriod.monthly(1967, 1), false, days);
-        FastMatrix td = GenericTradingDaysFactory.generateContrasts(DayClustering.TD3, days);
-        od.process(Y.log(), td, 12);
-        long t1 = System.currentTimeMillis();
-        int[] ao = od.getAoPositions();
-        System.out.print("AO:");
-        for (int i = 0; i < ao.length; ++i) {
-            System.out.print('\t');
-            System.out.print(ao[i] + 1);
-        }
-        System.out.println();
-        int[] ls = od.getLsPositions();
-        System.out.print("LS:");
-        for (int i = 0; i < ls.length; ++i) {
-            System.out.print('\t');
-            System.out.print(ls[i] + 1);
-        }
-        System.out.println();
-        System.out.println(t1 - t0);
-//        System.out.println(DoubleSeq.of(A));
     }
     
     @Test
@@ -202,6 +133,7 @@ public class OutliersDetectionTest {
             long t0 = System.currentTimeMillis();
             for (int k = 0; k < 10; ++k) {
                 BsmOutliersDetection od = BsmOutliersDetection.builder()
+                        .forwardEstimation(BsmOutliersDetection.Estimation.Score)
                         .bsm(spec)
                         .build();
                 od.process(Y.log().range(0, length[l]), td.extract(0, length[l], 0, td.getColumnsCount()), 12);
@@ -223,93 +155,95 @@ public class OutliersDetectionTest {
             long t1 = System.currentTimeMillis();
             System.out.println(t1 - t0);
         }
+        
+//        simulation();
     }
     
-    public static void simulation() {
-        int K = 100000;
-        int[] NN = new int[]{/*20, 40, 60, 80, 100, 120, 180, 240, 300, */360, 420, 480, 540, 600};
-        for (int h = 0; h < NN.length; ++h) {
-            int N = NN[h];
-            System.out.println(N);
-            System.out.println("");
-            for (int q = 0; q < 3; ++q) {
-                
-                BsmSpec spec = BsmSpec.builder()
-                        .seasonal(SeasonalModel.HarrisonStevens)
-                        .build();
-                int period = 4;
-                
-                FastMatrix M = FastMatrix.make(N, K);
-                double[] SAO = new double[K];
-                double[] SLS = new double[K];
-                double[] SSO = new double[K];
-                double[] SALL = new double[K];
-                BsmData[] models = randomBsm(spec, period, M);
-                DataBlockIterator cols = M.columnsIterator();
-                int k = 0;
-                while (cols.hasNext()) {
-                    DataBlock y = cols.next();
-                    Ssf ssf = SsfBsm.of(models[k]);
-                    SsfData data = new SsfData(y);
-                    SmoothingOutput output = AkfToolkit.robustSmooth(ssf, data, true, false);
-                    DefaultSmoothingResults sd = output.getSmoothing();
-                    double sig2 = output.getSig2();
-                    double saomax = 0, slsmax = 0, ssomax = 0, smax = 0;
-                    for (int i = 4; i < N - 4; ++i) {
-                        DataBlock R = DataBlock.of(sd.R(i));
-                        FastMatrix Rvar = sd.RVariance(i);
-                        double sao = R.get(0) * R.get(0) / Rvar.get(0, 0) / sig2;
-                        double sls = R.get(1) * R.get(1) / Rvar.get(1, 1) / sig2;
-                        double sso = R.get(3) * R.get(3) / Rvar.get(3, 3) / sig2;
-                        int[] sel = new int[]{0, 1, 3};
-                        FastMatrix S = MatrixFactory.select(Rvar, sel, sel);
-                        DataBlock ur = DataBlock.select(R, sel);
-                        double sall = 0;
-                        try {
-                            SymmetricMatrix.lcholesky(S, 1e-9);
-                            LowerTriangularMatrix.solveLx(S, ur, 1e-9);
-                            sall = ur.ssq() / sig2;
-                        } catch (Exception err) {
-                        }
-                        if (!Double.isFinite(sao)) {
-                            sao = 0;
-                        }
-                        if (!Double.isFinite(sls)) {
-                            sls = 0;
-                        }
-                        if (!Double.isFinite(sall)) {
-                            sall = 0;
-                        }
-                        if (sao > saomax) {
-                            saomax = sao;
-                        }
-                        if (sls > slsmax) {
-                            slsmax = sls;
-                        }
-                        if (sso > ssomax) {
-                            ssomax = sso;
-                        }
-                        if (sall > smax) {
-                            smax = sall;
-                        }
-                    }
-                    SAO[k] = saomax;
-                    SLS[k] = slsmax;
-                    SSO[k] = ssomax;
-                    SALL[k++] = smax;
-                }
-                Arrays.sort(SAO);
-                Arrays.sort(SLS);
-                Arrays.sort(SSO);
-                Arrays.sort(SALL);
-                System.out.println(SAO[(int) (K * .95)]);
-                System.out.println(SLS[(int) (K * .95)]);
-                System.out.println(SSO[(int) (K * .95)]);
-                System.out.println(SALL[(int) (K * .95)]);
-            }
-            System.out.println("");
-        }
-    }
+//    public static void simulation() {
+//        int K = 100000;
+//        int[] NN = new int[]{/*20, 40, 60, 80, 100, 120, 180, 240, 300, */360, 420, 480, 540, 600};
+//        for (int h = 0; h < NN.length; ++h) {
+//            int N = NN[h];
+//            System.out.println(N);
+//            System.out.println("");
+//            for (int q = 0; q < 3; ++q) {
+//                
+//                BsmSpec spec = BsmSpec.builder()
+//                        .seasonal(SeasonalModel.HarrisonStevens)
+//                        .build();
+//                int period = 4;
+//                
+//                FastMatrix M = FastMatrix.make(N, K);
+//                double[] SAO = new double[K];
+//                double[] SLS = new double[K];
+//                double[] SSO = new double[K];
+//                double[] SALL = new double[K];
+//                BsmData[] models = randomBsm(spec, period, M);
+//                DataBlockIterator cols = M.columnsIterator();
+//                int k = 0;
+//                while (cols.hasNext()) {
+//                    DataBlock y = cols.next();
+//                    Ssf ssf = SsfBsm.of(models[k]);
+//                    SsfData data = new SsfData(y);
+//                    SmoothingOutput output = AkfToolkit.robustSmooth(ssf, data, true, false);
+//                    DefaultSmoothingResults sd = output.getSmoothing();
+//                    double sig2 = output.getSig2();
+//                    double saomax = 0, slsmax = 0, ssomax = 0, smax = 0;
+//                    for (int i = 4; i < N - 4; ++i) {
+//                        DataBlock R = DataBlock.of(sd.R(i));
+//                        FastMatrix Rvar = sd.RVariance(i);
+//                        double sao = R.get(0) * R.get(0) / Rvar.get(0, 0) / sig2;
+//                        double sls = R.get(1) * R.get(1) / Rvar.get(1, 1) / sig2;
+//                        double sso = R.get(3) * R.get(3) / Rvar.get(3, 3) / sig2;
+//                        int[] sel = new int[]{0, 1, 3};
+//                        FastMatrix S = MatrixFactory.select(Rvar, sel, sel);
+//                        DataBlock ur = DataBlock.select(R, sel);
+//                        double sall = 0;
+//                        try {
+//                            SymmetricMatrix.lcholesky(S, 1e-9);
+//                            LowerTriangularMatrix.solveLx(S, ur, 1e-9);
+//                            sall = ur.ssq() / sig2;
+//                        } catch (Exception err) {
+//                        }
+//                        if (!Double.isFinite(sao)) {
+//                            sao = 0;
+//                        }
+//                        if (!Double.isFinite(sls)) {
+//                            sls = 0;
+//                        }
+//                        if (!Double.isFinite(sall)) {
+//                            sall = 0;
+//                        }
+//                        if (sao > saomax) {
+//                            saomax = sao;
+//                        }
+//                        if (sls > slsmax) {
+//                            slsmax = sls;
+//                        }
+//                        if (sso > ssomax) {
+//                            ssomax = sso;
+//                        }
+//                        if (sall > smax) {
+//                            smax = sall;
+//                        }
+//                    }
+//                    SAO[k] = saomax;
+//                    SLS[k] = slsmax;
+//                    SSO[k] = ssomax;
+//                    SALL[k++] = smax;
+//                }
+//                Arrays.sort(SAO);
+//                Arrays.sort(SLS);
+//                Arrays.sort(SSO);
+//                Arrays.sort(SALL);
+//                System.out.println(SAO[(int) (K * .95)]);
+//                System.out.println(SLS[(int) (K * .95)]);
+//                System.out.println(SSO[(int) (K * .95)]);
+//                System.out.println(SALL[(int) (K * .95)]);
+//            }
+//            System.out.println("");
+//        }
+//    }
     
     public static BsmData[] randomBsm(BsmSpec spec, int period, FastMatrix simul) {
         double[] p = new double[spec.getFreeParametersCount()];

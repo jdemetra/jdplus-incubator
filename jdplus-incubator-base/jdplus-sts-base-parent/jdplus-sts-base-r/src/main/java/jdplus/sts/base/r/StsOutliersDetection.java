@@ -23,23 +23,24 @@ import jdplus.sts.base.io.outliers.protobuf.StsOutliersProtos;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.protobuf.toolkit.ToolkitProtosUtility;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.stats.likelihood.DiffuseConcentratedLikelihood;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.toolkit.base.core.math.matrices.LowerTriangularMatrix;
 import jdplus.toolkit.base.core.math.matrices.SymmetricMatrix;
-import jdplus.toolkit.base.core.ssf.akf.AkfToolkit;
-import jdplus.toolkit.base.core.ssf.akf.SmoothingOutput;
 import jdplus.toolkit.base.core.ssf.basic.RegSsf;
-import jdplus.toolkit.base.core.ssf.univariate.DefaultSmoothingResults;
 import jdplus.toolkit.base.core.ssf.univariate.Ssf;
 import jdplus.toolkit.base.core.ssf.univariate.SsfData;
 import jdplus.sts.base.core.BsmData;
-import jdplus.sts.base.core.OutliersDetection;
 import jdplus.sts.base.core.SsfBsm;
 import jdplus.sts.base.core.BsmKernel;
 import jdplus.sts.base.core.BsmMapping;
+import jdplus.sts.base.core.BsmOutliersDetection;
+import jdplus.toolkit.base.core.ssf.StateStorage;
+import jdplus.toolkit.base.core.ssf.akf.QAugmentation;
+import jdplus.toolkit.base.core.ssf.akf.SmoothationsComputer;
 
 /**
  *
@@ -210,14 +211,13 @@ public class StsOutliersDetection {
                 .level(of(level), of(slope))
                 .noise(of(noise))
                 .build();
-        OutliersDetection.Estimation fe = OutliersDetection.Estimation.valueOf(forwardEstimation);
-        OutliersDetection.Estimation be = OutliersDetection.Estimation.valueOf(backwardEstimation);
-        OutliersDetection od = OutliersDetection.builder()
+        BsmOutliersDetection.Estimation fe = BsmOutliersDetection.Estimation.valueOf(forwardEstimation);
+        BsmOutliersDetection.Estimation be = BsmOutliersDetection.Estimation.valueOf(backwardEstimation);
+        BsmOutliersDetection od = BsmOutliersDetection.builder()
                 .bsm(spec)
                 .forwardEstimation(fe)
                 .backardEstimation(be)
                 .criticalValue(cv)
-                .tcriticalValue(tcv)
                 .ao(bao)
                 .ls(bls)
                 .so(bso)
@@ -226,19 +226,21 @@ public class StsOutliersDetection {
             return null;
         }
 
-        int[] ao = od.getAoPositions();
-        int[] ls = od.getLsPositions();
-        int[] so = od.getSoPositions();
+        List<int[]> o = od.outliers();
 
-        OutlierDescriptor[] outliers = new OutlierDescriptor[ao.length + ls.length + so.length];
-        for (int i = 0; i < ao.length; ++i) {
-            outliers[i] = new OutlierDescriptor("AO", ao[i]);
-        }
-        for (int i = 0, j = ao.length; i < ls.length; ++i, ++j) {
-            outliers[j] = new OutlierDescriptor("LS", ls[i]);
-        }
-        for (int i = 0, j = ao.length + ls.length; i < so.length; ++i, ++j) {
-            outliers[j] = new OutlierDescriptor("SO", so[i]);
+        OutlierDescriptor[] outliers = new OutlierDescriptor[o.size()];
+        int idx = 0;
+        for (int[] i : o) {
+
+            String type = switch (i[1]) {
+                case 0 ->
+                    "AO";
+                case 1 ->
+                    "LS";
+                default ->
+                    "SO";
+            };
+            outliers[idx++] = new OutlierDescriptor(type, i[0]);
         }
         SsfData data = new SsfData(y);
 
@@ -246,26 +248,25 @@ public class StsOutliersDetection {
         SsfBsm ssf0 = SsfBsm.of(model0);
         Ssf xssf = x == null ? ssf0 : RegSsf.ssf(ssf0, FastMatrix.of(x));
         int n = data.length();
-        SmoothingOutput output = AkfToolkit.robustSmooth(xssf, data, true, false);
-        DefaultSmoothingResults sd0=output.getSmoothing();
-        double sig2 = output.getSig2();
+        SmoothationsComputer sc = new SmoothationsComputer();
+        if (!sc.process(xssf, data)) {
+            return null;
+        }
 
-        FastMatrix tau0 = tau(n, ssf0.getStateDim(), model0, sd0, sig2);
+        FastMatrix tau0 = tau(n, ssf0.getStateDim(), model0, sc);
 
         FastMatrix W = od.getRegressors();
         DiffuseConcentratedLikelihood ll = od.getLikelihood();
         BsmData model = od.getModel();
         SsfBsm ssf = SsfBsm.of(model);
         Ssf wssf = W == null ? ssf : RegSsf.ssf(ssf, W);
-        output = AkfToolkit.robustSmooth(wssf, data, true, false);
-        DefaultSmoothingResults sd=output.getSmoothing();
-        sig2 = output.getSig2();
-        FastMatrix cmps = components(n, model, sd);
+        sc.process(ssf, data);
+        FastMatrix cmps = components(n, model, sc);
         DataBlock lin = cmps.column(0).deepClone();
         lin.add(cmps.column(1));
         lin.add(cmps.column(3));
 
-        FastMatrix tau1 = tau(n, ssf.getStateDim(), model, sd, sig2);
+        FastMatrix tau1 = tau(n, ssf.getStateDim(), model, sc);
 
         int np = spec.getFreeParametersCount();
 
@@ -290,39 +291,42 @@ public class StsOutliersDetection {
                 .build();
     }
 
-    private FastMatrix components(int n, BsmData model, DefaultSmoothingResults sd) {
+    private FastMatrix components(int n, BsmData model, SmoothationsComputer sc) {
 
+        StateStorage ss = sc.getSmoothedStates();
         FastMatrix cmps = FastMatrix.make(n, 4);
         int cmp = SsfBsm.searchPosition(model, Component.Noise);
         if (cmp >= 0) {
-            cmps.column(0).copy(sd.getComponent(cmp));
+            cmps.column(0).copy(ss.getComponent(cmp));
         }
         cmp = SsfBsm.searchPosition(model, Component.Level);
         if (cmp >= 0) {
-            cmps.column(1).copy(sd.getComponent(cmp));
+            cmps.column(1).copy(ss.getComponent(cmp));
         }
         cmp = SsfBsm.searchPosition(model, Component.Slope);
         if (cmp >= 0) {
-            cmps.column(2).copy(sd.getComponent(cmp));
+            cmps.column(2).copy(ss.getComponent(cmp));
         }
         cmp = SsfBsm.searchPosition(model, Component.Seasonal);
         if (cmp >= 0) {
-            cmps.column(3).copy(sd.getComponent(cmp));
+            cmps.column(3).copy(ss.getComponent(cmp));
         }
         return cmps;
     }
 
-    private FastMatrix tau(int n, int dim, BsmData model, DefaultSmoothingResults sd, double sig2) {
+    private FastMatrix tau(int n, int dim, BsmData model, SmoothationsComputer sc) {
         FastMatrix tau = FastMatrix.make(n, 6);
         int cmpn = SsfBsm.searchPosition(model, Component.Noise);
         int cmpl = SsfBsm.searchPosition(model, Component.Level);
         int cmps = SsfBsm.searchPosition(model, Component.Slope);
         int cmpseas = SsfBsm.searchPosition(model, Component.Seasonal);
         int p = model.getPeriod() - 1;
+        QAugmentation augmentation = sc.getFilteringResults().getAugmentation();
+        double sig2 = augmentation.ssq() / augmentation.getDegreesOfFreedom();
         for (int i = 0; i < n; ++i) {
             try {
-                DataBlock R = DataBlock.of(sd.R(i));
-                FastMatrix Rvar = sd.RVariance(i);
+                DataBlock R = DataBlock.of(sc.R(i));
+                FastMatrix Rvar = sc.Rvar(i);
 
                 if (cmpn >= 0) {
                     tau.set(i, 0, R.get(cmpn) * R.get(cmpn) / Rvar.get(cmpn, cmpn) / sig2);
@@ -396,10 +400,13 @@ public class StsOutliersDetection {
         }
         SsfData data = new SsfData(DoubleSeq.of(y));
         int n = data.length();
-        SmoothingOutput output = AkfToolkit.robustSmooth(ssf, data, true, false);
-        DefaultSmoothingResults sd=output.getSmoothing();
-        double sig2 = output.getSig2();
- 
+        SmoothationsComputer sc = new SmoothationsComputer();
+        if (! sc.process(ssf, data)) {
+            return null;
+        }
+        QAugmentation augmentation = sc.getFilteringResults().getAugmentation();
+        double sig2 = augmentation.ssq() / augmentation.getDegreesOfFreedom();
+
         int spos = 0;
         if (bsm.getNoiseVar() != 0) {
             ++spos;
@@ -413,8 +420,8 @@ public class StsOutliersDetection {
         double[] s = new double[n];
         for (int i = 0; i < n; ++i) {
             try {
-                DataBlock R = DataBlock.of(sd.R(i));
-                FastMatrix Rvar = sd.RVariance(i);
+                DataBlock R = sc.R(i);
+                FastMatrix Rvar = sc.Rvar(i);
                 FastMatrix S = Rvar.extract(spos, period - 1, spos, period - 1).deepClone();
                 DataBlock ur = R.extract(spos, period - 1).deepClone();
                 SymmetricMatrix.lcholesky(S, 1e-9);
