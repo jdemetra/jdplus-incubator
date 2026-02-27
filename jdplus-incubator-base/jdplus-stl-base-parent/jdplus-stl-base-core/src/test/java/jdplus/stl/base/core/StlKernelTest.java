@@ -70,9 +70,9 @@ public class StlKernelTest {
         double[] data = Data.ABS_RETAIL;
         
         RawStlResults rslt = stl.process(DoubleSeq.of(data, data.length-120, 120));
-        System.out.println(rslt.getTrend());
-        System.out.println(rslt.getSeasonal());
-        System.out.println(rslt.getFit());
+//        System.out.println(rslt.getTrend());
+//        System.out.println(rslt.getSeasonal());
+//        System.out.println(rslt.getFit());
     }
 
     @Test

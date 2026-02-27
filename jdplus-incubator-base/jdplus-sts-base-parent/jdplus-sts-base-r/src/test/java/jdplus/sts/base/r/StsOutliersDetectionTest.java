@@ -65,7 +65,7 @@ public class StsOutliersDetectionTest {
         TsData y = TsData.ofInternal(TsPeriod.monthly(1974, 1), sugar);
         double[] rslt = StsOutliersDetection.seasonalBreaks(y.multiply(.100), 1, 1, 1, "HarrisonStevens", null);
         assertTrue(rslt != null);
-        System.out.println(DoubleSeq.of(rslt));
+//        System.out.println(DoubleSeq.of(rslt));
     }
 
 }

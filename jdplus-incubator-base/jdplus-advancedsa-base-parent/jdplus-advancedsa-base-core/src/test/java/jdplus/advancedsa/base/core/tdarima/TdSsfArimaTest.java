@@ -76,14 +76,14 @@ public class TdSsfArimaTest {
         TsData stts = ts.delta(1).delta(12);
         
         DiffuseLikelihood stll1 = DkToolkit.likelihoodComputer(true, true, true).compute(stssf, new SsfData(stts.getValues()));
-        System.out.println(stll1);
+//        System.out.println(stll1);
 
         DiffuseLikelihood ll1 = DkToolkit.likelihoodComputer(false,true, true).compute(ssf, new SsfData(s));
-        System.out.println(ll1);
+//        System.out.println(ll1);
 
         Ssf ssf2 = SsfArima.ssf(models[0]);
         DiffuseLikelihood ll2 = DkToolkit.likelihood(ssf2, new SsfData(s), true, true);
-        System.out.println(ll2);
+//        System.out.println(ll2);
     }
 
     public static void main(String[] arg) {
