@@ -56,8 +56,8 @@
         <jspecify.version>1.0.0</jspecify.version>
 
         <!-- test frameworks -->
-        <junit.version>6.0.2</junit.version>
-        <assertj-core.version>3.27.6</assertj-core.version>
+        <junit.version>6.0.3</junit.version>
+        <assertj-core.version>3.27.7</assertj-core.version>
 
         <!-- dependencies -->
         <jd2.version>2.2.6</jd2.version>
@@ -126,7 +126,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.14.1</version>
+                    <version>3.15.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -162,7 +162,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.9.0</version>
+                    <version>3.10.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -187,7 +187,7 @@
                 <plugin>
                     <groupId>io.github.ascopes</groupId>
                     <artifactId>protobuf-maven-plugin</artifactId>
-                    <version>4.1.2</version>
+                    <version>5.0.0</version>
                 </plugin>
                 <plugin>
                     <groupId>com.amashchenko.maven.plugin</groupId>
@@ -522,6 +522,18 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+
+        <!-- Skip all checks for local builds -->
+        <profile>
+            <id>yolo</id>
+            <properties>
+                <enforcer.skip>true</enforcer.skip>
+                <modernizer.skip>true</modernizer.skip>
+                <forbiddenapis.skip>true</forbiddenapis.skip>
+                <jacoco.skip>true</jacoco.skip>
+                <heylogs.skip>true</heylogs.skip>
+            </properties>
         </profile>
     </profiles>
 
