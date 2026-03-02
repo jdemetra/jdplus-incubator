@@ -48,7 +48,7 @@ public class TdAirlineDecomposerTest {
         
         DefaultSmoothingResults sf = DkToolkit.sqrtSmooth(ssf, new SsfData(s), false, false);
         long t1 = System.currentTimeMillis();
-        System.out.println(t1 - t0);
+//        System.out.println(t1 - t0);
         int[] pos = ssf.componentsPosition();
 //        System.out.println(sf.item(pos[0]));
 //        System.out.println(sf.item(pos[1]));

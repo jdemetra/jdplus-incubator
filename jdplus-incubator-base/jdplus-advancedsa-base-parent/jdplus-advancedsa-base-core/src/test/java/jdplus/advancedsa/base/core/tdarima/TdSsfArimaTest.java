@@ -76,14 +76,14 @@ public class TdSsfArimaTest {
         TsData stts = ts.delta(1).delta(12);
         
         DiffuseLikelihood stll1 = DkToolkit.likelihoodComputer(true, true, true).compute(stssf, new SsfData(stts.getValues()));
-        System.out.println(stll1);
+//        System.out.println(stll1);
 
         DiffuseLikelihood ll1 = DkToolkit.likelihoodComputer(false,true, true).compute(ssf, new SsfData(s));
-        System.out.println(ll1);
+//        System.out.println(ll1);
 
         Ssf ssf2 = SsfArima.ssf(models[0]);
         DiffuseLikelihood ll2 = DkToolkit.likelihood(ssf2, new SsfData(s), true, true);
-        System.out.println(ll2);
+//        System.out.println(ll2);
     }
 
     public static void main(String[] arg) {
@@ -107,7 +107,6 @@ public class TdSsfArimaTest {
 
         Ssf ssf1 = SsfArima.ssf(models[0]);
         Ssf ssf2 = TdSsfArima.ssf(N, i -> models[i]);
-        Ssf ssf3 = TdSsfArima2.ssf(N, i -> models[i]);
         DiffuseLikelihood ll1 = null, ll2 = null, ll3 = null;
         long t0 = System.currentTimeMillis();
         for (int i = 0; i < K; ++i) {
@@ -121,15 +120,8 @@ public class TdSsfArimaTest {
         }
         t1 = System.currentTimeMillis();
         System.out.println(t1 - t0);
-        t0 = System.currentTimeMillis();
-        for (int i = 0; i < K; ++i) {
-            ll3 = DkToolkit.likelihood(ssf3, new SsfData(x), true, true);
-        }
-        t1 = System.currentTimeMillis();
-        System.out.println(t1 - t0);
         System.out.println(ll1.logLikelihood());
         System.out.println(ll2.logLikelihood());
-        System.out.println(ll3.logLikelihood());
     }
 
 }

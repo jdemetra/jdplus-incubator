@@ -44,11 +44,11 @@ public class TimeVaryingArimaModelsTest {
 
             LtdArimaResults result = TimeVaryingArimaModels.estimate(s[i].log().getValues().toArray(), s[i].getAnnualFrequency(), true, null, regular, seasonal, true, true, false, false, false, 1e-7, "mean_delta");
             assertTrue(result != null);
-            System.out.print(result.getData("ll0.ll", Double.class));
-            System.out.print('\t');
-            System.out.print(result.getData("ll1.ll", Double.class));
-            System.out.print('\t');
-            System.out.println(result.getLtd().getModel().getVar1());
+//            System.out.print(result.getData("ll0.ll", Double.class));
+//            System.out.print('\t');
+//            System.out.print(result.getData("ll1.ll", Double.class));
+//            System.out.print('\t');
+//            System.out.println(result.getLtd().getModel().getVar1());
         }
     }
 
@@ -74,10 +74,10 @@ public class TimeVaryingArimaModelsTest {
         }
 
         TimeVaryingArimaModels.DecompositionResults arimaDecomposition = TimeVaryingArimaModels.arimaDecomposition(s.getValues().toArray(), s.getAnnualFrequency(), regular, seasonal, vvar, parameters, true);
-        System.out.println(arimaDecomposition.getDirectLikelihood());
-        System.out.println(arimaDecomposition.getDecompositionLikelihood());
-        System.out.println(arimaDecomposition.getDirectLikelihood().e());
-        System.out.println(arimaDecomposition.getDecompositionLikelihood().e());
+//        System.out.println(arimaDecomposition.getDirectLikelihood());
+//        System.out.println(arimaDecomposition.getDecompositionLikelihood());
+//        System.out.println(arimaDecomposition.getDirectLikelihood().e());
+//        System.out.println(arimaDecomposition.getDecompositionLikelihood().e());
         double[] data = arimaDecomposition.getData("direct_res", double[].class);
     }
 

@@ -76,22 +76,22 @@ public class TdArimaDecomposerTest {
         Ssf ssf1 = TdSsfArima.ssf(s.length, i -> models[i]);
         MarginalLikelihood mll1 = AkfToolkit.marginalLikelihoodComputer(true, true).compute(ssf1, new SsfData(s));
         DiffuseLikelihood dll1 = DkToolkit.likelihoodComputer(true, true, true).compute(ssf1, new SsfData(s));
-        System.out.println(mll1);
-        System.out.println(dll1);
+//        System.out.println(mll1);
+//        System.out.println(dll1);
 
         UcarimaModel[] ucarimaModels = decomposer.ucarimaModels();
 
         CompositeSsf ssf2 = TdSsfUcarima.of(s.length, i -> ucarimaModels[i]);
         MarginalLikelihood mll2 = AkfToolkit.marginalLikelihoodComputer(true, true).compute(ssf2, new SsfData(s));
         DiffuseLikelihood dll2 = DkToolkit.likelihoodComputer(true, true, true).compute(ssf2, new SsfData(s));
-        System.out.println(mll2);
-        System.out.println(dll2);
-        System.out.println(dll1.e());
-        System.out.println(dll2.e());
+//        System.out.println(mll2);
+//        System.out.println(dll2);
+//        System.out.println(dll1.e());
+//        System.out.println(dll2.e());
         DefaultSmoothingResults sf = DkToolkit.sqrtSmooth(ssf2, new SsfData(s), false, false);
 
         long t1 = System.currentTimeMillis();
-        System.out.println(t1 - t0);
+//        System.out.println(t1 - t0);
         int[] dim = ssf2.componentsDimension();
 
         DataBlock Z = DataBlock.make(ssf2.getStateDim());
@@ -100,18 +100,18 @@ public class TdArimaDecomposerTest {
         for (int i = 0, j = 0; i < dim.length; ++i) {
             double[] z = new double[Z.length()];
             Z.extract(j, dim[i]).copyTo(z, j);
-            System.out.println(sf.zcomponent(DoubleSeq.of(z)));
+//            System.out.println(sf.zcomponent(DoubleSeq.of(z)));
             j += dim[i];
         }
-        System.out.println(DoubleSeq.of(s));
-        for (int i = 0; i < ucarimaModels.length; ++i) {
-            UcarimaModel ucm = ucarimaModels[i];
-            for (int j = 0; j < ucm.getComponentsCount(); ++j) {
-                System.out.print(ucm.getComponent(j).getInnovationVariance());
-                System.out.print('\t');
-            }
-            System.out.println();
-        }
+//        System.out.println(DoubleSeq.of(s));
+//        for (int i = 0; i < ucarimaModels.length; ++i) {
+//            UcarimaModel ucm = ucarimaModels[i];
+//            for (int j = 0; j < ucm.getComponentsCount(); ++j) {
+//                System.out.print(ucm.getComponent(j).getInnovationVariance());
+//                System.out.print('\t');
+//            }
+//            System.out.println();
+//        }
     }
 
     @Test
@@ -138,15 +138,15 @@ public class TdArimaDecomposerTest {
                     .build();
             models2[i] = arima;
         }
-        System.out.println(models1[0]);
-        System.out.println(models2[0]);
-        System.out.println(ArimaModel.of(models1[0]).plus(ArimaModel.of(models2[0])));
+//        System.out.println(models1[0]);
+//        System.out.println(models2[0]);
+//        System.out.println(ArimaModel.of(models1[0]).plus(ArimaModel.of(models2[0])));
 
         Ssf ssf = TdSsfArima.ssf(s.length, i -> ArimaModel.of(models1[i]).plus(models2[i]));
 //        MarginalLikelihood mll1 = AkfToolkit.marginalLikelihoodComputer(true, true).compute(ssf, new SsfData(s));
         DiffuseLikelihood dll1 = DkToolkit.likelihoodComputer(true, true, true).compute(ssf, new SsfData(s));
 //        System.out.println(mll1);
-        System.out.println(dll1);
+//        System.out.println(dll1);
 
         StateComponent c1 = TdSsfArma.stateComponent(s.length, i->models1[i]);
         StateComponent c2 = TdSsfArma.stateComponent(s.length, i->models2[i]);
@@ -158,9 +158,9 @@ public class TdArimaDecomposerTest {
 //        MarginalLikelihood mll2 = AkfToolkit.marginalLikelihoodComputer(true, true).compute(ssf2, new SsfData(s));
         DiffuseLikelihood dll2 = DkToolkit.likelihoodComputer(true, true, true).compute(ssf2, new SsfData(s));
 //        System.out.println(mll2);
-        System.out.println(dll2);
-        System.out.println(dll1.e());
-        System.out.println(dll2.e());
+//        System.out.println(dll2);
+//        System.out.println(dll1.e());
+//        System.out.println(dll2.e());
     }
 
     public static double[] linear(int n, int nd, double a, double b) {

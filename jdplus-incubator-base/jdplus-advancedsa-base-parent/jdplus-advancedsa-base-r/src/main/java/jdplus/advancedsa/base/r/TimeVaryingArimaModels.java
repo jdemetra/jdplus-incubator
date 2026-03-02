@@ -39,7 +39,6 @@ import jdplus.toolkit.base.api.information.GenericExplorable;
 import jdplus.toolkit.base.core.arima.ArimaModel;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.sarima.SarimaModel;
-import jdplus.toolkit.base.core.ssf.SsfException;
 import jdplus.toolkit.base.core.ssf.likelihood.DiffuseLikelihood;
 import jdplus.toolkit.base.core.ssf.univariate.Ssf;
 

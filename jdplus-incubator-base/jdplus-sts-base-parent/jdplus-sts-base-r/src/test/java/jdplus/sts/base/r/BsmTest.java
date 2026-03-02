@@ -7,7 +7,6 @@ package jdplus.sts.base.r;
 
 import tck.demetra.data.Data;
 import jdplus.toolkit.base.r.modelling.Variables;
-import jdplus.sts.base.core.BasicStructuralModel;
 import jdplus.sts.base.core.LightBasicStructuralModel;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.api.timeseries.TsPeriod;

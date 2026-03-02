@@ -25,6 +25,7 @@ import jdplus.toolkit.base.core.ssf.ISsfDynamics;
 import jdplus.toolkit.base.core.ssf.ISsfInitialization;
 import jdplus.toolkit.base.core.ssf.ISsfLoading;
 import jdplus.toolkit.base.core.ssf.StateComponent;
+import jdplus.toolkit.base.core.ssf.arima.SsfArima2;
 import jdplus.toolkit.base.core.ssf.basic.IntegratedInitialization;
 import jdplus.toolkit.base.core.ssf.basic.Loading;
 

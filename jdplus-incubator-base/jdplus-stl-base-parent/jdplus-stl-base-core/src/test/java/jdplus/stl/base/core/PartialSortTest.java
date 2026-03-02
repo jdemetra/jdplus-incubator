@@ -61,15 +61,15 @@ public class PartialSortTest {
             int[] idx = new int[]{M1, M2};
             double[] w = z.clone();
             new PartialSort().psort(z, idx);
-            System.out.println(DoubleSeq.of(z));
+//            System.out.println(DoubleSeq.of(z));
             double m = z[M1] + z[M2];
             Arrays.sort(w);
-            System.out.println(DoubleSeq.of(w));
+//            System.out.println(DoubleSeq.of(w));
             double m2 = w[M1] + w[M2];
             if (m == m2)
                 ++s;
             //assertEquals(m, m2, 0);
         }
-        System.out.println(s);
+//        System.out.println(s);
     }
 }
