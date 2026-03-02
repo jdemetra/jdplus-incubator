@@ -37,9 +37,11 @@
     </scm>
 
     <properties>
-        <!-- Java 17 config -->
+        <!-- Java 21 config -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.outputTimestamp>2025-11-21T09:12:18Z</project.build.outputTimestamp>
+        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.release>21</maven.compiler.release>
         <requiredMavenVersion>3.9.11</requiredMavenVersion>
 
