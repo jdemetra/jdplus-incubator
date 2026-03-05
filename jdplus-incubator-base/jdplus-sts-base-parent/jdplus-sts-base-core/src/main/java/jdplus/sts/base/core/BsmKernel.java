@@ -33,7 +33,7 @@ import jdplus.toolkit.base.core.math.functions.TransformedFunction;
 import jdplus.toolkit.base.core.math.functions.bfgs.Bfgs;
 import jdplus.toolkit.base.core.math.functions.levmar.LevenbergMarquardtMinimizer;
 import jdplus.toolkit.base.core.math.functions.minpack.MinPackMinimizer;
-import internal.toolkit.base.core.math.functions.riso.LbfgsMinimizer;
+import jdplus.toolkit.base.core.math.functions.riso.LbfgsMinimizer;
 import jdplus.toolkit.base.core.math.functions.ssq.ProxyMinimizer;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.toolkit.base.core.ssf.dk.DkToolkit;

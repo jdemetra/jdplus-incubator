@@ -19,7 +19,7 @@ package jdplus.sts.base.core.msts;
 import jdplus.toolkit.base.core.math.functions.bfgs.Bfgs;
 import jdplus.toolkit.base.core.math.functions.levmar.LevenbergMarquardtMinimizer;
 import jdplus.toolkit.base.core.math.functions.minpack.MinPackMinimizer;
-import internal.toolkit.base.core.math.functions.riso.LbfgsMinimizer;
+import jdplus.toolkit.base.core.math.functions.riso.LbfgsMinimizer;
 import jdplus.toolkit.base.core.ssf.likelihood.MarginalLikelihoodFunction;
 import jdplus.toolkit.base.core.ssf.dk.SsfFunction;
 import jdplus.toolkit.base.core.ssf.composite.MultivariateCompositeSsf;
