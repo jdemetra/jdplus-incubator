@@ -34,12 +34,14 @@ import jdplus.toolkit.base.core.stats.likelihood.Likelihood;
 import jdplus.toolkit.base.api.math.functions.Optimizer;
 import jdplus.toolkit.base.api.ssf.SsfInitialization;
 import java.util.Arrays;
+import jdplus.sts.base.core.Utility;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.data.DataBlockIterator;
 import jdplus.toolkit.base.core.data.DataBlockStorage;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.toolkit.base.core.math.matrices.QuadraticForm;
 import jdplus.toolkit.base.core.ssf.ISsfLoading;
+import jdplus.toolkit.base.core.ssf.akf.QAugmentation;
 
 /**
  *
@@ -104,7 +106,7 @@ public class CompositeModelEstimation {
     public StateStorage getSmoothedStates() {
         if (smoothedStates == null) {
             try {
-                StateStorage ss = AkfToolkit.robustSmooth(getSsf(), new SsfMatrix(getData()), true, false);
+                StateStorage ss = Utility.smooth(getSsf(), new SsfMatrix(getData()), true, false, QAugmentation.DEFAULT_COLLAPSING);
                 if (likelihood.isScalingFactor()) {
                     ss.rescaleVariances(likelihood.sigma2());
                 }
@@ -122,8 +124,7 @@ public class CompositeModelEstimation {
                 smoothedStates = ss;
 
             } catch (Exception err) {
-//                StateStorage ss = AkfToolkit.smooth(getSsf(), new SsfMatrix(getData()), false, false, false);
-                StateStorage ss = DkToolkit.smooth(getSsf(), new SsfMatrix(getData()), true, false);
+                StateStorage ss = Utility.smooth(getSsf(), new SsfMatrix(getData()), true, false, QAugmentation.QType.QR);
                 if (!ss.hasVariances()) {
                     return null;
                 }
@@ -137,7 +138,7 @@ public class CompositeModelEstimation {
     }
 
     public StateStorage getFastSmoothedStates() {
-        return AkfToolkit.robustSmooth(getSsf(), new SsfMatrix(getData()), false, false);
+        return Utility.smooth(getSsf(), new SsfMatrix(getData()), false, false, QAugmentation.DEFAULT_COLLAPSING);
     }
 
     public StateStorage getFilteredStates() {

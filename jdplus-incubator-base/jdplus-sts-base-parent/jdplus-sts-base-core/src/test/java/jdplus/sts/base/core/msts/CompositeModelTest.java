@@ -143,8 +143,8 @@ public class CompositeModelTest {
         M.column(0).copyFrom(VAT_BUG, 0);
         CompositeModelEstimation rslt = model.estimate(M, false, true, SsfInitialization.SqrtDiffuse, Optimizer.LevenbergMarquardt, 1e-15, null);
         StateStorage states = rslt.getSmoothedStates();
-//        System.out.println(states.getComponent(0));
-//        System.out.println(states.getComponent(2));
+        System.out.println(states.getComponent(0));
+        System.out.println(states.getComponent(1));
     }
 
     @Test
@@ -166,9 +166,9 @@ public class CompositeModelTest {
         M.column(0).copyFrom(P1_ELEC, 0);
         CompositeModelEstimation rslt = model.estimate(M, false, true, SsfInitialization.SqrtDiffuse, Optimizer.LevenbergMarquardt, 1e-15, null);
         StateStorage states = rslt.getSmoothedStates();
-//        System.out.println(states.getComponent(0));
-//        System.out.println(states.getComponent(2));
-//        System.out.println(states.getComponent(5));
+        System.out.println(states.getComponent(0));
+        System.out.println(states.getComponent(2));
+        System.out.println(states.getComponent(5));
     }
 
     @Test
