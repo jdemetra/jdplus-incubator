@@ -36,7 +36,7 @@ public class ExtendedAirlineDescription implements ArimaDescription<ArimaModel>{
     
     public ExtendedAirlineDescription(ExtendedAirlineSpec spec){
         this.spec=spec;
-        this.mapping=ExtendedAirlineMapping.of(spec);
+        this.mapping=ExtendedAirlineMapping.of(spec, ExtendedAirlineMapping.EPS);
         this.model=mapping.getDefault();
     }
 

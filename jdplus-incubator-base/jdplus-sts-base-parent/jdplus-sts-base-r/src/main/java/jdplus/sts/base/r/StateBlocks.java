@@ -27,7 +27,6 @@ import jdplus.toolkit.base.core.ssf.ISsfDynamics;
 import jdplus.toolkit.base.core.ssf.ISsfInitialization;
 import jdplus.toolkit.base.core.ssf.ISsfLoading;
 import jdplus.toolkit.base.core.ssf.StateComponent;
-import static jdplus.toolkit.base.core.ssf.akf.AkfToolkit.var;
 import jdplus.toolkit.base.core.ssf.arima.SsfArima;
 import jdplus.toolkit.base.core.ssf.arima.SsfArma2;
 import jdplus.toolkit.base.core.ssf.basic.IntegratedDynamics;
@@ -38,6 +37,8 @@ import jdplus.toolkit.base.core.ssf.sts.LocalLevel;
 import jdplus.toolkit.base.core.ssf.sts.LocalLinearTrend;
 import jdplus.toolkit.base.core.ssf.sts.Noise;
 import jdplus.toolkit.base.core.ssf.sts.SeasonalComponent;
+import jdplus.toolkit.base.core.ssf.univariate.ISsf;
+import jdplus.toolkit.base.core.ssf.univariate.ISsfError;
 
 /**
  *
@@ -114,7 +115,7 @@ public class StateBlocks {
     public StateComponent composite(StateComponent[] cmps){
         return CompositeSsf.of(cmps);
     }
-
+    
     public double[] Z(ISsfLoading l, int pos, int m) {
         if (l == null) {
             return null;

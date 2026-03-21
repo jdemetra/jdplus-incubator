@@ -40,7 +40,7 @@ public class Initialization {
                 .diffuseDim(B.getColumnsCount())
                 .a0(a)
                 .Pf(FastMatrix.of(P))
-                .B(B==null ? null : FastMatrix.of(B))
+                .B(FastMatrix.of(B))
                 .Pi(Pi==null ? null : FastMatrix.of(Pi))
                 .build();
     }

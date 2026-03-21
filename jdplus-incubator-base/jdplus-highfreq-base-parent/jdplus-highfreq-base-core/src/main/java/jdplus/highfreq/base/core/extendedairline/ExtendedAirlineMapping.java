@@ -25,10 +25,12 @@ import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.highfreq.base.api.ExtendedAirlineSpec;
 
 public class ExtendedAirlineMapping implements IArimaMapping<ArimaModel> {
-    
-    public static ExtendedAirlineMapping of(ExtendedAirlineSpec spec){
-        return new ExtendedAirlineMapping(spec.getPeriodicities(), spec.isAdjustToInt(), spec.getDifferencingOrder(), spec.hasAr());
+
+    public static ExtendedAirlineMapping of(ExtendedAirlineSpec spec, double eps) {
+        return new ExtendedAirlineMapping(spec.getPeriodicities(), spec.isAdjustToInt(), spec.getDifferencingOrder(), spec.hasAr(), eps);
     }
+    
+    public static final double EPS=1e-4;
 
     private final double[] f0, f1;
     private final int[] p0;
@@ -36,9 +38,10 @@ public class ExtendedAirlineMapping implements IArimaMapping<ArimaModel> {
     private final boolean stationary;
     private final int nur1;
     private final boolean ar;
+    private final double eps;
 
     // internal stationary mapping
-    private ExtendedAirlineMapping(double[] f0, double[] f1, int[] p0, boolean round, boolean ar) {
+    private ExtendedAirlineMapping(double[] f0, double[] f1, int[] p0, boolean round, boolean ar, double eps) {
         this.f0 = f0;
         this.f1 = f1;
         this.p0 = p0;
@@ -46,10 +49,11 @@ public class ExtendedAirlineMapping implements IArimaMapping<ArimaModel> {
         this.stationary = true;
         this.nur1 = 0;
         this.ar = ar;
+        this.eps = eps;
     }
 
-    public ExtendedAirlineMapping(double[] periods) {
-        this(periods, false, -1, false);
+    public ExtendedAirlineMapping(double[] periods, double eps) {
+        this(periods, false, -1, false, eps);
     }
 
     /**
@@ -57,9 +61,10 @@ public class ExtendedAirlineMapping implements IArimaMapping<ArimaModel> {
      * @param periods
      * @param round
      * @param nur1
-     * @param ar 
+     * @param ar
      */
-    public ExtendedAirlineMapping(double[] periods, boolean round, int nur1, boolean ar) {
+    public ExtendedAirlineMapping(double[] periods, boolean round, int nur1, boolean ar, double eps) {
+        this.eps=eps;
         this.round = round;
         this.stationary = false;
         this.nur1 = nur1;
@@ -174,12 +179,12 @@ public class ExtendedAirlineMapping implements IArimaMapping<ArimaModel> {
 
     @Override
     public boolean checkBoundaries(DoubleSeq inparams) {
-        return inparams.allMatch(x -> Math.abs(x) <= .999);
+        return inparams.allMatch(x -> Math.abs(x) <= UB);
     }
 
     @Override
     public double epsilon(DoubleSeq inparams, int idx) {
-        return inparams.get(idx) > 0 ? -1e-6 : 1e-6;
+        return inparams.get(idx) > 0 ? -eps: eps;
     }
 
     @Override
@@ -197,21 +202,21 @@ public class ExtendedAirlineMapping implements IArimaMapping<ArimaModel> {
         return 1;
     }
 
-    private final static double UB = .99;
+    private final static double UB = .999;
 
     @Override
     public ParamValidation validate(DataBlock ioparams) {
         boolean changed = false;
         for (int i = 0; i < ioparams.length(); ++i) {
             double p = ioparams.get(i);
-            if (Math.abs(p) > 1 / UB) {
-                ioparams.set(i, 1 / p);
-                changed = true;
-            } else if (Math.abs(p) > UB) {
-                ioparams.set(i, p < 0 ? -UB : UB);
-                changed = true;
+            if (Math.abs(p) > UB) {
+                if (Math.abs(p) > 1 / UB) {
+                    ioparams.set(i, 1 / p);
+                } else {
+                    ioparams.set(i, p > 0 ? UB - 1e-6 : UB + 1e-6);
+                    changed = true;
+                }
             }
-
         }
         return changed ? ParamValidation.Changed : ParamValidation.Valid;
     }
@@ -224,9 +229,10 @@ public class ExtendedAirlineMapping implements IArimaMapping<ArimaModel> {
     @Override
     public DoubleSeq getDefaultParameters() {
         double[] p = new double[getDim()];
-        int i=0;
-        if (ar)
-            p[i++]=.2;
+        int i = 0;
+        if (ar) {
+            p[i++] = .2;
+        }
         for (; i < p.length; ++i) {
             p[i] = .8;
         }
@@ -235,6 +241,6 @@ public class ExtendedAirlineMapping implements IArimaMapping<ArimaModel> {
 
     @Override
     public IArimaMapping<ArimaModel> stationaryMapping() {
-        return stationary ? this : new ExtendedAirlineMapping(f0, f1, p0, round, ar);
+        return stationary ? this : new ExtendedAirlineMapping(f0, f1, p0, round, ar, eps);
     }
 }

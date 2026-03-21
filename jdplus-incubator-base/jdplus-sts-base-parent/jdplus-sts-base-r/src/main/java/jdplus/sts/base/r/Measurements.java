@@ -14,6 +14,7 @@ import jdplus.toolkit.base.core.ssf.multivariate.ISsfMeasurements;
 import jdplus.toolkit.base.core.ssf.univariate.ISsfMeasurement;
 import jdplus.toolkit.base.core.ssf.univariate.Measurement;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
+import jdplus.toolkit.base.core.ssf.ISsfLoading;
 
 /**
  *
@@ -32,6 +33,12 @@ public class Measurements {
 
     public ISsfMeasurements of(Matrix Z, Matrix H) {
         return new TimeInvariantMeasurements(FastMatrix.of(Z), FastMatrix.of(H), null);
+    }
+    
+    public double[] Z(ISsfLoading loading, int n, int pos){
+        DataBlock z = DataBlock.make(n);
+        loading.Z(pos, z);
+        return z.getStorage();
     }
 
 }

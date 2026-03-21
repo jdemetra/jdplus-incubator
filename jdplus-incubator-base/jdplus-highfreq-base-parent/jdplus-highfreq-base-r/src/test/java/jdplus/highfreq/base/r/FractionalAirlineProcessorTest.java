@@ -37,8 +37,8 @@ public class FractionalAirlineProcessorTest {
 
         double[] OBS_A = {2.52, 1.43, 0.77, 3.19, 1.6, 1000000, 0.95, 1.69, 1.91, 1.46, 1.21, 2.48, 1.35, 0.6, 1.09, 1.73, 0.58, 2.56, 1.48, 0.36, 0.12, 1.6, 0.87, 1.31, 2.19, 1.46, 0.45, 2.43, 2.98, 11.93, 0.08, 2.42, 2.99, 0.44, 0.36, 3.83, 0.44, 1.19, 3.25, 2.65, 2.86, 1.18, 0.92, 2.06, 1.28, 2.6, 1.82, 0.53, 1.2, 0.76};
         double[] logOBS_A = DoubleSeq.of(OBS_A).log().toArray();
-        ExtendedAirlineEstimation rslt_level_logOBS = FractionalAirlineProcessor.estimate(logOBS_A, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 3, 1e-12, false, 0, false);
-        ExtendedAirlineEstimation rslt_log_OBS = FractionalAirlineProcessor.estimate(OBS_A, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 0, true);
+        ExtendedAirlineEstimation rslt_level_logOBS = FractionalAirlineProcessor.estimate(logOBS_A, false, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 3.0, 0, 1e-12, 1e-4, true);
+        ExtendedAirlineEstimation rslt_log_OBS = FractionalAirlineProcessor.estimate(OBS_A, true, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 0, 1e-12, 1e-4, true);
         assertEquals(rslt_level_logOBS.getOutliers().length, rslt_log_OBS.getOutliers().length, "Differnce in Number of outliers");
         assertEquals(Arrays.toString(rslt_level_logOBS.getOutliers()), Arrays.toString(rslt_log_OBS.getOutliers()), "Difference in Outlier");
     }
@@ -48,8 +48,8 @@ public class FractionalAirlineProcessorTest {
 
         double[] OBS_Na = {2.52, 1.43, 0.77, 3.19, 1.6, Double.NaN, 0.95, 1.69, 1.91, 1.46, 1.21, 2.48, 1.35, 0.6, 1.09, 1.73, 0.58, 2.56, 1.48, 0.36, 0.12, 1.6, 0.87, 1.31, 2.19, 1.46, 0.45, 2.43, 2.98, 11.93, 0.08, 2.42, 2.99, 0.44, 0.36, 3.83, 0.44, 1.19, 3.25, 2.65, 2.86, 1.18, 0.92, 2.06, 1.28, 2.6, 1.82, 0.53, 1.2, 0.76};
         double[] logOBS_NA = DoubleSeq.of(OBS_Na).log().toArray();
-        ExtendedAirlineEstimation rslt_level_logOBS = FractionalAirlineProcessor.estimate(logOBS_NA, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 3, 1e-12, false, 0, false);
-        ExtendedAirlineEstimation rslt_log_OBS = FractionalAirlineProcessor.estimate(OBS_Na, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 0, true);
+        ExtendedAirlineEstimation rslt_level_logOBS = FractionalAirlineProcessor.estimate(logOBS_NA, false, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 3, 0, 1e-12, 1e-4, true);
+        ExtendedAirlineEstimation rslt_log_OBS = FractionalAirlineProcessor.estimate(OBS_Na, true, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 0, 1e-12, 1e-4, true);
         assertEquals(rslt_level_logOBS.getMissing().length, rslt_log_OBS.getMissing().length, "Differnce in Number of Missing");
         assertArrayEquals(rslt_level_logOBS.getMissing(), rslt_log_OBS.getMissing(), "Difference in Missing");
         int[] arr = {5};
@@ -59,8 +59,8 @@ public class FractionalAirlineProcessorTest {
     @Test
     public void EstimationLog() {
 
-        ExtendedAirlineEstimation rslt_level_logOBS = FractionalAirlineProcessor.estimate(logOBS, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 0, false);
-        ExtendedAirlineEstimation rslt_log_OBS = FractionalAirlineProcessor.estimate(OBS, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 0, true);
+        ExtendedAirlineEstimation rslt_level_logOBS = FractionalAirlineProcessor.estimate(logOBS, false, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 0, 1e-12, 1e-4, true);
+        ExtendedAirlineEstimation rslt_log_OBS = FractionalAirlineProcessor.estimate(OBS, true, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 0, 1e-12, 1e-4, true);
 
         assertFalse(rslt_level_logOBS.isLog(), "Logs are taken");
         assertTrue(rslt_log_OBS.isLog(), "Logs are not taken");
@@ -102,12 +102,12 @@ public class FractionalAirlineProcessorTest {
     @Test
     public void EstimationLogFcast() {
 
-        ExtendedAirlineEstimation rslt_level_logOBS = FractionalAirlineProcessor.estimate(logOBS_minus1, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 1, false);
-        ExtendedAirlineEstimation rslt_log_OBS = FractionalAirlineProcessor.estimate(OBS_minus1, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 1, true);
+        ExtendedAirlineEstimation rslt_level_logOBS = FractionalAirlineProcessor.estimate(logOBS_minus1, false, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1, 1e-12, 1e-4, true);
+        ExtendedAirlineEstimation rslt_log_OBS = FractionalAirlineProcessor.estimate(OBS_minus1, true, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1, 1e-12, 1e-4, true);
         assertEquals(rslt_level_logOBS.getOutliers().length, rslt_log_OBS.getOutliers().length, "Number of outliers");
 
-        assertArrayEquals(rslt_level_logOBS.getY(), DoubleSeq.of(rslt_log_OBS.getY()).log().toArray(),0.00000001, "Difference in Original Series inkl. one fcast");
-        assertArrayEquals(rslt_level_logOBS.linearized(), rslt_log_OBS.linearized(),0.00000001, "Difference in Original Series inkl. one fcast");
+        assertArrayEquals(rslt_level_logOBS.getY(), DoubleSeq.of(rslt_log_OBS.getY()).log().toArray(), 0.00000001, "Difference in Original Series inkl. one fcast");
+        assertArrayEquals(rslt_level_logOBS.linearized(), rslt_log_OBS.linearized(), 0.00000001, "Difference in Original Series inkl. one fcast");
 
     }
 
@@ -118,7 +118,7 @@ public class FractionalAirlineProcessorTest {
         double[] Reg = {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0};
 
         Matrix Matrix_Reg = Matrix.of(Reg, Reg.length, 1);
-        ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(OBS, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 0);
+        ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(OBS, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 0, 1e-12, 1e-4, true);
         //  System.out.println(rslt.getLikelihood());
 
     }
@@ -130,7 +130,7 @@ public class FractionalAirlineProcessorTest {
         double[] Reg = {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0};
 
         Matrix Matrix_Reg = Matrix.of(Reg, Reg.length, 1);
-        ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(OBS, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1e-12, false, 1);
+        ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(OBS, Matrix_Reg, false, new double[]{7}, 1, false, new String[]{"ao"}, 6, 1, 1e-12, 1e-4, true);
         assertEquals(OBS.length + 1, rslt.getY().length, "Forcast has the wrong length");
 
     }
@@ -138,7 +138,7 @@ public class FractionalAirlineProcessorTest {
     @Test
     public void testWeeklyDecomp() {
         DoubleSeq y = DoubleSeq.of(WeeklyData.US_CLAIMS2).log();
-        LightExtendedAirlineDecomposition rslt = FractionalAirlineProcessor.decompose(y.toArray(), 365.25 / 7, false, true, 0, 0);
+        LightExtendedAirlineDecomposition rslt = FractionalAirlineProcessor.decompose(y.toArray(), 365.25 / 7, false, true, 0, 0, 1e-6, 1e-4);
 //        System.out.println(rslt.component("t").getData());
 //        System.out.println(rslt.component("s").getData());
 //        System.out.println(rslt.component("i").getData());
@@ -152,7 +152,7 @@ public class FractionalAirlineProcessorTest {
     @Test
     public void testWeeklyEstimation_mini() {
         ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(WeeklyData.US_CLAIMS2, null, false, new double[]{52},
-                2, false, null, 6, 1e-12, false, 0);
+                2, false, null, 6, 0, 1e-12, 1e-4, true);
 
 //        System.out.println();
     }
@@ -160,7 +160,7 @@ public class FractionalAirlineProcessorTest {
     @Test
     public void testWeeklyEstimation() {
         ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(WeeklyData.US_CLAIMS2, null, false, new double[]{52},
-                -1, false, new String[]{"ao", "ls", "wo"}, 5, 1e-12, true, 0);
+                -1, false, new String[]{"ao", "ls", "wo"}, 5, 0, 1e-12, 1e-4, true);
 //        System.out.println(rslt.getLikelihood());
 //        System.out.println();
     }
@@ -205,10 +205,10 @@ public class FractionalAirlineProcessorTest {
         Matrix x = Matrix.of(REGRES, data.length + nforecast, 1);
 
         ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(data, x, false, new double[]{12},
-                -1, false, null, 6, 1e-12, false, nforecast);
-             
+                -1, false, null, 6, nforecast, 1e-12, 1e-6, true);
+
         for (int i = 0; i < (rslt.getY().length - data.length); i++) {
-            boolean ident = Math.abs(Math.round(10000*rslt.getY()[i + data.length])/10000.0 - rdata[i]) > 0.00000001;
+            boolean ident = Math.abs(Math.round(10000 * rslt.getY()[i + data.length]) / 10000.0 - rdata[i]) > 0.00000001;
             assertFalse(ident, "The forecasts do not match, for " + i);
         }
     }
@@ -232,7 +232,8 @@ public class FractionalAirlineProcessorTest {
         Matrix x = Matrix.of(data, WeeklyData.US_CLAIMS2.length + 7, 2);
 
         ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(WeeklyData.US_CLAIMS2, x, false, new double[]{365.25 / 7},
-                -1, false, new String[]{"ao", "wo", "ls"}, 5, 1e-12, true, 7);
+                -1, false, new String[]{"ao", "wo", "ls"}, 5.0, 7,
+                1e-12, 1e-4, true);
 
         for (int i = 0; i < rslt.component_ls().length; i++) {
             boolean comp_out = Math.abs(rslt.component_ls()[i] + rslt.component_ao()[i] + rslt.component_wo()[i] - rslt.component_outliers()[i]) > 0.00000001;
@@ -251,7 +252,7 @@ public class FractionalAirlineProcessorTest {
     public void testComponentEstimation_with_fcast_withoutReg() {
 
         ExtendedAirlineEstimation rslt = FractionalAirlineProcessor.estimate(WeeklyData.US_CLAIMS2, null, false, new double[]{365.25 / 7},
-                -1, false, new String[]{"ao", "wo", "ls"}, 5, 1e-12, true, 7);
+                -1, false, new String[]{"ao", "wo", "ls"}, 5, 7, 1e-12, 1e-4,true);
 
         for (int i = 0; i < rslt.component_ls().length; i++) {
             boolean comp_out = Math.abs(rslt.component_ls()[i] + rslt.component_ao()[i] + rslt.component_wo()[i] - rslt.component_outliers()[i]) > 0.00000001;
@@ -268,7 +269,7 @@ public class FractionalAirlineProcessorTest {
 
     @Test
     public void testWeeklySsf() {
-        LightExtendedAirlineDecomposition rslt = FractionalAirlineProcessor.decompose(WeeklyData.US_CLAIMS2, new double[]{365.25 / 7}, -1, false, true, 7, 7);
+        LightExtendedAirlineDecomposition rslt = FractionalAirlineProcessor.decompose(WeeklyData.US_CLAIMS2, new double[]{365.25 / 7}, -1, false, true, 7, 7, 1e-6, 1e-4);
         SsfUcarimaEstimation details = FractionalAirlineProcessor.ssfDetails(rslt);
         assertNotSame(null, details.getData("smoothing.states", Matrix.class
         ));

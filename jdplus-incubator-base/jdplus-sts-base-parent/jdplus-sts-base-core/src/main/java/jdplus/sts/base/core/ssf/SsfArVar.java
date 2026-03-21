@@ -19,8 +19,10 @@ import lombok.NonNull;
 import jdplus.toolkit.base.core.ssf.ISsfLoading;
 
 /**
- * AR model with time-varying variances Dynamics of the state array for y(t) =
- * ar(0) y(t-1)+ ... + ar(p)y(t-p-1) The state array block contains y(t),
+ * AR model with time-varying variances 
+ * Dynamics of the state array for y(t) =
+ * ar(0) y(t-1)+ ... + ar(p)y(t-p-1) 
+ * The state array block contains y(t),
  * y(t-1)...y(t-p)
  *
  * @author PALATEJ

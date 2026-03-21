@@ -37,28 +37,33 @@ import jdplus.highfreq.base.core.ssf.extractors.SsfUcarimaEstimation;
 @lombok.experimental.UtilityClass
 public class FractionalAirlineProcessor {
 
-    public LightExtendedAirlineDecomposition decompose(double[] s, double period, boolean sn, boolean cov, int nb, int nf) {
+    public LightExtendedAirlineDecomposition decompose(double[] s, double period, boolean sn, boolean cov, int nb, int nf, double eps, double deps) {
         int iperiod = (int) period;
         if (Math.abs(period - iperiod) < 1e-9) {
             period = iperiod;
         }
-        return ExtendedAirlineDecomposer.decompose(DoubleSeq.of(s), period, sn, cov, nb, nf);
+        return ExtendedAirlineDecomposer.decompose(DoubleSeq.of(s), period, sn, cov, nb, nf, eps, deps);
     }
 
-    public LightExtendedAirlineDecomposition decompose(double[] s, double[] periods, int ndiff, boolean ar, boolean cov, int nb, int nf) {
-        return ExtendedAirlineDecomposer.decompose(DoubleSeq.of(s), periods, ndiff, ar, cov, nb, nf);
+    public LightExtendedAirlineDecomposition decompose(double[] s, double[] periods, 
+            int ndiff, boolean ar, boolean cov, int nb, int nf, 
+            double eps, double deps) {
+        return ExtendedAirlineDecomposer.decompose(DoubleSeq.of(s), periods, ndiff, ar, cov, nb, nf, eps, deps);
     }
 
-    public ExtendedAirlineEstimation estimate(double[] y, Matrix x, boolean mean, double[] periods, int ndiff, boolean ar, String[] outliers, double cv, double precision, boolean approximateHessian, int nfcasts) {
-        return estimate(y, x, mean, periods, ndiff, ar, outliers, cv, precision, approximateHessian, nfcasts, false);
+    public ExtendedAirlineEstimation estimate(double[] y, Matrix x, boolean mean, double[] periods, 
+            int ndiff, boolean ar, String[] outliers, double cv, int nfcasts, double eps, double deps, boolean approximateHessian) {
+        return estimate(y, false, x, mean, periods, ndiff, ar, outliers, cv, nfcasts, eps, deps, approximateHessian);
     }
 
-    public ExtendedAirlineEstimation estimate(double[] y, Matrix x, boolean mean, double[] periods, int ndiff, boolean ar, String[] outliers, double cv, double precision, boolean approximateHessian, int nfcasts, boolean log) {
+    public ExtendedAirlineEstimation estimate(double[] y, boolean log, Matrix x, boolean mean, double[] periods, 
+            int ndiff, boolean ar, String[] outliers, double cv, int nfcasts, 
+            double eps, double deps, boolean approximateHessian) {
         ExtendedAirlineSpec spec = ExtendedAirlineSpec.builder().periodicities(periods).differencingOrder(ndiff).phi(ar ? Parameter.undefined() : null).theta(ar ? null : Parameter.undefined()).adjustToInt(false).build();
-        return ExtendedAirlineKernel.fastProcess(DoubleSeq.of(y), x, mean, outliers, cv, spec, precision, nfcasts, log);
+        return ExtendedAirlineKernel.fastProcess(DoubleSeq.of(y), log, x, mean, outliers, cv, spec, nfcasts, eps,  deps);
     }
 
-    public double[] random(double[] periods, double theta, double[] stheta, boolean adjust, int n, double[] initial, double stdev, int warmup) {
+    public double[] random(double[] periods, double theta, double[] stheta, boolean adjust, int n, double[] initial, double stdev, int warmup, double deps) {
         ExtendedAirlineSpec spec = ExtendedAirlineSpec.builder()
                 .periodicities(periods)
                 .theta(Parameter.undefined())
@@ -66,7 +71,7 @@ public class FractionalAirlineProcessor {
                 .adjustToInt(adjust)
                 .build();
 
-        ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec);
+        ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec, deps);
         double[] p = new double[stheta.length + 1];
         p[0] = theta;
         for (int i = 0; i < stheta.length; ++i) {

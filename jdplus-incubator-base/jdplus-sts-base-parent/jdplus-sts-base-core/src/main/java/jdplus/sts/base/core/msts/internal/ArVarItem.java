@@ -19,7 +19,6 @@ package jdplus.sts.base.core.msts.internal;
 import jdplus.sts.base.core.msts.StateItem;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.sts.base.core.msts.ArInterpreter;
-import jdplus.sts.base.core.msts.VarianceInterpreter;
 import jdplus.toolkit.base.core.ssf.arima.SsfAr;
 import java.util.Arrays;
 import java.util.List;
