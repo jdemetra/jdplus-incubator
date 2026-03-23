@@ -251,11 +251,11 @@ public class ExtendedAirlineKernel {
         model.addVariable(var);
     }
 
-    public static ExtendedAirlineEstimation fastProcess(DoubleSeq y, Matrix X, boolean mean, String[] outliers, double cv, ExtendedAirlineSpec spec, double eps, boolean log) {
-        return fastProcess(y, X, mean, outliers, cv, spec, eps, 0, log);
+    public static ExtendedAirlineEstimation fastProcess(DoubleSeq y, boolean log, Matrix X, boolean mean, String[] outliers, double cv, ExtendedAirlineSpec spec, double eps, double deps) {
+        return fastProcess(y, log, X, mean, outliers, cv, spec, 0, eps, deps);
     }
 
-    public static ExtendedAirlineEstimation fastProcess(DoubleSeq y, Matrix X, boolean mean, String[] outliers, double cv, ExtendedAirlineSpec spec, double eps, int nfcasts, boolean log) {
+    public static ExtendedAirlineEstimation fastProcess(DoubleSeq y, boolean log, Matrix X, boolean mean, String[] outliers, double cv, ExtendedAirlineSpec spec, int nfcasts, double eps, double deps) {
 
 //Missing
         int nz = y.length();
@@ -298,7 +298,7 @@ public class ExtendedAirlineKernel {
             X_withoutFcast = X;
         }
 
-        final ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec);
+        final ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec, deps);
         //
         RegArimaModel.Builder builder = RegArimaModel.<ArimaModel>builder()
                 .y(y)
@@ -586,7 +586,7 @@ break;
     }
 
     public static ArimaModel estimate(DoubleSeq s, double period) {
-        ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(new double[]{period});
+        ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(new double[]{period}, ExtendedAirlineMapping.EPS);
 
         GlsArimaProcessor.Builder<ArimaModel> builder = GlsArimaProcessor.builder(ArimaModel.class
         );

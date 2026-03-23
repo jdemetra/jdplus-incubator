@@ -76,7 +76,7 @@ public class MultiPeriodicAirlineMappingTest {
         InputStream stream = Data.class.getResourceAsStream("edf.txt");
         Matrix edf = MatrixSerializer.read(stream);
         DoubleSeq y = edf.column(0).log();
-        final ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(new double[]{7}, false, 2, false);
+        final ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(new double[]{7}, false, 2, false, ExtendedAirlineMapping.EPS);
         GlsArimaProcessor<ArimaModel> processor = GlsArimaProcessor.builder(ArimaModel.class)
                 .precision(1e-7)
                 .build();
@@ -113,7 +113,7 @@ public class MultiPeriodicAirlineMappingTest {
         InputStream stream = Data.class.getResourceAsStream("edf.txt");
         Matrix edf = MatrixSerializer.read(stream);
         DoubleSeq y = edf.column(0).log();
-        final ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(new double[]{7}, false, 1, true);
+        final ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(new double[]{7}, false, 1, true, ExtendedAirlineMapping.EPS);
         GlsArimaProcessor<ArimaModel> processor = GlsArimaProcessor.builder(ArimaModel.class)
                 .precision(1e-7)
                 .build();
@@ -151,7 +151,7 @@ public class MultiPeriodicAirlineMappingTest {
         InputStream stream = Data.class.getResourceAsStream("edf.txt");
         Matrix edf = MatrixSerializer.read(stream);
         DoubleSeq y = edf.column(0).log();
-        final ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(new double[]{7, 365}, true, 2, false);
+        final ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(new double[]{7, 365}, true, 2, false, ExtendedAirlineMapping.EPS);
         GlsArimaProcessor<ArimaModel> processor = GlsArimaProcessor.builder(ArimaModel.class)
                 .precision(1e-7)
                 .build();
@@ -178,7 +178,7 @@ public class MultiPeriodicAirlineMappingTest {
         InputStream stream = Data.class.getResourceAsStream("edf.txt");
         Matrix edf = MatrixSerializer.read(stream);
         DoubleSeq y = edf.column(0).log();
-        final ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(new double[]{7, 365}, true, 2, true);
+        final ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(new double[]{7, 365}, true, 2, true, ExtendedAirlineMapping.EPS);
         GlsArimaProcessor<ArimaModel> processor = GlsArimaProcessor.builder(ArimaModel.class)
                 .precision(1e-7)
                 .build();
@@ -205,7 +205,7 @@ public class MultiPeriodicAirlineMappingTest {
     public static void testDaily3() throws IOException {
         InputStream stream = Data.class.getResourceAsStream("edf.txt");
         Matrix edf = MatrixSerializer.read(stream);
-        final ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(new double[]{7, 365}, true, 2, false);
+        final ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(new double[]{7, 365}, true, 2, false, ExtendedAirlineMapping.EPS);
         GlsArimaProcessor<ArimaModel> processor = GlsArimaProcessor.builder(ArimaModel.class)
                 .precision(1e-5)
                 .build();
@@ -263,7 +263,7 @@ public class MultiPeriodicAirlineMappingTest {
     public void testOutliers() throws IOException {
         InputStream stream = Data.class.getResourceAsStream("births.txt");
         Matrix edf = MatrixSerializer.read(stream);
-        final ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(new double[]{7, 365.25}, true, -1, false);
+        final ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(new double[]{7, 365.25}, true, -1, false, ExtendedAirlineMapping.EPS);
         GlsArimaProcessor<ArimaModel> processor = GlsArimaProcessor.builder(ArimaModel.class)
                 .precision(1e-5)
                 .build();

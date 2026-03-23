@@ -43,7 +43,7 @@ public class ExtendedAirlineMappingTest {
                 .periodicities(new double[]{7, 365.25})
                 .stheta(Parameter.make(2))
                 .build();
-        ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec);
+        ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec, ExtendedAirlineMapping.EPS);
         DoubleSeq p = mapping.getDefaultParameters();
         ArimaModel m = mapping.map(p);
 //        System.out.println(m);
@@ -60,7 +60,7 @@ public class ExtendedAirlineMappingTest {
                 .periodicities(new double[]{7, 365.25})
                 .stheta(Parameter.make(2))
                 .build();
-        ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec);
+        ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec, ExtendedAirlineMapping.EPS);
         DoubleSeq p = mapping.getDefaultParameters();
         ArimaModel m = mapping.map(p);
 //        System.out.println(m);
@@ -77,7 +77,7 @@ public class ExtendedAirlineMappingTest {
                 .periodicities(new double[]{7, 365.25})
                 .stheta(Parameter.make(2))
                 .build();
-        ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec);
+        ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec, ExtendedAirlineMapping.EPS);
         DoubleSeq p = mapping.getDefaultParameters();
         ArimaModel m = mapping.map(p);
 //        System.out.println(m);
@@ -94,7 +94,7 @@ public class ExtendedAirlineMappingTest {
                 .periodicities(new double[]{7, 365.25})
                 .stheta(Parameter.make(2))
                 .build();
-        ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec);
+        ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec, ExtendedAirlineMapping.EPS);
         DoubleSeq p = mapping.getDefaultParameters();
         ArimaModel m = mapping.map(p);
 //        System.out.println(m);

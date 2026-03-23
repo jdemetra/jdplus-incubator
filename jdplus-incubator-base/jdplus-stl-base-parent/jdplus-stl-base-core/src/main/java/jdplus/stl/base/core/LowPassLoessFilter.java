@@ -17,7 +17,6 @@
 package jdplus.stl.base.core;
 
 import jdplus.stl.base.api.LoessSpec;
-import jdplus.toolkit.base.api.data.DoubleSeq;
 
 /**
  *
