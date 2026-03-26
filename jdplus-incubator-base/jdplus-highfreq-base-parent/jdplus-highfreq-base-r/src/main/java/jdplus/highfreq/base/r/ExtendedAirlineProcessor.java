@@ -47,7 +47,7 @@ public class ExtendedAirlineProcessor {
                 .build();
     }
 
-    public RegArimaModel<ArimaModel> regarima(double[] Y, boolean mean, Matrix X, ExtendedAirlineSpec spec, double deps) {
+    public RegArimaModel<ArimaModel> regarima(double[] Y, boolean mean, Matrix X, ExtendedAirlineSpec spec) {
         DoubleSeq y = DoubleSeq.of(Y);
         //Missing
         int nz = y.length();
@@ -74,7 +74,7 @@ public class ExtendedAirlineProcessor {
             missing = IntList.EMPTY;
         }
 
-        final ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec, deps);
+        ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec, 0);
         //
         return RegArimaModel.<ArimaModel>builder()
                 .y(y)
@@ -107,12 +107,12 @@ public class ExtendedAirlineProcessor {
         }
     }
 
-    public Matrix outliers(RegArimaModel<ArimaModel> regarima, ExtendedAirlineSpec spec, String[] outliers, int start, int end, double cv, int maxoutliers, int maxround, double deps) {
+    public Matrix outliers(RegArimaModel<ArimaModel> regarima, ExtendedAirlineSpec spec, String[] outliers, int start, int end, double cv, int maxoutliers, int maxround, double precision, double deps) {
         LevenbergMarquardtMinimizer.LmBuilder min = LevenbergMarquardtMinimizer.builder().maxIter(5);
         GlsArimaProcessor<ArimaModel> processor = GlsArimaProcessor.builder(ArimaModel.class
         )
                 .minimizer(min)
-                .precision(1e-5)
+                .precision(precision)
                 .build();
         IOutlierFactory[] factories = factories(outliers);
         OutliersDetectionModule od = OutliersDetectionModule.build(ArimaModel.class
