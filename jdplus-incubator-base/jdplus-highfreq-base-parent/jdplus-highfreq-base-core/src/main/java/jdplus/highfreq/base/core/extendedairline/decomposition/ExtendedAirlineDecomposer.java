@@ -25,6 +25,7 @@ import jdplus.sa.base.api.ComponentType;
 import java.util.Arrays;
 import jdplus.toolkit.base.core.arima.ArimaModel;
 import jdplus.toolkit.base.core.arima.IArimaModel;
+import jdplus.toolkit.base.core.arima.Spectrum;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.data.DataBlockStorage;
 import jdplus.toolkit.base.core.math.functions.levmar.LevenbergMarquardtMinimizer;
@@ -215,7 +216,7 @@ public class ExtendedAirlineDecomposer {
         RegArimaEstimation<ArimaModel> rslt = monitor.process(regarima, mapping);
         LogLikelihoodFunction.Point<RegArimaModel<ArimaModel>, ConcentratedLikelihoodWithMissing> max = rslt.getMax();
         DoubleSeq parameters = max.getParameters();
-        UcarimaModel ucm = ucm(rslt.getModel().arima(), ip);
+        UcarimaModel ucm = ucm3(rslt.getModel().arima(), ip);
 
 //        IArimaModel sum = ucm.getModel();
 //        UcarimaModel ucmt;
@@ -228,7 +229,6 @@ public class ExtendedAirlineDecomposer {
 //                .model(sum)
 //                .add(all)
 //                .build();
-
         LightExtendedAirlineDecomposition.Builder dbuilder = LightExtendedAirlineDecomposition.builder()
                 .model(ExtendedAirline.builder()
                         .periodicities(dp)
@@ -327,7 +327,7 @@ public class ExtendedAirlineDecomposer {
         }
 //        decomposer.add(ssel);
         UcarimaModel ucm = decomposer.decompose(arimac);
-        int nc=ucm.getComponentsCount();
+        int nc = ucm.getComponentsCount();
         if (tr != null) {
             ArimaModel[] components = ucm.getComponents();
 //        int last = components.length - 1;
@@ -340,11 +340,128 @@ public class ExtendedAirlineDecomposer {
         }
         ucm = ucm.setVarianceMax(-1, true);
         ucm = ucm.simplify();
-        int n=ucm.getComponentsCount();
-        if (tr != null && n>nc+1){
+        int n = ucm.getComponentsCount();
+        if (tr != null && n > nc + 1) {
             ucm = ucm.compact(nc, 2);
         }
         return ucm;
+    }
+
+    public static UcarimaModel ucm2(IArimaModel arima, int[] periods) {
+
+        TrendCycleSelector tsel = new TrendCycleSelector();
+        AllSelector ssel = new AllSelector();
+
+        int[] np = periods.clone();
+        Arrays.sort(np);
+
+        ModelDecomposer decomposer = new ModelDecomposer();
+        decomposer.add(tsel);
+        for (int i = 0; i < np.length; ++i) {
+            decomposer.add(new SeasonalSelector(np[i], 1e-6));
+        }
+        decomposer.add(ssel);
+        UcarimaModel ucm = decomposer.decompose(arima);
+        ucm = setVarianceMax(ucm, true);
+        return ucm;
+    }
+
+    public static UcarimaModel ucm3(IArimaModel arima, int[] periods) {
+
+        // first, we check that q <= p. 
+        // Otherwise, we extract the transitory component and we decompose the remainder
+        BackFilter ar = arima.getAr(), ma = arima.getMa();
+        ArimaModel tr = null;
+        IArimaModel arimac = arima;
+        if (ma.getDegree() > ar.getDegree()) {
+            RootDecomposer rdecomposer = new RootDecomposer();
+            rdecomposer.setModel(ArimaModel.of(arima));
+            arimac = rdecomposer.getSignal();
+            tr = rdecomposer.getNoise();
+        }
+        TrendCycleSelector tsel = new TrendCycleSelector();
+        int[] np = periods.clone();
+        Arrays.sort(np);
+
+        ModelDecomposer decomposer = new ModelDecomposer();
+        decomposer.add(tsel);
+        for (int i = 0; i < np.length; ++i) {
+            decomposer.add(new SeasonalSelector(np[i], 1e-6));
+        }
+        UcarimaModel ucm = decomposer.decompose(arimac);
+        // ucm contains the trend and the seasonals (no irregular)
+        int nc = ucm.getComponentsCount();
+        // we add either the transitory or an empty irregular (wn with 0 var)
+        UcarimaModel.Builder builder = UcarimaModel.builder()
+                .model(arima)
+                .add(ucm.getComponents());
+        if (tr != null) {
+            builder.add(tr);
+        } else {
+            builder.add(ArimaModel.NULL);
+        }
+        ucm = setVarianceMax(builder.build(), true);
+        return ucm;
+    }
+
+    /**
+     * Put all the noise in the last component and adjust the model to a
+     * decomposable one if need be.
+     *
+     * @param ucm
+     * @param adjustModel
+     * @return
+     */
+    public static UcarimaModel setVarianceMax(UcarimaModel ucm, boolean adjustModel) {
+        double var = 0;
+        ArimaModel[] components = ucm.getComponents().clone();
+        int n = components.length - 1;
+        Spectrum.Minimizer min = new Spectrum.Minimizer();
+        // Do all the components canonical, except the last one
+        for (int i = 0; i < n; ++i) {
+            ArimaModel m = components[i];
+            if (m != null) {
+                min.minimize(m.getSpectrum());
+                if (min.getMinimum() != 0) {
+                    var += min.getMinimum();
+                    components[i] = m.minus(min.getMinimum());
+                }
+            }
+        }
+        ArimaModel nmodel = components[n];
+        if (var >= 0) {
+            // we just need to add the noise in the last component
+            components[n] = nmodel.plus(var);
+        } else {
+            min.minimize(nmodel.getSpectrum());
+            double nmin = min.getMinimum();
+            if (nmin >= -var) {
+            // The last component is noisy enough to absorb some negative var
+                components[n] = nmodel.plus(var);
+            } else if (adjustModel) {
+                // -var-nmin>
+                var=-var-nmin;
+                // If the last component is a white noise, we suppress it and we
+                // add to the model the needed noise
+                if (nmodel.isWhiteNoise()) {
+                    ArimaModel[] ncomponents = Arrays.copyOf(components, n);
+                    return UcarimaModel.builder()
+                            .model(ArimaModel.of(ucm.getModel()).plus(var))
+                            .add(ncomponents)
+                            .build();
+                } else {
+                    // Otherwise, we must keep the last component, made canonical
+                    components[n] = nmodel.minus(nmin);
+                    return UcarimaModel.builder()
+                            .model(ArimaModel.of(ucm.getModel()).plus(var))
+                            .add(components)
+                            .build();
+                }
+            } else {
+                return null;
+            }
+        }
+        return UcarimaModel.builder().model(ucm.getModel()).add(components).build();
     }
 
 }
