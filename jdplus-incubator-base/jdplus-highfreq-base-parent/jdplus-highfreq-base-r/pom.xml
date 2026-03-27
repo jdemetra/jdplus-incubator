@@ -20,11 +20,6 @@
         <!-- compile and runtime -->
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
-            <artifactId>jdplus-highfreq-base-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>eu.europa.ec.joinup.sat</groupId>
             <artifactId>jdplus-highfreq-base-core</artifactId>
             <version>${project.version}</version>
         </dependency>

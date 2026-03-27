@@ -218,17 +218,6 @@ public class ExtendedAirlineDecomposer {
         DoubleSeq parameters = max.getParameters();
         UcarimaModel ucm = ucm3(rslt.getModel().arima(), ip);
 
-//        IArimaModel sum = ucm.getModel();
-//        UcarimaModel ucmt;
-//        ArimaModel[] all = new ArimaModel[ucm.getComponentsCount()];
-//        for (int i = 0; i < all.length; ++i) {
-//            ArimaModel m = ucm.getComponent(i);
-//            all[i] = m;
-//        }
-//        ucmt = UcarimaModel.builder()
-//                .model(sum)
-//                .add(all)
-//                .build();
         LightExtendedAirlineDecomposition.Builder dbuilder = LightExtendedAirlineDecomposition.builder()
                 .model(ExtendedAirline.builder()
                         .periodicities(dp)
@@ -245,6 +234,8 @@ public class ExtendedAirlineDecomposer {
         ISsfData data = new ExtendedSsfData(new SsfData(s), nb, nf);
         int[] pos = ssf.componentsPosition();
         DoubleSeq sc = s;
+        String[] cmpNames=cmpNames(dp, pos.length);
+        ComponentType[] types=cmpTypes(pos.length, dp.length);
         if (cov) {
             try {
                 DefaultSmoothingResults sr = DkToolkit.sqrtSmooth(ssf, data, true, true);
@@ -256,9 +247,9 @@ public class ExtendedAirlineDecomposer {
                     sc = q;
                 }
                 for (int i = 0; i < pos.length; ++i) {
-                    dbuilder.component(new SeriesComponent("cmp" + (i + 1),
+                    dbuilder.component(new SeriesComponent(cmpNames[i],
                             sr.getComponent(pos[i]).commit(),
-                            sr.getComponentVariance(i).fn(a -> a <= 0 ? 0 : Math.sqrt(a)), ComponentType.Undefined));
+                            sr.getComponentVariance(i).fn(a -> a <= 0 ? 0 : Math.sqrt(a)), types[i]));
                 }
                 return dbuilder
                         .y(sc)
@@ -274,9 +265,10 @@ public class ExtendedAirlineDecomposer {
                 sc = DoublesMath.add(sc, ds.item(pos[i]));
             }
         }
+        
         for (int i = 0; i < pos.length; ++i) {
-            dbuilder.component(new SeriesComponent("Cmp" + (i + 1),
-                    ds.item(pos[i]).commit(), DoubleSeq.empty(), ComponentType.Undefined));
+            dbuilder.component(new SeriesComponent(cmpNames[i],
+                    ds.item(pos[i]).commit(), DoubleSeq.empty(), types[i]));
         }
         return dbuilder
                 .y(sc)
@@ -362,7 +354,7 @@ public class ExtendedAirlineDecomposer {
         }
         decomposer.add(ssel);
         UcarimaModel ucm = decomposer.decompose(arima);
-        ucm = setVarianceMax(ucm, true);
+        ucm = doCanonical(ucm, true);
         return ucm;
     }
 
@@ -400,7 +392,7 @@ public class ExtendedAirlineDecomposer {
         } else {
             builder.add(ArimaModel.NULL);
         }
-        ucm = setVarianceMax(builder.build(), true);
+        ucm = doCanonical(builder.build(), true);
         return ucm;
     }
 
@@ -412,7 +404,7 @@ public class ExtendedAirlineDecomposer {
      * @param adjustModel
      * @return
      */
-    public static UcarimaModel setVarianceMax(UcarimaModel ucm, boolean adjustModel) {
+    public static UcarimaModel doCanonical(UcarimaModel ucm, boolean adjustModel) {
         double var = 0;
         ArimaModel[] components = ucm.getComponents().clone();
         int n = components.length - 1;
@@ -463,5 +455,28 @@ public class ExtendedAirlineDecomposer {
         }
         return UcarimaModel.builder().model(ucm.getModel()).add(components).build();
     }
+    
+    static String[] cmpNames(double[] dperiods, int ncmps){
+        String[] cmps=new String[ncmps];
+        int j=0;
+        cmps[j++]="T";
+        for (int i=0; i<dperiods.length; ++i){
+            cmps[j++]="S-"+(int)dperiods[i];
+        }
+        if (j<ncmps)
+            cmps[j]="I";
+        return cmps;
+    }
 
+    static ComponentType[] cmpTypes(int ncmps, int ns){
+        ComponentType[] cmps=new ComponentType[ncmps];
+        int j=0;
+        cmps[j++]=ComponentType.Trend;
+        for (int i=0; i<ns; ++i){
+            cmps[j++]=ComponentType.Seasonal;
+        }
+        if (j<ncmps)
+            cmps[j]=ComponentType.Irregular;
+        return cmps;
+    }
 }
