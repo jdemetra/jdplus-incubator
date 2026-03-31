@@ -25,6 +25,9 @@ import jdplus.stl.base.api.StlPlusSpec;
 import jdplus.stl.base.api.StlSpec;
 import jdplus.toolkit.base.api.timeseries.TsDataTable;
 import java.util.Arrays;
+import jdplus.stl.base.core.stlplus.extractors.MStlExtractor;
+import jdplus.stl.base.core.stlplus.extractors.MStlPlusExtractor;
+import jdplus.toolkit.base.api.information.InformationExtractors;
 
 /**
  *
@@ -85,5 +88,13 @@ public class StlPlusKernelTest {
         long t1 = System.currentTimeMillis();
         System.out.println(t1 - t0);
     }
+    
+    @Test
+    public void testExtractors() {
+        InformationExtractors.reloadExtractors();
+        MStlExtractor mStlExtractor = new MStlExtractor();
+        MStlPlusExtractor mStlPlusExtractor = new MStlPlusExtractor();
+    }
+    
 
 }

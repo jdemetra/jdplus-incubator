@@ -22,12 +22,17 @@ import jdplus.toolkit.base.core.ssf.univariate.SsfData;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.sts.base.core.msts.MstsMapping;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
-import jdplus.toolkit.base.core.ssf.StateInfo;
-import jdplus.toolkit.base.core.ssf.akf.AkfToolkit;
+import jdplus.toolkit.base.core.ssf.akf.AugmentedFilter;
+import jdplus.toolkit.base.core.ssf.akf.AugmentedFilterInitializer;
 import jdplus.toolkit.base.core.ssf.akf.DefaultAugmentedFilteringResults;
 import jdplus.toolkit.base.core.ssf.akf.QAugmentation;
+import jdplus.toolkit.base.core.ssf.akf.QPredictionErrorDecomposition;
+import jdplus.toolkit.base.core.ssf.ckms.CkmsFilter;
+import jdplus.toolkit.base.core.ssf.dk.DiffusePredictionErrorDecomposition;
 import jdplus.toolkit.base.core.ssf.univariate.DefaultSmoothingResults;
-import jdplus.toolkit.base.core.ssf.univariate.ILikelihoodComputer;
+import jdplus.toolkit.base.core.ssf.univariate.OrdinaryFilter;
+import jdplus.toolkit.base.core.ssf.univariate.PredictionErrorDecomposition;
+import jdplus.toolkit.base.core.stats.likelihood.Likelihood;
 
 /**
  *
@@ -65,14 +70,42 @@ public class Algorithms {
         }
     }
 
-    public DiffuseLikelihood akfLikelihood(ISsf model, double[] data, boolean scalingfactor) {
-        try {
-            SsfData s = new SsfData(data);
-            ILikelihoodComputer<DiffuseLikelihood> computer = AkfToolkit.likelihoodComputer(true, scalingfactor, true);
-            return computer.compute(model, s);
-        } catch (Exception err) {
+    public DiffuseLikelihood akfLikelihood(ISsf model, double[] d, String qtype, boolean collapsing, boolean scalingfactor) {
+        QAugmentation.QType q = QAugmentation.QType.valueOf(qtype);
+        QPredictionErrorDecomposition pe = new QPredictionErrorDecomposition(q, true);
+        SsfData data = new SsfData(d);
+        pe.prepare(model, data.length());
+        if (!collapsing) {
+            AugmentedFilter akf = new AugmentedFilter();
+            if (!akf.process(model, data, pe)) {
+                return null;
+            }
+        } else {
+            AugmentedFilterInitializer initializer = new AugmentedFilterInitializer(pe);
+            OrdinaryFilter of = new OrdinaryFilter(initializer);
+            if (!of.process(model, data, pe)) {
+                return null;
+            }
+        }
+        return pe.likelihood(scalingfactor);
+    }
+
+    public DiffuseLikelihood dkLikelihood(ISsf model, double[] d, boolean sqrt, boolean scalingfactor) {
+        DiffusePredictionErrorDecomposition pe = new DiffusePredictionErrorDecomposition(true);
+        SsfData data = new SsfData(d);
+        pe.prepare(model, data.length());
+        return DkToolkit.likelihoodComputer(sqrt, scalingfactor, true).compute(model, data);
+    }
+
+    public Likelihood ckmsLikelihood(ISsf model, double[] d, boolean scalingfactor) {
+        PredictionErrorDecomposition pe = new PredictionErrorDecomposition(true);
+        SsfData data = new SsfData(d);
+        pe.prepare(model, data.length());
+        CkmsFilter filter = new CkmsFilter();
+        if (!filter.process(model, data, pe)) {
             return null;
         }
+        return pe.likelihood(scalingfactor);
     }
 
     public Matrix smooth(ISsf model, double[] data, boolean all, String qtype) {
