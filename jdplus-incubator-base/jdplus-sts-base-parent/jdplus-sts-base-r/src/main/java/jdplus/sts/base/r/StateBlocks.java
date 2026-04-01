@@ -74,7 +74,7 @@ public class StateBlocks {
         }
     }
 
-    public StateComponent sarma(int period, double[] phi, double[] bphi, double[] theta, double[] btheta) {
+    public StateComponent sarma(int period, double[] phi, double[] theta, double[] bphi, double[] btheta) {
 
         SarimaModel model = SarimaModel.builder(period)
                 .phi(phi)
@@ -85,7 +85,19 @@ public class StateBlocks {
         return SsfArima.stateComponent(model);
     }
 
-    public StateComponent sarma2(int period, double[] phi, double[] bphi, double[] theta, double[] btheta) {
+    public StateComponent sarima(int period, double[] phi, int d, double[] theta, double[] bphi, int bd, double[] btheta) {
+
+        SarimaModel model = SarimaModel.builder(period)
+                .differencing(d, bd)
+                .phi(phi)
+                .bphi(bphi)
+                .theta(theta)
+                .btheta(btheta)
+                .build();
+        return SsfArima.stateComponent(model);
+    }
+
+    public StateComponent sarma2(int period, double[] phi, double[] theta, double[] bphi, double[] btheta) {
 
         SarimaModel model = SarimaModel.builder(period)
                 .phi(phi)

@@ -15,8 +15,14 @@
  */
 package jdplus.sts.base.r;
 
+import jdplus.toolkit.base.core.ssf.ISsfDynamics;
+import jdplus.toolkit.base.core.ssf.ISsfInitialization;
 import jdplus.toolkit.base.core.ssf.ISsfLoading;
 import jdplus.toolkit.base.core.ssf.StateComponent;
+import jdplus.toolkit.base.core.ssf.basic.TimeInvariantSsf;
+import jdplus.toolkit.base.core.ssf.multivariate.IMultivariateSsf;
+import jdplus.toolkit.base.core.ssf.multivariate.ISsfMeasurements;
+import jdplus.toolkit.base.core.ssf.multivariate.MultivariateSsf;
 import jdplus.toolkit.base.core.ssf.univariate.ISsf;
 import jdplus.toolkit.base.core.ssf.univariate.ISsfError;
 import jdplus.toolkit.base.core.ssf.univariate.Ssf;
@@ -32,6 +38,10 @@ public class StateSpaceModels {
         return Ssf.of(cmp.initialization(), cmp.dynamics(), loading, error);
     }
     
+    public ISsf ssf(ISsfInitialization init, ISsfDynamics dynamics, ISsfLoading loading, ISsfError error){
+        return Ssf.of(init, dynamics, loading, error);
+    }
+
     public ISsf ssf(StateComponent cmp, ISsfLoading loading, double evar){
         return Ssf.of(cmp.initialization(), cmp.dynamics(), loading, evar);
     }
@@ -39,4 +49,13 @@ public class StateSpaceModels {
     public StateComponent componentOf(ISsf ssf){
         return new StateComponent(ssf.initialization(), ssf.dynamics());
     }
+    
+    public ISsf asTimeInvariant(ISsf ssf){
+        return TimeInvariantSsf.of(ssf);
+    }
+    
+    public IMultivariateSsf ssf(StateComponent cmp, ISsfMeasurements m){
+        return new MultivariateSsf(cmp.initialization(), cmp.dynamics(), m);
+    }
+    
 }

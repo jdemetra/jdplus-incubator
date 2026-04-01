@@ -19,7 +19,6 @@ package jdplus.stl.base.core.stlplus.extractors;
 import jdplus.toolkit.base.api.information.InformationExtractor;
 import jdplus.toolkit.base.api.information.InformationMapping;
 import jdplus.toolkit.base.api.modelling.ComponentInformation;
-import jdplus.toolkit.base.api.modelling.ModellingDictionary;
 import jdplus.sa.base.api.ComponentType;
 import jdplus.sa.base.api.DecompositionMode;
 import jdplus.sa.base.api.SaDictionaries;
@@ -54,7 +53,7 @@ public class StlPlusExtractor extends InformationMapping<StlPlusResults> {
             }
         }
         );
-        set(ModellingDictionary.Y, TsData.class, source
+        set(SaDictionaries.Y, TsData.class, source
                 -> source.getFinals().getSeries(ComponentType.Series, ComponentInformation.Value));
 
         set(SaDictionaries.T, TsData.class, source
