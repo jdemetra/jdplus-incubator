@@ -101,7 +101,7 @@ public class Algorithms {
         PredictionErrorDecomposition pe = new PredictionErrorDecomposition(true);
         SsfData data = new SsfData(d);
         pe.prepare(model, data.length());
-        CkmsFilter filter = new CkmsFilter();
+        CkmsFilter filter = new CkmsFilter(new CkmsInitializer2());
         if (!filter.process(model, data, pe)) {
             return null;
         }

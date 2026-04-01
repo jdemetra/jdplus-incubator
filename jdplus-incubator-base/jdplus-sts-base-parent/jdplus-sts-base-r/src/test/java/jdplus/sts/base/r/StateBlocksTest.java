@@ -76,7 +76,7 @@ public class StateBlocksTest {
                 .build();
         StateComponent sarma1 = StateBlocks.sarma(4, new double[]{.2, -.3, .1}, new double[]{-.5}, null, new double[]{-.6});
         ISsf ssf = StateSpaceModels.ssf(sarma1, Loading.fromPosition(0), 0);
-        CkmsFilter filter = new CkmsFilter(SsfArima.fastInitializer(arima));
+        CkmsFilter filter = new CkmsFilter(new CkmsInitializer2());
         SsfData data = new SsfData(Data.ABS_RETAIL);
         PredictionErrorDecomposition decomp = new PredictionErrorDecomposition(true);
         decomp.prepare(ssf, data.length());
