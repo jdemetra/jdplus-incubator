@@ -1,17 +1,17 @@
 /*
  * Copyright 2022 National Bank of Belgium
  *
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved 
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  *
  * https://joinup.ec.europa.eu/software/page/eupl
  *
- * Unless required by applicable law or agreed to in writing, software 
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package jdplus.highfreq.base.api;
@@ -19,19 +19,21 @@ package jdplus.highfreq.base.api;
 import jdplus.toolkit.base.api.design.Algorithm;
 import jdplus.toolkit.base.api.processing.ProcResults;
 import nbbrd.design.Development;
-import nbbrd.service.Mutability;
 import nbbrd.service.Quantifier;
 import nbbrd.service.ServiceDefinition;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * Low-level algorithms. Should be refined
+ *
  * @author palatej
  */
 @Development(status = Development.Status.Beta)
 @lombok.experimental.UtilityClass
 public class ExtendedAirlineAlgorithms {
 
-    private final ExtendedAirlineAlgorithmsLoader.Processor PROCESSOR = new ExtendedAirlineAlgorithmsLoader.Processor();
+    private final AtomicReference<ExtendedAirlineAlgorithms.Processor> PROCESSOR = new AtomicReference<>(ExtendedAirlineAlgorithmsLoader.Processor.load());
 
     public void setProcessor(Processor algorithm) {
         PROCESSOR.set(algorithm);
@@ -43,10 +45,9 @@ public class ExtendedAirlineAlgorithms {
 
     /**
      *
-     * @param s Time series being decomposed
+     * @param s       Time series being decomposed
      * @param airline
-     * @param var True if the covariance matrices of the components are computed
-     *
+     * @param var     True if the covariance matrices of the components are computed
      * @return
      */
     public ProcResults process(double[] s, ExtendedAirline airline, boolean var) {
@@ -59,7 +60,7 @@ public class ExtendedAirlineAlgorithms {
 
     @Algorithm
     @SuppressWarnings(ServiceDefinition.SINGLE_FALLBACK_NOT_EXPECTED)
-    @ServiceDefinition(quantifier = Quantifier.SINGLE, mutability = Mutability.CONCURRENT)
+    @ServiceDefinition(quantifier = Quantifier.SINGLE)
     public interface Processor {
 
         ProcResults process(double[] s, ExtendedAirline airline, boolean var);
