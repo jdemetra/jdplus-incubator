@@ -69,8 +69,8 @@ public class TdSsfArma {
         }
 
         Data(int n, IntFunction<IArimaModel> fn) {
-            var = new double[n];
-            se = new double[n];
+            var = new double[n + 1];
+            se = new double[n + 1];
             arma = new IArimaModel[n];
 
             int p = 0, q = 0;
@@ -107,6 +107,8 @@ public class TdSsfArma {
                     theta.column(i).range(0, c.length()).copy(c);
                 }
             }
+            var[n] = var[n - 1];
+            se[n] = se[n - 1];
             DataBlock pn = phi.column(n - 1), qn = theta.column(n - 1);
             for (int i = n; i < theta.getColumnsCount(); ++i) {
                 if (p > 0) {
@@ -137,14 +139,14 @@ public class TdSsfArma {
             int q = data.q();
             FastMatrix Vc = vm.extract(0, q + 1, 0, q + 1);
             DataBlock th = data.theta.subDiagonal(i + 1);
-            Vc.addXaXt(data.var[i], th);
+            Vc.addXaXt(data.var[i + 1], th);
 //            SYRK.laddaXXt(data.var[i], DataPointer.of(th.getStorage(), th.getStartPosition(), th.getIncrement()), Vc);
 //            SymmetricMatrix.fromLower(Vc);
         }
 
         @Override
         public void S(int i, FastMatrix sm) {
-            sm.column(0).setAY(data.se[i], data.theta.subDiagonal(i + 1));
+            sm.column(0).setAY(data.se[i + 1], data.theta.subDiagonal(i + 1));
         }
 
         @Override
@@ -181,7 +183,7 @@ public class TdSsfArma {
 
         @Override
         public void addSU(int i, DataBlock x, DataBlock u) {
-            double a = u.get(0) * data.se[i];
+            double a = u.get(0) * data.se[i + 1];
             int q = data.q();
             x.range(0, q + 1).addAY(a, data.theta.subDiagonal(i + 1));
         }
@@ -192,7 +194,7 @@ public class TdSsfArma {
             int q = data.q();
             FastMatrix Vc = fm.extract(0, q + 1, 0, q + 1);
             DataBlock th = data.theta.subDiagonal(i + 1);
-            Vc.addXaXt(data.var[i], th);
+            Vc.addXaXt(data.var[i + 1], th);
 //            SYRK.laddaXXt(data.var[i], DataPointer.of(th.getStorage(), th.getStartPosition(), th.getIncrement()), Vc);
 //            SymmetricMatrix.fromLower(Vc);
         }
@@ -312,7 +314,7 @@ public class TdSsfArma {
                     for (int tli = 0, li = i; li <= q; ++tli, ++li) {
                         for (int tkj = 1, kj = j + 1; kj <= p; ++tkj, ++kj) {
                             if (tli >= tkj) {
-                                cov -= th_i.get(li) * phi_j.get(kj - 1) * psi[tli-tkj ];
+                                cov -= th_i.get(li) * phi_j.get(kj - 1) * psi[tli - tkj] * v0;
                             }
                         }
                         for (int tlj = 0, lj = j; lj <= q; ++tlj, ++lj) {

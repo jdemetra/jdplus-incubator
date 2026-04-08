@@ -78,16 +78,16 @@ public class LtdArimaKernelTest {
         long t0 = System.currentTimeMillis();
         for (int i = 34; i < s.length; ++i) {
             LtdArimaResults result = kernel.process(s[i].getValues(), s[i].getAnnualFrequency(), false, null);
-            System.out.print(result.getStart().getLl().getLogLikelihood());
-            System.out.print('\t');
-            System.out.print(result.getLtd().getLl().getLogLikelihood());
-            System.out.print('\t');
+//            System.out.print(result.getStart().getLl().getLogLikelihood());
+//            System.out.print('\t');
+//            System.out.print(result.getLtd().getLl().getLogLikelihood());
+//            System.out.print('\t');
 //            System.out.print(result.getStart().parameters());
             StatisticalTest test = result.getLtd().getStationaryTest();
-            System.out.print(test == null ? Double.NaN : test.getPvalue());
-            System.out.print('\t');
-            System.out.print(result.getLtd().getLikelihoodRatioTest().getPvalue());
-            System.out.print('\t');
+//            System.out.print(test == null ? Double.NaN : test.getPvalue());
+//            System.out.print('\t');
+//            System.out.print(result.getLtd().getLikelihoodRatioTest().getPvalue());
+//            System.out.print('\t');
 //            System.out.print(s[i].length());
 //            System.out.print('\t');
 //
@@ -96,10 +96,10 @@ public class LtdArimaKernelTest {
 //            DoubleSeq t = DoublesMath.divide(result.getLtd().getParameters(), result.getLtd().getParametersCovariance().diagonal().sqrt());
 //            System.out.println();
             DoubleSeq t = result.getLtd().getParameters();
-            System.out.println(t);
+//            System.out.println(t);
         }
         long t1 = System.currentTimeMillis();
-        System.out.println(t1 - t0);
+//        System.out.println(t1 - t0);
     }
 
     @Test
@@ -122,14 +122,14 @@ public class LtdArimaKernelTest {
         long t0 = System.currentTimeMillis();
         for (int i = 0; i < s.length; ++i) {
             LtdArimaResults result = kernel.process(s[i].log().getValues(), s[i].getAnnualFrequency(), false, null);
-            System.out.print(result.getStart().getLl().getLogLikelihood());
-            System.out.print('\t');
-            System.out.print(result.getLtd().getLl().getLogLikelihood());
+//            System.out.print(result.getStart().getLl().getLogLikelihood());
+//            System.out.print('\t');
+//            System.out.print(result.getLtd().getLl().getLogLikelihood());
             StatisticalTest test = result.getLtd().getStationaryTest();
-            System.out.print('\t');
-            System.out.print(test == null ? Double.NaN : test.getPvalue());
-            System.out.print('\t');
-            System.out.println(result.getLtd().getLikelihoodRatioTest().getPvalue());
+//            System.out.print('\t');
+//            System.out.print(test == null ? Double.NaN : test.getPvalue());
+//            System.out.print('\t');
+//            System.out.println(result.getLtd().getLikelihoodRatioTest().getPvalue());
 //            System.out.println(result.getStart().parameters());
 //            System.out.println(result.getModel().getP0());
 //            System.out.println(result.getModel().getP1());
@@ -142,6 +142,6 @@ public class LtdArimaKernelTest {
 //            System.out.println(t);
         }
         long t1 = System.currentTimeMillis();
-        System.out.println(t1 - t0);
+//        System.out.println(t1 - t0);
     }
 }

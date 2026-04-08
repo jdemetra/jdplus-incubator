@@ -51,25 +51,26 @@ public class PartialSortTest {
     @Test
     public void testMedianEven() {
         int N = 40, M2 = N / 2, M1 = M2 - 5;
-        int s=0;
+        int s = 0;
         for (int k = 0; k < 1; ++k) {
             double[] z = new double[N];
             Random rnd = new Random(18);
             for (int i = 0; i < z.length; ++i) {
                 z[i] = rnd.nextDouble();
             }
-            int[] idx = new int[]{M1, M2};
+            int[] idx = new int[]{M2, M1};
             double[] w = z.clone();
             new PartialSort().psort(z, idx);
-            System.out.println(DoubleSeq.of(z));
+
             double m = z[M1] + z[M2];
             Arrays.sort(w);
-            System.out.println(DoubleSeq.of(w));
             double m2 = w[M1] + w[M2];
-            if (m == m2)
+            if (m == m2) {
                 ++s;
-            //assertEquals(m, m2, 0);
+            }
+//            System.out.println(DoubleSeq.of(w));
+//            System.out.println(DoubleSeq.of(z));
         }
-        System.out.println(s);
+//        System.out.println(s);
     }
 }

@@ -180,10 +180,10 @@ public class LocalPolynomialFiltersTest {
     public void testTrapezoidal() {
         int h = 3;
         SymmetricFilter sf = LocalPolynomialFilters.of(h, 0, DiscreteKernel.henderson(h));
-        System.out.println(sf.coefficientsAsPolynomial().coefficients());
+//        System.out.println(sf.coefficientsAsPolynomial().coefficients());
         IFiniteFilter[] af = AsymmetricFiltersFactory.mmsreFilters(sf, 0, new double[0], null);
         for (int i=0; i<af.length; ++i){
-            System.out.println(DoubleSeq.of(af[i].weightsToArray()));
+//            System.out.println(DoubleSeq.of(af[i].weightsToArray()));
         }
 
     }

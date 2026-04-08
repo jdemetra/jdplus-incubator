@@ -18,6 +18,7 @@ package jdplus.advancedsa.base.core.tdarima;
 import java.util.Random;
 import jdplus.toolkit.base.api.arima.SarimaOrders;
 import jdplus.toolkit.base.api.arima.SarmaOrders;
+import jdplus.toolkit.base.core.arima.ArimaModel;
 import jdplus.toolkit.base.core.arima.IArimaModel;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.sarima.SarimaModel;
@@ -61,7 +62,7 @@ public class TdSsfArmaTest {
                     .theta(th0)
                     .btheta(bth0)
                     .build();
-            models[i] = arma;
+            models[i] = ArimaModel.of(arma);//.scaleVariance(0.25);
             th0 += dth;
             bth0 += dbth;
         }
@@ -73,15 +74,11 @@ public class TdSsfArmaTest {
         x.set(() -> rnd.nextDouble(-1, 1));
 
         DiffuseLikelihood ll1 = DkToolkit.likelihood(ssf, new SsfData(x), true, false);
-        System.out.println(ll1);
-
-        Ssf ssf2 = TdSsfArima2.ssf(N, i -> models[i]);
-        DiffuseLikelihood ll2 = DkToolkit.likelihood(ssf2, new SsfData(x), true, false);
-        System.out.println(ll2);
+//        System.out.println(ll1);
 
         Ssf ssf3 =  SsfArima.ssf(models[0]);
         DiffuseLikelihood ll3 = DkToolkit.likelihood(ssf3, new SsfData(x), true, false);
-        System.out.println(ll3);
+//        System.out.println(ll3);
     }
 
     @Test
@@ -121,7 +118,7 @@ public class TdSsfArmaTest {
         x.set(() -> rnd.nextDouble(-1, 1));
 
         DiffuseLikelihood ll1 = DkToolkit.likelihood(ssf, new SsfData(x), true, false);
-        System.out.println(ll1);
+//        System.out.println(ll1);
 
 //        Ssf ssf2 = TimeVaryingSsfArima2.ssf(N, i -> models[i]);
 //        DiffuseLikelihood ll2 = DkToolkit.likelihood(ssf2, new SsfData(x), true, false);
@@ -129,7 +126,7 @@ public class TdSsfArmaTest {
 //
         Ssf ssf3 =  SsfArima.ssf(models[0]);
         DiffuseLikelihood ll3 = DkToolkit.likelihood(ssf3, new SsfData(x), true, false);
-        System.out.println(ll3);
+//        System.out.println(ll3);
     }
 
     public static void main(String[] arg) {
@@ -159,8 +156,7 @@ public class TdSsfArmaTest {
 
 //        Ssf ssf1 = SsfArma2.ssf(models[0]);
         Ssf ssf1 = TdSsfArma.ssf(N, i -> models[i]);
-        Ssf ssf2 = TdSsfArima2.ssf(N, i -> models[i]);
-        DataBlock x = DataBlock.make(N);
+         DataBlock x = DataBlock.make(N);
         Random rnd = new Random();
         x.set(() -> rnd.nextDouble(-1, 1));
         DiffuseLikelihood ll1 = null, ll2 = null;
@@ -170,14 +166,7 @@ public class TdSsfArmaTest {
         }
         long t1 = System.currentTimeMillis();
         System.out.println(t1 - t0);
-        t0 = System.currentTimeMillis();
-        for (int i = 0; i < K; ++i) {
-            ll2 = DkToolkit.likelihood(ssf2, new SsfData(x), true, true);
-        }
-        t1 = System.currentTimeMillis();
-        System.out.println(t1 - t0);
         System.out.println(ll1.logLikelihood());
-        System.out.println(ll2.logLikelihood());
     }
 
 }

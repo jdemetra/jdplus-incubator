@@ -18,6 +18,7 @@ package jdplus.advancedsa.base.core.tdarima;
 import java.util.function.IntFunction;
 import jdplus.toolkit.base.core.arima.ArimaModel;
 import jdplus.toolkit.base.core.arima.IArimaModel;
+import jdplus.toolkit.base.core.ssf.univariate.Ssf;
 import jdplus.toolkit.base.core.ucarima.ModelDecomposer;
 import jdplus.toolkit.base.core.ucarima.SeasonalSelector;
 import jdplus.toolkit.base.core.ucarima.TrendCycleSelector;
@@ -37,14 +38,14 @@ public class TdArimaDecomposer {
     private boolean modified;
 
     public TdArimaDecomposer(int period, int n, IntFunction<IArimaModel> fn) {
-        this.period=period;
+        this.period = period;
         arima = new ArimaModel[n];
         ucms = new UcarimaModel[n];
         int first = -1, last = -1;
         for (int i = 0; i < ucms.length; ++i) {
-            ArimaModel m= ArimaModel.of(fn.apply(i));
-            m=m.simplifyAr();
-            arima[i]=m;
+            ArimaModel m = ArimaModel.of(fn.apply(i));
+            m = m.simplifyAr();
+            arima[i] = m;
             UcarimaModel ucm = ucm(m);
             ucms[i] = ucm;
             if (ucm != null) {
@@ -54,29 +55,31 @@ public class TdArimaDecomposer {
                 last = i;
             }
         }
-        if (first == -1){
+        if (first == -1) {
             throw new UcarimaException();
-           
+
         }
-        if (first != 0){
-            modified=true;
-            for (int i=0; i<first; ++i){
-                ucms[i]=ucms[first];
+        if (first != 0) {
+            modified = true;
+            for (int i = 0; i < first; ++i) {
+                ucms[i] = ucms[first];
             }
         }
-        if (last+1 != ucms.length){
-            modified=true;
-            for (int i=last+1; i<ucms.length; ++i){
-                ucms[i]=ucms[last];
+        if (last + 1 != ucms.length) {
+            modified = true;
+            for (int i = last + 1; i < ucms.length; ++i) {
+                ucms[i] = ucms[last];
             }
         }
     }
-    
-    public UcarimaModel[] ucarimaModels(){
+
+    public UcarimaModel[] ucarimaModels() {
         return ucms;
     }
-    
-    
+
+    public Ssf model() {
+        return TdSsfArima.ssf(arima.length, i -> arima[i]);
+    }
 
     private UcarimaModel ucm(IArimaModel model) {
         TrendCycleSelector tsel = new TrendCycleSelector();
@@ -91,8 +94,8 @@ public class TdArimaDecomposer {
 //        ucm = ucm.setVarianceMax(-1, false);
         return ucm;
     }
-    
-    public boolean isModified(){
+
+    public boolean isModified() {
         return modified;
     }
 }

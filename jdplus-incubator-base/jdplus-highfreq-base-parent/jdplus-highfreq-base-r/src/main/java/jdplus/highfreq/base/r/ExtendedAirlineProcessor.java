@@ -74,7 +74,7 @@ public class ExtendedAirlineProcessor {
             missing = IntList.EMPTY;
         }
 
-        final ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec);
+        ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec, 0);
         //
         return RegArimaModel.<ArimaModel>builder()
                 .y(y)
@@ -85,8 +85,8 @@ public class ExtendedAirlineProcessor {
                 .build();
     }
 
-    public LightExtendedAirlineEstimation estimate(RegArimaModel<ArimaModel> regarima, ExtendedAirlineSpec spec, double eps, boolean exactderivatives) {
-        final ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec);
+    public LightExtendedAirlineEstimation estimate(RegArimaModel<ArimaModel> regarima, ExtendedAirlineSpec spec, double eps, double deps, boolean exactderivatives) {
+        final ExtendedAirlineMapping mapping = ExtendedAirlineMapping.of(spec, deps);
         GlsArimaProcessor<ArimaModel> processor = GlsArimaProcessor.builder(ArimaModel.class)
                 .precision(eps)
                 .computeExactFinalDerivatives(exactderivatives)
@@ -95,24 +95,24 @@ public class ExtendedAirlineProcessor {
         return LightExtendedAirlineEstimation.of(rslt, spec);
     }
 
-    public double[] logLevelTest(RegArimaModel<ArimaModel> model, ExtendedAirlineSpec spec, double eps) {
+    public double[] logLevelTest(RegArimaModel<ArimaModel> model, ExtendedAirlineSpec spec, double eps, double deps) {
         LogLevelModule ll = LogLevelModule
                 .builder()
                 .estimationPrecision(eps)
                 .build();
-        if (ll.process(model, ExtendedAirlineMapping.of(spec))) {
+        if (ll.process(model, ExtendedAirlineMapping.of(spec, deps))) {
             return new double[]{ll.getAICcLevel(), ll.getAICcLog()};
         } else {
             return null;
         }
     }
 
-    public Matrix outliers(RegArimaModel<ArimaModel> regarima, ExtendedAirlineSpec spec, String[] outliers, int start, int end, double cv, int maxoutliers, int maxround) {
+    public Matrix outliers(RegArimaModel<ArimaModel> regarima, ExtendedAirlineSpec spec, String[] outliers, int start, int end, double cv, int maxoutliers, int maxround, double precision, double deps) {
         LevenbergMarquardtMinimizer.LmBuilder min = LevenbergMarquardtMinimizer.builder().maxIter(5);
         GlsArimaProcessor<ArimaModel> processor = GlsArimaProcessor.builder(ArimaModel.class
         )
                 .minimizer(min)
-                .precision(1e-5)
+                .precision(precision)
                 .build();
         IOutlierFactory[] factories = factories(outliers);
         OutliersDetectionModule od = OutliersDetectionModule.build(ArimaModel.class
@@ -136,7 +136,7 @@ public class ExtendedAirlineProcessor {
             }
         }
 
-        od.process(regarima, ExtendedAirlineMapping.of(spec));
+        od.process(regarima, ExtendedAirlineMapping.of(spec,deps));
         int[][] io = od.getOutliers();
         if (io.length > 0) {
             FastMatrix M = FastMatrix.make(io.length, 2);

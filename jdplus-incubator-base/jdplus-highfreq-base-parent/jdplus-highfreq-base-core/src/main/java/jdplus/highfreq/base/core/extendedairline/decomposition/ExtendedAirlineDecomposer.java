@@ -25,9 +25,12 @@ import jdplus.sa.base.api.ComponentType;
 import java.util.Arrays;
 import jdplus.toolkit.base.core.arima.ArimaModel;
 import jdplus.toolkit.base.core.arima.IArimaModel;
+import jdplus.toolkit.base.core.arima.Spectrum;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.data.DataBlockStorage;
 import jdplus.toolkit.base.core.math.functions.levmar.LevenbergMarquardtMinimizer;
+import jdplus.toolkit.base.core.math.linearfilters.BackFilter;
+import jdplus.toolkit.base.core.math.polynomials.Polynomial;
 import jdplus.toolkit.base.core.regarima.GlsArimaProcessor;
 import jdplus.toolkit.base.core.regarima.RegArimaEstimation;
 import jdplus.toolkit.base.core.regarima.RegArimaModel;
@@ -45,6 +48,7 @@ import jdplus.toolkit.base.core.ucarima.SeasonalSelector;
 import jdplus.toolkit.base.core.ucarima.TrendCycleSelector;
 import jdplus.toolkit.base.core.ucarima.UcarimaModel;
 import jdplus.toolkit.base.core.ssf.arima.SsfUcarima;
+import jdplus.toolkit.base.core.ucarima.RootDecomposer;
 
 /**
  *
@@ -52,12 +56,12 @@ import jdplus.toolkit.base.core.ssf.arima.SsfUcarima;
  */
 public class ExtendedAirlineDecomposer {
 
-    public static LightExtendedAirlineDecomposition decompose(DoubleSeq s, double period, boolean sn, boolean cov, int nb, int nf) {
-        ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(new double[]{period});
+    public static LightExtendedAirlineDecomposition decompose(DoubleSeq s, double period, boolean sn, boolean cov, int nb, int nf, double eps, double deps) {
+        ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(new double[]{period}, deps);
 
         GlsArimaProcessor.Builder<ArimaModel> builder = GlsArimaProcessor.builder(ArimaModel.class);
         builder.minimizer(LevenbergMarquardtMinimizer.builder())
-                .precision(1e-12)
+                .precision(eps)
                 .useMaximumLikelihood(true)
                 .useParallelProcessing(true)
                 .build();
@@ -175,10 +179,10 @@ public class ExtendedAirlineDecomposer {
         }
     }
 
-    public static LightExtendedAirlineDecomposition decompose(DoubleSeq s, double[] periods, int ndiff, boolean ar, boolean cov, int nb, int nf) {
+    public static LightExtendedAirlineDecomposition decompose(DoubleSeq s, double[] periods, int ndiff, boolean ar, boolean cov, int nb, int nf, double eps, double deps) {
 
         if (periods.length == 1) {
-            return decompose(s, periods[0], false, cov, nb, nf);
+            return decompose(s, periods[0], false, cov, nb, nf, eps, deps);
         }
 
         double[] dp = periods.clone();
@@ -194,11 +198,11 @@ public class ExtendedAirlineDecomposer {
             }
         }
 
-        final ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(dp, false, ndiff, ar);
+        final ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(dp, false, ndiff, ar, deps);
 
         GlsArimaProcessor.Builder<ArimaModel> builder = GlsArimaProcessor.builder(ArimaModel.class);
         builder.minimizer(LevenbergMarquardtMinimizer.builder())
-                .precision(1e-12)
+                .precision(eps)
                 .useMaximumLikelihood(true)
                 .useParallelProcessing(true)
                 .build();
@@ -212,19 +216,7 @@ public class ExtendedAirlineDecomposer {
         RegArimaEstimation<ArimaModel> rslt = monitor.process(regarima, mapping);
         LogLikelihoodFunction.Point<RegArimaModel<ArimaModel>, ConcentratedLikelihoodWithMissing> max = rslt.getMax();
         DoubleSeq parameters = max.getParameters();
-        UcarimaModel ucm = ucm(rslt.getModel().arima(), ip);
-
-        IArimaModel sum = ucm.getModel();
-        UcarimaModel ucmt;
-        ArimaModel[] all = new ArimaModel[ucm.getComponentsCount()];
-        for (int i = 0; i < all.length; ++i) {
-            ArimaModel m = ucm.getComponent(i);
-            all[i] = m;
-        }
-        ucmt = UcarimaModel.builder()
-                .model(sum)
-                .add(all)
-                .build();
+        UcarimaModel ucm = ucm3(rslt.getModel().arima(), ip);
 
         LightExtendedAirlineDecomposition.Builder dbuilder = LightExtendedAirlineDecomposition.builder()
                 .model(ExtendedAirline.builder()
@@ -237,11 +229,13 @@ public class ExtendedAirlineDecomposer {
                 .parameters(max.getParameters())
                 .parametersCovariance(max.asymptoticCovariance())
                 .score(max.getScore())
-                .ucarima(ucmt);
+                .ucarima(ucm);
         CompositeSsf ssf = SsfUcarima.of(ucm);
         ISsfData data = new ExtendedSsfData(new SsfData(s), nb, nf);
         int[] pos = ssf.componentsPosition();
         DoubleSeq sc = s;
+        String[] cmpNames=cmpNames(dp, pos.length);
+        ComponentType[] types=cmpTypes(pos.length, dp.length);
         if (cov) {
             try {
                 DefaultSmoothingResults sr = DkToolkit.sqrtSmooth(ssf, data, true, true);
@@ -253,9 +247,9 @@ public class ExtendedAirlineDecomposer {
                     sc = q;
                 }
                 for (int i = 0; i < pos.length; ++i) {
-                    dbuilder.component(new SeriesComponent("cmp" + (i + 1),
+                    dbuilder.component(new SeriesComponent(cmpNames[i],
                             sr.getComponent(pos[i]).commit(),
-                            sr.getComponentVariance(i).fn(a -> a <= 0 ? 0 : Math.sqrt(a)), ComponentType.Undefined));
+                            sr.getComponentVariance(i).fn(a -> a <= 0 ? 0 : Math.sqrt(a)), types[i]));
                 }
                 return dbuilder
                         .y(sc)
@@ -271,9 +265,10 @@ public class ExtendedAirlineDecomposer {
                 sc = DoublesMath.add(sc, ds.item(pos[i]));
             }
         }
+        
         for (int i = 0; i < pos.length; ++i) {
-            dbuilder.component(new SeriesComponent("Cmp" + (i + 1),
-                    ds.item(pos[i]).commit(), DoubleSeq.empty(), ComponentType.Undefined));
+            dbuilder.component(new SeriesComponent(cmpNames[i],
+                    ds.item(pos[i]).commit(), DoubleSeq.empty(), types[i]));
         }
         return dbuilder
                 .y(sc)
@@ -300,6 +295,52 @@ public class ExtendedAirlineDecomposer {
 
     public static UcarimaModel ucm(IArimaModel arima, int[] periods) {
 
+        // first, we check that q <= p. 
+        // Otherwise, we extract the transitory component and we decompose the remainder
+        BackFilter ar = arima.getAr(), ma = arima.getMa();
+        ArimaModel tr = null;
+        IArimaModel arimac = arima;
+        if (ma.getDegree() > ar.getDegree()) {
+            RootDecomposer rdecomposer = new RootDecomposer();
+            rdecomposer.setModel(ArimaModel.of(arima));
+            arimac = rdecomposer.getSignal();
+            tr = rdecomposer.getNoise();
+        }
+        TrendCycleSelector tsel = new TrendCycleSelector();
+//        AllSelector ssel = new AllSelector();
+
+        int[] np = periods.clone();
+        Arrays.sort(np);
+
+        ModelDecomposer decomposer = new ModelDecomposer();
+        decomposer.add(tsel);
+        for (int i = 0; i < np.length; ++i) {
+            decomposer.add(new SeasonalSelector(np[i], 1e-6));
+        }
+//        decomposer.add(ssel);
+        UcarimaModel ucm = decomposer.decompose(arimac);
+        int nc = ucm.getComponentsCount();
+        if (tr != null) {
+            ArimaModel[] components = ucm.getComponents();
+//        int last = components.length - 1;
+//           components[last] = ArimaModel.add(tr, components[last]);
+            ucm = UcarimaModel.builder()
+                    .model(arima)
+                    .add(components)
+                    .add(tr)
+                    .build();
+        }
+        ucm = ucm.setVarianceMax(-1, true);
+        ucm = ucm.simplify();
+        int n = ucm.getComponentsCount();
+        if (tr != null && n > nc + 1) {
+            ucm = ucm.compact(nc, 2);
+        }
+        return ucm;
+    }
+
+    public static UcarimaModel ucm2(IArimaModel arima, int[] periods) {
+
         TrendCycleSelector tsel = new TrendCycleSelector();
         AllSelector ssel = new AllSelector();
 
@@ -313,8 +354,129 @@ public class ExtendedAirlineDecomposer {
         }
         decomposer.add(ssel);
         UcarimaModel ucm = decomposer.decompose(arima);
-        ucm = ucm.setVarianceMax(-1, true);
-        return ucm.simplify();
+        ucm = doCanonical(ucm, true);
+        return ucm;
     }
 
+    public static UcarimaModel ucm3(IArimaModel arima, int[] periods) {
+
+        // first, we check that q <= p. 
+        // Otherwise, we extract the transitory component and we decompose the remainder
+        BackFilter ar = arima.getAr(), ma = arima.getMa();
+        ArimaModel tr = null;
+        IArimaModel arimac = arima;
+        if (ma.getDegree() > ar.getDegree()) {
+            RootDecomposer rdecomposer = new RootDecomposer();
+            rdecomposer.setModel(ArimaModel.of(arima));
+            arimac = rdecomposer.getSignal();
+            tr = rdecomposer.getNoise();
+        }
+        TrendCycleSelector tsel = new TrendCycleSelector();
+        int[] np = periods.clone();
+        Arrays.sort(np);
+
+        ModelDecomposer decomposer = new ModelDecomposer();
+        decomposer.add(tsel);
+        for (int i = 0; i < np.length; ++i) {
+            decomposer.add(new SeasonalSelector(np[i], 1e-6));
+        }
+        UcarimaModel ucm = decomposer.decompose(arimac);
+        // ucm contains the trend and the seasonals (no irregular)
+        int nc = ucm.getComponentsCount();
+        // we add either the transitory or an empty irregular (wn with 0 var)
+        UcarimaModel.Builder builder = UcarimaModel.builder()
+                .model(arima)
+                .add(ucm.getComponents());
+        if (tr != null) {
+            builder.add(tr);
+        } else {
+            builder.add(ArimaModel.NULL);
+        }
+        ucm = doCanonical(builder.build(), true);
+        return ucm;
+    }
+
+    /**
+     * Put all the noise in the last component and adjust the model to a
+     * decomposable one if need be.
+     *
+     * @param ucm
+     * @param adjustModel
+     * @return
+     */
+    public static UcarimaModel doCanonical(UcarimaModel ucm, boolean adjustModel) {
+        double var = 0;
+        ArimaModel[] components = ucm.getComponents().clone();
+        int n = components.length - 1;
+        Spectrum.Minimizer min = new Spectrum.Minimizer();
+        // Do all the components canonical, except the last one
+        for (int i = 0; i < n; ++i) {
+            ArimaModel m = components[i];
+            if (m != null) {
+                min.minimize(m.getSpectrum());
+                if (min.getMinimum() != 0) {
+                    var += min.getMinimum();
+                    components[i] = m.minus(min.getMinimum());
+                }
+            }
+        }
+        ArimaModel nmodel = components[n];
+        if (var >= 0) {
+            // we just need to add the noise in the last component
+            components[n] = nmodel.plus(var);
+        } else {
+            min.minimize(nmodel.getSpectrum());
+            double nmin = min.getMinimum();
+            if (nmin >= -var) {
+            // The last component is noisy enough to absorb some negative var
+                components[n] = nmodel.plus(var);
+            } else if (adjustModel) {
+                // -var-nmin>
+                var=-var-nmin;
+                // If the last component is a white noise, we suppress it and we
+                // add to the model the needed noise
+                if (nmodel.isWhiteNoise()) {
+                    ArimaModel[] ncomponents = Arrays.copyOf(components, n);
+                    return UcarimaModel.builder()
+                            .model(ArimaModel.of(ucm.getModel()).plus(var))
+                            .add(ncomponents)
+                            .build();
+                } else {
+                    // Otherwise, we must keep the last component, made canonical
+                    components[n] = nmodel.minus(nmin);
+                    return UcarimaModel.builder()
+                            .model(ArimaModel.of(ucm.getModel()).plus(var))
+                            .add(components)
+                            .build();
+                }
+            } else {
+                return null;
+            }
+        }
+        return UcarimaModel.builder().model(ucm.getModel()).add(components).build();
+    }
+    
+    static String[] cmpNames(double[] dperiods, int ncmps){
+        String[] cmps=new String[ncmps];
+        int j=0;
+        cmps[j++]="T";
+        for (int i=0; i<dperiods.length; ++i){
+            cmps[j++]="S-"+(int)dperiods[i];
+        }
+        if (j<ncmps)
+            cmps[j]="I";
+        return cmps;
+    }
+
+    static ComponentType[] cmpTypes(int ncmps, int ns){
+        ComponentType[] cmps=new ComponentType[ncmps];
+        int j=0;
+        cmps[j++]=ComponentType.Trend;
+        for (int i=0; i<ns; ++i){
+            cmps[j++]=ComponentType.Seasonal;
+        }
+        if (j<ncmps)
+            cmps[j]=ComponentType.Irregular;
+        return cmps;
+    }
 }

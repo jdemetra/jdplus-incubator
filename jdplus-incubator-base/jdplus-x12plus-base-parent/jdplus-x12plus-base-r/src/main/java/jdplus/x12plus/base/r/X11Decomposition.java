@@ -336,7 +336,7 @@ public class X11Decomposition {
     }
 
     public Results trendX11(double[] data, double period, boolean mul,
-            DoubleSeq ctrendf, Matrix ltrendf, String seas0, String seas1, double lsig, double usig) {
+            double[] ctrendf, Matrix ltrendf, String seas0, String seas1, double lsig, double usig) {
         int iperiod = (int) period;
         Number P;
         if (Math.abs(period - iperiod) < 1e-9) {
@@ -344,7 +344,7 @@ public class X11Decomposition {
         } else {
             P = period;
         }
-        UserDefinedSymmetricFilterSpec tspec = new UserDefinedSymmetricFilterSpec(ctrendf, ltrendf);
+        UserDefinedSymmetricFilterSpec tspec = new UserDefinedSymmetricFilterSpec(DoubleSeq.of(ctrendf), ltrendf);
 
         X11plusSpec spec = X11plusSpec.builder()
                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
