@@ -5,7 +5,6 @@
  */
 package jdplus.sts.base.r;
 
-import jdplus.sts.base.core.Utility;
 import jdplus.toolkit.base.api.data.Doubles;
 import jdplus.sts.base.core.msts.CompositeModel;
 import jdplus.sts.base.core.msts.MstsMonitor;
@@ -22,6 +21,7 @@ import jdplus.toolkit.base.core.ssf.univariate.SsfData;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.sts.base.core.msts.MstsMapping;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
+import jdplus.toolkit.base.core.ssf.akf.AkfToolkit;
 import jdplus.toolkit.base.core.ssf.akf.AugmentedFilter;
 import jdplus.toolkit.base.core.ssf.akf.AugmentedFilterInitializer;
 import jdplus.toolkit.base.core.ssf.akf.DefaultAugmentedFilteringResults;
@@ -56,7 +56,7 @@ public class Algorithms {
     public double[] akfFilter(ISsf model, double[] data, String qtype, boolean normalized, boolean clean) {
         QAugmentation.QType q = QAugmentation.QType.valueOf(qtype);
         SsfData s = new SsfData(data);
-        DefaultAugmentedFilteringResults rslt = Utility.filter(model, s, true, q);
+        DefaultAugmentedFilteringResults rslt = AkfToolkit.filter(model, s, true, true, q);
         return rslt.errors(normalized, clean).toArray();
     }
 
@@ -111,7 +111,7 @@ public class Algorithms {
     public Matrix smooth(ISsf model, double[] data, boolean all, String qtype) {
         QAugmentation.QType q = QAugmentation.QType.valueOf(qtype);
         SsfData s = new SsfData(data);
-        DefaultSmoothingResults sr = Utility.smooth(model, s, all, true, q);
+        DefaultSmoothingResults sr = AkfToolkit.smooth(model, s, all, true, true, q);
         int m = model.getStateDim();
         FastMatrix ss = FastMatrix.make(s.length(), all ? 2 * m : m);
 

@@ -140,7 +140,7 @@ public class SsfBsm2Test {
     @Test
     public void testSmoothing() {
         SsfData data = new SsfData(Data.EXPORTS);
-        StateStorage rslt = AkfToolkit.robustSmooth(BSM, data, true, true).getSmoothing();
+        StateStorage rslt = AkfToolkit.robustSmooth(BSM, data, true, true);
 //        System.out.println(rslt.getComponent(0));
 //        System.out.println(rslt.getComponentVariance(0));
         DefaultSmoothingResults fs = DkToolkit.sqrtSmooth(BSM, data, true, true);

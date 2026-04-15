@@ -34,7 +34,6 @@ import jdplus.toolkit.base.core.stats.likelihood.Likelihood;
 import jdplus.toolkit.base.api.math.functions.Optimizer;
 import jdplus.toolkit.base.api.ssf.SsfInitialization;
 import java.util.Arrays;
-import jdplus.sts.base.core.Utility;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.data.DataBlockIterator;
 import jdplus.toolkit.base.core.data.DataBlockStorage;
@@ -106,7 +105,7 @@ public class CompositeModelEstimation {
     public StateStorage getSmoothedStates() {
         if (smoothedStates == null) {
             try {
-                StateStorage ss = Utility.smooth(getSsf(), new SsfMatrix(getData()), true, false, QAugmentation.DEFAULT_COLLAPSING);
+                StateStorage ss = AkfToolkit.smooth(getSsf(), new SsfMatrix(getData()), true, false, true, QAugmentation.DEFAULT_COLLAPSING);
                 if (likelihood.isScalingFactor()) {
                     ss.rescaleVariances(likelihood.sigma2());
                 }
@@ -124,7 +123,7 @@ public class CompositeModelEstimation {
                 smoothedStates = ss;
 
             } catch (Exception err) {
-                StateStorage ss = Utility.smooth(getSsf(), new SsfMatrix(getData()), true, false, QAugmentation.QType.QR);
+                StateStorage ss = AkfToolkit.smooth(getSsf(), new SsfMatrix(getData()), true, false, true, QAugmentation.DEFAULT_COLLAPSING);
                 if (!ss.hasVariances()) {
                     return null;
                 }
@@ -138,7 +137,7 @@ public class CompositeModelEstimation {
     }
 
     public StateStorage getFastSmoothedStates() {
-        return Utility.smooth(getSsf(), new SsfMatrix(getData()), false, false, QAugmentation.DEFAULT_COLLAPSING);
+        return AkfToolkit.smooth(getSsf(), new SsfMatrix(getData()), false, false, true, QAugmentation.DEFAULT_COLLAPSING);
     }
 
     public StateStorage getFilteredStates() {
