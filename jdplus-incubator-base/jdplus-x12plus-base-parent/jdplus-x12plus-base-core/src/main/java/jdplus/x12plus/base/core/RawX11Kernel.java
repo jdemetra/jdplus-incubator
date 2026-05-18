@@ -17,9 +17,7 @@
 package jdplus.x12plus.base.core;
 
 import java.util.Arrays;
-import jdplus.toolkit.base.core.math.linearfilters.FiltersToolkit;
 import jdplus.toolkit.base.api.data.DoubleSeq;
-import jdplus.x12plus.base.api.X11SeasonalFilterSpec;
 import jdplus.x12plus.base.api.X11plusSpec;
 
 /**
@@ -46,11 +44,11 @@ public class RawX11Kernel {
         this.spec=spec;
     }
 
-    public RawX11Results process(DoubleSeq data) {
+    public RawX11Results process(DoubleSeq data, Number freq) {
         clear();
 
         // build the context from the spec
-        X11Context context = X11Context.of(spec);
+        X11Context context = X11Context.of(spec, freq);
         return process(data, context);
     }
 

@@ -18,8 +18,8 @@ package jdplus.stl.base.api;
 
 import jdplus.highfreq.base.api.ExtendedAirlineModellingSpec;
 import jdplus.highfreq.base.api.ExtendedAirlineSpec;
+import jdplus.highfreq.base.api.HighFreqSpec;
 import jdplus.toolkit.base.api.processing.AlgorithmDescriptor;
-import jdplus.sa.base.api.SaSpecification;
 import jdplus.toolkit.base.api.timeseries.TsUnit;
 import nbbrd.design.LombokWorkaround;
 
@@ -29,7 +29,7 @@ import nbbrd.design.LombokWorkaround;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true, builderClassName = "Builder")
-public class MStlPlusSpec implements SaSpecification {
+public class MStlPlusSpec implements HighFreqSpec {
 
     public static final String METHOD = "mstlplus";
     public static final String VERSION_V3 = "3.0.0";

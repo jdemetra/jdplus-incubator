@@ -63,5 +63,14 @@ public class StsSpec implements SaSpecification{
             .bsm(BsmSpec.DEFAULT)
             .benchmarking(SaBenchmarkingSpec.DEFAULT_DISABLED)
             .build();
-    
+
+    @Override
+    public int getFrequency() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public SaSpecification setFrequency(int i) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

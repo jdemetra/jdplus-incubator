@@ -41,7 +41,7 @@ import jdplus.toolkit.base.core.data.DataBlock;
 //import jdplus.experimentalsa.base.core.filters.FSTFilterSpec;
 import jdplus.toolkit.base.api.math.linearfilters.LocalPolynomialFilterSpec;
 //import jdplus.experimentalsa.base.core.filters.SpectralDensity;
-import jdplus.x12plus.base.api.X11SeasonalFilterSpec;
+import jdplus.x12plus.base.api.DefaultSeasonalFilterSpec;
 import jdplus.x12plus.base.api.X11plusSpec;
 //import jdplus.experimentalsa.base.core.rkhs.RKHSFilterFactory;
 //import jdplus.experimentalsa.base.core.rkhs.RKHSFilterSpec;
@@ -103,11 +103,11 @@ public class RawX11KernelTest {
     public void testWeekly() {
         X11plusSpec spec=X11plusSpec.createDefault(true, 365.25/7, SeasonalFilterOption.S3X5);
         RawX11Kernel kernel = new RawX11Kernel(spec);
-        kernel.process(DoubleSeq.of(WeeklyData.US_CLAIMS2));
+        kernel.process(DoubleSeq.of(WeeklyData.US_CLAIMS2), 365.25/7);
 //        System.out.println(kernel.getDstep().getD11());
         X11plusSpec spec2=X11plusSpec.createDefault(true, 52, SeasonalFilterOption.S3X5);
         kernel = new RawX11Kernel(spec2);
-        kernel.process(DoubleSeq.of(WeeklyData.US_CLAIMS2));
+        kernel.process(DoubleSeq.of(WeeklyData.US_CLAIMS2), 365.25/7);
 //        System.out.println(kernel.getDstep().getD11());
     }
 
@@ -117,14 +117,13 @@ public class RawX11KernelTest {
         DataBlock s=DataBlock.make(5000);
         s.set((DoubleSupplier)rnd::nextDouble);
         X11plusSpec spec = X11plusSpec.builder()
-                .period(365.25)
                 .trendFilter(daf(367))
-                .initialSeasonalFilter(new X11SeasonalFilterSpec(365.25, SeasonalFilterOption.S3X1))
-                .finalSeasonalFilter(new X11SeasonalFilterSpec(365.25, SeasonalFilterOption.S3X1))
+                .initialSeasonalFilter(new DefaultSeasonalFilterSpec(SeasonalFilterOption.S3X1))
+                .finalSeasonalFilter(new DefaultSeasonalFilterSpec(SeasonalFilterOption.S3X1))
                 .build();
         RawX11Kernel kernel = new RawX11Kernel(spec);
         long t0=System.currentTimeMillis();
-        kernel.process(s);
+        kernel.process(s, 365.25);
         long t1=System.currentTimeMillis();
         System.out.println(t1-t0);
     }
@@ -133,7 +132,7 @@ public class RawX11KernelTest {
     public void testMonthly() {
         X11plusSpec nspec= X11plusSpec.createDefault(false, 12, SeasonalFilterOption.S3X5);
         RawX11Kernel kernel = new RawX11Kernel(nspec);
-        RawX11Results nx11 = kernel.process(DoubleSeq.of(Data.PROD));
+        RawX11Results nx11 = kernel.process(DoubleSeq.of(Data.PROD), 12);
 //        System.out.println(kernel.getDstep().getD13());
         ec.satoolkit.x11.X11Specification spec = new ec.satoolkit.x11.X11Specification();
         spec.setMode(ec.satoolkit.DecompositionMode.Additive);

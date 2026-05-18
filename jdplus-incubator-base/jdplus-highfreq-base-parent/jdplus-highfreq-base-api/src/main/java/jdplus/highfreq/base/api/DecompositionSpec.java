@@ -59,12 +59,12 @@ public class DecompositionSpec {
                     .periodicities(new double[]{freq})
                     .adjustToInt(true)
                     .build();
-        } else if (unit.equals(TsUnit.WEEK)) {
+        } else if (unit.equals(TsUnit.WEEK) || unit.equals(TsUnit.P7D)|| unit.equals(TsUnit.P1W)) {
             return builder
                     .periodicities(new double[]{365.25 / 7})
                     .adjustToInt(false)
                     .build();
-        } else if (unit.equals(TsUnit.DAY)) {
+        } else if (unit.equals(TsUnit.DAY) || unit.equals(TsUnit.P1D)) {
             return builder
                     .periodicities(new double[]{7, 365.25})
                     .adjustToInt(true)
