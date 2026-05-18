@@ -78,4 +78,20 @@ public class X12plusSpec implements SaSpecification{
             .benchmarking(SaBenchmarkingSpec.DEFAULT_DISABLED)
             .build();
     
+    @Override
+    public int getFrequency(){
+        return preprocessing.getSeries().getFrequency();
+    }
+    
+    @Override
+    public X12plusSpec setFrequency(int freq){
+        if (getFrequency() == freq)
+            return this;
+        
+        return toBuilder()
+                .preprocessing(preprocessing.setFrequency(freq))
+                .x11(x11.setFrequency(freq))
+                .build();
+    }
+    
 }

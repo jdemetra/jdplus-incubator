@@ -17,7 +17,6 @@
 package jdplus.highfreq.base.api;
 
 import jdplus.toolkit.base.api.processing.AlgorithmDescriptor;
-import jdplus.sa.base.api.SaSpecification;
 import jdplus.toolkit.base.api.timeseries.TsUnit;
 import lombok.NonNull;
 import nbbrd.design.Development;
@@ -29,27 +28,33 @@ import nbbrd.design.Development;
 @Development(status = Development.Status.Beta)
 @lombok.Value
 @lombok.Builder(toBuilder = true, builderClassName = "Builder")
-public class ExtendedAirlineDecompositionSpec implements SaSpecification {
+public class ExtendedAirlineDecompositionSpec implements HighFreqSpec {
+
+    public static final String METHOD = "extendedairline-decomposition";
+    public static final String VERSION = "0.1.0.0";
+    public static final AlgorithmDescriptor DESCRIPTOR = new AlgorithmDescriptor(FAMILY, METHOD, VERSION);
+
+    @Override
+    public AlgorithmDescriptor getAlgorithmDescriptor() {
+        return DESCRIPTOR;
+    }
+
     @NonNull
     private ExtendedAirlineModellingSpec preprocessing;
 
     private DecompositionSpec decomposition;
-    
-    
-    public static final ExtendedAirlineDecompositionSpec DEFAULT=builder()
+
+    public static final ExtendedAirlineDecompositionSpec DEFAULT = builder()
             .preprocessing(ExtendedAirlineModellingSpec.DEFAULT_ENABLED)
             .decomposition(null)
             .build();
-    
-    public static final String METHOD = "extendedairline";
-    public static final String VERSION = "0.1.0.0";
 
     public ExtendedAirlineDecompositionSpec withPeriod(TsUnit unit) {
         TsUnit period = preprocessing.getPeriod();
         if (unit.equals(period)) {
             return this;
         }
-        
+
         Builder builder = toBuilder();
         ExtendedAirlineModellingSpec nspec;
         DecompositionSpec dspec;
@@ -73,13 +78,9 @@ public class ExtendedAirlineDecompositionSpec implements SaSpecification {
     }
 
     @Override
-    public AlgorithmDescriptor getAlgorithmDescriptor() {
-        return new AlgorithmDescriptor(FAMILY, METHOD, VERSION);
+    public String toString() {
+        // TO DO
+        return METHOD;
     }
-    
-    @Override
-    public String display(){
-        return "Extended airline";
-    }
-    
+
 }

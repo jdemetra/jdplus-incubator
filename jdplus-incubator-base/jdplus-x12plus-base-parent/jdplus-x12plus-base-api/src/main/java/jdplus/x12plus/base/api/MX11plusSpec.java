@@ -18,9 +18,8 @@ package jdplus.x12plus.base.api;
 
 import java.util.List;
 import java.util.Optional;
+import jdplus.highfreq.base.api.HighFreqSpec;
 import jdplus.sa.base.api.DecompositionMode;
-import jdplus.sa.base.api.SaSpecification;
-import static jdplus.sa.base.api.SaSpecification.FAMILY;
 import jdplus.toolkit.base.api.processing.AlgorithmDescriptor;
 import nbbrd.design.LombokWorkaround;
 
@@ -30,7 +29,7 @@ import nbbrd.design.LombokWorkaround;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true, builderClassName = "Builder")
-public class MX11plusSpec implements SaSpecification {
+public class MX11plusSpec implements HighFreqSpec {
 
     public static final String METHOD = "MX11plus";
     public static final String VERSION = "1.0.0";

@@ -16,10 +16,12 @@
  */
 package jdplus.x12plus.base.api;
 
+
 /**
  *
  * @author palatej
  */
-public interface SeasonalFilterSpec {
-    
+@lombok.Value
+public class DefaultSeasonalFilterSpec implements SeasonalFilterSpec {
+    SeasonalFilterOption option;
 }
