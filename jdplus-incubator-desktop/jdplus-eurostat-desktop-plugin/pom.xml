@@ -138,28 +138,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>eu.europa.ec.joinup.sat</groupId>
-            <artifactId>jdplus-tramoseats-desktop-plugin</artifactId>
-            <version>${jdplus-main.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.netbeans.api</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>eu.europa.ec.joinup.sat</groupId>
-            <artifactId>jdplus-x13-desktop-plugin</artifactId>
-            <version>${jdplus-main.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.netbeans.api</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <!-- 3. JD3 Base -->
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
@@ -178,11 +156,7 @@
             <exclusions>
                 <exclusion>
                     <groupId>eu.europa.ec.joinup.sat</groupId>
-                    <artifactId>jdplus-tramoseats-base-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>eu.europa.ec.joinup.sat</groupId>
-                    <artifactId>jdplus-x13-base-core</artifactId>
+                    <artifactId>jdplus-sa-base-core</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>com.github.nbbrd.java-io-util</groupId>

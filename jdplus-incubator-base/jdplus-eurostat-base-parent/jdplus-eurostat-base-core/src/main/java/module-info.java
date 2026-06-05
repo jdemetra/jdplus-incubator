@@ -13,8 +13,6 @@ module jdplus.eurostat.base.core {
     requires jdplus.eurostat.base.api;
     requires jdplus.toolkit.base.core;
     requires jdplus.sa.base.core;
-    requires jdplus.tramoseats.base.core;
-    requires jdplus.x13.base.core;
 
     exports jdplus.eurostat.base.core;
 

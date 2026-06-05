@@ -24,12 +24,7 @@
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.joinup.sat</groupId>
-            <artifactId>jdplus-tramoseats-base-core</artifactId>
-            <version>${jdplus-main.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>eu.europa.ec.joinup.sat</groupId>
-            <artifactId>jdplus-x13-base-core</artifactId>
+            <artifactId>jdplus-sa-base-core</artifactId>
             <version>${jdplus-main.version}</version>
         </dependency>
         <dependency>
