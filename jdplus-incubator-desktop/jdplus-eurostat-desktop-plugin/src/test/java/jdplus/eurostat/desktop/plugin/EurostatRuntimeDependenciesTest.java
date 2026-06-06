@@ -1,4 +1,4 @@
-package jdplus.sts.desktop.plugin;
+package jdplus.eurostat.desktop.plugin;
 
 import jdplus.main.desktop.design.GAV;
 import nbbrd.design.MightBePromoted;
@@ -15,13 +15,13 @@ import java.util.regex.Pattern;
 import static java.util.regex.Pattern.compile;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class StsRuntimeDependenciesTest {
+public class EurostatRuntimeDependenciesTest {
 
     @Test
     public void test() throws IOException {
-        assertThat(getRuntimeDependencies(StsRuntimeDependenciesTest.class))
+        assertThat(getRuntimeDependencies(EurostatRuntimeDependenciesTest.class))
                 .describedAs("Check runtime dependencies")
-                .satisfies(StsRuntimeDependenciesTest::checkSts)
+                .satisfies(EurostatRuntimeDependenciesTest::checkSts)
                 .hasSize(2);
     }
 
@@ -29,7 +29,7 @@ public class StsRuntimeDependenciesTest {
         assertThatGroupId(coordinates, "eu.europa.ec.joinup.sat")
                 .has(sameVersion())
                 .extracting(GAV::getArtifactId)
-                .are(matchingPattern(compile("^jdplus-sts-base-\\w+$")))
+                .are(matchingPattern(compile("^jdplus-eurostat-base-\\w+$")))
                 .hasSize(2);
     }
 
