@@ -87,7 +87,7 @@ public class CompositeModelTest {
         M.column(0).copyFrom(Prod_B_C, 0);
         CompositeModelEstimation rslt = model.estimate(M, false, true, SsfInitialization.Augmented_Robust, Optimizer.LevenbergMarquardt, 1e-15, null);
         // CompositeModelEstimation rslt = model.estimate(M, 1e-15, false, true, null);
-//        System.out.println(DataBlock.of(rslt.getFullParameters()));
+//        System.out.println(DoubleSeq.of(rslt.getFullParameters()));
         StateStorage states = rslt.getSmoothedStates();
         int[] pos = rslt.getCmpPos();
         DoubleSeq cmp = states.getComponent(pos[1]);
