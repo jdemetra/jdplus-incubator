@@ -58,7 +58,7 @@ public class JobVacancySurveyReport {
     public String csa() {
         if (seasonality) {
             if (leapYear || ntd > 0 || easter) {
-                return "CSA";
+                return "SCA";
             } else {
                 return "SA";
             }

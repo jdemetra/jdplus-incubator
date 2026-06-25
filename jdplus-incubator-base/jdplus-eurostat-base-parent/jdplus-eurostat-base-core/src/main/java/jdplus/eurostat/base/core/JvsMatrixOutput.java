@@ -40,6 +40,7 @@ import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.api.timeseries.regression.RegressionItem;
 import jdplus.toolkit.base.api.util.MultiLineNameUtil;
 import jdplus.toolkit.base.core.dstats.Chi2;
+import jdplus.toolkit.base.core.dstats.Normal;
 import jdplus.toolkit.base.core.stats.DescriptiveStatistics;
 import jdplus.toolkit.base.core.stats.tests.TestsUtility;
 import nbbrd.design.SystemDependent;
@@ -227,14 +228,14 @@ public class JvsMatrixOutput implements Output<SaDocument> {
         double ac1 = report.getDsaAC1();
         if (!Double.isFinite(ac1)) {
             writer.writeField(null);
-//            writer.writeField(null);
-//            writer.writeField(null);
+            writer.writeField(null);
+            writer.writeField(null);
         } else {
             writer.writeField(dfmt.format(ac1));
-            // Ljung-Box Test (P-value)", "Autocorrelation negative and significant";
-            StatisticalTest chi = chi(ac1, report.getNobs());
-            writer.writeField(dfmt.format(chi.getPvalue()));
-            if (chi.getPvalue()<PVAL_THRESHOLD){
+            // Normal Test (P-value)", "Autocorrelation negative and significant";
+            StatisticalTest n = normal(ac1, report.getNobs());
+            writer.writeField(dfmt.format(n.getPvalue()));
+            if (n.getPvalue()<PVAL_THRESHOLD){
                 writer.writeField(WARNING);
             }else{
                 writer.writeField(null);
@@ -244,10 +245,10 @@ public class JvsMatrixOutput implements Output<SaDocument> {
         
     }
     
-    private StatisticalTest chi(double ac, int n) {
-        double val = ac * ac / (n - 1) * n * (n + 2);
-        Chi2 chi = new Chi2(1);
-        return TestsUtility.testOf(val, chi, TestType.Upper);
+    private StatisticalTest normal(double ac, int n) {
+        double val = ac * Math.sqrt(n);
+        Normal N =new Normal();
+        return TestsUtility.testOf(val, N, TestType.Lower);
     }
     
     private static String formatQuality(String q) {
@@ -316,7 +317,7 @@ public class JvsMatrixOutput implements Output<SaDocument> {
         "", "Method", "Period", "Nobs", "Start", "End", "Adjustment", "Presence of Seasonality in the Raw Series", "Presence of TD effects", "Log-Transformation", "ARIMA Model", "LeapYear",
         "MovingHoliday", "NbTD", "Noutliers", "Outlier1", "Outlier2", "Outlier3", "Residual Seasonality in SA Series (F-test)", "Residual TD Effect",
         "Q-Stat (for X13)", "Final Henderson Filter", "Stage 2 Henderson Filter", "Seasonal Filter", "Irregular Standard-Deviation", "Quality (for TS)", "Max-Adj", "Autocorrelation of order 1 of the SA series"
-    , "Ljung-Box Test (P-value)", "Autocorrelation negative and significant"
+    , "Normal Test (P-value)", "Autocorrelation negative and significant"
     };
     
     private static void writeRowHeader(Csv.Writer writer, String txt, boolean fullRowName) throws IOException {
