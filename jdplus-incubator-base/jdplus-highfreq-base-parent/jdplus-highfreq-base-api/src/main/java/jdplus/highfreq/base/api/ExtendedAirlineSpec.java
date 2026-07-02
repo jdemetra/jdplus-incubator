@@ -16,9 +16,11 @@
  */
 package jdplus.highfreq.base.api;
 
+import static jdplus.highfreq.base.api.HighFreqSpec.FAMILY;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.DoubleSeqCursor;
 import jdplus.toolkit.base.api.data.Parameter;
+import jdplus.toolkit.base.api.processing.AlgorithmDescriptor;
 import jdplus.toolkit.base.api.timeseries.TsUnit;
 import nbbrd.design.Development;
 
@@ -29,8 +31,17 @@ import nbbrd.design.Development;
 @Development(status = Development.Status.Beta)
 @lombok.Value
 @lombok.Builder(toBuilder = true, builderClassName = "Builder")
-public class ExtendedAirlineSpec {
+public class ExtendedAirlineSpec implements HighFreqSpec{
 
+    public static final String METHOD = "extendedairline-modelling";
+    public static final String VERSION = "0.1.0.0";
+    public static final AlgorithmDescriptor DESCRIPTOR = new AlgorithmDescriptor(FAMILY, METHOD, VERSION);
+
+    @Override
+    public AlgorithmDescriptor getAlgorithmDescriptor() {
+        return DESCRIPTOR;
+    }
+    
     private boolean mean;
     // Periodic airline model
     private double[] periodicities;
@@ -55,6 +66,12 @@ public class ExtendedAirlineSpec {
             return this;
         }
 
+    }
+    
+    @Override
+    public String toString(){
+        // TO DO
+        return METHOD;
     }
 
     public boolean isValid() {
@@ -141,6 +158,8 @@ public class ExtendedAirlineSpec {
     }
 
     public static ExtendedAirlineSpec createDefault(TsUnit unit) {
+        if (unit == TsUnit.UNDEFINED)
+            return null;
         int freq = unit.getAnnualFrequency();
         if (freq > 0) {
             return ExtendedAirlineSpec
@@ -148,9 +167,9 @@ public class ExtendedAirlineSpec {
                     .periodicities(new double[]{freq})
                     .adjustToInt(true)
                     .build();
-        } else if (unit.equals(TsUnit.WEEK)) {
+        } else if (unit.equals(TsUnit.WEEK) || unit.equals(TsUnit.P7D)|| unit.equals(TsUnit.P1W)) {
             return ExtendedAirlineSpec.DEFAULT_W;
-        } else if (unit.equals(TsUnit.DAY)) {
+        } else if (unit.equals(TsUnit.DAY) || unit.equals(TsUnit.P1D)) {
             return ExtendedAirlineSpec.DEFAULT_WD;
         } else {
             throw new UnsupportedOperationException("Not supported yet.");

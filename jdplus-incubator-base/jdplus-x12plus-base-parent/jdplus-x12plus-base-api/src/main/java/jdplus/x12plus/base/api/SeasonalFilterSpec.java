@@ -22,6 +22,4 @@ package jdplus.x12plus.base.api;
  */
 public interface SeasonalFilterSpec {
     
-    Number getPeriod();
-    
 }

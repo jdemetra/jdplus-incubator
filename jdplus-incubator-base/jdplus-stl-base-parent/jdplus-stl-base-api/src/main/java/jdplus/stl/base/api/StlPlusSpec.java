@@ -20,6 +20,7 @@ import jdplus.toolkit.base.api.modelling.regular.ModellingSpec;
 import jdplus.toolkit.base.api.processing.AlgorithmDescriptor;
 import jdplus.sa.base.api.SaSpecification;
 import jdplus.sa.base.api.benchmarking.SaBenchmarkingSpec;
+import jdplus.toolkit.base.api.modelling.regular.SeriesSpec;
 import nbbrd.design.LombokWorkaround;
 
 /**
@@ -28,7 +29,8 @@ import nbbrd.design.LombokWorkaround;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true, builderClassName = "Builder")
-public class StlPlusSpec implements SaSpecification{
+public class StlPlusSpec implements SaSpecification {
+
     public static final String METHOD = "stlplus";
     public static final String VERSION_V3 = "3.0.0";
     public static final AlgorithmDescriptor DESCRIPTOR = new AlgorithmDescriptor(FAMILY, METHOD, VERSION_V3);
@@ -40,9 +42,9 @@ public class StlPlusSpec implements SaSpecification{
 
     @lombok.NonNull
     private ModellingSpec preprocessing;
-    
+
     private StlSpec stl;
-    
+
     @lombok.NonNull
     private SaBenchmarkingSpec benchmarking;
 
@@ -54,24 +56,37 @@ public class StlPlusSpec implements SaSpecification{
                 .benchmarking(SaBenchmarkingSpec.DEFAULT_DISABLED);
     }
 
-
     @Override
-    public String display(){
+    public String display() {
         return SMETHOD;
     }
-    
+
     private static final String SMETHOD = "STL+";
-    
-    public static final StlPlusSpec FULL=StlPlusSpec.builder()
+
+    public static final StlPlusSpec FULL = StlPlusSpec.builder()
             .preprocessing(ModellingSpec.FULL)
             .stl(null)
             .benchmarking(SaBenchmarkingSpec.DEFAULT_DISABLED)
             .build();
-    
-    public static final StlPlusSpec DEFAULT=StlPlusSpec.builder()
+
+    public static final StlPlusSpec DEFAULT = StlPlusSpec.builder()
             .preprocessing(ModellingSpec.DEFAULT)
             .stl(null)
             .benchmarking(SaBenchmarkingSpec.DEFAULT_DISABLED)
             .build();
-    
+
+    @Override
+    public int getFrequency() {
+        return preprocessing.getSeries().getFrequency();
+    }
+
+    @Override
+    public StlPlusSpec setFrequency(int nfreq) {
+        if (nfreq == preprocessing.getSeries().getFrequency()) {
+            return this;
+        } else {
+            return toBuilder().preprocessing(preprocessing.setFrequency(nfreq)).build();
+        }
+    }
+
 }

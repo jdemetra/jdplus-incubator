@@ -31,7 +31,7 @@ import jdplus.toolkit.base.api.math.linearfilters.LocalPolynomialFilterSpec;
 import jdplus.x12plus.base.api.GenericSeasonalFilterSpec;
 import jdplus.x12plus.base.api.SeasonalFilterOption;
 import jdplus.x12plus.base.api.SeasonalFilterSpec;
-import jdplus.x12plus.base.api.X11SeasonalFilterSpec;
+import jdplus.x12plus.base.api.DefaultSeasonalFilterSpec;
 import jdplus.x12plus.base.api.X11plusSpec;
 import org.openide.util.NbBundle;
 import org.openide.util.NbBundle.Messages;
@@ -354,7 +354,7 @@ public class X11plusSpecUI implements IPropertyDescriptors {
 
     public SeasonalType getSeasonalType() {
         SeasonalFilterSpec sspec = spec().getFinalSeasonalFilter();
-        if (sspec instanceof X11SeasonalFilterSpec) {
+        if (sspec instanceof DefaultSeasonalFilterSpec) {
             return SeasonalType.X11;
         } else if (sspec instanceof GenericSeasonalFilterSpec gspec) {
             if (gspec.getFilter() instanceof LocalPolynomialFilterSpec) {
@@ -369,11 +369,9 @@ public class X11plusSpecUI implements IPropertyDescriptors {
         SeasonalFilterSpec sspec = spec().getInitialSeasonalFilter();
         if (sspec instanceof GenericSeasonalFilterSpec gspec) {
             if (gspec.getFilter() instanceof LocalPolynomialFilterSpec lpspec) {
-                TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
-
                 return new LocalPolynomialSpecUI(lpspec, isRo(), true, nspec
                         -> {
-                    GenericSeasonalFilterSpec ngspec = new GenericSeasonalFilterSpec(domain.getAnnualFrequency(), nspec);
+                    GenericSeasonalFilterSpec ngspec = new GenericSeasonalFilterSpec(nspec);
                     update(spec().toBuilder()
                             .initialSeasonalFilter(ngspec)
                             .build());
@@ -387,11 +385,9 @@ public class X11plusSpecUI implements IPropertyDescriptors {
         SeasonalFilterSpec sspec = spec().getFinalSeasonalFilter();
         if (sspec instanceof GenericSeasonalFilterSpec gspec) {
             if (gspec.getFilter() instanceof LocalPolynomialFilterSpec lpspec) {
-                TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
-
-                return new LocalPolynomialSpecUI(lpspec, isRo(), true, nspec
+                 return new LocalPolynomialSpecUI(lpspec, isRo(), true, nspec
                         -> {
-                    GenericSeasonalFilterSpec ngspec = new GenericSeasonalFilterSpec(domain.getAnnualFrequency(), nspec);
+                    GenericSeasonalFilterSpec ngspec = new GenericSeasonalFilterSpec(nspec);
                     update(spec().toBuilder()
                             .finalSeasonalFilter(ngspec)
                             .build());
@@ -409,9 +405,9 @@ public class X11plusSpecUI implements IPropertyDescriptors {
         }
         switch (type) {
             case X11 ->
-                nspec = new X11SeasonalFilterSpec(domain.getAnnualFrequency(), SeasonalFilterOption.S3X5);
+                nspec = new DefaultSeasonalFilterSpec(SeasonalFilterOption.S3X5);
             case LocalPolynomial ->
-                nspec = new GenericSeasonalFilterSpec(domain.getAnnualFrequency(), LocalPolynomialFilterSpec.DEF_SEAS_SPEC);
+                nspec = new GenericSeasonalFilterSpec(LocalPolynomialFilterSpec.DEF_SEAS_SPEC);
         }
 
         if (nspec != null) {
@@ -424,8 +420,8 @@ public class X11plusSpecUI implements IPropertyDescriptors {
 
     public SeasonalFilterOption getX11InitialSeasonalFilter() {
         SeasonalFilterSpec sspec = spec().getInitialSeasonalFilter();
-        if (sspec instanceof X11SeasonalFilterSpec xspec) {
-            return xspec.getFilter();
+        if (sspec instanceof DefaultSeasonalFilterSpec xspec) {
+            return xspec.getOption();
         } else {
             return null;
         }
@@ -433,24 +429,22 @@ public class X11plusSpecUI implements IPropertyDescriptors {
 
     public SeasonalFilterOption getX11FinalSeasonalFilter() {
         SeasonalFilterSpec sspec = spec().getFinalSeasonalFilter();
-        if (sspec instanceof X11SeasonalFilterSpec xspec) {
-            return xspec.getFilter();
+        if (sspec instanceof DefaultSeasonalFilterSpec xspec) {
+            return xspec.getOption();
         } else {
             return null;
         }
     }
 
     public void setX11InitialSeasonalFilter(SeasonalFilterOption option) {
-        TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
-        SeasonalFilterSpec nspec = new X11SeasonalFilterSpec(domain.getAnnualFrequency(), option);
+        SeasonalFilterSpec nspec = new DefaultSeasonalFilterSpec(option);
         update(spec().toBuilder()
                 .initialSeasonalFilter(nspec)
                 .build());
     }
 
     public void setX11FinalSeasonalFilter(SeasonalFilterOption option) {
-        TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
-        SeasonalFilterSpec nspec = new X11SeasonalFilterSpec(domain.getAnnualFrequency(), option);
+        SeasonalFilterSpec nspec = new DefaultSeasonalFilterSpec(option);
         update(spec().toBuilder()
                 .finalSeasonalFilter(nspec)
                 .build());
@@ -543,7 +537,7 @@ public class X11plusSpecUI implements IPropertyDescriptors {
         }
         try {
             SeasonalFilterSpec sspec = spec().getFinalSeasonalFilter();
-            if (sspec instanceof X11SeasonalFilterSpec) {
+            if (sspec instanceof DefaultSeasonalFilterSpec) {
                 PropertyDescriptor desc = new PropertyDescriptor("X11InitialSeasonalFilter", this.getClass());
                 EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, ISEAS_ID);
                 desc.setDisplayName(Bundle.x11plusSpecUI_iseasDesc_name());
@@ -571,7 +565,7 @@ public class X11plusSpecUI implements IPropertyDescriptors {
         }
         try {
             SeasonalFilterSpec sspec = spec().getFinalSeasonalFilter();
-            if (sspec instanceof X11SeasonalFilterSpec) {
+            if (sspec instanceof DefaultSeasonalFilterSpec) {
                 PropertyDescriptor desc = new PropertyDescriptor("X11FinalSeasonalFilter", this.getClass());
                 EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, FSEAS_ID);
                 desc.setDisplayName(Bundle.x11plusSpecUI_fseasDesc_name());

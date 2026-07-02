@@ -18,7 +18,7 @@ package jdplus.x12plus.base.core;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import jdplus.toolkit.base.core.math.linearfilters.FiltersToolkit;
 import jdplus.x12plus.base.api.SeasonalFilterOption;
 import jdplus.toolkit.base.core.data.DataBlock;
@@ -32,7 +32,7 @@ import jdplus.toolkit.base.core.math.linearfilters.ISymmetricFiltering;
 import jdplus.toolkit.base.core.math.linearfilters.LinearFilterException;
 import jdplus.x12plus.base.api.GenericSeasonalFilterSpec;
 import jdplus.x12plus.base.api.SeasonalFilterSpec;
-import jdplus.x12plus.base.api.X11SeasonalFilterSpec;
+import jdplus.x12plus.base.api.DefaultSeasonalFilterSpec;
 
 /**
  *
@@ -41,12 +41,12 @@ import jdplus.x12plus.base.api.X11SeasonalFilterSpec;
 @lombok.experimental.UtilityClass
 public class X11SeasonalFiltersFactory {
 
-    private final Map< Class, Function<SeasonalFilterSpec, ISymmetricFiltering>> map = new HashMap<>();
-
-    public <S extends SeasonalFilterSpec> void register(Class<S> spec, Function<S, ISymmetricFiltering> fn) {
+    private final Map< Class, BiFunction<SeasonalFilterSpec, Number, ISymmetricFiltering>> map = new HashMap<>();
+    
+    public <S extends SeasonalFilterSpec> void register(Class<S> spec, BiFunction<S, Number, ISymmetricFiltering> fn) {
         synchronized (map) {
             if (fn != null) {
-                map.put(spec, (Function<SeasonalFilterSpec, ISymmetricFiltering>) fn);
+                map.put(spec, (BiFunction<SeasonalFilterSpec, Number, ISymmetricFiltering>) fn);
             }
         }
     }
@@ -57,42 +57,42 @@ public class X11SeasonalFiltersFactory {
         }
     }
 
-    public ISymmetricFiltering of(SeasonalFilterSpec spec) {
+    public ISymmetricFiltering of(SeasonalFilterSpec spec, Number period) {
         synchronized (map) {
-            Function<SeasonalFilterSpec, ISymmetricFiltering> fn = map.get(spec.getClass());
+            BiFunction<SeasonalFilterSpec, Number, ISymmetricFiltering> fn = map.get(spec.getClass());
             if (fn == null) {
                 throw new LinearFilterException("Filter spec not registered");
             }
-            return fn.apply(spec);
+            return fn.apply(spec, period);
         }
     }
 
-    public ISymmetricFiltering filter(Number period, SeasonalFilterOption option) {
+    public static ISymmetricFiltering filter(Number period, SeasonalFilterOption option) {
 
         SymmetricFilter sfilter = null;
         IFiniteFilter[] efilters = null;
 
         switch (option) {
-            case S3X1:
+            case S3X1 -> {
                 sfilter = S3X1;
                 efilters = FC1;
-                break;
-            case S3X3:
+            }
+            case S3X3 -> {
                 sfilter = S3X3;
                 efilters = FC3;
-                break;
-            case S3X5:
+            }
+            case S3X5 -> {
                 sfilter = S3X5;
                 efilters = FC5;
-                break;
-            case S3X9:
+            }
+            case S3X9 -> {
                 sfilter = S3X9;
                 efilters = FC9;
-                break;
-            case S3X15:
+            }
+            case S3X15 -> {
                 sfilter = S3X15;
                 efilters = FC15;
-                break;
+            }
         }
 
         if (period instanceof Integer) {
@@ -101,7 +101,7 @@ public class X11SeasonalFiltersFactory {
             return new AnyFilter(period.doubleValue(), sfilter, efilters);
         }
     }
-
+    
     static class DefaultFilter implements ISymmetricFiltering {
 
         private final SymmetricFilter sfilter;
@@ -374,11 +374,11 @@ public class X11SeasonalFiltersFactory {
         M_8X5, M_8X4, M_8X3, M_8X2, M_8X1, M_8X0};
 
     static {
-        register(X11SeasonalFilterSpec.class, (X11SeasonalFilterSpec spec) -> filter(spec.getPeriod(), spec.getFilter()));
-        register(GenericSeasonalFilterSpec.class, (GenericSeasonalFilterSpec spec) -> {
+        register(DefaultSeasonalFilterSpec.class, (DefaultSeasonalFilterSpec spec, Number period) -> filter(period, spec.getOption()));
+        register(GenericSeasonalFilterSpec.class, (GenericSeasonalFilterSpec spec, Number period) -> {
             IFiltering f = FiltersToolkit.of(spec.getFilter());
             if (f instanceof ISymmetricFiltering sf) {
-                return new AnyFilter(spec.getPeriod().doubleValue(), sf.centralFilter(), sf.endPointsFilters());
+                return new AnyFilter(period.doubleValue(), sf.centralFilter(), sf.endPointsFilters());
             } else {
                 return null;
             }

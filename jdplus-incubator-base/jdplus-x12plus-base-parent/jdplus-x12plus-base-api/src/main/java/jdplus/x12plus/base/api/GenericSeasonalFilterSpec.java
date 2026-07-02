@@ -24,8 +24,5 @@ import jdplus.toolkit.base.api.math.linearfilters.FilterSpec;
  */
 @lombok.Value
 public class GenericSeasonalFilterSpec implements SeasonalFilterSpec {
-    
-    Number period;
     FilterSpec filter;
-    
 }

@@ -33,7 +33,7 @@ import jdplus.x12plus.base.api.GenericSeasonalFilterSpec;
 import jdplus.x12plus.base.core.AsymmetricEndPoints;
 import jdplus.x12plus.base.core.MusgraveFilterFactory;
 import jdplus.x12plus.base.api.SeasonalFilterOption;
-import jdplus.x12plus.base.api.X11SeasonalFilterSpec;
+import jdplus.x12plus.base.api.DefaultSeasonalFilterSpec;
 import jdplus.x12plus.base.api.X11plusSpec;
 import jdplus.x12plus.base.core.SeriesEvolution;
 import jdplus.x12plus.base.core.RawX11Kernel;
@@ -63,7 +63,6 @@ public class X11Decomposition {
         }
         return new SymmetricFiltering(fcf, frf);
     }
-    
 
     static {
         FiltersToolkit.register(UserDefinedSymmetricFilterSpec.class, spec -> {
@@ -71,9 +70,8 @@ public class X11Decomposition {
             return of(uspec);
         });
     }
-    
-    // END TODO
 
+    // END TODO
     @lombok.Value
     @lombok.Builder
     public static class Results implements GenericExplorable {
@@ -173,16 +171,15 @@ public class X11Decomposition {
 
         X11plusSpec spec = X11plusSpec.builder()
                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
-                .period(P)
                 .trendFilter(tspec)
-                .initialSeasonalFilter(new X11SeasonalFilterSpec(P, SeasonalFilterOption.valueOf(seas0)))
-                .finalSeasonalFilter(new X11SeasonalFilterSpec(P, SeasonalFilterOption.valueOf(seas1)))
+                .initialSeasonalFilter(new DefaultSeasonalFilterSpec(SeasonalFilterOption.valueOf(seas0)))
+                .finalSeasonalFilter(new DefaultSeasonalFilterSpec(SeasonalFilterOption.valueOf(seas1)))
                 .lowerSigma(lsig)
                 .upperSigma(usig)
                 .build();
         RawX11Kernel kernel = new RawX11Kernel(spec);
         DoubleSeq y = DoubleSeq.of(data);
-        RawX11Results rslts = kernel.process(y);
+        RawX11Results rslts = kernel.process(y, P);
 
         return Results.builder()
                 .y(y)
@@ -206,12 +203,11 @@ public class X11Decomposition {
                 .passBand(passBand)
                 .build();
 
-        GenericSeasonalFilterSpec sfilter = new GenericSeasonalFilterSpec(period,
+        GenericSeasonalFilterSpec sfilter = new GenericSeasonalFilterSpec(
                 LocalPolynomialFilterSpec.defaultSeasonalSpec(shorizon, KernelOption.valueOf(seasKernel)));
 
         X11plusSpec spec = X11plusSpec.builder()
                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
-                .period(period)
                 .trendFilter(tspec)
                 .initialSeasonalFilter(sfilter)
                 .finalSeasonalFilter(sfilter)
@@ -220,7 +216,7 @@ public class X11Decomposition {
                 .build();
         RawX11Kernel kernel = new RawX11Kernel(spec);
         DoubleSeq y = DoubleSeq.of(data);
-        RawX11Results rslts = kernel.process(y);
+        RawX11Results rslts = kernel.process(y, period);
 
         return Results.builder()
                 .y(y)
@@ -239,12 +235,11 @@ public class X11Decomposition {
                 .asymmetricFilters(AsymmetricFilterOption.Direct)
                 .build();
 
-        GenericSeasonalFilterSpec sfilter = new GenericSeasonalFilterSpec(period,
+        GenericSeasonalFilterSpec sfilter = new GenericSeasonalFilterSpec(
                 LocalPolynomialFilterSpec.defaultSeasonalSpec(shorizon, KernelOption.valueOf(seasKernel)));
 
         X11plusSpec spec = X11plusSpec.builder()
                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
-                .period(period)
                 .trendFilter(tspec)
                 .initialSeasonalFilter(sfilter)
                 .finalSeasonalFilter(sfilter)
@@ -253,7 +248,7 @@ public class X11Decomposition {
                 .build();
         RawX11Kernel kernel = new RawX11Kernel(spec);
         DoubleSeq y = DoubleSeq.of(data);
-        RawX11Results rslts = kernel.process(y);
+        RawX11Results rslts = kernel.process(y, period);
 
         return Results.builder()
                 .y(y)
@@ -272,12 +267,11 @@ public class X11Decomposition {
                 .asymmetricFilters(AsymmetricFilterOption.CutAndNormalize)
                 .build();
 
-        GenericSeasonalFilterSpec sfilter = new GenericSeasonalFilterSpec(period,
+        GenericSeasonalFilterSpec sfilter = new GenericSeasonalFilterSpec(
                 LocalPolynomialFilterSpec.defaultSeasonalSpec(shorizon, KernelOption.valueOf(seasKernel)));
 
         X11plusSpec spec = X11plusSpec.builder()
                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
-                .period(period)
                 .trendFilter(tspec)
                 .initialSeasonalFilter(sfilter)
                 .finalSeasonalFilter(sfilter)
@@ -286,7 +280,7 @@ public class X11Decomposition {
                 .build();
         RawX11Kernel kernel = new RawX11Kernel(spec);
         DoubleSeq y = DoubleSeq.of(data);
-        RawX11Results rslts = kernel.process(y);
+        RawX11Results rslts = kernel.process(y, period);
 
         return Results.builder()
                 .y(y)
@@ -311,12 +305,11 @@ public class X11Decomposition {
                 .maxBandWidth(3 * thorizon)
                 .build();
 
-        GenericSeasonalFilterSpec sfilter = new GenericSeasonalFilterSpec(period,
+        GenericSeasonalFilterSpec sfilter = new GenericSeasonalFilterSpec(
                 LocalPolynomialFilterSpec.defaultSeasonalSpec(shorizon, KernelOption.valueOf(seasKernel)));
 
         X11plusSpec spec = X11plusSpec.builder()
                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
-                .period(period)
                 .trendFilter(tspec)
                 .initialSeasonalFilter(sfilter)
                 .finalSeasonalFilter(sfilter)
@@ -325,7 +318,7 @@ public class X11Decomposition {
                 .build();
         RawX11Kernel kernel = new RawX11Kernel(spec);
         DoubleSeq y = DoubleSeq.of(data);
-        RawX11Results rslts = kernel.process(y);
+        RawX11Results rslts = kernel.process(y, period);
 
         return Results.builder()
                 .y(y)
@@ -348,16 +341,15 @@ public class X11Decomposition {
 
         X11plusSpec spec = X11plusSpec.builder()
                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
-                .period(P)
                 .trendFilter(tspec)
-                .initialSeasonalFilter(new X11SeasonalFilterSpec(P, SeasonalFilterOption.valueOf(seas0)))
-                .finalSeasonalFilter(new X11SeasonalFilterSpec(P, SeasonalFilterOption.valueOf(seas1)))
+                .initialSeasonalFilter(new DefaultSeasonalFilterSpec(SeasonalFilterOption.valueOf(seas0)))
+                .finalSeasonalFilter(new DefaultSeasonalFilterSpec(SeasonalFilterOption.valueOf(seas1)))
                 .lowerSigma(lsig)
                 .upperSigma(usig)
                 .build();
         RawX11Kernel kernel = new RawX11Kernel(spec);
         DoubleSeq y = DoubleSeq.of(data);
-        RawX11Results rslts = kernel.process(y);
+        RawX11Results rslts = kernel.process(y, P);
 
         return Results.builder()
                 .y(y)

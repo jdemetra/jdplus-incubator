@@ -2,11 +2,8 @@ package jdplus.x12plus.base.api;
 
 
 import jdplus.highfreq.base.api.ExtendedAirlineModellingSpec;
-import jdplus.highfreq.base.api.ExtendedAirlineSpec;
-import jdplus.sa.base.api.SaSpecification;
-import static jdplus.sa.base.api.SaSpecification.FAMILY;
+import jdplus.highfreq.base.api.HighFreqSpec;
 import jdplus.toolkit.base.api.processing.AlgorithmDescriptor;
-import jdplus.toolkit.base.api.timeseries.TsUnit;
 import nbbrd.design.LombokWorkaround;
 
 /*
@@ -32,7 +29,7 @@ import nbbrd.design.LombokWorkaround;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true, builderClassName = "Builder")
-public class MX12plusSpec implements SaSpecification {
+public class MX12plusSpec implements HighFreqSpec {
 
     public static final String METHOD = "mx12plus";
     public static final String VERSION = "1.0.0";

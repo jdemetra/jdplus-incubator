@@ -6,7 +6,7 @@
 
     <groupId>eu.europa.ec.joinup.sat</groupId>
     <artifactId>jdplus-incubator</artifactId>
-    <version>2.4.1</version>
+    <version>2.5.0</version>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
@@ -39,7 +39,7 @@
     <properties>
         <!-- Java config -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.outputTimestamp>2026-04-08T09:58:23Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2026-07-02T12:42:48Z</project.build.outputTimestamp>
         <maven.compiler.target>21</maven.compiler.target>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.release>21</maven.compiler.release>
@@ -50,19 +50,21 @@
         <x.github.repo>${project.artifactId}</x.github.repo>
 
         <!-- annotations & processors -->
-        <lombok.version>1.18.44</lombok.version>
-        <java-service.version>2.0.0</java-service.version>
-        <java-design.version>1.9.0</java-design.version>
+        <lombok.version>1.18.46</lombok.version>
+        <java-service.version>2.1.0</java-service.version>
+        <java-design.version>1.10.2</java-design.version>
         <jspecify.version>1.0.0</jspecify.version>
 
         <!-- test frameworks -->
-        <junit.version>6.0.3</junit.version>
+        <junit.version>6.1.1</junit.version>
         <assertj-core.version>3.27.7</assertj-core.version>
 
         <!-- dependencies -->
         <jd2.version>2.2.6</jd2.version>
-        <jdplus-main.version>3.7.1</jdplus-main.version>
+        <jdplus-main.version>3.8.0</jdplus-main.version>
         <protobuf.version>3.21.12</protobuf.version>
+        <java-io-util.version>0.0.38</java-io-util.version>
+        <heylogs.version>0.19.1</heylogs.version>
     </properties>
 
     <modules>
@@ -151,23 +153,23 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.21.0</version>
+                    <version>3.22.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.5.5</version>
+                    <version>3.5.6</version>
                 </plugin>
                 <!-- Other plugins -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.10.0</version>
+                    <version>3.11.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.6.2</version>
+                    <version>3.6.3</version>
                 </plugin>
                 <plugin>
                     <groupId>org.gaul</groupId>
@@ -182,12 +184,12 @@
                 <plugin>
                     <groupId>com.github.nbbrd.heylogs</groupId>
                     <artifactId>heylogs-maven-plugin</artifactId>
-                    <version>0.17.1</version>
+                    <version>${heylogs.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>io.github.ascopes</groupId>
                     <artifactId>protobuf-maven-plugin</artifactId>
-                    <version>5.1.2</version>
+                    <version>5.1.7</version>
                 </plugin>
                 <plugin>
                     <groupId>com.amashchenko.maven.plugin</groupId>
@@ -212,12 +214,12 @@
                 <plugin>
                     <groupId>org.sonatype.central</groupId>
                     <artifactId>central-publishing-maven-plugin</artifactId>
-                    <version>0.10.0</version>
+                    <version>0.11.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jreleaser</groupId>
                     <artifactId>jreleaser-maven-plugin</artifactId>
-                    <version>1.23.0</version>
+                    <version>1.25.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -302,6 +304,11 @@
                         <artifactId>pomchecker-enforcer-rules</artifactId>
                         <version>1.15.0</version>
                     </dependency>
+                    <dependency>
+                        <groupId>com.github.nbbrd.heylogs</groupId>
+                        <artifactId>heylogs-enforcer-rules</artifactId>
+                        <version>${heylogs.version}</version>
+                    </dependency>
                 </dependencies>
                 <executions>
                     <execution>
@@ -346,6 +353,9 @@
                                     <release>false</release>
                                     <strict>false</strict>
                                 </checkMavenCentral>
+                                <!-- heylogs-enforcer-rules -->
+                                <checkChangelog/>
+                                <formatChangelog/>
                             </rules>
                         </configuration>
                     </execution>
@@ -415,18 +425,6 @@
                             <goal>check</goal>
                             <goal>testCheck</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.github.nbbrd.heylogs</groupId>
-                <artifactId>heylogs-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <inherited>false</inherited>
                     </execution>
                 </executions>
             </plugin>

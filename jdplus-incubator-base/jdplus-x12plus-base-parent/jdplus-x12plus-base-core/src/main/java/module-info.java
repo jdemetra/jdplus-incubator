@@ -1,4 +1,5 @@
 
+import jdplus.highfreq.base.api.HighFreqProcessingFactory;
 import jdplus.sa.base.api.SaProcessingFactory;
 import jdplus.toolkit.base.api.information.InformationExtractor;
 import jdplus.x12plus.base.core.extractors.X11plusExtractor;
@@ -14,9 +15,11 @@ module jdplus.x12plus.base.core {
     
     requires jdplus.toolkit.base.api;
     requires jdplus.toolkit.base.core;
+    requires jdplus.highfreq.base.api;
     requires jdplus.sa.base.api;
-    requires jdplus.advancedsa.base.api;
     requires jdplus.sa.base.core;
+    requires jdplus.advancedsa.base.api;
+    requires jdplus.highfreq.base.core;
     requires jdplus.advancedsa.base.core;
     requires jdplus.filters.base.core;
     requires jdplus.x12plus.base.api;

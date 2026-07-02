@@ -31,7 +31,7 @@ public class X11Toolkit {
 
     public X11plusResults process(TsData data, X11plusSpec spec) {
         RawX11Kernel x11 = new RawX11Kernel(spec);
-        RawX11Results decomp = x11.process(data.getValues());
+        RawX11Results decomp = x11.process(data.getValues(), data.getAnnualFrequency());
 
         TsPeriod start = data.getStart();
 
@@ -84,7 +84,7 @@ public class X11Toolkit {
         TsData b1 = data;
         for (PeriodSpec pspec : spec.getPeriodSpecs()) {
             RawX11Kernel x11 = new RawX11Kernel(spec.step(pspec.getPeriod()));
-            RawX11Results decomp = x11.process(b1.getValues());
+            RawX11Results decomp = x11.process(b1.getValues(), pspec.getPeriod());
 
             TsPeriod start = b1.getStart();
 

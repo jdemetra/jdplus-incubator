@@ -7,6 +7,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-07-02
+
 ## [2.4.1] - 2026-04-08
 
 This is a bugfix release of incubator extensions for JDemetra+ v3.  
@@ -75,7 +77,8 @@ This is the **initial release** of incubator extensions for JDemetra+ v3.
 
 - Initial release
 
-[Unreleased]: https://github.com/jdemetra/jdplus-incubator/compare/v2.4.1...HEAD
+[Unreleased]: https://github.com/jdemetra/jdplus-incubator/compare/v2.5.0...HEAD
+[2.5.0]: https://github.com/jdemetra/jdplus-incubator/compare/v2.4.1...v2.5.0
 [2.4.1]: https://github.com/jdemetra/jdplus-incubator/compare/v2.4.0...v2.4.1
 [2.4.0]: https://github.com/jdemetra/jdplus-incubator/compare/v2.3.0...v2.4.0
 [2.3.0]: https://github.com/jdemetra/jdplus-incubator/compare/v2.2.0...v2.3.0
@@ -83,7 +86,7 @@ This is the **initial release** of incubator extensions for JDemetra+ v3.
 [2.1.0]: https://github.com/jdemetra/jdplus-incubator/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/jdemetra/jdplus-incubator/compare/v1.0.0...v2.0.0
 [1.0.0]: https://github.com/jdemetra/jdplus-incubator/releases/tag/v1.0.0
-[STAT]: https://img.shields.io/badge/-STAT-068C09
-[OTHER]: https://img.shields.io/badge/-OTHER-e4e669
 [IO]: https://img.shields.io/badge/-IO-F813F7
+[OTHER]: https://img.shields.io/badge/-OTHER-e4e669
+[STAT]: https://img.shields.io/badge/-STAT-068C09
 [UI]: https://img.shields.io/badge/-UI-5319E7

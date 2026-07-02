@@ -17,11 +17,8 @@
 package jdplus.x12plus.base.api;
 
 import jdplus.sa.base.api.DecompositionMode;
-import jdplus.sa.base.api.SaSpecification;
-import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.math.linearfilters.FilterSpec;
 import jdplus.toolkit.base.api.math.linearfilters.HendersonSpec;
-import jdplus.toolkit.base.api.processing.AlgorithmDescriptor;
 import nbbrd.design.LombokWorkaround;
 
 /**
@@ -30,12 +27,8 @@ import nbbrd.design.LombokWorkaround;
  */
 @lombok.Value
 @lombok.Builder(toBuilder = true, builderClassName = "Builder")
-public class X11plusSpec implements SaSpecification {
-    
-    public static final String METHOD = "x11plus";
-    public static final String VERSION = "1.0.0";
-    public static final AlgorithmDescriptor DESCRIPTOR = new AlgorithmDescriptor(FAMILY, METHOD, VERSION);
-    
+public class X11plusSpec {
+
     public static final double DEFAULT_LOWER_SIGMA = 1.5, DEFAULT_UPPER_SIGMA = 2.5;
     public static final int DEFAULT_FORECAST_HORIZON = 0, DEFAULT_BACKCAST_HORIZON = 0;
 
@@ -43,12 +36,9 @@ public class X11plusSpec implements SaSpecification {
      * Decomposition mode of X11
      */
     private DecompositionMode mode;
-    
-    @lombok.With
-    private Number period;
-    
+
     private boolean seasonal;
-    
+
     private FilterSpec trendFilter;
     private SeasonalFilterSpec initialSeasonalFilter, finalSeasonalFilter;
 
@@ -84,14 +74,14 @@ public class X11plusSpec implements SaSpecification {
      * @param backcastHorizon The backcasts horizon to set.
      */
     private int backcastHorizon;
-    
+
     public static final X11plusSpec DEFAULT_UNDEFINED = X11plusSpec.builder()
             .mode(DecompositionMode.Undefined)
             .build();
-    
+
     public static final X11plusSpec DEFAULT = X11plusSpec.builder()
             .build();
-    
+
     @LombokWorkaround
     public static Builder builder() {
         return new Builder()
@@ -102,33 +92,26 @@ public class X11plusSpec implements SaSpecification {
                 .upperSigma(DEFAULT_UPPER_SIGMA)
                 .mode(DecompositionMode.Multiplicative);
     }
-    
+
     public boolean isDefault() {
         return this.equals(DEFAULT_UNDEFINED);
     }
-    
+
     public static X11plusSpec createDefault(boolean mul, Number period, SeasonalFilterOption seas) {
-        int iperiod=period.intValue()/2;
+        int iperiod = period.intValue() / 2;
         return builder()
                 .mode(mul ? DecompositionMode.Multiplicative : DecompositionMode.Additive)
-                .period(period)
-                .initialSeasonalFilter(new X11SeasonalFilterSpec(period, seas))
-                .finalSeasonalFilter(new X11SeasonalFilterSpec(period, seas))
+                .initialSeasonalFilter(new DefaultSeasonalFilterSpec(seas))
+                .finalSeasonalFilter(new DefaultSeasonalFilterSpec(seas))
                 .trendFilter(new HendersonSpec(iperiod, 3.5, 3.5))
                 .forecastHorizon(-1)
                 .build();
     }
-    
-    @Override
-    public AlgorithmDescriptor getAlgorithmDescriptor() {
-        return DESCRIPTOR;
+
+    public X11plusSpec setFrequency(Number freq) {
+        int iperiod = freq.intValue() / 2;
+        return toBuilder()
+                .trendFilter(new HendersonSpec(iperiod, 3.5, 3.5))
+                .build();
     }
-    
-    @Override
-    public String display() {
-        return SMETHOD;
-    }
-    
-    private static final String SMETHOD = "X11+";
-    
 }

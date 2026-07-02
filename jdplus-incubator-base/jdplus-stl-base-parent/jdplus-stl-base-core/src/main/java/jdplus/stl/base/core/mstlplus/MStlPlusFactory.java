@@ -39,143 +39,143 @@ import nbbrd.service.ServiceProvider;
  *
  * @author palatej
  */
-@ServiceProvider(SaProcessingFactory.class)
-public class MStlPlusFactory implements SaProcessingFactory<MStlPlusSpec, MStlPlusResults> {
-
-    public static MStlPlusFactory getInstance() {
-        return (MStlPlusFactory) SaManager.processors().stream().filter(x -> x instanceof MStlPlusFactory).findAny().orElse(new MStlPlusFactory());
-    }
-
-    private final List<SaDiagnosticsFactory<?, MStlPlusResults>> diagnostics = new CopyOnWriteArrayList<>();
-
-    public MStlPlusFactory() {
-        diagnostics.addAll(defaultDiagnostics());
-    }
-
-    public static List<SaDiagnosticsFactory<?, MStlPlusResults>> defaultDiagnostics() {
-//        CoherenceDiagnosticsFactory<StlPlusResults> coherence
-//                = new CoherenceDiagnosticsFactory<>(CoherenceDiagnosticsConfiguration.getDefault(),
-//                        (StlPlusResults r) -> {
-//                            return new CoherenceDiagnostics.Input(r.getFinals().getMode(), r);
-//                        }
-//                );
-//        SaOutOfSampleDiagnosticsFactory<StlPlusResults> outofsample
-//                = new SaOutOfSampleDiagnosticsFactory<>(OutOfSampleDiagnosticsConfiguration.getDefault(),
-//                        r -> r.getDiagnostics().getGenericDiagnostics().forecastingTest());
-//        SaResidualsDiagnosticsFactory<StlPlusResults> residuals
-//                = new SaResidualsDiagnosticsFactory<>(ResidualsDiagnosticsConfiguration.getDefault(),
-//                        r -> r.getPreprocessing());
-//        SaOutliersDiagnosticsFactory<StlPlusResults> outliers
-//                = new SaOutliersDiagnosticsFactory<>(OutliersDiagnosticsConfiguration.getDefault(),
-//                        r -> r.getPreprocessing());
+//@ServiceProvider(SaProcessingFactory.class)
+//public class MStlPlusFactory implements SaProcessingFactory<MStlPlusSpec, MStlPlusResults> {
 //
-//        AdvancedResidualSeasonalityDiagnosticsFactory<StlPlusResults> advancedResidualSeasonality
-//                = new AdvancedResidualSeasonalityDiagnosticsFactory<>(AdvancedResidualSeasonalityDiagnosticsConfiguration.getDefault(),
-//                        (StlPlusResults r) -> r.getDiagnostics().getGenericDiagnostics()
-//                );
-//
-//        ResidualTradingDaysDiagnosticsFactory<StlPlusResults> residualTradingDays
-//                = new ResidualTradingDaysDiagnosticsFactory<>(ResidualTradingDaysDiagnosticsConfiguration.getDefault(),
-//                        (StlPlusResults r) -> r.getDiagnostics().getGenericDiagnostics().residualTradingDaysTests()
-//                );
-
-        List<SaDiagnosticsFactory<?, MStlPlusResults>> all = new ArrayList<>();
-
-//        all.add(coherence);
-//        all.add(residuals);
-//        all.add(outofsample);
-//        all.add(outliers);
-//        all.add(advancedResidualSeasonality);
-//        all.add(residualTradingDays);
-        return all;
-    }
-
-    @Override
-    public AlgorithmDescriptor descriptor() {
-        return StlPlusSpec.DESCRIPTOR;
-    }
-
-    @Override
-    public MStlPlusSpec generateSpec(MStlPlusSpec spec, MStlPlusResults estimation) {
-        return null;
-//        return generateSpec(spec, estimation.getPreprocessing().getDescription());
-    }
-
-//    public MStlPlusSpec generateSpec(MStlPlusSpec spec, GeneralLinearModel.Description<SarimaSpec> desc) {
-//
-//        ModellingSpec ntspec = FastRegArimaFactory.getInstance().generateSpec(spec.getPreprocessing(), desc);
-//        StlSpec nsspec = update(spec.getStl());
-//
-//        return spec.toBuilder()
-//                .preprocessing(ntspec)
-//                .stl(nsspec)
-//                .build();
+//    public static MStlPlusFactory getInstance() {
+//        return (MStlPlusFactory) SaManager.processors().stream().filter(x -> x instanceof MStlPlusFactory).findAny().orElse(new MStlPlusFactory());
 //    }
-
-    @Override
-    public MStlPlusSpec refreshSpec(MStlPlusSpec currentSpec, MStlPlusSpec domainSpec, EstimationPolicyType policy, TsDomain domain) {
-        // NOT COMPLETE
-//        if (policy == EstimationPolicyType.None) {
-//            return currentSpec;
+//
+//    private final List<SaDiagnosticsFactory<?, MStlPlusResults>> diagnostics = new CopyOnWriteArrayList<>();
+//
+//    public MStlPlusFactory() {
+//        diagnostics.addAll(defaultDiagnostics());
+//    }
+//
+//    public static List<SaDiagnosticsFactory<?, MStlPlusResults>> defaultDiagnostics() {
+////        CoherenceDiagnosticsFactory<StlPlusResults> coherence
+////                = new CoherenceDiagnosticsFactory<>(CoherenceDiagnosticsConfiguration.getDefault(),
+////                        (StlPlusResults r) -> {
+////                            return new CoherenceDiagnostics.Input(r.getFinals().getMode(), r);
+////                        }
+////                );
+////        SaOutOfSampleDiagnosticsFactory<StlPlusResults> outofsample
+////                = new SaOutOfSampleDiagnosticsFactory<>(OutOfSampleDiagnosticsConfiguration.getDefault(),
+////                        r -> r.getDiagnostics().getGenericDiagnostics().forecastingTest());
+////        SaResidualsDiagnosticsFactory<StlPlusResults> residuals
+////                = new SaResidualsDiagnosticsFactory<>(ResidualsDiagnosticsConfiguration.getDefault(),
+////                        r -> r.getPreprocessing());
+////        SaOutliersDiagnosticsFactory<StlPlusResults> outliers
+////                = new SaOutliersDiagnosticsFactory<>(OutliersDiagnosticsConfiguration.getDefault(),
+////                        r -> r.getPreprocessing());
+////
+////        AdvancedResidualSeasonalityDiagnosticsFactory<StlPlusResults> advancedResidualSeasonality
+////                = new AdvancedResidualSeasonalityDiagnosticsFactory<>(AdvancedResidualSeasonalityDiagnosticsConfiguration.getDefault(),
+////                        (StlPlusResults r) -> r.getDiagnostics().getGenericDiagnostics()
+////                );
+////
+////        ResidualTradingDaysDiagnosticsFactory<StlPlusResults> residualTradingDays
+////                = new ResidualTradingDaysDiagnosticsFactory<>(ResidualTradingDaysDiagnosticsConfiguration.getDefault(),
+////                        (StlPlusResults r) -> r.getDiagnostics().getGenericDiagnostics().residualTradingDaysTests()
+////                );
+//
+//        List<SaDiagnosticsFactory<?, MStlPlusResults>> all = new ArrayList<>();
+//
+////        all.add(coherence);
+////        all.add(residuals);
+////        all.add(outofsample);
+////        all.add(outliers);
+////        all.add(advancedResidualSeasonality);
+////        all.add(residualTradingDays);
+//        return all;
+//    }
+//
+//    @Override
+//    public AlgorithmDescriptor descriptor() {
+//        return StlPlusSpec.DESCRIPTOR;
+//    }
+//
+//    @Override
+//    public MStlPlusSpec generateSpec(MStlPlusSpec spec, MStlPlusResults estimation) {
+//        return null;
+////        return generateSpec(spec, estimation.getPreprocessing().getDescription());
+//    }
+//
+////    public MStlPlusSpec generateSpec(MStlPlusSpec spec, GeneralLinearModel.Description<SarimaSpec> desc) {
+////
+////        ModellingSpec ntspec = FastRegArimaFactory.getInstance().generateSpec(spec.getPreprocessing(), desc);
+////        StlSpec nsspec = update(spec.getStl());
+////
+////        return spec.toBuilder()
+////                .preprocessing(ntspec)
+////                .stl(nsspec)
+////                .build();
+////    }
+//
+//    @Override
+//    public MStlPlusSpec refreshSpec(MStlPlusSpec currentSpec, MStlPlusSpec domainSpec, EstimationPolicyType policy, TsDomain domain) {
+//        // NOT COMPLETE
+////        if (policy == EstimationPolicyType.None) {
+////            return currentSpec;
+////        }
+////        ModellingSpec ntspec = FastRegArimaFactory.getInstance().refreshSpec(currentSpec.getPreprocessing(), domainSpec.getPreprocessing(), policy, domain);
+////        return currentSpec.toBuilder()
+////                .preprocessing(ntspec)
+////                .build();
+//        return null;
+//    }
+//
+////    private StlSpec update(StlSpec stl) {
+////        // Nothing to do (for the time being)
+////        return stl;
+////    }
+//
+//    @Override
+//    public SaProcessor processor(MStlPlusSpec spec) {
+//        return (s, cxt, log) -> MStlPlusKernel.of(spec, cxt).process(s, log);
+//    }
+//
+//    @Override
+//    public MStlPlusSpec decode(SaSpecification spec) {
+//        if (spec instanceof MStlPlusSpec) {
+//            return (MStlPlusSpec) spec;
+//        } else {
+//            return null;
 //        }
-//        ModellingSpec ntspec = FastRegArimaFactory.getInstance().refreshSpec(currentSpec.getPreprocessing(), domainSpec.getPreprocessing(), policy, domain);
-//        return currentSpec.toBuilder()
-//                .preprocessing(ntspec)
-//                .build();
-        return null;
-    }
-
-//    private StlSpec update(StlSpec stl) {
-//        // Nothing to do (for the time being)
-//        return stl;
 //    }
-
-    @Override
-    public SaProcessor processor(MStlPlusSpec spec) {
-        return (s, cxt, log) -> MStlPlusKernel.of(spec, cxt).process(s, log);
-    }
-
-    @Override
-    public MStlPlusSpec decode(SaSpecification spec) {
-        if (spec instanceof MStlPlusSpec) {
-            return (MStlPlusSpec) spec;
-        } else {
-            return null;
-        }
-    }
-
-    @Override
-    public boolean canHandle(SaSpecification spec) {
-        return spec instanceof MStlPlusSpec;
-    }
-
-    @Override
-    public List<SaDiagnosticsFactory<?, MStlPlusResults>> diagnosticFactories() {
-        return Collections.unmodifiableList(diagnostics);
-    }
-
-    public void addDiagnostics(SaDiagnosticsFactory<?, MStlPlusResults> diag) {
-        diagnostics.add(diag);
-    }
-
-    public void replaceDiagnostics(SaDiagnosticsFactory<?, MStlPlusResults> olddiag, SaDiagnosticsFactory<?, MStlPlusResults> newdiag) {
-        int idx = diagnostics.indexOf(olddiag);
-        if (idx < 0) {
-            diagnostics.add(newdiag);
-        } else {
-            diagnostics.set(idx, newdiag);
-        }
-    }
-
-    @Override
-    public void resetDiagnosticFactories(List<SaDiagnosticsFactory<?, MStlPlusResults>> factories) {
-        diagnostics.clear();
-        diagnostics.addAll(factories);
-    }
-
-    @Override
-    public Dictionary outputDictionary() {
-        return StlDictionaries.STLPLUSDICTIONARY;
-    }
-
-}
+//
+//    @Override
+//    public boolean canHandle(SaSpecification spec) {
+//        return spec instanceof MStlPlusSpec;
+//    }
+//
+//    @Override
+//    public List<SaDiagnosticsFactory<?, MStlPlusResults>> diagnosticFactories() {
+//        return Collections.unmodifiableList(diagnostics);
+//    }
+//
+//    public void addDiagnostics(SaDiagnosticsFactory<?, MStlPlusResults> diag) {
+//        diagnostics.add(diag);
+//    }
+//
+//    public void replaceDiagnostics(SaDiagnosticsFactory<?, MStlPlusResults> olddiag, SaDiagnosticsFactory<?, MStlPlusResults> newdiag) {
+//        int idx = diagnostics.indexOf(olddiag);
+//        if (idx < 0) {
+//            diagnostics.add(newdiag);
+//        } else {
+//            diagnostics.set(idx, newdiag);
+//        }
+//    }
+//
+//    @Override
+//    public void resetDiagnosticFactories(List<SaDiagnosticsFactory<?, MStlPlusResults>> factories) {
+//        diagnostics.clear();
+//        diagnostics.addAll(factories);
+//    }
+//
+//    @Override
+//    public Dictionary outputDictionary() {
+//        return StlDictionaries.STLPLUSDICTIONARY;
+//    }
+//
+//}

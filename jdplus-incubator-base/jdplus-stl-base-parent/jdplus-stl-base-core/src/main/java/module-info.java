@@ -1,6 +1,6 @@
 
 import jdplus.sa.base.api.SaProcessingFactory;
-import jdplus.stl.base.core.mstlplus.MStlPlusFactory;
+//import jdplus.stl.base.core.mstlplus.MStlPlusFactory;
 import jdplus.stl.base.core.stlplus.StlPlusFactory;
 import jdplus.stl.base.core.stlplus.extractors.MStlExtractor;
 import jdplus.stl.base.core.stlplus.extractors.MStlPlusExtractor;
@@ -35,6 +35,6 @@ module jdplus.stl.base.core {
             MStlExtractor;
 
     provides SaProcessingFactory with
-            StlPlusFactory,
-            MStlPlusFactory;
+            StlPlusFactory;
+//            MStlPlusFactory;
 }

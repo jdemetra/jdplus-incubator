@@ -43,15 +43,15 @@ public class X11Context {
     IQuasiSymmetricFiltering trendFiltering;
     ISymmetricFiltering initialSeasonalFiltering, finalSeasonalFiltering;
     
-    public static X11Context of(X11plusSpec spec){
+    public static X11Context of(X11plusSpec spec, Number period){
         return X11Context.builder()
+                .period(period)
                 .mode(spec.getMode())
-                .period(spec.getPeriod())
                 .lowerSigma(spec.getLowerSigma())
                 .upperSigma(spec.getUpperSigma())
                 .trendFiltering((IQuasiSymmetricFiltering) FiltersToolkit.of(spec.getTrendFilter()))
-                .initialSeasonalFiltering(X11SeasonalFiltersFactory.of(spec.getInitialSeasonalFilter()))
-                .finalSeasonalFiltering(X11SeasonalFiltersFactory.of(spec.getFinalSeasonalFilter()))
+                .initialSeasonalFiltering(X11SeasonalFiltersFactory.of(spec.getInitialSeasonalFilter(), period))
+                .finalSeasonalFiltering(X11SeasonalFiltersFactory.of(spec.getFinalSeasonalFilter(), period))
                 .build();
     }
 
