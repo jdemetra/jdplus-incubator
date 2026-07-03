@@ -142,6 +142,11 @@
                                                         ${desktop.basedir}/jdplus-x12plus-desktop-plugin/target/jdplus-x12plus-desktop-plugin-${project.version}.nbm
                                                     </path>
                                                 </artifact>
+                                                <artifact>
+                                                    <path>
+                                                        ${desktop.basedir}/jdplus-eurostat-desktop-plugin/target/jdplus-eurostat-desktop-plugin-${project.version}.nbm
+                                                    </path>
+                                                </artifact>
                                             </artifacts>
                                         </files>
                                     </jreleaser>
