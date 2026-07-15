@@ -144,7 +144,7 @@
                                                 </artifact>
                                                 <artifact>
                                                     <path>
-                                                        ${desktop.basedir}/jdplus-eurostat-desktop-plugin/target/jdplus-eurostat-desktop-plugin-${project.version}.nbm
+                                                        ${desktop.basedir}/jdplus-jvsqr-desktop-plugin/target/jdplus-jvsqr-desktop-plugin-${project.version}.nbm
                                                     </path>
                                                 </artifact>
                                             </artifacts>

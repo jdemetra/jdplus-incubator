@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-OpenIDE-Module-Localizing-Bundle: jdplus/eurostat/desktop/plugin/Bundle.properties
-OpenIDE-Module-Display-Category: JD+ Incubator
-OpenIDE-Module-Java-Dependencies: Java > 17
-OpenIDE-Module-Install: jdplus/eurostat/desktop/plugin/util/Installer.class
-
