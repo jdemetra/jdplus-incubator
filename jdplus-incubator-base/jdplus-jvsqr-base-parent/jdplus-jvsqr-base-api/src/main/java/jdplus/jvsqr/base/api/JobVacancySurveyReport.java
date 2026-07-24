@@ -16,7 +16,10 @@
 package jdplus.jvsqr.base.api;
 
 import java.util.Arrays;
+import java.util.function.IntToDoubleFunction;
+import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.information.Explorable;
+import jdplus.toolkit.base.api.stats.AutoCovariances;
 import jdplus.toolkit.base.api.stats.StatisticalTest;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.api.timeseries.TsPeriod;
@@ -142,12 +145,10 @@ public class JobVacancySurveyReport {
         yadj = yadj.fn(x -> !Double.isFinite(x) ? 0 : Math.abs((x)));
         maxAdjustment = 100 * yadj.getValues().max();
         JdQuality = rslts.getData(QUALITY, String.class);
-        Double ac1 = rslts.getData(SA_AC1, Double.class);
-        if (ac1 == null) {
-            dsaAC1 = Double.NaN;
-        } else {
-            dsaAC1 = ac1;
-        }
+//        Double ac1 = rslts.getData(SA_AC1, Double.class);
+        DoubleSeq dsa = sa.delta(1).getValues();
+        IntToDoubleFunction ac = AutoCovariances.autoCorrelationFunction(dsa, dsa.average());
+        dsaAC1 = ac.applyAsDouble(1);
     }
 
     private static void fill(RegressionItem[] outliers, Explorable rslts) {
@@ -170,5 +171,5 @@ public class JobVacancySurveyReport {
     private static final String SEASONAL = "seasonal", ADJUST = "adjust", LP = "regression.nlp", NMH = "regression.nmh", NTD = "regression.ntd", NOUT = "regression.nout";
     private static final String FTD = "diagnostics.td_f_ma", FSEASLIN = "diagnostics.seas-lin-f", KWSEASLIN = "diagnostics.seas-lin-kw", QSSEASLIN = "diagnostics.seas-lin-qs", FSEASSA = "diagnostics.seas-sa-f", FTDSA = "diagnostics.td-sa-all";
     private static final String X13_Q = "m-statistics.q", X13_HENDERSON = "decomposition.trend-filter", X13_HENDERSON_D7 = "decomposition.d7-trend-filter", X13_SF = "decomposition.seasonal-filters";
-    private static final String QUALITY = "quality.summary", Y = "decomposition.y_cmp", SA = "decomposition.sa_cmp", TREND = "decomposition.t_cmp", SA_AC1 = "diagnostics.seas-sa-ac1";
+    private static final String QUALITY = "quality.summary", Y = "y", SA = "sa", TREND = "t", SA_AC1 = "diagnostics.seas-sa-ac1";
 }
