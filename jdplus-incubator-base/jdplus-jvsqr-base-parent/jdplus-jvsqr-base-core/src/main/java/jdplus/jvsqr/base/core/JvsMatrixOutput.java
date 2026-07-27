@@ -212,7 +212,7 @@ public class JvsMatrixOutput implements Output<SaDocument> {
         }
         // Irregular Standard-Deviation
         TsData irr = report.getIrregular();
-        double stdev = DescriptiveStatistics.of(irr.getValues()).getStdev();
+        double stdev = DescriptiveStatistics.of(irr.getValues()).getStdevDF(1);
         writer.writeField(dfmt.format(stdev));
         // Quality (for TS)
         writer.writeField(formatQuality(report.getJdQuality()));
@@ -232,7 +232,8 @@ public class JvsMatrixOutput implements Output<SaDocument> {
         } else {
             writer.writeField(dfmt.format(ac1));
             // Normal Test (P-value)", "Autocorrelation negative and significant";
-            StatisticalTest n = normal(ac1, report.getNobs());
+            // -1 for the differencing, -1 for the ac1
+            StatisticalTest n = normal(ac1, report.getNobs()-1);
             writer.writeField(dfmt.format(n.getPvalue()));
             if (n.getPvalue()<PVAL_THRESHOLD){
                 writer.writeField(WARNING);
@@ -328,8 +329,11 @@ public class JvsMatrixOutput implements Output<SaDocument> {
             txt = MultiLineNameUtil.join(txt, " * ");
         } else {
             txt = MultiLineNameUtil.last(txt);
+            int idx = txt.lastIndexOf("(frozen)");
+            if (idx >= 0)
+                txt=txt.substring(0, idx);
         }
-        txt = StringFormatter.cleanup(txt);
+        txt = StringFormatter.cleanup(txt).strip();
         writer.writeField(txt);
     }
     
