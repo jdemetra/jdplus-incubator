@@ -397,6 +397,10 @@
                             <exclusionPatterns>
                                 <!--<exclusionPattern>com/google/common/base/Optional.*</exclusionPattern>-->
                             </exclusionPatterns>
+                            <ignoreClassNamePatterns>
+                                <ignoreClassNamePattern>jdplus/sts/base/io/outliers/protobuf/StsOutliersProtos.*</ignoreClassNamePattern>
+                                <ignoreClassNamePattern>jdplus/sts/base/io/protobuf/StsProtos.*</ignoreClassNamePattern>
+                            </ignoreClassNamePatterns>
                         </configuration>
                     </execution>
                 </executions>

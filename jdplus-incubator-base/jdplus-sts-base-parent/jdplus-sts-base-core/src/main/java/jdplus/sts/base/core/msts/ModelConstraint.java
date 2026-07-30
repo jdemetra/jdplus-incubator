@@ -18,8 +18,8 @@ package jdplus.sts.base.core.msts;
 
 import jdplus.toolkit.base.core.ssf.ISsfLoading;
 import jdplus.toolkit.base.core.ssf.composite.MultivariateCompositeSsf;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -97,7 +97,7 @@ public class ModelConstraint implements ModelItem {
 
     @Override
     public List<ParameterInterpreter> parameters() {
-        return Collections.emptyList();
+        return List.of();
     }
 
 }

@@ -16,20 +16,20 @@
  */
 package jdplus.sts.base.core.msts.internal;
 
-import jdplus.sts.base.core.msts.StateItem;
-import jdplus.toolkit.base.api.data.DoubleSeq;
-import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.sts.base.core.msts.MstsMapping;
-import jdplus.sts.base.core.msts.VarianceInterpreter;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import jdplus.sts.base.core.msts.ParameterInterpreter;
+import jdplus.sts.base.core.msts.StateItem;
+import jdplus.sts.base.core.msts.VarianceInterpreter;
+import jdplus.toolkit.base.api.data.DoubleSeq;
+import jdplus.toolkit.base.api.math.matrices.Matrix;
+import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.toolkit.base.core.ssf.ISsfLoading;
 import jdplus.toolkit.base.core.ssf.StateComponent;
 import jdplus.toolkit.base.core.ssf.basic.Coefficients;
 import jdplus.toolkit.base.core.ssf.basic.Loading;
-import jdplus.toolkit.base.api.math.matrices.Matrix;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -105,9 +105,9 @@ public class RegressionItem extends StateItem {
     @Override
     public List<ParameterInterpreter> parameters() {
         if (v == null) {
-            return Collections.emptyList();
+            return List.of();
         } else if (v.length == 1) {
-            return Collections.singletonList(v[0]);
+            return List.of(v[0]);
         } else {
             return Arrays.asList(v);
         }

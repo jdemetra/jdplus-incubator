@@ -16,25 +16,25 @@
  */
 package jdplus.sts.base.core.msts.internal;
 
-import jdplus.toolkit.base.api.data.DoubleSeq;
-import jdplus.sts.base.core.msts.StateItem;
-import jdplus.toolkit.base.core.math.matrices.FastMatrix;
-import jdplus.toolkit.base.core.math.matrices.SymmetricMatrix;
-import jdplus.toolkit.base.core.modelling.regression.Regression;
 import jdplus.sts.base.core.msts.MstsMapping;
+import jdplus.sts.base.core.msts.ParameterInterpreter;
+import jdplus.sts.base.core.msts.StateItem;
 import jdplus.sts.base.core.msts.VarianceInterpreter;
+import jdplus.toolkit.base.api.data.DoubleSeq;
+import jdplus.toolkit.base.api.math.matrices.Matrix;
 import jdplus.toolkit.base.api.timeseries.TsDomain;
 import jdplus.toolkit.base.api.timeseries.calendars.DayClustering;
 import jdplus.toolkit.base.api.timeseries.calendars.GenericTradingDays;
-import java.util.Collections;
-import java.util.List;
-import jdplus.sts.base.core.msts.ParameterInterpreter;
 import jdplus.toolkit.base.api.timeseries.regression.GenericTradingDaysVariable;
+import jdplus.toolkit.base.core.math.matrices.FastMatrix;
+import jdplus.toolkit.base.core.math.matrices.SymmetricMatrix;
+import jdplus.toolkit.base.core.modelling.regression.Regression;
 import jdplus.toolkit.base.core.ssf.ISsfLoading;
 import jdplus.toolkit.base.core.ssf.StateComponent;
 import jdplus.toolkit.base.core.ssf.basic.Coefficients;
 import jdplus.toolkit.base.core.ssf.basic.Loading;
-import jdplus.toolkit.base.api.math.matrices.Matrix;
+
+import java.util.List;
 
 /**
  *
@@ -91,7 +91,7 @@ public class TdRegressionItem extends StateItem {
 
     @Override
     public List<ParameterInterpreter> parameters() {
-        return Collections.singletonList(v);
+        return List.of(v);
     }
 
     public static Matrix tdContrasts(TsDomain domain, int[] groups) {
