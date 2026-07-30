@@ -16,16 +16,16 @@
  */
 package jdplus.sts.base.core.msts.internal;
 
-import jdplus.sts.base.core.msts.StateItem;
-import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.sts.base.core.msts.MstsMapping;
-import java.util.Collections;
-import java.util.List;
 import jdplus.sts.base.core.msts.ParameterInterpreter;
 import jdplus.sts.base.core.msts.ScaleInterpreter;
+import jdplus.sts.base.core.msts.StateItem;
+import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.core.ssf.ISsfLoading;
 import jdplus.toolkit.base.core.ssf.StateComponent;
 import jdplus.toolkit.base.core.ssf.basic.VarNoise;
+
+import java.util.List;
 
 /**
  *
@@ -66,7 +66,7 @@ public class VarNoiseItem extends StateItem {
 
     @Override
     public List<ParameterInterpreter> parameters() {
-        return Collections.singletonList(scale);
+        return List.of(scale);
     }
 
     @Override

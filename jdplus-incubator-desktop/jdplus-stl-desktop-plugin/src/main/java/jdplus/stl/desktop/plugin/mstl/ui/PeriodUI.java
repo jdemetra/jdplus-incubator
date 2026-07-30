@@ -1,29 +1,29 @@
 /*
  * Copyright 2023 National Bank of Belgium
  *
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved 
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
  *
  * https://joinup.ec.europa.eu/software/page/eupl
  *
- * Unless required by applicable law or agreed to in writing, software 
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package jdplus.stl.desktop.plugin.mstl.ui;
 
 import jdplus.toolkit.desktop.plugin.descriptors.EnhancedPropertyDescriptor;
 import jdplus.toolkit.desktop.plugin.descriptors.IPropertyDescriptors;
+import org.openide.util.NbBundle;
+
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
-import org.openide.util.NbBundle;
 
 /**
  *
@@ -54,7 +54,7 @@ public class PeriodUI implements IPropertyDescriptors {
     public List<EnhancedPropertyDescriptor> getProperties() {
         // regression
         EnhancedPropertyDescriptor desc = pDesc();
-        return Collections.singletonList(desc);
+        return List.of(desc);
     }
     public void setPeriod(int period) {
         if (period <= 1) {
@@ -83,7 +83,7 @@ public class PeriodUI implements IPropertyDescriptors {
         }
     }
 
- 
+
     @Override
     @NbBundle.Messages("periodUI.getDisplayName=period")
     public String getDisplayName() {
