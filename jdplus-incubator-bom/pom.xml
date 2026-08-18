@@ -142,11 +142,6 @@
                                                         ${desktop.basedir}/jdplus-x12plus-desktop-plugin/target/jdplus-x12plus-desktop-plugin-${project.version}.nbm
                                                     </path>
                                                 </artifact>
-                                                <artifact>
-                                                    <path>
-                                                        ${desktop.basedir}/jdplus-jvsqr-desktop-plugin/target/jdplus-jvsqr-desktop-plugin-${project.version}.nbm
-                                                    </path>
-                                                </artifact>
                                             </artifacts>
                                         </files>
                                     </jreleaser>
