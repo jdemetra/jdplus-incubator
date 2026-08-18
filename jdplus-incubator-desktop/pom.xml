@@ -25,7 +25,6 @@
         <module>jdplus-stl-desktop-plugin</module>
         <module>jdplus-sts-desktop-plugin</module>
         <module>jdplus-x12plus-desktop-plugin</module>
-        <module>jdplus-jvsqr-desktop-plugin</module>
     </modules>
 
     <build>
