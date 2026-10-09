@@ -16,33 +16,31 @@
 package jdplus.advancedsa.base.r;
 
 import java.util.Locale;
-import jdplus.advancedsa.base.api.tdarima.LtdSarimaSpec;
 import jdplus.advancedsa.base.api.tdarima.LtdSarimaModelSpec;
+import jdplus.advancedsa.base.api.tdarima.LtdSarimaSpec;
 import jdplus.advancedsa.base.api.tdarima.LtdSpec;
 import jdplus.advancedsa.base.core.tdarima.LtdKernel;
 import jdplus.advancedsa.base.core.tdarima.LtdResults;
-import jdplus.advancedsa.base.core.tdarima.LtdSarimaResults;
-import jdplus.toolkit.base.api.math.matrices.Matrix;
-import jdplus.toolkit.base.core.math.matrices.FastMatrix;
-import jdplus.toolkit.base.core.ssf.composite.CompositeSsf;
-import jdplus.toolkit.base.core.ssf.dk.DkToolkit;
-import jdplus.toolkit.base.core.ssf.univariate.DefaultSmoothingResults;
-import jdplus.toolkit.base.core.ssf.univariate.SsfData;
-import jdplus.toolkit.base.core.ucarima.UcarimaModel;
 import jdplus.advancedsa.base.core.tdarima.TdAirlineDecomposer;
 import jdplus.advancedsa.base.core.tdarima.TdArimaDecomposer;
 import jdplus.advancedsa.base.core.tdarima.TdSsfUcarima;
 import jdplus.toolkit.base.api.arima.SarimaOrders;
-import jdplus.toolkit.base.api.arima.SarimaSpec;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.Parameter;
 import jdplus.toolkit.base.api.data.ParameterType;
 import jdplus.toolkit.base.api.information.GenericExplorable;
+import jdplus.toolkit.base.api.math.matrices.Matrix;
 import jdplus.toolkit.base.core.arima.ArimaModel;
 import jdplus.toolkit.base.core.data.DataBlock;
+import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.toolkit.base.core.sarima.SarimaModel;
+import jdplus.toolkit.base.core.ssf.composite.CompositeSsf;
+import jdplus.toolkit.base.core.ssf.dk.DkToolkit;
 import jdplus.toolkit.base.core.ssf.likelihood.DiffuseLikelihood;
+import jdplus.toolkit.base.core.ssf.univariate.DefaultSmoothingResults;
 import jdplus.toolkit.base.core.ssf.univariate.Ssf;
+import jdplus.toolkit.base.core.ssf.univariate.SsfData;
+import jdplus.toolkit.base.core.ucarima.UcarimaModel;
 
 /**
  *
@@ -75,7 +73,8 @@ public class TimeVaryingArimaModels {
         return rslt;
     }
 
-    public DecompositionResults arimaDecomposition(double[] data, int period, int[] regular, int[] seasonal, boolean tdvar, Matrix parameters, boolean se) {
+    public DecompositionResults arimaDecomposition(
+            double[] data, int period, int[] regular, int[] seasonal, boolean tdvar, Matrix parameters, boolean se) {
         try {
             SarimaOrders orders = new SarimaOrders(period);
             orders.setP(regular[0]);
@@ -87,8 +86,7 @@ public class TimeVaryingArimaModels {
             TdArimaDecomposer decomposer = new TdArimaDecomposer(period, data.length, i -> {
                 DoubleSeq c = parameters.column(i);
                 DoubleSeq p = tdvar ? c.drop(0, 1) : c;
-                SarimaModel sarima = SarimaModel.builder(orders).parameters(p)
-                        .build();
+                SarimaModel sarima = SarimaModel.builder(orders).parameters(p).build();
                 if (!tdvar) {
                     return sarima;
                 } else {
@@ -115,18 +113,32 @@ public class TimeVaryingArimaModels {
                     ecmps.column(i).copy(sf.zvariance(DoubleSeq.of(z)).sqrt());
                 }
             }
-            DiffuseLikelihood decompositionLl = DkToolkit.likelihoodComputer(true, true, true).compute(ssf, new SsfData(data));
+            DiffuseLikelihood decompositionLl =
+                    DkToolkit.likelihoodComputer(true, true, true).compute(ssf, new SsfData(data));
             Ssf model = decomposer.model();
-            DiffuseLikelihood directLl = DkToolkit.likelihoodComputer(true, true, true).compute(model, new SsfData(data));
+            DiffuseLikelihood directLl =
+                    DkToolkit.likelihoodComputer(true, true, true).compute(model, new SsfData(data));
             return new DecompositionResults(cmps, ecmps, directLl, decompositionLl);
         } catch (Exception err) {
             return null;
         }
     }
 
-    public LtdResults estimate(double[] data, int period, boolean mean, Matrix X, int[] regular, int[] seasonal,
-            boolean fphi, boolean fbphi, boolean ftheta, boolean fbtheta, boolean fvar,
-            double eps, String param) {
+    public LtdResults estimate(
+            double[] data,
+            int period,
+            boolean mean,
+            Matrix X,
+            int[] regular,
+            int[] seasonal,
+            boolean fphi,
+            boolean fbphi,
+            boolean ftheta,
+            boolean fbtheta,
+            boolean fvar,
+            String param,
+            double eps,
+            double simplificationThreshold) {
 
         LtdSpec.Parametrization pltd = LtdSpec.Parametrization.valueOf(param.toUpperCase(Locale.ROOT));
 
@@ -148,36 +160,50 @@ public class TimeVaryingArimaModels {
                 .vVar(!fvar)
                 .build();
 
-        LtdSpec spec=LtdSpec.builder()
+        LtdSpec spec = LtdSpec.builder()
                 .parametrization(pltd)
                 .precision(eps)
+                .simplificationThreshold(simplificationThreshold)
                 .build();
         LtdKernel kernel = LtdKernel.of(spec);
         return kernel.process(DoubleSeq.of(data), mean, FastMatrix.of(X), modelspec);
     }
 
-//    public LtdSarimaResults estimate(double[] data, int period, Matrix X, int[] regular, int[] seasonal,
-//            double[] phi, double[] bphi, double[] theta, double[] btheta,
-//            double[] dphi, double[] dbphi, double[] dtheta, double[] dbtheta,
-//            double dvar, 
-//            boolean fphi, boolean fbphi, boolean ftheta, boolean fbtheta, boolean fvar,
-//            double eps) {
-//        
-//        LtdSarimaModelSpec spec =specOf(period, regular, seasonal,
-//            phi, bphi, theta, btheta,
-//            dphi, dbphi, dtheta, dbtheta, dvar,
-//            fphi, fbphi, ftheta, fbtheta, fvar);
-//        
-//        LtdKernel kernel=LtdKernel.of(spec);
-//        return null;
-//    }
-    // use p and fphi or p and phi (dphi == null) or p and phi and dphi   
-    public LtdSarimaModelSpec SarimaSpecOf(int period, int[] regular, int[] seasonal,
-            double[] phi, double[] bphi, double[] theta, double[] btheta,
-            double[] dphi, double[] dbphi, double[] dtheta, double[] dbtheta,
-            double dvar, boolean fphi, boolean fbphi, boolean ftheta, boolean fbtheta, boolean fvar) {
-        LtdSarimaModelSpec.Builder builder = LtdSarimaModelSpec.builder()
-                .period(period);
+    //    public LtdSarimaResults estimate(double[] data, int period, Matrix X, int[] regular, int[] seasonal,
+    //            double[] phi, double[] bphi, double[] theta, double[] btheta,
+    //            double[] dphi, double[] dbphi, double[] dtheta, double[] dbtheta,
+    //            double dvar,
+    //            boolean fphi, boolean fbphi, boolean ftheta, boolean fbtheta, boolean fvar,
+    //            double eps) {
+    //
+    //        LtdSarimaModelSpec spec =specOf(period, regular, seasonal,
+    //            phi, bphi, theta, btheta,
+    //            dphi, dbphi, dtheta, dbtheta, dvar,
+    //            fphi, fbphi, ftheta, fbtheta, fvar);
+    //
+    //        LtdKernel kernel=LtdKernel.of(spec);
+    //        return null;
+    //    }
+    // use p and fphi or p and phi (dphi == null) or p and phi and dphi
+    public LtdSarimaModelSpec SarimaSpecOf(
+            int period,
+            int[] regular,
+            int[] seasonal,
+            double[] phi,
+            double[] bphi,
+            double[] theta,
+            double[] btheta,
+            double[] dphi,
+            double[] dbphi,
+            double[] dtheta,
+            double[] dbtheta,
+            double dvar,
+            boolean fphi,
+            boolean fbphi,
+            boolean ftheta,
+            boolean fbtheta,
+            boolean fvar) {
+        LtdSarimaModelSpec.Builder builder = LtdSarimaModelSpec.builder().period(period);
 
         int p = regular[0];
         if (p > 0) {
@@ -199,7 +225,8 @@ public class TimeVaryingArimaModels {
             } else if (dtheta == null) {
                 builder.theta(Parameter.of(theta, ParameterType.Initial));
             } else {
-                builder.btheta(Parameter.of(theta, ParameterType.Initial), Parameter.of(dtheta, ParameterType.Undefined));
+                builder.btheta(
+                        Parameter.of(theta, ParameterType.Initial), Parameter.of(dtheta, ParameterType.Undefined));
             }
         }
 
@@ -212,7 +239,8 @@ public class TimeVaryingArimaModels {
                 } else if (dbphi == null) {
                     builder.bphi(Parameter.of(bphi, ParameterType.Initial));
                 } else {
-                    builder.bphi(Parameter.of(bphi, ParameterType.Initial), Parameter.of(dbphi, ParameterType.Undefined));
+                    builder.bphi(
+                            Parameter.of(bphi, ParameterType.Initial), Parameter.of(dbphi, ParameterType.Undefined));
                 }
             }
 
@@ -225,7 +253,9 @@ public class TimeVaryingArimaModels {
                 } else if (dbtheta == null) {
                     builder.btheta(Parameter.of(btheta, ParameterType.Initial));
                 } else {
-                    builder.btheta(Parameter.of(btheta, ParameterType.Initial), Parameter.of(dbtheta, ParameterType.Undefined));
+                    builder.btheta(
+                            Parameter.of(btheta, ParameterType.Initial),
+                            Parameter.of(dbtheta, ParameterType.Undefined));
                 }
             }
         }
@@ -235,5 +265,4 @@ public class TimeVaryingArimaModels {
         }
         return builder.build();
     }
-
 }

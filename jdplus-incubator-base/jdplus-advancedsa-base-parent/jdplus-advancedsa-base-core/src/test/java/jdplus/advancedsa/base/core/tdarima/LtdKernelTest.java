@@ -33,15 +33,15 @@ public class LtdKernelTest {
     public void testDetails() {
 
         LtdSarimaSpec.Orders arima = LtdSarimaSpec.Orders.airline(0);
-        LtdSarimaSpec modelspec =
-                LtdSarimaSpec.builder()
-                        .orders(arima)
-                        .vTheta(true)
-                        .vBtheta(true)
-                        //                .vVar(true)
-                        .build();
-        LtdSpec spec =
-                LtdSpec.builder().parametrization(LtdSpec.Parametrization.MEAN_DELTA).build();
+        LtdSarimaSpec modelspec = LtdSarimaSpec.builder()
+                .orders(arima)
+                .vTheta(true)
+                .vBtheta(true)
+                //                .vVar(true)
+                .build();
+        LtdSpec spec = LtdSpec.builder()
+                .parametrization(LtdSpec.Parametrization.MEAN_DELTA)
+                .build();
 
         LtdSarimaMapping.ParametersDetails details =
                 new LtdSarimaMapping.ParametersDetails(modelspec, spec.getParametrization());
@@ -62,27 +62,23 @@ public class LtdKernelTest {
     public void testAirline() {
         TsData[] s = Data.retail_us();
 
-        LtdSarimaSpec modelspec =
-                LtdSarimaSpec.builder()
-                        .orders(LtdSarimaSpec.Orders.airline(0))
-                        .vTheta(true)
-                        .vBtheta(true)
-                        .vVar(false)
-                        .build();
+        LtdSarimaSpec modelspec = LtdSarimaSpec.builder()
+                .orders(LtdSarimaSpec.Orders.airline(0))
+                .vTheta(true)
+                .vBtheta(true)
+                .vVar(false)
+                .build();
 
-        LtdSpec spec =
-                LtdSpec.builder().parametrization(LtdSpec.Parametrization.MEAN_DELTA).build();
+        LtdSpec spec = LtdSpec.builder()
+                .parametrization(LtdSpec.Parametrization.MEAN_DELTA)
+                .build();
 
         LtdKernel kernel = LtdKernel.of(spec);
 
         long t0 = System.currentTimeMillis();
         for (int i = 0; i < s.length; ++i) {
             LtdResults result =
-                    kernel.process(
-                            s[i].getValues(),
-                            false,
-                            null,
-                            modelspec.withPeriod(s[i].getAnnualFrequency()));
+                    kernel.process(s[i].getValues(), false, null, modelspec.withPeriod(s[i].getAnnualFrequency()));
             //
             // System.out.print(result.initialResults().getLikelihood().getLogLikelihood());
             //            System.out.print('\t');
@@ -120,28 +116,25 @@ public class LtdKernelTest {
         LtdSarimaSpec.Orders airline = LtdSarimaSpec.Orders.airline(0);
         LtdSarimaSpec.Orders aspec = airline.toBuilder().p(3).build();
 
-        LtdSarimaSpec modelspec =
-                LtdSarimaSpec.builder()
-                        .orders(aspec)
-                        .vTheta(true)
-                        .vBtheta(true)
-                        .vPhi(true)
-                        //                .vVar(true)
-                        .build();
+        LtdSarimaSpec modelspec = LtdSarimaSpec.builder()
+                .orders(aspec)
+                .vTheta(true)
+                .vBtheta(true)
+                .vPhi(true)
+                //                .vVar(true)
+                .build();
 
-        LtdSpec spec =
-                LtdSpec.builder().parametrization(LtdSpec.Parametrization.MEAN_DELTA).build();
+        LtdSpec spec = LtdSpec.builder()
+                .parametrization(LtdSpec.Parametrization.MEAN_DELTA)
+                .simplificationThreshold(0)
+                .build();
 
         LtdKernel kernel = LtdKernel.of(spec);
 
         long t0 = System.currentTimeMillis();
         for (int i = 0; i < s.length; ++i) {
             LtdResults result =
-                    kernel.process(
-                            s[i].getValues(),
-                            false,
-                            null,
-                            modelspec.withPeriod(s[i].getAnnualFrequency()));
+                    kernel.process(s[i].getValues(), false, null, modelspec.withPeriod(s[i].getAnnualFrequency()));
             //
             // System.out.print(result.initialResults().getLikelihood().getLogLikelihood());
             //            System.out.print('\t');
@@ -165,7 +158,7 @@ public class LtdKernelTest {
             //
             //            DoubleSeq t = DoublesMath.divide(result.getMax().getParameters(),
             // result.getMax().asymptoticCovariance().diagonal().sqrt());
-//            System.out.println();
+            //            System.out.println();
             //            //            System.out.println(t);
         }
         long t1 = System.currentTimeMillis();
@@ -174,22 +167,20 @@ public class LtdKernelTest {
 
     public static void main(String[] args) {
         TsData s = Data.TS_PROD;
-        LtdSarimaSpec modelspec =
-                LtdSarimaSpec.builder()
-                        .orders(LtdSarimaSpec.Orders.airline(0))
-                        .vTheta(true)
-                        .vBtheta(true)
-                        .vVar(false)
-                        .build();
+        LtdSarimaSpec modelspec = LtdSarimaSpec.builder()
+                .orders(LtdSarimaSpec.Orders.airline(0))
+                .vTheta(true)
+                .vBtheta(true)
+                .vVar(false)
+                .build();
 
-        LtdSpec spec =
-                LtdSpec.builder().parametrization(LtdSpec.Parametrization.MEAN_DELTA).build();
+        LtdSpec spec = LtdSpec.builder()
+                .parametrization(LtdSpec.Parametrization.MEAN_DELTA)
+                .build();
 
         LtdKernel kernel = LtdKernel.of(spec);
 
-        LtdResults result =
-                kernel.process(
-                        s.getValues(), false, null, modelspec.withPeriod(s.getAnnualFrequency()));
+        LtdResults result = kernel.process(s.getValues(), false, null, modelspec.withPeriod(s.getAnnualFrequency()));
         Map<String, Class> dic = result.getDictionary();
         for (String e : dic.keySet()) {
             System.out.println(e);

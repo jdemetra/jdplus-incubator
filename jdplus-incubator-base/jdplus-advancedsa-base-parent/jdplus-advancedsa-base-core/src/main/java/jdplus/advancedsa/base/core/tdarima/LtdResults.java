@@ -27,13 +27,18 @@ public class LtdResults implements GenericExplorable {
 
     SarimaResults start;
 
-    @lombok.Singular List<LtdSarimaResults> ltdResults;
+    @lombok.Singular
+    List<LtdSarimaResults> ltdResults;
 
     public LtdSarimaResults finalResults() {
         return ltdResults.getLast();
     }
 
-    public LtdSarimaResults initialResults() {
-        return ltdResults.getFirst();
+    public LtdSarimaResults results(int idx) {
+        return ltdResults.get(idx);
+    }
+
+    public SarimaResults initialResults() {
+        return start;
     }
 }

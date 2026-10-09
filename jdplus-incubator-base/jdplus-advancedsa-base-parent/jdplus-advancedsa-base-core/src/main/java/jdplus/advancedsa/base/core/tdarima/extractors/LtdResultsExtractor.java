@@ -38,20 +38,16 @@ public class LtdResultsExtractor extends InformationMapping<LtdResults> {
 
     public LtdResultsExtractor() {
         delegate(LtdDictionaries.SARIMA, SarimaResults.class, source -> source.getStart());
-        delegateArray(
-                LtdDictionaries.ITER,
-                0,
-                10,
-                LtdSarimaResults.class,
-                (source, i) -> {
-                    int last = source.getLtdResults().size() - 1;
-                    if (i > last) return null;
-                    return source.getLtdResults().get(last - i);
-                });
-        delegate(
-                LtdDictionaries.INITIAL, LtdSarimaResults.class, source -> source.initialResults());
-        delegate(LtdDictionaries.FINAL, LtdSarimaResults.class, source -> source.finalResults());
-        set(LtdDictionaries.NITERS, Integer.class, source -> source.getLtdResults().size());
+        delegateArray(LtdDictionaries.ITER, 0, 10, LtdSarimaResults.class, (source, i) -> {
+            int last = source.getLtdResults().size() - 1;
+            if (i > last) return null;
+            return source.getLtdResults().get(last - i);
+        });
+        delegate(LtdDictionaries.SARIMA, SarimaResults.class, source -> source.initialResults());
+        delegate(LtdDictionaries.FINAL_STEP, LtdSarimaResults.class, source -> source.finalResults());
+        delegate(LtdDictionaries.INITIAL_STEP, LtdSarimaResults.class, source -> source.results(0));
+        set(LtdDictionaries.NITERS, Integer.class, source -> source.getLtdResults()
+                .size());
     }
 
     //    private String mlItem(String key) {
