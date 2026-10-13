@@ -15,13 +15,12 @@
  */
 package jdplus.advancedsa.base.core.tdarima;
 
-import jdplus.advancedsa.base.api.tdarima.LtdSarimaSpec;
-import jdplus.toolkit.base.api.information.GenericExplorable;
-import jdplus.toolkit.base.core.stats.likelihood.LikelihoodStatistics;
 import jdplus.toolkit.base.api.data.DoubleSeq;
+import jdplus.toolkit.base.api.information.GenericExplorable;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
-import jdplus.toolkit.base.api.timeseries.TsResiduals;
 import jdplus.toolkit.base.api.stats.StatisticalTest;
+import jdplus.toolkit.base.api.timeseries.TsResiduals;
+import jdplus.toolkit.base.core.stats.likelihood.LikelihoodStatistics;
 
 /**
  *
@@ -30,24 +29,6 @@ import jdplus.toolkit.base.api.stats.StatisticalTest;
 @lombok.Builder(toBuilder = true, builderClassName = "Builder")
 @lombok.Value
 public class LtdSarimaResults implements GenericExplorable {
-
-    static LtdSarimaResults of(SarimaResults sarima) {
-        DoubleSeq p = sarima.getParameters();
-        LtdSarimaModel model = LtdSarimaModel.builder()
-                .spec(LtdSarimaSpec.Orders.of(sarima.getModel().arima().orders()))
-                .p0(p)
-                .p1(p)
-                .n(sarima.getModel().getObservationsCount())
-                .build();
-        return builder()
-                .model(model)
-                .coefficients(sarima.getCoefficients())
-                .covariance(sarima.getCovariance())
-                .parameters(p)
-                .parametersCovariance(sarima.getParametersCovariance())
-                .likelihood(sarima.getLikelihood())
-                .build();
-    }
 
     private LtdSarimaModel model;
     private LikelihoodStatistics likelihood;

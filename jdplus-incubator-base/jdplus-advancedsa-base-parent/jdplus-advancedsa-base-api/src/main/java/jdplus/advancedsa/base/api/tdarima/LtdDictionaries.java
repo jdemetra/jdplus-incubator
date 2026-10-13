@@ -216,5 +216,6 @@ public class LtdDictionaries {
             ITER = "iter",
             INITIAL_STEP = "initial",
             FINAL_STEP = "final",
-            STEP = "iter(*)";
+            STEP = "iter(*)",
+            TIME_VARYING = "time_varying";
 }

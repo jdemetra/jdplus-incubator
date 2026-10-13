@@ -30,15 +30,13 @@ public class LtdResults implements GenericExplorable {
     @lombok.Singular
     List<LtdSarimaResults> ltdResults;
 
+    boolean isTimeVarying;
+
     public LtdSarimaResults finalResults() {
-        return ltdResults.getLast();
+        return isTimeVarying ? ltdResults.getLast() : null;
     }
 
     public LtdSarimaResults results(int idx) {
         return ltdResults.get(idx);
-    }
-
-    public SarimaResults initialResults() {
-        return start;
     }
 }

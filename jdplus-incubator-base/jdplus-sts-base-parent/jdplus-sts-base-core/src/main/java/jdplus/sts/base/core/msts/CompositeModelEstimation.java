@@ -17,7 +17,6 @@
 package jdplus.sts.base.core.msts;
 
 import java.util.Arrays;
-import jdplus.sts.base.core.Utility;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.DoubleSeqCursor;
 import jdplus.toolkit.base.api.data.Doubles;
@@ -114,8 +113,8 @@ public class CompositeModelEstimation {
     public StateStorage getSmoothedStates() {
         if (smoothedStates == null) {
             try {
-                StateStorage ss = Utility.smooth(
-                        getSsf(), new SsfMatrix(getData()), true, false, QAugmentation.DEFAULT_COLLAPSING);
+                StateStorage ss = AkfToolkit.smooth(
+                        getSsf(), new SsfMatrix(getData()), true, false, false, QAugmentation.DEFAULT_NOCOLLAPSING);
                 if (likelihood.isScalingFactor()) {
                     ss.rescaleVariances(likelihood.sigma2());
                 }
@@ -134,7 +133,7 @@ public class CompositeModelEstimation {
 
             } catch (Exception err) {
                 StateStorage ss = AkfToolkit.smooth(
-                        getSsf(), new SsfMatrix(getData()), true, false, true, QAugmentation.DEFAULT_COLLAPSING);
+                        getSsf(), new SsfMatrix(getData()), true, false, false, QAugmentation.DEFAULT_NOCOLLAPSING);
                 if (!ss.hasVariances()) {
                     return null;
                 }

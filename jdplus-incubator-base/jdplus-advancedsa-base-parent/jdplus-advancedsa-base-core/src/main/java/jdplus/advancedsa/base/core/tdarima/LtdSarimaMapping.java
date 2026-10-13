@@ -17,8 +17,6 @@ package jdplus.advancedsa.base.core.tdarima;
 
 import jdplus.advancedsa.base.api.tdarima.LtdSarimaSpec;
 import jdplus.advancedsa.base.api.tdarima.LtdSpec;
-import jdplus.toolkit.base.api.arima.SarimaOrders;
-import jdplus.toolkit.base.api.arima.SarimaSpec;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.core.math.functions.IParametricMapping;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
@@ -31,11 +29,12 @@ import jdplus.toolkit.base.core.math.matrices.SymmetricMatrix;
 public interface LtdSarimaMapping extends IParametricMapping<LtdSarimaModel> {
 
     public int getN();
+
     public LtdSarimaSpec.Orders getOrders();
 
     static final double MAX = 0.99999;
     public static final double STEP = Math.pow(2.220446e-16, 0.5), EVAR = 1e-6;
-    
+
     DoubleSeq parametersOf(LtdSarimaModel model);
 
     @lombok.ToString
@@ -45,7 +44,12 @@ public interface LtdSarimaMapping extends IParametricMapping<LtdSarimaModel> {
         double[] dval;
         FastMatrix cov, dcov;
 
-        Parameters(DoubleSeq p, FastMatrix pcov, int m, ParametersDetails details, LtdSpec.Parametrization parametrization) {
+        Parameters(
+                DoubleSeq p,
+                FastMatrix pcov,
+                int m,
+                ParametersDetails details,
+                LtdSpec.Parametrization parametrization) {
             double[] v = p.toArray();
             val = new double[v.length];
             cov = FastMatrix.square(v.length);
@@ -60,7 +64,7 @@ public interface LtdSarimaMapping extends IParametricMapping<LtdSarimaModel> {
                     cov.set(Double.NaN);
                 }
             }
-            //derived
+            // derived
             int nd = details.derivedpnames.length;
             int ndc = details.nv;
             dval = new double[nd];
@@ -82,7 +86,7 @@ public interface LtdSarimaMapping extends IParametricMapping<LtdSarimaModel> {
                 }
                 if (j < nd) {
                     R.set(j, details.np - 1, 1);
-                    dval[j] = 1 + val[j];
+                    dval[j] = val[details.np - 1];
                 }
             } else {
                 int j = 0;
@@ -96,13 +100,13 @@ public interface LtdSarimaMapping extends IParametricMapping<LtdSarimaModel> {
                     R.set(j + 1, k + 1, 1);
                 }
                 if (j < nd) {
-                    dval[j] = val[j] - 1;
+                    dval[j] = val[details.np - 1];
                     R.set(j, details.np - 1, 1);
                 }
             }
             dcov = SymmetricMatrix.XSXt(cov, R);
 
-            //rescale
+            // rescale and update stde(last)
             for (int i = 0; i < v.length; ++i) {
                 if (details.torescale[i]) {
                     val[i] /= m1;
@@ -120,9 +124,11 @@ public interface LtdSarimaMapping extends IParametricMapping<LtdSarimaModel> {
                     dval[nd - 1] /= m1;
                     dcov.column(nd - 1).div(m1);
                     dcov.row(nd - 1).div(m1);
+                    val[val.length - 1] += 1;
                 }
+            } else if (nd % 2 == 1) {
+                dval[nd - 1] += 1;
             }
-
         }
     }
 
@@ -225,12 +231,12 @@ public interface LtdSarimaMapping extends IParametricMapping<LtdSarimaModel> {
             if (vVar) {
                 preorder[np - 1] = np - 1;
                 if (pspec == LtdSpec.Parametrization.MEAN_DELTA) {
-                    pnames[np - 1] = "var-delta";
-                    derivedpnames[n1 + nv - 1] = "var-end[derived]";
+                    pnames[np - 1] = "stde-delta";
+                    derivedpnames[n1 + nv - 1] = "stde-end[derived]";
                     torescale[i] = true;
                 } else {
-                    pnames[np - 1] = "var-end";
-                    derivedpnames[n1 + nv - 1] = "var-delta[derived]";
+                    pnames[np - 1] = "stde-end";
+                    derivedpnames[n1 + nv - 1] = "stde-delta[derived]";
                 }
             }
         }
@@ -248,7 +254,14 @@ public interface LtdSarimaMapping extends IParametricMapping<LtdSarimaModel> {
         }
     }
 
-    static final String PHI = "phi", BPHI = "bphi", THETA = "theta", BTHETA = "btheta",
-            START = "start", END = "end", MEAN = "mean", DELTA = "delta", DERIVED = "[derived]";
-
+    static final String PHI = "phi",
+            BPHI = "bphi",
+            THETA = "theta",
+            BTHETA = "btheta",
+            START = "start",
+            END = "end",
+            MEAN = "mean",
+            DELTA = "delta",
+            STDE = "stde",
+            DERIVED = "[derived]";
 }

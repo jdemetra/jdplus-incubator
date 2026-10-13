@@ -64,13 +64,14 @@ public class LtdKernelTest {
 
         LtdSarimaSpec modelspec = LtdSarimaSpec.builder()
                 .orders(LtdSarimaSpec.Orders.airline(0))
-                .vTheta(true)
+                .vTheta(false)
                 .vBtheta(true)
-                .vVar(false)
+                .vVar(true)
                 .build();
 
         LtdSpec spec = LtdSpec.builder()
-                .parametrization(LtdSpec.Parametrization.MEAN_DELTA)
+                .parametrization(LtdSpec.Parametrization.START_END)
+                .simplificationThreshold(0.05)
                 .build();
 
         LtdKernel kernel = LtdKernel.of(spec);
@@ -79,6 +80,9 @@ public class LtdKernelTest {
         for (int i = 0; i < s.length; ++i) {
             LtdResults result =
                     kernel.process(s[i].getValues(), false, null, modelspec.withPeriod(s[i].getAnnualFrequency()));
+            if (result.isTimeVarying()) {
+                result.getData("final.regression.effect", double[].class);
+            }
             //
             // System.out.print(result.initialResults().getLikelihood().getLogLikelihood());
             //            System.out.print('\t');

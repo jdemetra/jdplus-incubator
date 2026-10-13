@@ -88,11 +88,21 @@ public class LtdKernel {
 
         SarimaResults initialModel = initialModel(s, mean, X, modelSpec);
         builder.start(initialModel);
-
+        double t = spec.getSimplificationThreshold();
         LtdSarimaSpec curSpec = modelSpec;
         do {
             LtdSarimaResults step = step(curSpec, initialModel);
-            builder.ltdResult(step);
+            if (step == null) {
+                builder.isTimeVarying(false);
+                break;
+            }
+            builder.ltdResult(step).isTimeVarying(true);
+            if (t == 0) {
+                break;
+            } else if (!step.getLikelihoodRatioTest().isSignificant(t)) {
+                builder.isTimeVarying(false);
+                break;
+            }
             curSpec = nextSpec(step);
         } while (curSpec != null);
 
@@ -151,7 +161,7 @@ public class LtdKernel {
 
     private LtdSarimaResults step(LtdSarimaSpec curSpec, SarimaResults initialModel) {
         if (!curSpec.isTimeVarying()) {
-            return LtdSarimaResults.of(initialModel);
+            return null;
         }
         RegArimaModel<SarimaModel> model = initialModel.getModel();
         RegArmaModel<SarimaModel> dmodel = model.differencedModel();
@@ -393,7 +403,7 @@ public class LtdKernel {
 
     private LtdSarimaSpec nextSpec(LtdSarimaResults step) {
         LtdSarimaModel model = step.getModel();
-        if (model == null || !model.isTimeVarying() || spec.getSimplificationThreshold() == 0) {
+        if (spec.getSimplificationThreshold() == 0) {
             return null;
         }
         LtdSarimaSpec curSpec = model.spec();
@@ -402,9 +412,9 @@ public class LtdKernel {
         int df = step.getLikelihood().getEffectiveObservationsCount()
                 - step.getLikelihood().getEstimatedParametersCount();
         if (spec.getParametrization() == LtdSpec.Parametrization.MEAN_DELTA) {
-            idx = maxPValue(curSpec, step.getParameters(), step.getParametersCovariance(), df);
+            idx = maxPValue(curSpec, step.getParameters(), step.getParametersCovariance(), df, false);
         } else {
-            idx = maxPValue(curSpec, step.getDerivedParameters(), step.getDerivedParametersCovariance(), df);
+            idx = maxPValue(curSpec, step.getDerivedParameters(), step.getDerivedParametersCovariance(), df, true);
         }
         if (idx < 0) {
             return null;
@@ -420,7 +430,8 @@ public class LtdKernel {
         return builder.build();
     }
 
-    private int maxPValue(LtdSarimaSpec modelSpec, DoubleSeq parameters, Matrix parametersCovariance, int df) {
+    private int maxPValue(
+            LtdSarimaSpec modelSpec, DoubleSeq parameters, Matrix parametersCovariance, int df, boolean derived) {
         int imax = -1;
         double pmax = 0;
         LtdSarimaSpec.Orders orders = modelSpec.getOrders();
@@ -441,7 +452,7 @@ public class LtdKernel {
                         imax = 0;
                     }
                 }
-            } else {
+            } else if (!derived) {
                 n += p;
             }
         }
@@ -460,7 +471,7 @@ public class LtdKernel {
                         imax = 1;
                     }
                 }
-            } else {
+            } else if (!derived) {
                 n += p;
             }
         }
@@ -479,7 +490,7 @@ public class LtdKernel {
                         imax = 2;
                     }
                 }
-            } else {
+            } else if (!derived) {
                 n += p;
             }
         }
@@ -498,16 +509,13 @@ public class LtdKernel {
                         imax = 3;
                     }
                 }
-            } else {
+            } else if (!derived) {
                 n += p;
             }
         }
         if (modelSpec.isVVar()) {
             StatisticalTest test = stationarityTest(
-                    DoubleSeq.of(parameters.get(n) - 1),
-                    FastMatrix.of(parametersCovariance.extract(n, 1, n, 1)),
-                    null,
-                    df);
+                    DoubleSeq.of(parameters.get(n)), FastMatrix.of(parametersCovariance.extract(n, 1, n, 1)), null, df);
             if (test.isValid()) {
                 double v = test.getPvalue();
                 if (v > pmax && Double.isFinite(v)) {
