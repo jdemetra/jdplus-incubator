@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 JDemetra+.
+ * Copyright 2026 JDemetra+.
  * Licensed under the EUPL, Version 1.2 or – as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
@@ -15,25 +15,28 @@
  */
 package jdplus.advancedsa.base.core.tdarima;
 
-import jdplus.toolkit.base.api.arima.SarimaOrders;
-import jdplus.toolkit.base.api.data.DoubleSeq;
-import jdplus.toolkit.base.core.math.functions.IParametricMapping;
+import java.util.List;
+import jdplus.toolkit.base.api.information.GenericExplorable;
 
 /**
- * The parameters are organized as follows: p_mean for all sarima parameters,
- * p_step for all variable sarima parameters (phi, bphi, theta, btheta), true
- * signs + var_end (var_start = 1)
- *
  * @author Jean Palate
  */
-public interface LtdArimaMapping extends IParametricMapping<LtdArimaModel> {
+@lombok.Builder(builderClassName = "Builder")
+@lombok.Value
+public class LtdResults implements GenericExplorable {
 
-    public int getN();
-    public SarimaOrders getOrders();
+    SarimaResults start;
 
-    static final double MAX = 0.99999;
-    public static final double STEP = Math.pow(2.220446e-16, 0.5), EVAR = 1e-6;
-    
-    DoubleSeq parametersOf(LtdArimaModel model);
+    @lombok.Singular
+    List<LtdSarimaResults> ltdResults;
 
+    boolean isTimeVarying;
+
+    public LtdSarimaResults finalResults() {
+        return isTimeVarying ? ltdResults.getLast() : null;
+    }
+
+    public LtdSarimaResults results(int idx) {
+        return ltdResults.get(idx);
+    }
 }

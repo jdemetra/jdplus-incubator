@@ -1,3 +1,4 @@
+
 import jdplus.toolkit.base.api.information.InformationExtractor;
 
 module jdplus.advancedsa.base.core {
@@ -18,8 +19,8 @@ module jdplus.advancedsa.base.core {
     exports jdplus.advancedsa.base.core.tdarima.extractors;
     
         provides InformationExtractor with
-            jdplus.advancedsa.base.core.tdarima.extractors.LtdArimaResultsExtractor;
+            jdplus.advancedsa.base.core.tdarima.extractors.SarimaResultsExtractor,
+            jdplus.advancedsa.base.core.tdarima.extractors.LtdSarimaResultsExtractor,
+            jdplus.advancedsa.base.core.tdarima.extractors.LtdResultsExtractor;
 
 }
-
-

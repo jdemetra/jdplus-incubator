@@ -15,59 +15,35 @@
  */
 package jdplus.advancedsa.base.api.tdarima;
 
-import jdplus.toolkit.base.api.arima.SarimaSpec;
-
 /**
  *
  * @author Jean Palate
  */
 @lombok.Builder(toBuilder = true, builderClassName = "Builder")
 @lombok.Value
-public class LtdArimaSpec {
+public class LtdSpec {
 
     public enum Parametrization {
         START_END, MEAN_DELTA;
     }
 
     public static final double DEF_PRECISION = 1e-9;
+    
+    public static final double DEF_SIMPLIFICATION = 0.05;
 
     public static final Parametrization DEF_PARAMETRIZATION = Parametrization.MEAN_DELTA;
-
-    @lombok.With
-    private final SarimaSpec sarimaSpec;
-    private final boolean vPhi, vBphi, vTheta, vBtheta, vVar;
 
     @lombok.With
     private double precision;
 
     @lombok.With
     private Parametrization parametrization;
+    
+    @lombok.With
+    private double simplificationThreshold;
 
     public static Builder builder() {
-        return new Builder().precision(DEF_PRECISION).parametrization(DEF_PARAMETRIZATION);
+        return new Builder().precision(DEF_PRECISION).simplificationThreshold(DEF_SIMPLIFICATION).parametrization(DEF_PARAMETRIZATION);
     }
 
-    public int parametersCount() {
-        int n = 0;
-        int o = sarimaSpec.getP();
-        if (o > 0) {
-            n += vPhi ? 2 * o : o;
-        }
-        o = sarimaSpec.getBp();
-        if (o > 0) {
-            n += vBphi ? 2 * o : o;
-        }
-        o = sarimaSpec.getQ();
-        if (o > 0) {
-            n += vTheta ? 2 * o : o;
-        }
-        o = sarimaSpec.getBq();
-        if (o > 0) {
-            n += vBtheta ? 2 * o : o;
-        }
-        if (vVar) {
-            ++n;
-        }
-        return n;
-    }
 }

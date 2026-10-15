@@ -66,11 +66,11 @@ public final class LtdModellingSpec implements Validatable<LtdModellingSpec>, Pr
     private RegressionSpec regression;
 
     @lombok.NonNull
-    private LtdSarimaSpec ltdarima;
+    private LtdSarimaModelSpec ltdarima;
 
     @LombokWorkaround
     public static Builder builder() {
-        LtdSarimaSpec ltdsarima = LtdSarimaSpec.airline();
+        LtdSarimaModelSpec ltdsarima = LtdSarimaModelSpec.airline();
         return new Builder()
                 .series(SeriesSpec.DEFAULT)
                 .enabled(true)
@@ -136,7 +136,7 @@ public final class LtdModellingSpec implements Validatable<LtdModellingSpec>, Pr
                 .estimate(EstimateSpec.DEFAULT)
                 .outliers(o)
                 .regression(reg)
-                .ltdarima(LtdSarimaSpec.airline())
+                .ltdarima(LtdSarimaModelSpec.airline())
                 .build();
     }
 

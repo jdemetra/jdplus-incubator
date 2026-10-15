@@ -15,6 +15,7 @@
  */
 package jdplus.advancedsa.base.core.tdarima;
 
+import jdplus.advancedsa.base.api.tdarima.LtdSarimaSpec;
 import jdplus.toolkit.base.api.arima.SarimaOrders;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.core.data.DataBlock;
@@ -31,10 +32,10 @@ import jdplus.toolkit.base.core.sarima.estimation.SarimaMapping;
  */
 @lombok.Builder(toBuilder = true, builderClassName = "Builder")
 @lombok.Value
-public class LtdAirlineMapping implements IParametricMapping<LtdArimaModel> {
+public class LtdAirlineMapping implements IParametricMapping<LtdSarimaModel> {
 
     @lombok.With
-    private final SarimaOrders orders;
+    private final LtdSarimaSpec.Orders orders;
     private final int n;
     private final boolean vPhi, vBphi, vTheta, vBtheta, vVar;
     private final double eps, epsVar;
@@ -42,7 +43,7 @@ public class LtdAirlineMapping implements IParametricMapping<LtdArimaModel> {
     static final double MAX = 0.99999;
     public static final double STEP = Math.pow(2.220446e-16, 0.5), EVAR = 1e-6;
 
-    public static Builder builder(SarimaOrders orders) {
+    public static Builder builder(LtdSarimaSpec.Orders orders) {
         Builder builder = new Builder();
         builder.orders(orders)
                 .n(0)
@@ -58,10 +59,10 @@ public class LtdAirlineMapping implements IParametricMapping<LtdArimaModel> {
     }
 
     @Override
-    public LtdArimaModel map(DoubleSeq ds) {
+    public LtdSarimaModel map(DoubleSeq ds) {
         int np=orders.getParametersCount();
         double[] pmodels = pmodels(ds);
-        return LtdArimaModel.builder()
+        return LtdSarimaModel.builder()
                 .spec(orders)
                 .n(n)
                 .p0(DoubleSeq.of(pmodels, 0, np))
@@ -85,7 +86,7 @@ public class LtdAirlineMapping implements IParametricMapping<LtdArimaModel> {
 
     @Override
     public DoubleSeq getDefaultParameters() {
-        SarimaMapping mapping = new SarimaMapping(orders, eps, true);
+        SarimaMapping mapping = new SarimaMapping(orders.asSarimaOrders(), eps, true);
         DoubleSeq p0 = mapping.getDefaultParameters();
         int ns=stepParamsCount();
         if (ns == 0 && ! vVar)
@@ -102,7 +103,7 @@ public class LtdAirlineMapping implements IParametricMapping<LtdArimaModel> {
 
     @Override
     public boolean checkBoundaries(DoubleSeq inParams) {
-        SarimaMapping mapping = new SarimaMapping(orders, eps, true);
+        SarimaMapping mapping = new SarimaMapping(orders.asSarimaOrders(), eps, true);
         int np = orders.getParametersCount();
         double[] p = pmodels(inParams);
         if (!mapping.checkBoundaries(DoubleSeq.of(p, 0, np))) {
@@ -116,7 +117,7 @@ public class LtdAirlineMapping implements IParametricMapping<LtdArimaModel> {
 
     @Override
     public ParamValidation validate(DataBlock ioParams) {
-        SarimaMapping mapping = new SarimaMapping(orders, eps, true);
+        SarimaMapping mapping = new SarimaMapping(orders.asSarimaOrders(), eps, true);
         int np = orders.getParametersCount();
         double[] pm = pmodels(ioParams);
         ParamValidation v0 = mapping.validate(DataBlock.of(pm, 0, np));

@@ -16,7 +16,7 @@
 package jdplus.advancedsa.base.core.tdarima;
 
 import java.util.function.IntToDoubleFunction;
-import jdplus.toolkit.base.api.arima.SarimaOrders;
+import jdplus.advancedsa.base.api.tdarima.LtdSarimaSpec;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.math.functions.ParamValidation;
@@ -25,23 +25,23 @@ import jdplus.toolkit.base.core.sarima.estimation.SarimaMapping;
 /**
  * The parameters are organized as follows: p_0 for all sarima parameters, p_1
  * for all variable sarima parameters (phi, bphi, theta, btheta), true signs +
- * var_end (var_start = 1)
+ * e_end-1 (e_start = 1)
  *
  * @author Jean Palate
  */
 @lombok.Builder(toBuilder = true, builderClassName = "Builder")
 @lombok.Value
-public class LtdArimaMapping2 implements LtdArimaMapping {
+public class LtdSarimaMapping2 implements LtdSarimaMapping {
 
     private final int n;
     @lombok.With
-    private final SarimaOrders orders;
+    private final LtdSarimaSpec.Orders orders;
     private final boolean vPhi, vBphi, vTheta, vBtheta, vVar;
     private final double eps, epsVar;
 
 //    static final double MAX = 0.99999;
 //    public static final double STEP = Math.pow(2.220446e-16, 0.5), EVAR = 1e-6;
-    public static Builder builder(SarimaOrders orders) {
+    public static Builder builder(LtdSarimaSpec.Orders orders) {
         Builder builder = new Builder();
         builder.orders(orders)
                 .vPhi(false)
@@ -56,10 +56,10 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
     }
 
     @Override
-    public LtdArimaModel map(DoubleSeq ds) {
+    public LtdSarimaModel map(DoubleSeq ds) {
         int np = orders.getParametersCount();
         double[] pmodels = pmodels(ds);
-        return LtdArimaModel.builder()
+        return LtdSarimaModel.builder()
                 .n(n)
                 .spec(orders)
                 .p0(DoubleSeq.of(pmodels, 0, np))
@@ -87,7 +87,7 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
 
     @Override
     public DoubleSeq getDefaultParameters() {
-        SarimaMapping mapping = new SarimaMapping(orders, eps, true);
+        SarimaMapping mapping = new SarimaMapping(orders.asSarimaOrders(), eps, true);
         DoubleSeq p0 = mapping.getDefaultParameters();
         int ns = varParamsCount();
         if (ns == 0 && !vVar) {
@@ -103,38 +103,35 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
 
         DataBlock P = DataBlock.of(p);
         setP1(P.drop(np, 0), i -> p[i]);
-        if (vVar) {
-            p[p.length - 1] = 1;
-        }
+//        if (vVar) {
+//            p[p.length - 1] = 1;
+//        }
         return DoubleSeq.of(p);
     }
 
     @Override
     public boolean checkBoundaries(DoubleSeq inParams) {
-        SarimaMapping mapping = new SarimaMapping(orders, eps, true);
+        SarimaMapping mapping = new SarimaMapping(orders.asSarimaOrders(), eps, true);
         int np = orders.getParametersCount();
         double[] p = pmodels(inParams);
         if (!mapping.checkBoundaries(DoubleSeq.of(p, 0, np))) {
             return false;
         }
         return mapping.checkBoundaries(DoubleSeq.of(p, np, np));
-//        if (!mapping.checkBoundaries(DoubleSeq.of(p, np, np))) {
-//            return false;
-//        }
-        //return p[2 * np] >= 0;
     }
 
     @Override
     public ParamValidation validate(DataBlock ioParams) {
-        SarimaMapping mapping = new SarimaMapping(orders, eps, true);
+        SarimaMapping mapping = new SarimaMapping(orders.asSarimaOrders(), eps, true);
         int np = orders.getParametersCount();
         // step 1: with validate p0 and var
         ParamValidation v0 = mapping.validate(ioParams.range(0, np));
         boolean changed = v0 == ParamValidation.Changed;
         if (vVar) {
             double v = ioParams.getLast();
-            if (v < 0) {
-                ioParams.setLast(-1 / v);
+            if (v < -1) {
+                double w = -1 / (v + 1); // new var
+                ioParams.setLast(w - 1);
                 changed = true;
             }
         }
@@ -271,8 +268,7 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
             }
         }
         // var
-        // return 0;
-        return Double.NEGATIVE_INFINITY;
+        return -1;
     }
 
     @Override
@@ -433,7 +429,7 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
             }
         }
         if (vVar) {
-            double e = pall.get(pall.length() - 1);
+            double e = 1 + pall.get(pall.length() - 1);
             pm[2 * np] = e * e;
         } else {
             pm[2 * np] = 1;
@@ -523,7 +519,7 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
     }
 
     @Override
-    public DoubleSeq parametersOf(LtdArimaModel model) {
+    public DoubleSeq parametersOf(LtdSarimaModel model) {
         int np0 = orders.getParametersCount(), np1 = varParamsCount(), nv = vVar ? 1 : 0;
         double[] p = new double[np0 + np1 + nv];
         DoubleSeq p0 = model.getP0();
@@ -532,7 +528,7 @@ public class LtdArimaMapping2 implements LtdArimaMapping {
         DataBlock P = DataBlock.of(p, np0, np0 + np1, 1);
         setP1(P, i -> p1.get(i));
         if (vVar) {
-            p[np0 + np1] = Math.sqrt(model.getVar1());
+            p[np0 + np1] = Math.sqrt(model.getVar1()) - 1;
         }
         return DoubleSeq.of(p);
     }

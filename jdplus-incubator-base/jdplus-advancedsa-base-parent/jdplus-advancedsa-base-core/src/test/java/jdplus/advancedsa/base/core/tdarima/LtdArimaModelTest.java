@@ -15,6 +15,7 @@
  */
 package jdplus.advancedsa.base.core.tdarima;
 
+import jdplus.advancedsa.base.api.tdarima.LtdSarimaSpec;
 import jdplus.toolkit.base.api.arima.SarimaOrders;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.core.data.DataBlock;
@@ -38,16 +39,16 @@ public class LtdArimaModelTest {
         double[] s=Data.ABS_RETAIL2;
         DoubleSeq S=DataBlock.of(s);
                 
-        SarimaOrders orders=SarimaOrders.airline(12);
+        LtdSarimaSpec.Orders orders=LtdSarimaSpec.Orders.airline(12);
 //        orders.setP(3);
-        LtdArimaMapping mapping=LtdArimaMapping1.builder(orders)
+        LtdSarimaMapping mapping=LtdSarimaMapping1.builder(orders)
                 .n(s.length)
 //                .vPhi(true)
                 .vTheta(true)
                 .vBtheta(true)
 //                .vVar(true)
                 .build();
-        SsfFunction fn = SsfFunction.builder(new SsfData(S), mapping, (LtdArimaModel model) -> model.ssf())
+        SsfFunction fn = SsfFunction.builder(new SsfData(S), mapping, (LtdSarimaModel model) -> model.ssf())
                 .useScalingFactor(true)
                 .useLog(false)
                 .useParallelProcessing(true)

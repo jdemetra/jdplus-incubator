@@ -1,29 +1,29 @@
 /*
  * Copyright 2023 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * https://joinup.ec.europa.eu/software/page/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package jdplus.sts.base.core;
 
 import java.util.ArrayList;
 import java.util.List;
-import jdplus.sa.base.core.CholetteProcessor;
-import jdplus.sa.base.core.PreliminaryChecks;
 import jdplus.advancedsa.base.core.regarima.FastKernel;
 import jdplus.sa.base.api.ComponentType;
 import jdplus.sa.base.api.DecompositionMode;
 import jdplus.sa.base.api.SeriesDecomposition;
+import jdplus.sa.base.core.CholetteProcessor;
+import jdplus.sa.base.core.PreliminaryChecks;
 import jdplus.sa.base.core.modelling.TwoStepsDecomposition;
 import jdplus.sts.base.api.BsmDecomposition;
 import jdplus.sts.base.api.BsmSpec;
@@ -48,7 +48,6 @@ import jdplus.toolkit.base.api.timeseries.regression.ResidualsType;
 import jdplus.toolkit.base.api.timeseries.regression.Variable;
 import jdplus.toolkit.base.core.dstats.T;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
-import jdplus.toolkit.base.core.modelling.Residuals;
 import jdplus.toolkit.base.core.modelling.regression.RegressionDesc;
 import jdplus.toolkit.base.core.regsarima.regular.RegSarimaModel;
 import jdplus.toolkit.base.core.stats.likelihood.DiffuseConcentratedLikelihood;
@@ -104,7 +103,7 @@ public class StsKernel {
             FastMatrix X = null;
             DoubleSeq y = s.getValues();
             int period = s.getAnnualFrequency();
-//            X12plusPreadjustment preadjustment;
+            //            X12plusPreadjustment preadjustment;
             // TODO : backcasts/forecasts
             if (preprocessor != null) {
                 // we have to remove fixed effects of the transformed series
@@ -118,52 +117,70 @@ public class StsKernel {
             }
             boolean ok = kernel.process(y, X, period, spec);
 
-            Variable[] vars = preprocessing == null ? new Variable[0] : preprocessing.getDescription().getVariables();
+            Variable[] vars = preprocessing == null
+                    ? new Variable[0]
+                    : preprocessing.getDescription().getVariables();
             Variable[] variables = new Variable[vars.length];
             // update the coefficients of the variables
             BsmSpec fspec = kernel.finalSpecification(true);
             int nhp = fspec.getFreeParametersCount();
             DiffuseConcentratedLikelihood ll = kernel.getLikelihood();
-            DoubleSeqCursor cursor = ll.coefficients().cursor();
-            DoubleSeqCursor.OnMutable diag = ll.unscaledCovariance().diagonal().cursor();
-            int df = ll.degreesOfFreedom() - nhp;
-            double vscale = ll.ssq() / df;
-            T tstat = new T(df);
-
-            int k = 0, pos = 0;
-
             List<RegressionDesc> regressionDesc = new ArrayList<>();
-            // fill the free coefficients
-            for (Variable var : vars) {
-                int nfree = var.freeCoefficientsCount();
-                if (nfree == var.dim()) {
-                    Parameter[] p = new Parameter[nfree];
-                    for (int j = 0; j < nfree; ++j) {
-                        double c = cursor.getAndNext(), e = Math.sqrt(diag.getAndNext() * vscale);
-                        if (e == 0) {
-                            p[j] = Parameter.zero();
-                            regressionDesc.add(new RegressionDesc(var.getName(), var.getCore(), j, pos++, 0, 0, 0));
-                        } else {
-                            p[j] = Parameter.estimated(c);
-                            regressionDesc.add(new RegressionDesc(var.getName(), var.getCore(), j, pos++, c, e, 2 * tstat.getProbability(Math.abs(c / e), ProbabilityType.Upper)));
-                        }
-                    }
-                    variables[k++] = var.withCoefficients(p);
-                } else if (nfree > 0) {
-                    Parameter[] p = var.getCoefficients();
-                    for (int j = 0; j < p.length; ++j) {
-                        if (p[j].isFree()) {
+            if (vars.length > 0) {
+                DoubleSeqCursor cursor = ll.coefficients().cursor();
+                DoubleSeqCursor.OnMutable diag =
+                        ll.unscaledCovariance().diagonal().cursor();
+                int df = ll.degreesOfFreedom() - nhp;
+                double vscale = ll.ssq() / df;
+                T tstat = new T(df);
+
+                int k = 0, pos = 0;
+
+                // fill the free coefficients
+                for (Variable var : vars) {
+                    int nfree = var.freeCoefficientsCount();
+                    if (nfree == var.dim()) {
+                        Parameter[] p = new Parameter[nfree];
+                        for (int j = 0; j < nfree; ++j) {
                             double c = cursor.getAndNext(), e = Math.sqrt(diag.getAndNext() * vscale);
-                            p[j] = Parameter.estimated(c);
-                            regressionDesc.add(new RegressionDesc(var.getName(), var.getCore(), j, pos++, c, e, 2 * tstat.getProbability(Math.abs(c / e), ProbabilityType.Upper)));
+                            if (e == 0) {
+                                p[j] = Parameter.zero();
+                                regressionDesc.add(new RegressionDesc(var.getName(), var.getCore(), j, pos++, 0, 0, 0));
+                            } else {
+                                p[j] = Parameter.estimated(c);
+                                regressionDesc.add(new RegressionDesc(
+                                        var.getName(),
+                                        var.getCore(),
+                                        j,
+                                        pos++,
+                                        c,
+                                        e,
+                                        2 * tstat.getProbability(Math.abs(c / e), ProbabilityType.Upper)));
+                            }
                         }
+                        variables[k++] = var.withCoefficients(p);
+                    } else if (nfree > 0) {
+                        Parameter[] p = var.getCoefficients();
+                        for (int j = 0; j < p.length; ++j) {
+                            if (p[j].isFree()) {
+                                double c = cursor.getAndNext(), e = Math.sqrt(diag.getAndNext() * vscale);
+                                p[j] = Parameter.estimated(c);
+                                regressionDesc.add(new RegressionDesc(
+                                        var.getName(),
+                                        var.getCore(),
+                                        j,
+                                        pos++,
+                                        c,
+                                        e,
+                                        2 * tstat.getProbability(Math.abs(c / e), ProbabilityType.Upper)));
+                            }
+                        }
+                        variables[k++] = var.withCoefficients(p);
+                    } else {
+                        variables[k++] = var;
                     }
-                    variables[k++] = var.withCoefficients(p);
-                } else {
-                    variables[k++] = var;
                 }
             }
-
             BsmMapping mapping = new BsmMapping(fspec, s.getAnnualFrequency(), null);
             DoubleSeq params = mapping.map(kernel.result(true));
             ParametersEstimation parameters = new ParametersEstimation(params, "bsm");
@@ -182,8 +199,14 @@ public class StsKernel {
                     .build();
             LightBasicStructuralModel.Description description = LightBasicStructuralModel.Description.builder()
                     .series(s)
-                    .logTransformation(preprocessing == null ? false : preprocessing.getDescription().isLogTransformation())
-                    .lengthOfPeriodTransformation(preprocessing == null ? LengthOfPeriodType.None : preprocessing.getDescription().getLengthOfPeriodTransformation())
+                    .logTransformation(
+                            preprocessing == null
+                                    ? false
+                                    : preprocessing.getDescription().isLogTransformation())
+                    .lengthOfPeriodTransformation(
+                            preprocessing == null
+                                    ? LengthOfPeriodType.None
+                                    : preprocessing.getDescription().getLengthOfPeriodTransformation())
                     .specification(kernel.finalSpecification(false))
                     .variables(variables)
                     .build();
@@ -198,7 +221,7 @@ public class StsKernel {
             TsResiduals residuals = TsResiduals.builder()
                     .type(ResidualsType.QR_Transformed)
                     .res(e)
-//                    .tsres(TsData.of(description.getSeries().getStart(), e))
+                    //                    .tsres(TsData.of(description.getSeries().getStart(), e))
                     .ssq(ll.ssq())
                     .n(ll.dim())
                     .df(ll.degreesOfFreedom())
@@ -270,7 +293,7 @@ public class StsKernel {
             double ci = irr.getValues().average();
             double si = fullYears(seas).getValues().average();
             seas = seas.divide(si);
-            tc.multiply(ci * si);
+            tc = tc.multiply(ci * si);
             sa = TsData.divide(series, seas);
             irr = TsData.divide(sa, tc);
         }

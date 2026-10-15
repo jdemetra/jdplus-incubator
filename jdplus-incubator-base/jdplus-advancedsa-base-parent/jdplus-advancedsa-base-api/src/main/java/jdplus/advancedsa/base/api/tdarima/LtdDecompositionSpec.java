@@ -34,9 +34,9 @@ public final class LtdDecompositionSpec implements Validatable<LtdDecompositionS
     private TsData series;
     private boolean log, meanCorrection;
     private double innovationVariance;
-    private LtdSarimaSpec ltdSarimaSpec;
+    private LtdSarimaModelSpec ltdSarimaSpec;
 
-    private static final LtdSarimaSpec AIRLINE = LtdSarimaSpec.airline();
+    private static final LtdSarimaModelSpec AIRLINE = LtdSarimaModelSpec.airline();
 
 
     @LombokWorkaround

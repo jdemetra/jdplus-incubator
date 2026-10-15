@@ -1,46 +1,46 @@
 /*
  * Copyright 2023 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * https://joinup.ec.europa.eu/software/page/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package jdplus.sts.base.core.msts;
 
-import jdplus.toolkit.base.core.ssf.StateInfo;
-import jdplus.toolkit.base.core.ssf.StateStorage;
-import jdplus.toolkit.base.core.ssf.akf.AkfToolkit;
-import jdplus.toolkit.base.core.ssf.dk.DkToolkit;
-import jdplus.toolkit.base.core.ssf.dk.sqrt.DefaultDiffuseSquareRootFilteringResults;
-import jdplus.toolkit.base.core.ssf.composite.MultivariateCompositeSsf;
-import jdplus.toolkit.base.core.ssf.multivariate.M2uAdapter;
-import jdplus.toolkit.base.core.ssf.multivariate.SsfMatrix;
-import jdplus.toolkit.base.core.ssf.univariate.ISsf;
-import jdplus.toolkit.base.core.ssf.univariate.ISsfData;
-import jdplus.toolkit.base.core.ssf.univariate.StateFilteringResults;
+import java.util.Arrays;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.DoubleSeqCursor;
 import jdplus.toolkit.base.api.data.Doubles;
-import jdplus.toolkit.base.core.stats.likelihood.Likelihood;
 import jdplus.toolkit.base.api.math.functions.Optimizer;
 import jdplus.toolkit.base.api.ssf.SsfInitialization;
-import java.util.Arrays;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.data.DataBlockIterator;
 import jdplus.toolkit.base.core.data.DataBlockStorage;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.toolkit.base.core.math.matrices.QuadraticForm;
 import jdplus.toolkit.base.core.ssf.ISsfLoading;
+import jdplus.toolkit.base.core.ssf.StateInfo;
+import jdplus.toolkit.base.core.ssf.StateStorage;
+import jdplus.toolkit.base.core.ssf.akf.AkfToolkit;
 import jdplus.toolkit.base.core.ssf.akf.QAugmentation;
+import jdplus.toolkit.base.core.ssf.composite.MultivariateCompositeSsf;
+import jdplus.toolkit.base.core.ssf.dk.DkToolkit;
+import jdplus.toolkit.base.core.ssf.dk.sqrt.DefaultDiffuseSquareRootFilteringResults;
+import jdplus.toolkit.base.core.ssf.multivariate.M2uAdapter;
+import jdplus.toolkit.base.core.ssf.multivariate.SsfMatrix;
+import jdplus.toolkit.base.core.ssf.univariate.ISsf;
+import jdplus.toolkit.base.core.ssf.univariate.ISsfData;
+import jdplus.toolkit.base.core.ssf.univariate.StateFilteringResults;
+import jdplus.toolkit.base.core.stats.likelihood.Likelihood;
 
 /**
  *
@@ -48,8 +48,15 @@ import jdplus.toolkit.base.core.ssf.akf.QAugmentation;
  */
 public class CompositeModelEstimation {
 
-    public static CompositeModelEstimation estimationOf(CompositeModel model, FastMatrix data,
-            boolean marginal, boolean concentrated, SsfInitialization initialization, Optimizer optimizer, double eps, double[] parameters) {
+    public static CompositeModelEstimation estimationOf(
+            CompositeModel model,
+            FastMatrix data,
+            boolean marginal,
+            boolean concentrated,
+            SsfInitialization initialization,
+            Optimizer optimizer,
+            double eps,
+            double[] parameters) {
         CompositeModelEstimation rslt = new CompositeModelEstimation();
         rslt.data = data;
         MstsMonitor monitor = MstsMonitor.builder()
@@ -72,7 +79,8 @@ public class CompositeModelEstimation {
         return rslt;
     }
 
-    public static CompositeModelEstimation computationOf(CompositeModel model, FastMatrix data, DoubleSeq fullParameters, boolean marginal, boolean concentrated) {
+    public static CompositeModelEstimation computationOf(
+            CompositeModel model, FastMatrix data, DoubleSeq fullParameters, boolean marginal, boolean concentrated) {
         CompositeModelEstimation rslt = new CompositeModelEstimation();
         rslt.model = model;
         rslt.data = data;
@@ -85,8 +93,8 @@ public class CompositeModelEstimation {
         rslt.cmpName = mapping.parametersName();
         rslt.parametersName = mapping.parametersName();
         if (marginal) {
-            rslt.likelihood = AkfToolkit.marginalLikelihoodComputer(concentrated, true).
-                    compute(M2uAdapter.of(rslt.getSsf()), M2uAdapter.of(new SsfMatrix(data)));
+            rslt.likelihood = AkfToolkit.marginalLikelihoodComputer(concentrated, true)
+                    .compute(M2uAdapter.of(rslt.getSsf()), M2uAdapter.of(new SsfMatrix(data)));
         } else {
             rslt.likelihood = DkToolkit.likelihood(rslt.getSsf(), new SsfMatrix(data), true, false);
         }
@@ -99,45 +107,57 @@ public class CompositeModelEstimation {
     private FastMatrix data;
     private double[] fullParameters, parameters;
     private String[] parametersName, cmpName;
-    private StateStorage smoothedStates, filteredStates, filteringStates;
+    private volatile StateStorage smoothedStates, filteredStates, filteringStates;
     private CompositeModel model;
 
     public StateStorage getSmoothedStates() {
         if (smoothedStates == null) {
+            StateStorage ss = null;
             try {
-                StateStorage ss = AkfToolkit.smooth(getSsf(), new SsfMatrix(getData()), true, false, true, QAugmentation.DEFAULT_COLLAPSING);
-                if (likelihood.isScalingFactor()) {
-                    ss.rescaleVariances(likelihood.sigma2());
-                }
-                smoothedStates = ss;
+                ss = smoothedStates(false, null);
+
             } catch (OutOfMemoryError err) {
                 ISsf ussf = M2uAdapter.of(ssf);
                 ISsfData udata = M2uAdapter.of(new SsfMatrix(data));
                 DataBlockStorage ds = DkToolkit.fastSmooth(ussf, udata);
-                StateStorage ss = StateStorage.light(StateInfo.Smoothed);
+                ss = StateStorage.light(StateInfo.Smoothed);
                 int m = data.getColumnsCount(), n = data.getRowsCount();
                 ss.prepare(ussf.getStateDim(), 0, n);
                 for (int i = 0; i < n; ++i) {
                     ss.save(i, ds.block(i * m), null);
                 }
-                smoothedStates = ss;
 
             } catch (Exception err) {
-                StateStorage ss = AkfToolkit.smooth(getSsf(), new SsfMatrix(getData()), true, false, true, QAugmentation.DEFAULT_COLLAPSING);
+                ss = AkfToolkit.smooth(
+                        getSsf(), new SsfMatrix(getData()), true, false, false, QAugmentation.DEFAULT_NOCOLLAPSING);
                 if (!ss.hasVariances()) {
                     return null;
                 }
                 if (likelihood.isScalingFactor()) {
                     ss.rescaleVariances(likelihood.sigma2());
                 }
+            }
+            if (smoothedStates == null) {
                 smoothedStates = ss;
             }
         }
         return smoothedStates;
     }
 
+    public StateStorage smoothedStates(boolean collapsing, QAugmentation.QType type) {
+        if (type == null) {
+            type = collapsing ? QAugmentation.DEFAULT_COLLAPSING : QAugmentation.DEFAULT_NOCOLLAPSING;
+        }
+        StateStorage ss = AkfToolkit.smooth(getSsf(), new SsfMatrix(getData()), true, false, collapsing, type);
+        if (likelihood.isScalingFactor()) {
+            ss.rescaleVariances(likelihood.sigma2());
+        }
+        return ss;
+    }
+
     public StateStorage getFastSmoothedStates() {
-        return AkfToolkit.smooth(getSsf(), new SsfMatrix(getData()), false, false, true, QAugmentation.DEFAULT_COLLAPSING);
+        return AkfToolkit.smooth(
+                getSsf(), new SsfMatrix(getData()), false, false, true, QAugmentation.DEFAULT_COLLAPSING);
     }
 
     public StateStorage getFilteredStates() {

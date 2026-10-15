@@ -1,33 +1,34 @@
 /*
  * Copyright 2017 National Bank of Belgium
- * 
- * Licensed under the EUPL, Version 1.2 or – as soon they will be approved 
+ *
+ * Licensed under the EUPL, Version 1.2 or – as soon they will be approved
  * by the European Commission - subsequent versions of the EUPL (the "Licence");
  * You may not use this work except in compliance with the Licence.
  * You may obtain a copy of the Licence at:
- * 
+ *
  * https://joinup.ec.europa.eu/software/page/eupl
- * 
- * Unless required by applicable law or agreed to in writing, software 
+ *
+ * Unless required by applicable law or agreed to in writing, software
  * distributed under the Licence is distributed on an "AS IS" basis,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the Licence for the specific language governing permissions and 
+ * See the Licence for the specific language governing permissions and
  * limitations under the Licence.
  */
 package jdplus.sts.base.r;
 
-import jdplus.toolkit.base.api.information.InformationMapping;
-import jdplus.toolkit.base.api.math.functions.Optimizer;
-import jdplus.toolkit.base.core.math.matrices.FastMatrix;
-import jdplus.sts.base.core.msts.CompositeModel;
-import jdplus.sts.base.core.msts.CompositeModelEstimation;
-import jdplus.toolkit.base.core.ssf.StateStorage;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import jdplus.toolkit.base.api.ssf.SsfInitialization;
-import jdplus.toolkit.base.core.ssf.multivariate.MultivariateSsf;
+import jdplus.sts.base.core.msts.CompositeModel;
+import jdplus.sts.base.core.msts.CompositeModelEstimation;
 import jdplus.toolkit.base.api.information.GenericExplorable;
+import jdplus.toolkit.base.api.information.InformationMapping;
+import jdplus.toolkit.base.api.math.functions.Optimizer;
 import jdplus.toolkit.base.api.math.matrices.Matrix;
+import jdplus.toolkit.base.api.ssf.SsfInitialization;
+import jdplus.toolkit.base.core.math.matrices.FastMatrix;
+import jdplus.toolkit.base.core.ssf.StateStorage;
+import jdplus.toolkit.base.core.ssf.akf.QAugmentation;
+import jdplus.toolkit.base.core.ssf.multivariate.MultivariateSsf;
 
 /**
  *
@@ -44,18 +45,31 @@ public class CompositeModels {
             this.estimation = estimation;
         }
 
-        private static final InformationMapping<CompositeModelEstimation> MAPPING = new InformationMapping<CompositeModelEstimation>() {
-            @Override
-            public Class getSourceClass() {
-                return CompositeModelEstimation.class;
-            }
-        };
+        private static final InformationMapping<CompositeModelEstimation> MAPPING =
+                new InformationMapping<CompositeModelEstimation>() {
+                    @Override
+                    public Class getSourceClass() {
+                        return CompositeModelEstimation.class;
+                    }
+                };
 
         static {
-            MAPPING.set("likelihood.ll", Double.class, source -> source.getLikelihood().logLikelihood());
-            MAPPING.set("likelihood.ser", Double.class, source -> source.getLikelihood().ser());
-            MAPPING.set("likelihood.residuals", double[].class, source -> source.getLikelihood().e().toArray());
-            MAPPING.set("scalingfactor", Double.class, source -> source.getLikelihood().sigma2());
+            MAPPING.set(
+                    "likelihood.ll",
+                    Double.class,
+                    source -> source.getLikelihood().logLikelihood());
+            MAPPING.set(
+                    "likelihood.ser",
+                    Double.class,
+                    source -> source.getLikelihood().ser());
+            MAPPING.set(
+                    "likelihood.residuals",
+                    double[].class,
+                    source -> source.getLikelihood().e().toArray());
+            MAPPING.set(
+                    "scalingfactor",
+                    Double.class,
+                    source -> source.getLikelihood().sigma2());
             MAPPING.set("ssf.ncmps", Integer.class, source -> source.getCmpPos().length);
             MAPPING.set("ssf.cmppos", int[].class, source -> source.getCmpPos());
             MAPPING.set("ssf.cmpnames", String[].class, source -> source.getCmpName());
@@ -124,7 +138,9 @@ public class CompositeModels {
                 if (!smoothedStates.hasVariances()) {
                     return null;
                 }
-                double[] z = smoothedStates.getComponentVariance(source.getCmpPos()[p]).toArray();
+                double[] z = smoothedStates
+                        .getComponentVariance(source.getCmpPos()[p])
+                        .toArray();
                 checkVariance(z);
                 return z;
             });
@@ -289,7 +305,6 @@ public class CompositeModels {
                 checkVariance(z);
                 return Matrix.of(z, n, m);
             });
-
         }
 
         private static void checkVariance(double[] z) {
@@ -299,7 +314,6 @@ public class CompositeModels {
                     z[i] = 0;
                 }
             }
-
         }
 
         @Override
@@ -353,6 +367,10 @@ public class CompositeModels {
             return estimation.getSmoothedStates();
         }
 
+        public StateStorage smoothedStates(boolean collapsing, String type) {
+            return estimation.smoothedStates(collapsing, type != null ? QAugmentation.QType.valueOf(type) : null);
+        }
+
         public StateStorage filteredStates() {
             return estimation.getFilteredStates();
         }
@@ -362,12 +380,27 @@ public class CompositeModels {
         }
     }
 
-    public Results estimate(CompositeModel model, Matrix data, boolean marginal, boolean rescaling, String initialization,
-            String opt, double eps, double[] parameters) {
-        return new Results(model.estimate(FastMatrix.of(data), marginal, rescaling, SsfInitialization.valueOf(initialization), Optimizer.valueOf(opt), eps, parameters));
+    public Results estimate(
+            CompositeModel model,
+            Matrix data,
+            boolean marginal,
+            boolean rescaling,
+            String initialization,
+            String opt,
+            double eps,
+            double[] parameters) {
+        return new Results(model.estimate(
+                FastMatrix.of(data),
+                marginal,
+                rescaling,
+                SsfInitialization.valueOf(initialization),
+                Optimizer.valueOf(opt),
+                eps,
+                parameters));
     }
 
-    public Results compute(CompositeModel model, Matrix data, double[] parameters, boolean marginal, boolean concentrated) {
+    public Results compute(
+            CompositeModel model, Matrix data, double[] parameters, boolean marginal, boolean concentrated) {
         return new Results(model.compute(FastMatrix.of(data), parameters, marginal, concentrated));
     }
 }
