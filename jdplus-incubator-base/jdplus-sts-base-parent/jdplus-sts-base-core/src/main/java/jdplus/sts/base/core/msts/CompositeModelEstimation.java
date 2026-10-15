@@ -107,32 +107,28 @@ public class CompositeModelEstimation {
     private FastMatrix data;
     private double[] fullParameters, parameters;
     private String[] parametersName, cmpName;
-    private StateStorage smoothedStates, filteredStates, filteringStates;
+    private volatile StateStorage smoothedStates, filteredStates, filteringStates;
     private CompositeModel model;
 
     public StateStorage getSmoothedStates() {
         if (smoothedStates == null) {
+            StateStorage ss = null;
             try {
-                StateStorage ss = AkfToolkit.smooth(
-                        getSsf(), new SsfMatrix(getData()), true, false, false, QAugmentation.DEFAULT_NOCOLLAPSING);
-                if (likelihood.isScalingFactor()) {
-                    ss.rescaleVariances(likelihood.sigma2());
-                }
-                smoothedStates = ss;
+                ss = smoothedStates(false, null);
+
             } catch (OutOfMemoryError err) {
                 ISsf ussf = M2uAdapter.of(ssf);
                 ISsfData udata = M2uAdapter.of(new SsfMatrix(data));
                 DataBlockStorage ds = DkToolkit.fastSmooth(ussf, udata);
-                StateStorage ss = StateStorage.light(StateInfo.Smoothed);
+                ss = StateStorage.light(StateInfo.Smoothed);
                 int m = data.getColumnsCount(), n = data.getRowsCount();
                 ss.prepare(ussf.getStateDim(), 0, n);
                 for (int i = 0; i < n; ++i) {
                     ss.save(i, ds.block(i * m), null);
                 }
-                smoothedStates = ss;
 
             } catch (Exception err) {
-                StateStorage ss = AkfToolkit.smooth(
+                ss = AkfToolkit.smooth(
                         getSsf(), new SsfMatrix(getData()), true, false, false, QAugmentation.DEFAULT_NOCOLLAPSING);
                 if (!ss.hasVariances()) {
                     return null;
@@ -140,10 +136,23 @@ public class CompositeModelEstimation {
                 if (likelihood.isScalingFactor()) {
                     ss.rescaleVariances(likelihood.sigma2());
                 }
+            }
+            if (smoothedStates == null) {
                 smoothedStates = ss;
             }
         }
         return smoothedStates;
+    }
+
+    public StateStorage smoothedStates(boolean collapsing, QAugmentation.QType type) {
+        if (type == null) {
+            type = collapsing ? QAugmentation.DEFAULT_COLLAPSING : QAugmentation.DEFAULT_NOCOLLAPSING;
+        }
+        StateStorage ss = AkfToolkit.smooth(getSsf(), new SsfMatrix(getData()), true, false, collapsing, type);
+        if (likelihood.isScalingFactor()) {
+            ss.rescaleVariances(likelihood.sigma2());
+        }
+        return ss;
     }
 
     public StateStorage getFastSmoothedStates() {
