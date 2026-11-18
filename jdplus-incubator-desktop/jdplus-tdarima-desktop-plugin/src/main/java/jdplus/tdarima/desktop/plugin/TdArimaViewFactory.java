@@ -840,11 +840,11 @@ public class TdArimaViewFactory extends ProcDocumentViewFactory<TdArimaDocument>
     //// <editor-fold defaultstate="collapsed" desc="REGISTER FORECASTS">
     ////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 200000 + 500)
     ////    public static class ForecastsTable extends ProcDocumentItemFactory<FractionalAirlineDocument,
-    ////TsDocument> {
+    //// TsDocument> {
     ////
     ////        public ForecastsTable() {
     ////            super(TdArimaDocument.class, RegSarimaViews.MODEL_FCASTS_TABLE, s -> s, new
-    ////GenericTableUI(false,
+    //// GenericTableUI(false,
     //// generateItems()));
     ////        }
     ////
@@ -1034,7 +1034,7 @@ public class TdArimaViewFactory extends ProcDocumentViewFactory<TdArimaDocument>
     ////
     ////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 4910)
     ////    public static class StationaryVarianceDecompositionFactory extends
-    ////ProcDocumentItemFactory<TdArimaDocument,
+    //// ProcDocumentItemFactory<TdArimaDocument,
     //// HtmlElement> {
     ////
     ////        public StationaryVarianceDecompositionFactory() {
@@ -1058,7 +1058,7 @@ public class TdArimaViewFactory extends ProcDocumentViewFactory<TdArimaDocument>
     ////// <editor-fold defaultstate="collapsed" desc="DIAGNOSTICS">
     ////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5000)
     ////    public static class DiagnosticsSummaryFactory extends ProcDocumentItemFactory<TdArimaDocument,
-    ////HtmlElement>
+    //// HtmlElement>
     //// {
     ////
     ////        public DiagnosticsSummaryFactory() {
@@ -1082,7 +1082,7 @@ public class TdArimaViewFactory extends ProcDocumentViewFactory<TdArimaDocument>
     ////
     ////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5010)
     ////    public static class OriginalSeasonalityFactory extends ProcDocumentItemFactory<TdArimaDocument,
-    ////HtmlElement>
+    //// HtmlElement>
     //// {
     ////
     ////        public OriginalSeasonalityFactory() {
@@ -1115,7 +1115,7 @@ public class TdArimaViewFactory extends ProcDocumentViewFactory<TdArimaDocument>
     ////
     ////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5020)
     ////    public static class LinSeasonalityFactory extends ProcDocumentItemFactory<TdArimaDocument, HtmlElement>
-    ////{
+    //// {
     ////
     ////        public LinSeasonalityFactory() {
     ////            super(TdArimaDocument.class, SaViews.DIAGNOSTICS_LSEASONALITY, (TdArimaDocument doc) -> {
@@ -1142,7 +1142,7 @@ public class TdArimaViewFactory extends ProcDocumentViewFactory<TdArimaDocument>
     ////
     ////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5030)
     ////    public static class ResSeasonalityFactory extends ProcDocumentItemFactory<TdArimaDocument, HtmlElement>
-    ////{
+    //// {
     ////
     ////        public ResSeasonalityFactory() {
     ////            super(TdArimaDocument.class, SaViews.DIAGNOSTICS_RSEASONALITY, (TdArimaDocument doc) -> {
@@ -1198,7 +1198,7 @@ public class TdArimaViewFactory extends ProcDocumentViewFactory<TdArimaDocument>
     ////
     ////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5050)
     ////    public static class IrrSeasonalityFactory extends ProcDocumentItemFactory<TdArimaDocument, HtmlElement>
-    ////{
+    //// {
     ////
     ////        public IrrSeasonalityFactory() {
     ////            super(TdArimaDocument.class, SaViews.DIAGNOSTICS_ISEASONALITY, (TdArimaDocument doc) -> {
@@ -1228,7 +1228,7 @@ public class TdArimaViewFactory extends ProcDocumentViewFactory<TdArimaDocument>
     ////
     ////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5060)
     ////    public static class LastResSeasonalityFactory extends ProcDocumentItemFactory<TdArimaDocument,
-    ////HtmlElement>
+    //// HtmlElement>
     //// {
     ////
     ////        public LastResSeasonalityFactory() {
@@ -1262,7 +1262,7 @@ public class TdArimaViewFactory extends ProcDocumentViewFactory<TdArimaDocument>
     ////
     ////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5070)
     ////    public static class LastSaSeasonalityFactory extends ProcDocumentItemFactory<TdArimaDocument,
-    ////HtmlElement> {
+    //// HtmlElement> {
     ////
     ////        public LastSaSeasonalityFactory() {
     ////            super(TdArimaDocument.class, SaViews.DIAGNOSTICS_LASTSASEASONALITY, (TdArimaDocument doc) -> {
@@ -1275,7 +1275,7 @@ public class TdArimaViewFactory extends ProcDocumentViewFactory<TdArimaDocument>
     ////                    return null;
     ////                }
     ////                StringBuilder header = new StringBuilder().append("[Linearized] seasonally adjusted
-    ////series");
+    //// series");
     ////                int ny = DemetraSaUI.get().getSeasonalityLength();
     ////                if (ny > 0) {
     ////                    s = s.drop(Math.max(0, s.length() - s.getAnnualFrequency() * ny - 1), 0);
@@ -1299,7 +1299,7 @@ public class TdArimaViewFactory extends ProcDocumentViewFactory<TdArimaDocument>
     ////
     ////    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 5080)
     ////    public static class LastIrrSeasonalityFactory extends ProcDocumentItemFactory<TdArimaDocument,
-    ////HtmlElement>
+    //// HtmlElement>
     //// {
     ////
     ////        public LastIrrSeasonalityFactory() {
