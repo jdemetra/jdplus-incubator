@@ -670,9 +670,17 @@ public class HtmlTdArimaModel extends HtmlTdArima {
         for (RegressionDesc reg : regs) {
             stream.open(HtmlTag.TABLEROW);
             stream.write(new HtmlTableCell(display(reg, context, description || size > 1)).withWidth(100));
-            stream.write(new HtmlTableCell(df4.format(reg.getCoef())).withWidth(100));
-            stream.write(new HtmlTableCell(formatT(reg.getTStat())).withWidth(100));
-            stream.write(new HtmlTableCell(df4.format(reg.getPvalue())).withWidth(100));
+            if (coefs.isEmpty()) {
+                stream.write(new HtmlTableCell(df4.format(reg.getCoef())).withWidth(100));
+                stream.write(new HtmlTableCell(formatT(reg.getTStat())).withWidth(100));
+                stream.write(new HtmlTableCell(df4.format(reg.getPvalue())).withWidth(100));
+            } else {
+                double c = coefs.get(reg.getPosition()), ec = ecoefs.get(reg.getPosition());
+                stream.write(new HtmlTableCell(df4.format(c)).withWidth(100));
+                stream.write(new HtmlTableCell(formatT(c / ec)).withWidth(100));
+                stream.write(new HtmlTableCell(df4.format(reg.getPvalue())).withWidth(100)); // TODO
+            }
+
             stream.close(HtmlTag.TABLEROW);
         }
         if (size > 1 && regs.size() == var.dim() && var instanceof ITradingDaysVariable tdvar) {
@@ -689,6 +697,7 @@ public class HtmlTdArimaModel extends HtmlTdArima {
                 stream.write(new HtmlTableCell(df4.format(derivedTradingDay.getCoef())).withWidth(100));
                 stream.write(new HtmlTableCell(formatT(derivedTradingDay.getTStat())).withWidth(100));
                 stream.write(new HtmlTableCell(df4.format(derivedTradingDay.getPvalue())).withWidth(100));
+                // TODO
                 stream.close(HtmlTag.TABLEROW);
             }
             stream.close(HtmlTag.TABLE);

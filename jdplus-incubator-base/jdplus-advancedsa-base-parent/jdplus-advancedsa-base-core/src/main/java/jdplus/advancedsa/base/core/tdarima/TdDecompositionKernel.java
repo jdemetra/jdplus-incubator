@@ -18,6 +18,7 @@ package jdplus.advancedsa.base.core.tdarima;
 import java.util.Arrays;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
+import jdplus.advancedsa.base.core.ssf.Utility;
 import jdplus.sa.base.api.ComponentType;
 import jdplus.sa.base.api.DecompositionMode;
 import jdplus.sa.base.api.SaVariable;
@@ -142,22 +143,11 @@ public class TdDecompositionKernel {
             UcarimaModel[] ucarimaModels = ucmKernel.ucarimaModels();
             dbuilder.models(Arrays.asList(ucarimaModels));
             CompositeSsf ssf = TdSsfUcarima.of(n, i -> ucarimaModels[i]);
-
-            DefaultSmoothingResults srslts =
-                    AkfToolkit.smooth(ssf, new SsfData(ls.getValues()), true, true, true, QAugmentation.QType.NORMAL);
             int[] dim = ssf.componentsDimension();
-            DataBlock Z = DataBlock.make(ssf.getStateDim());
-            ssf.loading().Z(0, Z);
-
-            FastMatrix cmps = FastMatrix.make(n, 3);
-            FastMatrix ecmps = FastMatrix.make(n, 3);
-            for (int i = 0, j = 0; i < 3; ++i) {
-                double[] z = new double[Z.length()];
-                Z.extract(j, dim[i]).copyTo(z, j);
-                j += dim[i];
-                cmps.column(i).copy(srslts.zcomponent(DoubleSeq.of(z)));
-                ecmps.column(i).copy(srslts.zvariance(DoubleSeq.of(z)).sqrt());
-            }
+            FastMatrix cmps = FastMatrix.make(n, dim.length);
+            FastMatrix ecmps = FastMatrix.make(n, dim.length);
+            Utility.smoothedComponents(ssf, ls.getValues(), cmps, ecmps);
+            ecmps.apply(x -> x > 0 ? Math.sqrt(x) : 0);
             TsPeriod start = ls.getStart();
             TsData trend = TsData.of(start, cmps.column(0));
             TsData seas = TsData.of(start, cmps.column(1));
@@ -196,7 +186,6 @@ public class TdDecompositionKernel {
     public static TsData deterministicEffect(
             GeneralLinearModel model, DoubleSeq coeff, TsDomain domain, Predicate<Variable> test) {
         GeneralLinearModel.Description description = model.getDescription();
-        GeneralLinearModel.Estimation estimation = model.getEstimation();
         if (domain == null) {
             domain = description.getSeries().getDomain();
         }

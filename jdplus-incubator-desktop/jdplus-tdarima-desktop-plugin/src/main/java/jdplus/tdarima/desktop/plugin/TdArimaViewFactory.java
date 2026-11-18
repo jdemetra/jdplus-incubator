@@ -189,7 +189,7 @@ public class TdArimaViewFactory extends ProcDocumentViewFactory<TdArimaDocument>
     private static final String[] highSeries() {
         return new String[] {
             generateId("Seasonal", SaDictionaries.S),
-            generateId("Calendar effects", RegressionDictionaries.CAL),
+            generateId("Calendar effects", SaDictionaries.CAL),
             generateId("Irregular", SaDictionaries.I)
         };
     }
@@ -471,12 +471,12 @@ public class TdArimaViewFactory extends ProcDocumentViewFactory<TdArimaDocument>
                     source -> source,
                     new GenericTableUI(
                             false,
-                            Dictionary.concatenate(SaDictionaries.PREPROCESSING, RegressionDictionaries.YCAL),
+                            Dictionary.concatenate(SaDictionaries.PREPROCESSING, SaDictionaries.YCAL),
                             Dictionary.concatenate(SaDictionaries.PREPROCESSING, RegressionDictionaries.YLIN),
                             Dictionary.concatenate(SaDictionaries.PREPROCESSING, RegressionDictionaries.DET),
-                            Dictionary.concatenate(SaDictionaries.PREPROCESSING, RegressionDictionaries.CAL),
-                            Dictionary.concatenate(SaDictionaries.PREPROCESSING, RegressionDictionaries.TDE),
-                            Dictionary.concatenate(SaDictionaries.PREPROCESSING, RegressionDictionaries.EE),
+                            Dictionary.concatenate(SaDictionaries.PREPROCESSING, SaDictionaries.CAL),
+                            Dictionary.concatenate(SaDictionaries.PREPROCESSING, SaDictionaries.TDE),
+                            Dictionary.concatenate(SaDictionaries.PREPROCESSING, SaDictionaries.EE),
                             Dictionary.concatenate(SaDictionaries.PREPROCESSING, RegressionDictionaries.OUT)));
         }
 
