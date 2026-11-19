@@ -5,24 +5,25 @@
  */
 package jdplus.highfreq.base.core.extractors;
 
-import jdplus.toolkit.base.api.data.DoubleSeq;
+import static jdplus.toolkit.base.core.regarima.extractors.RegSarimaModelExtractors.NBCAST;
+
+import java.util.Optional;
 import jdplus.highfreq.base.api.ExtendedAirlineDictionaries;
+import jdplus.highfreq.base.core.extendedairline.ExtendedAirlineResults;
+import jdplus.highfreq.base.core.extendedairline.decomposition.ExtendedAirlineDecomposition;
+import jdplus.highfreq.base.core.regarima.HighFreqRegArimaModel;
+import jdplus.sa.base.api.ComponentType;
+import jdplus.sa.base.api.DecompositionMode;
+import jdplus.sa.base.api.SaDictionaries;
+import jdplus.toolkit.base.api.data.DoubleSeq;
+import jdplus.toolkit.base.api.dictionaries.Dictionary;
+import jdplus.toolkit.base.api.dictionaries.RegressionDictionaries;
 import jdplus.toolkit.base.api.information.InformationExtractor;
 import jdplus.toolkit.base.api.information.InformationMapping;
 import jdplus.toolkit.base.api.modelling.ComponentInformation;
 import jdplus.toolkit.base.api.modelling.SeriesInfo;
-import jdplus.sa.base.api.ComponentType;
-import jdplus.sa.base.api.DecompositionMode;
-import jdplus.sa.base.api.SaDictionaries;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.api.timeseries.TsDomain;
-import jdplus.toolkit.base.api.dictionaries.Dictionary;
-import jdplus.toolkit.base.api.dictionaries.RegressionDictionaries;
-import java.util.Optional;
-import jdplus.highfreq.base.core.extendedairline.decomposition.ExtendedAirlineDecomposition;
-import jdplus.highfreq.base.core.extendedairline.ExtendedAirlineResults;
-import jdplus.highfreq.base.core.regarima.HighFreqRegArimaModel;
-import static jdplus.toolkit.base.core.regarima.extractors.RegSarimaModelExtractors.NBCAST;
 import nbbrd.design.Development;
 import nbbrd.service.ServiceProvider;
 
@@ -37,7 +38,9 @@ public class ExtendedAirlineResultsExtractor extends InformationMapping<Extended
     public static final String FINAL = "";
 
     private ExtendedAirlineDecomposition.Step step(ExtendedAirlineResults rslt, int period) {
-        Optional<ExtendedAirlineDecomposition.Step> any = rslt.getDecomposition().getSteps().stream().filter(s -> period == (int) s.getPeriod()).findAny();
+        Optional<ExtendedAirlineDecomposition.Step> any = rslt.getDecomposition().getSteps().stream()
+                .filter(s -> period == (int) s.getPeriod())
+                .findAny();
         return any.orElse(null);
     }
 
@@ -46,60 +49,114 @@ public class ExtendedAirlineResultsExtractor extends InformationMapping<Extended
     }
 
     public ExtendedAirlineResultsExtractor() {
-        set(SaDictionaries.MODE, DecompositionMode.class, source -> source.getFinals().getMode());
+        set(
+                SaDictionaries.MODE,
+                DecompositionMode.class,
+                source -> source.getFinals().getMode());
 
-        set(RegressionDictionaries.Y, TsData.class, source
-                -> source.getFinals().getSeries(ComponentType.Series, ComponentInformation.Value));
-        set(SaDictionaries.T, TsData.class, source
-                -> source.getFinals().getSeries(ComponentType.Trend, ComponentInformation.Value));
-        set(SaDictionaries.SA, TsData.class, source
-                -> source.getFinals().getSeries(ComponentType.SeasonallyAdjusted, ComponentInformation.Value));
-        set(SaDictionaries.S, TsData.class, source
-                -> source.getFinals().getSeries(ComponentType.Seasonal, ComponentInformation.Value));
-        set(SaDictionaries.I, TsData.class, source
-                -> source.getFinals().getSeries(ComponentType.Irregular, ComponentInformation.Value));
-        set(RegressionDictionaries.Y_F, TsData.class, source
-                -> source.getFinals().getSeries(ComponentType.Series, ComponentInformation.Forecast));
-        set(SaDictionaries.T+SaDictionaries.FORECAST, TsData.class, source
-                -> source.getFinals().getSeries(ComponentType.Trend, ComponentInformation.Forecast));
-        set(SaDictionaries.SA+SaDictionaries.FORECAST, TsData.class, source
-                -> source.getFinals().getSeries(ComponentType.SeasonallyAdjusted, ComponentInformation.Forecast));
-        set(SaDictionaries.S+SaDictionaries.FORECAST, TsData.class, source
-                -> source.getFinals().getSeries(ComponentType.Seasonal, ComponentInformation.Forecast));
-        set(SaDictionaries.I+SaDictionaries.FORECAST, TsData.class, source
-                -> source.getFinals().getSeries(ComponentType.Irregular, ComponentInformation.Forecast));
-        set(RegressionDictionaries.Y_B, TsData.class, source
-                -> source.getFinals().getSeries(ComponentType.Series, ComponentInformation.Backcast));
-        set(SaDictionaries.T+SaDictionaries.BACKCAST, TsData.class, source
-                -> source.getFinals().getSeries(ComponentType.Trend, ComponentInformation.Backcast));
-        set(SaDictionaries.SA+SaDictionaries.BACKCAST, TsData.class, source
-                -> source.getFinals().getSeries(ComponentType.SeasonallyAdjusted, ComponentInformation.Backcast));
-        set(SaDictionaries.S+SaDictionaries.BACKCAST, TsData.class, source
-                -> source.getFinals().getSeries(ComponentType.Seasonal, ComponentInformation.Backcast));
-        set(SaDictionaries.I+SaDictionaries.BACKCAST, TsData.class, source
-                -> source.getFinals().getSeries(ComponentType.Irregular, ComponentInformation.Backcast));
-        set(cmpItem(SaDictionaries.T_CMP), TsData.class, source
-                -> source.getComponents().getSeries(ComponentType.Trend, ComponentInformation.Value));
-        set(cmpItem(SaDictionaries.SA_CMP), TsData.class, source
-                -> source.getComponents().getSeries(ComponentType.SeasonallyAdjusted, ComponentInformation.Value));
-        set(cmpItem(SaDictionaries.S_CMP), TsData.class, source
-                -> source.getComponents().getSeries(ComponentType.Seasonal, ComponentInformation.Value));
-        set(cmpItem(SaDictionaries.I_CMP), TsData.class, source
-                -> source.getComponents().getSeries(ComponentType.Irregular, ComponentInformation.Value));
-        set(cmpItem(ExtendedAirlineDictionaries.T_CMP_F), TsData.class, source
-                -> source.getComponents().getSeries(ComponentType.Trend, ComponentInformation.Value));
-        set(cmpItem(SaDictionaries.SA_CMP), TsData.class, source
-                -> source.getComponents().getSeries(ComponentType.SeasonallyAdjusted, ComponentInformation.Value));
-        set(cmpItem(SaDictionaries.S_CMP), TsData.class, source
-                -> source.getComponents().getSeries(ComponentType.Seasonal, ComponentInformation.Value));
-        set(cmpItem(SaDictionaries.I_CMP), TsData.class, source
-                -> source.getComponents().getSeries(ComponentType.Irregular, ComponentInformation.Value));
+        set(
+                RegressionDictionaries.Y,
+                TsData.class,
+                source -> source.getFinals().getSeries(ComponentType.Series, ComponentInformation.Value));
+        set(
+                SaDictionaries.T,
+                TsData.class,
+                source -> source.getFinals().getSeries(ComponentType.Trend, ComponentInformation.Value));
+        set(
+                SaDictionaries.SA,
+                TsData.class,
+                source -> source.getFinals().getSeries(ComponentType.SeasonallyAdjusted, ComponentInformation.Value));
+        set(
+                SaDictionaries.S,
+                TsData.class,
+                source -> source.getFinals().getSeries(ComponentType.Seasonal, ComponentInformation.Value));
+        set(
+                SaDictionaries.I,
+                TsData.class,
+                source -> source.getFinals().getSeries(ComponentType.Irregular, ComponentInformation.Value));
+        set(
+                RegressionDictionaries.Y_F,
+                TsData.class,
+                source -> source.getFinals().getSeries(ComponentType.Series, ComponentInformation.Forecast));
+        set(
+                SaDictionaries.T + SaDictionaries.FORECAST,
+                TsData.class,
+                source -> source.getFinals().getSeries(ComponentType.Trend, ComponentInformation.Forecast));
+        set(
+                SaDictionaries.SA + SaDictionaries.FORECAST,
+                TsData.class,
+                source ->
+                        source.getFinals().getSeries(ComponentType.SeasonallyAdjusted, ComponentInformation.Forecast));
+        set(
+                SaDictionaries.S + SaDictionaries.FORECAST,
+                TsData.class,
+                source -> source.getFinals().getSeries(ComponentType.Seasonal, ComponentInformation.Forecast));
+        set(
+                SaDictionaries.I + SaDictionaries.FORECAST,
+                TsData.class,
+                source -> source.getFinals().getSeries(ComponentType.Irregular, ComponentInformation.Forecast));
+        set(
+                RegressionDictionaries.Y_B,
+                TsData.class,
+                source -> source.getFinals().getSeries(ComponentType.Series, ComponentInformation.Backcast));
+        set(
+                SaDictionaries.T + SaDictionaries.BACKCAST,
+                TsData.class,
+                source -> source.getFinals().getSeries(ComponentType.Trend, ComponentInformation.Backcast));
+        set(
+                SaDictionaries.SA + SaDictionaries.BACKCAST,
+                TsData.class,
+                source ->
+                        source.getFinals().getSeries(ComponentType.SeasonallyAdjusted, ComponentInformation.Backcast));
+        set(
+                SaDictionaries.S + SaDictionaries.BACKCAST,
+                TsData.class,
+                source -> source.getFinals().getSeries(ComponentType.Seasonal, ComponentInformation.Backcast));
+        set(
+                SaDictionaries.I + SaDictionaries.BACKCAST,
+                TsData.class,
+                source -> source.getFinals().getSeries(ComponentType.Irregular, ComponentInformation.Backcast));
+        set(
+                cmpItem(SaDictionaries.T_CMP),
+                TsData.class,
+                source -> source.getComponents().getSeries(ComponentType.Trend, ComponentInformation.Value));
+        set(
+                cmpItem(SaDictionaries.SA_CMP),
+                TsData.class,
+                source ->
+                        source.getComponents().getSeries(ComponentType.SeasonallyAdjusted, ComponentInformation.Value));
+        set(
+                cmpItem(SaDictionaries.S_CMP),
+                TsData.class,
+                source -> source.getComponents().getSeries(ComponentType.Seasonal, ComponentInformation.Value));
+        set(
+                cmpItem(SaDictionaries.I_CMP),
+                TsData.class,
+                source -> source.getComponents().getSeries(ComponentType.Irregular, ComponentInformation.Value));
+        set(
+                cmpItem(ExtendedAirlineDictionaries.T_CMP_F),
+                TsData.class,
+                source -> source.getComponents().getSeries(ComponentType.Trend, ComponentInformation.Value));
+        set(
+                cmpItem(SaDictionaries.SA_CMP),
+                TsData.class,
+                source ->
+                        source.getComponents().getSeries(ComponentType.SeasonallyAdjusted, ComponentInformation.Value));
+        set(
+                cmpItem(SaDictionaries.S_CMP),
+                TsData.class,
+                source -> source.getComponents().getSeries(ComponentType.Seasonal, ComponentInformation.Value));
+        set(
+                cmpItem(SaDictionaries.I_CMP),
+                TsData.class,
+                source -> source.getComponents().getSeries(ComponentType.Irregular, ComponentInformation.Value));
         set(cmpItem(ExtendedAirlineDictionaries.SW_CMP), TsData.class, source -> {
             DoubleSeq data = source.getDecomposition().getFinalComponent(ExtendedAirlineDictionaries.SW_CMP);
             if (data.isEmpty()) {
                 return null;
             }
-            int nb = source.getDecomposition().getBackcastsCount(), nf = source.getDecomposition().getForecastsCount();
+            int nb = source.getDecomposition().getBackcastsCount(),
+                    nf = source.getDecomposition().getForecastsCount();
             TsDomain dom = source.getPreprocessing().getDescription().getDomain();
             return TsData.of(dom.getStartPeriod(), data.drop(nb, nf));
         });
@@ -132,7 +189,8 @@ public class ExtendedAirlineResultsExtractor extends InformationMapping<Extended
             if (data.isEmpty()) {
                 return null;
             }
-            int nb = source.getDecomposition().getBackcastsCount(), nf = source.getDecomposition().getForecastsCount();
+            int nb = source.getDecomposition().getBackcastsCount(),
+                    nf = source.getDecomposition().getForecastsCount();
             TsDomain dom = source.getPreprocessing().getDescription().getDomain();
             return TsData.of(dom.getStartPeriod(), data.drop(nb, nf));
         });
@@ -169,7 +227,8 @@ public class ExtendedAirlineResultsExtractor extends InformationMapping<Extended
             if (data.isEmpty()) {
                 return null;
             }
-            int nb = source.getDecomposition().getBackcastsCount(), nf = source.getDecomposition().getForecastsCount();
+            int nb = source.getDecomposition().getBackcastsCount(),
+                    nf = source.getDecomposition().getForecastsCount();
             TsDomain dom = source.getPreprocessing().getDescription().getDomain();
             return TsData.of(dom.getStartPeriod(), data.drop(nb, nf));
         });
@@ -214,7 +273,8 @@ public class ExtendedAirlineResultsExtractor extends InformationMapping<Extended
             if (data.isEmpty()) {
                 return null;
             }
-            int nb = source.getDecomposition().getBackcastsCount(), nf = source.getDecomposition().getForecastsCount();
+            int nb = source.getDecomposition().getBackcastsCount(),
+                    nf = source.getDecomposition().getForecastsCount();
             TsDomain dom = source.getPreprocessing().getDescription().getDomain();
             return TsData.of(dom.getStartPeriod(), data.drop(nb, nf));
         });
@@ -259,7 +319,8 @@ public class ExtendedAirlineResultsExtractor extends InformationMapping<Extended
             if (data.isEmpty()) {
                 return null;
             }
-            int nb = source.getDecomposition().getBackcastsCount(), nf = source.getDecomposition().getForecastsCount();
+            int nb = source.getDecomposition().getBackcastsCount(),
+                    nf = source.getDecomposition().getForecastsCount();
             TsDomain dom = source.getPreprocessing().getDescription().getDomain();
             return TsData.of(dom.getStartPeriod(), data.drop(nb, nf));
         });
@@ -304,7 +365,8 @@ public class ExtendedAirlineResultsExtractor extends InformationMapping<Extended
             if (data.isEmpty()) {
                 return null;
             }
-            int nb = source.getDecomposition().getBackcastsCount(), nf = source.getDecomposition().getForecastsCount();
+            int nb = source.getDecomposition().getBackcastsCount(),
+                    nf = source.getDecomposition().getForecastsCount();
             TsDomain dom = source.getPreprocessing().getDescription().getDomain();
             return TsData.of(dom.getStartPeriod(), data.drop(nb, nf));
         });
@@ -343,11 +405,23 @@ public class ExtendedAirlineResultsExtractor extends InformationMapping<Extended
 
         delegate(null, HighFreqRegArimaModel.class, source -> source.getPreprocessing());
 
-        set(RegressionDictionaries.CAL, TsData.class, source -> source.getPreprocessing().getCalendarEffect(null));
-        set(RegressionDictionaries.CAL + SeriesInfo.F_SUFFIX, TsData.class,
-                source -> source.getPreprocessing().getCalendarEffect(source.getPreprocessing().forecastDomain(source.getDecomposition().getForecastsCount())));
-        setArray(RegressionDictionaries.CAL + SeriesInfo.B_SUFFIX, NBCAST, TsData.class,
-                (source, i) -> source.getPreprocessing().getCalendarEffect(source.getPreprocessing().backcastDomain(source.getDecomposition().getBackcastsCount())));
+        set(
+                SaDictionaries.CAL,
+                TsData.class,
+                source -> source.getPreprocessing().getCalendarEffect(null));
+        set(
+                SaDictionaries.CAL + SeriesInfo.F_SUFFIX,
+                TsData.class,
+                source -> source.getPreprocessing()
+                        .getCalendarEffect(source.getPreprocessing()
+                                .forecastDomain(source.getDecomposition().getForecastsCount())));
+        setArray(
+                SaDictionaries.CAL + SeriesInfo.B_SUFFIX,
+                NBCAST,
+                TsData.class,
+                (source, i) -> source.getPreprocessing()
+                        .getCalendarEffect(source.getPreprocessing()
+                                .backcastDomain(source.getDecomposition().getBackcastsCount())));
     }
 
     @Override

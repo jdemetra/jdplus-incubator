@@ -1,6 +1,5 @@
 package jdplus.sts.base.api;
 
-import jdplus.advancedsa.base.api.movingtd.MovingTradingDaysSpec;
 import jdplus.advancedsa.base.api.movingtd.TimeVaryingSpec;
 import jdplus.sa.base.api.SaSpecification;
 import jdplus.sa.base.api.benchmarking.SaBenchmarkingSpec;
@@ -10,7 +9,7 @@ import nbbrd.design.LombokWorkaround;
 
 @lombok.Value
 @lombok.Builder(toBuilder = true, builderClassName = "Builder")
-public class StsSpec implements SaSpecification{
+public class StsSpec implements SaSpecification {
     public static final String METHOD = "sts";
     public static final String VERSION_V3 = "3.0.0";
     public static final AlgorithmDescriptor DESCRIPTOR = new AlgorithmDescriptor(FAMILY, METHOD, VERSION_V3);
@@ -20,19 +19,15 @@ public class StsSpec implements SaSpecification{
         return DESCRIPTOR;
     }
 
-    @lombok.NonNull
-    private ModellingSpec preprocessing;
-    
-    @lombok.NonNull
-    private BsmSpec bsm;
-    
-    @lombok.NonNull
-    private BsmEstimationSpec estimation;
-    
+    @lombok.NonNull private ModellingSpec preprocessing;
+
+    @lombok.NonNull private BsmSpec bsm;
+
+    @lombok.NonNull private BsmEstimationSpec estimation;
+
     private TimeVaryingSpec timeVaryingTradingDays;
-    
-    @lombok.NonNull
-    private SaBenchmarkingSpec benchmarking;
+
+    @lombok.NonNull private SaBenchmarkingSpec benchmarking;
 
     @LombokWorkaround
     public static Builder builder() {
@@ -44,21 +39,20 @@ public class StsSpec implements SaSpecification{
                 .benchmarking(SaBenchmarkingSpec.DEFAULT_DISABLED);
     }
 
-
     @Override
-    public String display(){
+    public String display() {
         return SMETHOD;
     }
-    
+
     private static final String SMETHOD = "BSM";
-    
-    public static final StsSpec FULL=StsSpec.builder()
+
+    public static final StsSpec FULL = StsSpec.builder()
             .preprocessing(ModellingSpec.FULL)
             .bsm(BsmSpec.DEFAULT)
             .benchmarking(SaBenchmarkingSpec.DEFAULT_DISABLED)
             .build();
-    
-    public static final StsSpec DEFAULT=StsSpec.builder()
+
+    public static final StsSpec DEFAULT = StsSpec.builder()
             .preprocessing(ModellingSpec.DEFAULT)
             .bsm(BsmSpec.DEFAULT)
             .benchmarking(SaBenchmarkingSpec.DEFAULT_DISABLED)
@@ -66,11 +60,13 @@ public class StsSpec implements SaSpecification{
 
     @Override
     public int getFrequency() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from
+        // nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public SaSpecification setFrequency(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from
+        // nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

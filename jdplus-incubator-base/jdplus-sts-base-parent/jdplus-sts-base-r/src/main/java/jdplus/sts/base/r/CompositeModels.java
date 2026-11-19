@@ -363,20 +363,41 @@ public class CompositeModels {
             return estimation.getSsf();
         }
 
-        public StateStorage smoothedStates() {
-            return estimation.getSmoothedStates();
+        public Matrix smoothedStates() {
+            StateStorage smoothedStates = estimation.getSmoothedStates();
+            return of(
+                    smoothedStates,
+                    estimation.getData().getRowsCount(),
+                    estimation.getSsf().getStateDim(),
+                    false);
         }
 
-        public StateStorage smoothedStates(boolean collapsing, String type) {
-            return estimation.smoothedStates(collapsing, type != null ? QAugmentation.QType.valueOf(type) : null);
+        public Matrix smoothedStates(boolean collapsing, String type, boolean includeVar) {
+            QAugmentation.QType qtype = type != null ? QAugmentation.QType.valueOf(type) : null;
+            StateStorage smoothedStates = estimation.smoothedStates(collapsing, qtype);
+            return of(
+                    smoothedStates,
+                    estimation.getData().getRowsCount(),
+                    estimation.getSsf().getStateDim(),
+                    includeVar);
         }
 
-        public StateStorage filteredStates() {
-            return estimation.getFilteredStates();
+        public Matrix filteredStates(boolean includeVar) {
+            StateStorage filteredStates = estimation.getFilteredStates();
+            return of(
+                    filteredStates,
+                    estimation.getData().getRowsCount(),
+                    estimation.getSsf().getStateDim(),
+                    includeVar);
         }
 
-        public StateStorage filteringStates() {
-            return estimation.getFilteringStates();
+        public Matrix filteringStates(boolean includeVar) {
+            StateStorage filteringStates = estimation.getFilteringStates();
+            return of(
+                    filteringStates,
+                    estimation.getData().getRowsCount(),
+                    estimation.getSsf().getStateDim(),
+                    includeVar);
         }
     }
 
@@ -402,5 +423,23 @@ public class CompositeModels {
     public Results compute(
             CompositeModel model, Matrix data, double[] parameters, boolean marginal, boolean concentrated) {
         return new Results(model.compute(FastMatrix.of(data), parameters, marginal, concentrated));
+    }
+
+    private Matrix of(StateStorage ss, int nr, int nc, boolean includeVar) {
+        int size = nr * nc;
+        if (includeVar) {
+            size *= 2;
+        }
+        double[] z = new double[size];
+        int j = 0;
+        for (int i = 0; i < nc; ++i, j += nr) {
+            ss.getComponent(i).copyTo(z, j);
+        }
+        if (includeVar) {
+            for (int i = 0; i < nc; ++i, j += nr) {
+                ss.getComponentVariance(i).copyTo(z, j);
+            }
+        }
+        return Matrix.of(z, nr, includeVar ? nc * 2 : nc);
     }
 }

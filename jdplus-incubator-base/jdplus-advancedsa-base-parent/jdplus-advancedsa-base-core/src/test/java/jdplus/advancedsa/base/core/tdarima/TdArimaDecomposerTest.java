@@ -16,7 +16,7 @@
 package jdplus.advancedsa.base.core.tdarima;
 
 import jdplus.toolkit.base.api.arima.SarimaOrders;
-import jdplus.toolkit.base.api.data.DoubleSeq;
+import jdplus.toolkit.base.api.processing.ProcessingLog;
 import jdplus.toolkit.base.core.arima.ArimaModel;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.sarima.SarimaModel;
@@ -54,44 +54,46 @@ public class TdArimaDecomposerTest {
         spec.setBd(1);
         spec.setBq(1);
         long t0 = System.currentTimeMillis();
-        TdArimaDecomposer decomposer = new TdArimaDecomposer(12, s.length,
+        TdArimaDecomposer decomposer = new TdArimaDecomposer(
+                12,
+                s.length,
                 i -> {
                     ArimaModel arima = ArimaModel.of(SarimaModel.builder(spec)
                             .theta(th[i])
                             .btheta(bth[i])
                             .build());
-//                    arima=arima.scaleVariance(var[i]);
+                    //                    arima=arima.scaleVariance(var[i]);
                     return arima;
-                }
-        );
+                },
+                ProcessingLog.dummy());
         SarimaModel[] models = new SarimaModel[s.length];
         for (int i = 0; i < s.length; ++i) {
-            SarimaModel arima = SarimaModel.builder(spec)
-                    .theta(th[i])
-                    .btheta(bth[i])
-                    .build();
+            SarimaModel arima =
+                    SarimaModel.builder(spec).theta(th[i]).btheta(bth[i]).build();
             models[i] = arima;
         }
 
         Ssf ssf1 = TdSsfArima.ssf(s.length, i -> models[i]);
-        MarginalLikelihood mll1 = AkfToolkit.marginalLikelihoodComputer(true, true).compute(ssf1, new SsfData(s));
+        MarginalLikelihood mll1 =
+                AkfToolkit.marginalLikelihoodComputer(true, true).compute(ssf1, new SsfData(s));
         DiffuseLikelihood dll1 = DkToolkit.likelihoodComputer(true, true, true).compute(ssf1, new SsfData(s));
-//        System.out.println(mll1);
-//        System.out.println(dll1);
+        //        System.out.println(mll1);
+        //        System.out.println(dll1);
 
         UcarimaModel[] ucarimaModels = decomposer.ucarimaModels();
 
         CompositeSsf ssf2 = TdSsfUcarima.of(s.length, i -> ucarimaModels[i]);
-        MarginalLikelihood mll2 = AkfToolkit.marginalLikelihoodComputer(true, true).compute(ssf2, new SsfData(s));
+        MarginalLikelihood mll2 =
+                AkfToolkit.marginalLikelihoodComputer(true, true).compute(ssf2, new SsfData(s));
         DiffuseLikelihood dll2 = DkToolkit.likelihoodComputer(true, true, true).compute(ssf2, new SsfData(s));
-//        System.out.println(mll2);
-//        System.out.println(dll2);
-//        System.out.println(dll1.e());
-//        System.out.println(dll2.e());
+        //        System.out.println(mll2);
+        //        System.out.println(dll2);
+        //        System.out.println(dll1.e());
+        //        System.out.println(dll2.e());
         DefaultSmoothingResults sf = DkToolkit.sqrtSmooth(ssf2, new SsfData(s), false, false);
 
         long t1 = System.currentTimeMillis();
-//        System.out.println(t1 - t0);
+        //        System.out.println(t1 - t0);
         int[] dim = ssf2.componentsDimension();
 
         DataBlock Z = DataBlock.make(ssf2.getStateDim());
@@ -100,18 +102,18 @@ public class TdArimaDecomposerTest {
         for (int i = 0, j = 0; i < dim.length; ++i) {
             double[] z = new double[Z.length()];
             Z.extract(j, dim[i]).copyTo(z, j);
-//            System.out.println(sf.zcomponent(DoubleSeq.of(z)));
+            //            System.out.println(sf.zcomponent(DoubleSeq.of(z)));
             j += dim[i];
         }
-//        System.out.println(DoubleSeq.of(s));
-//        for (int i = 0; i < ucarimaModels.length; ++i) {
-//            UcarimaModel ucm = ucarimaModels[i];
-//            for (int j = 0; j < ucm.getComponentsCount(); ++j) {
-//                System.out.print(ucm.getComponent(j).getInnovationVariance());
-//                System.out.print('\t');
-//            }
-//            System.out.println();
-//        }
+        //        System.out.println(DoubleSeq.of(s));
+        //        for (int i = 0; i < ucarimaModels.length; ++i) {
+        //            UcarimaModel ucm = ucarimaModels[i];
+        //            for (int j = 0; j < ucm.getComponentsCount(); ++j) {
+        //                System.out.print(ucm.getComponent(j).getInnovationVariance());
+        //                System.out.print('\t');
+        //            }
+        //            System.out.println();
+        //        }
     }
 
     @Test
@@ -126,41 +128,39 @@ public class TdArimaDecomposerTest {
         spec.setQ(2);
         SarimaModel[] models1 = new SarimaModel[s.length];
         for (int i = 0; i < s.length; ++i) {
-            SarimaModel arima = SarimaModel.builder(spec)
-                    .theta(th1[i])
-                    .build();
+            SarimaModel arima = SarimaModel.builder(spec).theta(th1[i]).build();
             models1[i] = arima;
         }
         SarimaModel[] models2 = new SarimaModel[s.length];
         for (int i = 0; i < s.length; ++i) {
-            SarimaModel arima = SarimaModel.builder(spec)
-                    .theta(th2[i])
-                    .build();
+            SarimaModel arima = SarimaModel.builder(spec).theta(th2[i]).build();
             models2[i] = arima;
         }
-//        System.out.println(models1[0]);
-//        System.out.println(models2[0]);
-//        System.out.println(ArimaModel.of(models1[0]).plus(ArimaModel.of(models2[0])));
+        //        System.out.println(models1[0]);
+        //        System.out.println(models2[0]);
+        //        System.out.println(ArimaModel.of(models1[0]).plus(ArimaModel.of(models2[0])));
 
         Ssf ssf = TdSsfArima.ssf(s.length, i -> ArimaModel.of(models1[i]).plus(models2[i]));
-//        MarginalLikelihood mll1 = AkfToolkit.marginalLikelihoodComputer(true, true).compute(ssf, new SsfData(s));
+        //        MarginalLikelihood mll1 = AkfToolkit.marginalLikelihoodComputer(true, true).compute(ssf, new
+        // SsfData(s));
         DiffuseLikelihood dll1 = DkToolkit.likelihoodComputer(true, true, true).compute(ssf, new SsfData(s));
-//        System.out.println(mll1);
-//        System.out.println(dll1);
+        //        System.out.println(mll1);
+        //        System.out.println(dll1);
 
-        StateComponent c1 = TdSsfArma.stateComponent(s.length, i->models1[i]);
-        StateComponent c2 = TdSsfArma.stateComponent(s.length, i->models2[i]);
-        
+        StateComponent c1 = TdSsfArma.stateComponent(s.length, i -> models1[i]);
+        StateComponent c2 = TdSsfArma.stateComponent(s.length, i -> models2[i]);
+
         CompositeSsf ssf2 = CompositeSsf.builder()
                 .add(c1, TdSsfArma.defaultLoading())
                 .add(c2, TdSsfArma.defaultLoading())
                 .build();
-//        MarginalLikelihood mll2 = AkfToolkit.marginalLikelihoodComputer(true, true).compute(ssf2, new SsfData(s));
+        //        MarginalLikelihood mll2 = AkfToolkit.marginalLikelihoodComputer(true, true).compute(ssf2, new
+        // SsfData(s));
         DiffuseLikelihood dll2 = DkToolkit.likelihoodComputer(true, true, true).compute(ssf2, new SsfData(s));
-//        System.out.println(mll2);
-//        System.out.println(dll2);
-//        System.out.println(dll1.e());
-//        System.out.println(dll2.e());
+        //        System.out.println(mll2);
+        //        System.out.println(dll2);
+        //        System.out.println(dll1.e());
+        //        System.out.println(dll2.e());
     }
 
     public static double[] linear(int n, int nd, double a, double b) {
@@ -176,5 +176,4 @@ public class TdArimaDecomposerTest {
         }
         return s;
     }
-
 }
