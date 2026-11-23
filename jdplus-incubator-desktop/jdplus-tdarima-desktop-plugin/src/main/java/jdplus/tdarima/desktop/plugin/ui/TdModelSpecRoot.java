@@ -15,6 +15,7 @@
  */
 package jdplus.tdarima.desktop.plugin.ui;
 
+import java.time.LocalDate;
 import jdplus.advancedsa.base.api.tdarima.TdEstimationSpec;
 import jdplus.advancedsa.base.api.tdarima.TdModelSpec;
 import jdplus.advancedsa.base.api.tdarima.TdSarimaSpec;
@@ -33,6 +34,10 @@ public class TdModelSpecRoot implements RegularSpecUI {
 
     private boolean usingPreprocessing;
 
+    @lombok.Getter
+    @lombok.Setter
+    private LocalDate startArimaRamp, endArimaRamp, startVarianceRamp, endVarianceRamp;
+
     @lombok.NonNull private TdEstimationSpec tdarima;
 
     @lombok.NonNull SaBenchmarkingSpec benchmarking;
@@ -41,6 +46,10 @@ public class TdModelSpecRoot implements RegularSpecUI {
 
     public TdModelSpecRoot(TdModelSpec spec, boolean ro) {
         this.preprocessing = spec.getPreprocessing();
+        this.startArimaRamp = spec.getStartArimaRamp();
+        this.endArimaRamp = spec.getEndArimaRamp();
+        this.startVarianceRamp = spec.getStartVarianceRamp();
+        this.endVarianceRamp = spec.getEndVarianceRamp();
         this.usingPreprocessing = spec.isUsingPreprocessing();
         this.tdarima = spec.getTdarima();
         this.benchmarking = spec.getBenchmarking();
@@ -51,6 +60,10 @@ public class TdModelSpecRoot implements RegularSpecUI {
         return TdModelSpec.builder()
                 .preprocessing(preprocessing)
                 .usingPreprocessing(usingPreprocessing)
+                .startArimaRamp(startArimaRamp)
+                .endArimaRamp(endArimaRamp)
+                .startVarianceRamp(startVarianceRamp)
+                .endVarianceRamp(endVarianceRamp)
                 .tdarima(tdarima)
                 .benchmarking(benchmarking)
                 .build();

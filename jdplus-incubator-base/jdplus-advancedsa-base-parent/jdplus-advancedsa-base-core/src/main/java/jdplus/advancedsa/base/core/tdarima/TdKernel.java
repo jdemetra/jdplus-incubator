@@ -172,6 +172,7 @@ public class TdKernel {
         int n = dmodel.getY().length();
 
         TdSarimaResults.Builder builder = TdSarimaResults.builder();
+        Orders norders = Orders.of(orders);
 
         TdSarimaMapping tdmapping = stmapping(period, curSpec, n);
         SsfFunction<TdSarimaModel, Ssf> fn = SsfFunction.<TdSarimaModel, Ssf>builder(
@@ -183,17 +184,29 @@ public class TdKernel {
                 .useFastAlgorithm(false)
                 .build();
         int dim = tdmapping.getDim();
-
-        TdSarimaModel m0 =
-                TdSarimaModel.of(period, Orders.of(orders), dmodel.getArma().parameters(), n);
-        DoubleSeq p = tdmapping.parametersOf(m0);
+        DoubleSeq p = dmodel.getArma().parameters();
+        TdSarimaModel m0 = TdSarimaModel.builder()
+                .period(period)
+                .orders(norders)
+                .p0(p)
+                .p1(p)
+                .fn(spec.getTransformation())
+                .n(n)
+                .startArimaRamp(spec.getStartArimaRamp())
+                .endArimaRamp(spec.getEndArimaRamp())
+                .startVarianceRamp(spec.getStartVarianceRamp())
+                .endVarianceRamp(spec.getEndVarianceRamp())
+                .var0(1)
+                .var1(1)
+                .build();
+        p = tdmapping.parametersOf(m0);
         SsfFunctionPoint<TdSarimaModel, Ssf> pt = fn.evaluate(p);
         LevenbergMarquardtMinimizer min = LevenbergMarquardtMinimizer.builder()
                 .functionPrecision(spec.getPrecision())
                 .build();
         min.minimize(pt);
         pt = (SsfFunctionPoint<TdSarimaModel, Ssf>) min.getResult();
-        TdSarimaModel m1 = pt.getCore().toBuilder().spec(Orders.of(orders)).build();
+        TdSarimaModel m1 = pt.getCore().toBuilder().orders(norders).build();
 
         DiffuseConcentratedLikelihood likelihood = pt.getLikelihood();
 
@@ -335,40 +348,36 @@ public class TdKernel {
 
     private TdSarimaMapping stmapping(int period, TdSarimaSpec curspec, int n) {
         Orders orders = curspec.getOrders().doStationary();
-        return mapping(period, curspec.withOrders(orders), n, spec.getParametrization());
+        return mapping(period, curspec.withOrders(orders), n);
     }
 
     private TdSarimaMapping mapping(int period, TdSarimaSpec curspec, int n) {
-        return mapping(period, curspec, n, spec.getParametrization());
+        return mapping(period, curspec, n, spec);
     }
 
-    private TdSarimaMapping mapping(
-            int period, TdSarimaSpec curspec, int n, TdEstimationSpec.Parametrization parametrization) {
+    private TdSarimaMapping mapping(int period, TdSarimaSpec curspec, int n, TdEstimationSpec spec) {
         TdSarimaMapping tdmapping = null;
-        Orders orders = curspec.getOrders();
-        if (parametrization == TdEstimationSpec.Parametrization.MEAN_DELTA) {
+        if (spec.getParametrization() == TdEstimationSpec.Parametrization.MEAN_DELTA) {
             tdmapping = TdSarimaMapping1.builder()
                     .period(period)
-                    .orders(orders)
                     .n(n)
+                    .spec(curspec)
+                    .startArimaRamp(spec.getStartArimaRamp())
+                    .endArimaRamp(spec.getEndArimaRamp())
+                    .startVarianceRamp(spec.getStartArimaRamp())
+                    .endVarianceRamp(spec.getEndArimaRamp())
                     .fn(spec.getTransformation())
-                    .vPhi(curspec.isVPhi())
-                    .vBphi(curspec.isVBphi())
-                    .vTheta(curspec.isVTheta())
-                    .vBtheta(curspec.isVBtheta())
-                    .vVar(curspec.isVVar())
                     .build();
-        } else if (parametrization == TdEstimationSpec.Parametrization.START_END) {
+        } else if (spec.getParametrization() == TdEstimationSpec.Parametrization.START_END) {
             tdmapping = TdSarimaMapping2.builder()
                     .period(period)
-                    .orders(orders)
                     .n(n)
+                    .spec(curspec)
+                    .startArimaRamp(spec.getStartArimaRamp())
+                    .endArimaRamp(spec.getEndArimaRamp())
+                    .startVarianceRamp(spec.getStartArimaRamp())
+                    .endVarianceRamp(spec.getEndArimaRamp())
                     .fn(spec.getTransformation())
-                    .vPhi(curspec.isVPhi())
-                    .vBphi(curspec.isVBphi())
-                    .vTheta(curspec.isVTheta())
-                    .vBtheta(curspec.isVBtheta())
-                    .vVar(curspec.isVVar())
                     .build();
         }
         return tdmapping;

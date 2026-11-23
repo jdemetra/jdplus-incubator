@@ -39,6 +39,7 @@ import jdplus.toolkit.desktop.plugin.html.modelling.HtmlLikelihood;
  * @author Jean Palate
  */
 public abstract class HtmlTdArima extends AbstractHtmlElement {
+
     public static void writeArima(HtmlStream stream, SarimaResults start, boolean summary) throws IOException {
         LikelihoodStatistics ll = start.getLikelihood();
         int nobs = ll.getEffectiveObservationsCount(), nparams = ll.getEstimatedParametersCount();
@@ -178,8 +179,10 @@ public abstract class HtmlTdArima extends AbstractHtmlElement {
 
     public static void writeTdArima(HtmlStream stream, TdSarimaResults tdarima, boolean summary) throws IOException {
         LikelihoodStatistics ll = tdarima.getLikelihood();
-        stream.write(HtmlTag.HEADER2, "Likelihood statistics");
-        stream.write(new HtmlLikelihood(ll));
+        if (!summary) {
+            stream.write(HtmlTag.HEADER2, "Likelihood statistics");
+            stream.write(new HtmlLikelihood(ll));
+        }
         int nobs = ll.getEffectiveObservationsCount(), nparams = ll.getEstimatedParametersCount();
         DoubleSeqCursor p = tdarima.getParameters().cursor();
         Matrix pcov = tdarima.getParametersCovariance();

@@ -31,7 +31,7 @@ public interface TdSarimaMapping extends IParametricMapping<TdSarimaModel> {
 
     public int getN();
 
-    public Orders getOrders();
+    public TdSarimaSpec getSpec();
 
     static final double MAX = 0.99999;
     public static final double STEP = Math.pow(2.220446e-16, 0.5), EVAR = 1e-6;
@@ -121,13 +121,8 @@ public interface TdSarimaMapping extends IParametricMapping<TdSarimaModel> {
                     dcov.column(i).div(m1);
                     dcov.row(i).div(m1);
                 }
-                if (nd % 2 == 1) {
-                    dval[nd - 1] /= m1;
-                    dcov.column(nd - 1).div(m1);
-                    dcov.row(nd - 1).div(m1);
-                    val[val.length - 1] += 1;
-                }
-            } else if (nd % 2 == 1) {
+            }
+            if (nd % 2 == 1) {
                 dval[nd - 1] += 1;
             }
         }

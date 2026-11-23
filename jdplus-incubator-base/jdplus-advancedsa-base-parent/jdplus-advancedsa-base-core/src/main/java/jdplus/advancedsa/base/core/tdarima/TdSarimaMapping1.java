@@ -18,6 +18,7 @@ package jdplus.advancedsa.base.core.tdarima;
 import java.util.function.IntToDoubleFunction;
 import jdplus.advancedsa.base.api.tdarima.Orders;
 import jdplus.advancedsa.base.api.tdarima.TdEstimationSpec;
+import jdplus.advancedsa.base.api.tdarima.TdSarimaSpec;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.math.functions.ParamValidation;
@@ -34,14 +35,11 @@ import jdplus.toolkit.base.core.sarima.estimation.SarimaMapping;
 @lombok.Value
 public class TdSarimaMapping1 implements TdSarimaMapping {
 
-    private final int n;
-
     private final int period;
+    private final int n;
+    private final int startArimaRamp, endArimaRamp, startVarianceRamp, endVarianceRamp;
 
-    @lombok.With
-    private final Orders orders;
-
-    private final boolean vPhi, vBphi, vTheta, vBtheta, vVar;
+    private final TdSarimaSpec spec;
     private final double eps, epsVar;
     private final TdEstimationSpec.Transformation fn;
 
@@ -49,11 +47,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
     //    public static final double STEP = Math.pow(2.220446e-16, 0.5), EVAR = 1e-6;
     public static Builder builder() {
         Builder builder = new Builder();
-        builder.vPhi(false)
-                .vBphi(false)
-                .vTheta(false)
-                .vBtheta(false)
-                .vVar(false)
+        builder.spec(TdSarimaSpec.DEFAULT)
                 .fn(TdEstimationSpec.Transformation.LINEAR)
                 .eps(STEP)
                 .epsVar(EVAR);
@@ -63,12 +57,16 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
 
     @Override
     public TdSarimaModel map(DoubleSeq ds) {
-        int np = orders.getParametersCount();
+        int np = spec.getOrders().getParametersCount();
         double[] pmodels = pmodels(ds);
         return TdSarimaModel.builder()
                 .period(period)
                 .n(n)
-                .spec(orders)
+                .startArimaRamp(startArimaRamp)
+                .endArimaRamp(endArimaRamp)
+                .startVarianceRamp(startVarianceRamp)
+                .endVarianceRamp(endVarianceRamp)
+                .orders(spec.getOrders())
                 .p0(DoubleSeq.of(pmodels, 0, np))
                 .p1(DoubleSeq.of(pmodels, np, np))
                 .var1(pmodels[pmodels.length - 1])
@@ -77,17 +75,18 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
     }
 
     public int deltaParamsCount() {
+        Orders orders = spec.getOrders();
         int dn = 0;
-        if (vPhi) {
+        if (spec.isVPhi()) {
             dn += orders.getP();
         }
-        if (vBphi) {
+        if (spec.isVBphi()) {
             dn += orders.getBp();
         }
-        if (vTheta) {
+        if (spec.isVTheta()) {
             dn += orders.getQ();
         }
-        if (vBtheta) {
+        if (spec.isVBtheta()) {
             dn += orders.getBq();
         }
         return dn;
@@ -95,19 +94,20 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
 
     @Override
     public DoubleSeq getDefaultParameters() {
+        Orders orders = spec.getOrders();
         SarimaMapping mapping = new SarimaMapping(orders.asSarimaOrders(period), eps, true);
         DoubleSeq p0 = mapping.getDefaultParameters();
         int ns = deltaParamsCount();
-        if (ns == 0 && !vVar) {
+        if (ns == 0 && !spec.isVVar()) {
             return p0;
         }
         int np = p0.length() + ns;
-        if (vVar) {
+        if (spec.isVVar()) {
             ++np;
         }
         double[] p = new double[np];
         p0.copyTo(p, 0);
-        //        if (vVar) {
+        //        if (spec.isVVar()) {
         //            p[p.length - 1] = 0;
         //        }
         return DoubleSeq.of(p);
@@ -115,6 +115,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
 
     @Override
     public boolean checkBoundaries(DoubleSeq inParams) {
+        Orders orders = spec.getOrders();
         SarimaMapping mapping = new SarimaMapping(orders.asSarimaOrders(period), eps, false);
         int np = orders.getParametersCount();
         double[] p = pmodels(inParams);
@@ -126,13 +127,14 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
 
     @Override
     public ParamValidation validate(DataBlock ioParams) {
+        Orders orders = spec.getOrders();
         SarimaMapping mapping = new SarimaMapping(orders.asSarimaOrders(period), eps, true);
         int np = orders.getParametersCount();
         // step 1: we validate the mean
         ParamValidation v0 = mapping.validate(ioParams.range(0, np));
 
         boolean changed = v0 == ParamValidation.Changed;
-        if (vVar) {
+        if (spec.isVVar()) {
             double v = ioParams.getLast();
             if (v < -1) {
                 double w = -1 / (v + 1); // new var
@@ -164,7 +166,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
     @Override
     public double epsilon(DoubleSeq inparams, int idx) {
 
-        if (vVar && idx == inparams.length() - 1) {
+        if (spec.isVVar() && idx == inparams.length() - 1) {
             return epsVar;
         }
         double p = inparams.get(idx);
@@ -177,24 +179,25 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
 
     @Override
     public int getDim() {
+        Orders orders = spec.getOrders();
         int dim = 0;
         int p = orders.getP();
         if (p > 0) {
-            dim += vPhi ? 2 * p : p;
+            dim += spec.isVPhi() ? 2 * p : p;
         }
         int bp = orders.getBp();
         if (bp > 0) {
-            dim += vBphi ? 2 * bp : bp;
+            dim += spec.isVBphi() ? 2 * bp : bp;
         }
         int q = orders.getQ();
         if (q > 0) {
-            dim += vTheta ? 2 * q : q;
+            dim += spec.isVTheta() ? 2 * q : q;
         }
         int bq = orders.getBq();
         if (bq > 0) {
-            dim += vBtheta ? 2 * bq : bq;
+            dim += spec.isVBtheta() ? 2 * bq : bq;
         }
-        if (vVar) {
+        if (spec.isVVar()) {
             ++dim;
         }
         return dim;
@@ -202,6 +205,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
 
     @Override
     public double lbound(int idx) {
+        Orders orders = spec.getOrders();
         if (orders.getP() > 0) {
             if (idx < orders.getP()) {
                 if (orders.getP() == 1) {
@@ -241,7 +245,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
             }
             idx -= orders.getBq();
         }
-        if (vPhi && orders.getP() > 0) {
+        if (spec.isVPhi() && orders.getP() > 0) {
             if (idx < orders.getP()) {
                 if (orders.getP() == 1) {
                     return -2 * MAX;
@@ -251,7 +255,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
             }
             idx -= orders.getP();
         }
-        if (vBphi && orders.getBp() > 0) {
+        if (spec.isVBphi() && orders.getBp() > 0) {
             if (idx < orders.getBp()) {
                 if (orders.getBp() == 1) {
                     return -2 * MAX;
@@ -261,7 +265,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
             }
             idx -= orders.getBp();
         }
-        if (vTheta && orders.getQ() > 0) {
+        if (spec.isVTheta() && orders.getQ() > 0) {
             if (idx < orders.getQ()) {
                 if (orders.getQ() == 1) {
                     return -2 * MAX;
@@ -270,7 +274,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
                 }
             }
         }
-        if (vBtheta && orders.getBq() > 0) {
+        if (spec.isVBtheta() && orders.getBq() > 0) {
             if (idx < orders.getBq()) {
                 if (orders.getBq() == 1) {
                     return -2 * MAX;
@@ -285,6 +289,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
 
     @Override
     public double ubound(int idx) {
+        Orders orders = spec.getOrders();
         if (orders.getP() > 0) {
             if (idx < orders.getP()) {
                 if (orders.getP() == 1) {
@@ -324,7 +329,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
             }
             idx -= orders.getBq();
         }
-        if (vPhi && orders.getP() > 0) {
+        if (spec.isVPhi() && orders.getP() > 0) {
             if (idx < orders.getP()) {
                 if (orders.getP() == 1) {
                     return 2 * MAX;
@@ -334,7 +339,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
             }
             idx -= orders.getP();
         }
-        if (vBphi && orders.getBp() > 0) {
+        if (spec.isVBphi() && orders.getBp() > 0) {
             if (idx < orders.getBp()) {
                 if (orders.getBp() == 1) {
                     return 2 * MAX;
@@ -344,7 +349,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
             }
             idx -= orders.getBp();
         }
-        if (vTheta && orders.getQ() > 0) {
+        if (spec.isVTheta() && orders.getQ() > 0) {
             if (idx < orders.getQ()) {
                 if (orders.getQ() == 1) {
                     return 2 * MAX;
@@ -353,7 +358,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
                 }
             }
         }
-        if (vBtheta && orders.getBq() > 0) {
+        if (spec.isVBtheta() && orders.getBq() > 0) {
             if (idx < orders.getBq()) {
                 if (orders.getBq() == 1) {
                     return 2 * MAX;
@@ -367,13 +372,14 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
     }
 
     private double[] pmodels(DoubleSeq pall) {
+        Orders orders = spec.getOrders();
         int np = orders.getParametersCount();
         double[] pm = new double[2 * np + 1];
         int ip = 0, istep = np;
         int p = orders.getP();
         if (p > 0) {
             DoubleSeq cp = pall.extract(ip, p);
-            if (vPhi) {
+            if (spec.isVPhi()) {
                 DoubleSeq dp = pall.extract(istep, p);
                 for (int i = 0; i < p; ++i) {
                     double m = cp.get(i);
@@ -391,7 +397,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
         int bp = orders.getBp();
         if (bp > 0) {
             DoubleSeq cp = pall.extract(ip, bp);
-            if (vBphi) {
+            if (spec.isVBphi()) {
                 DoubleSeq dp = pall.extract(istep, bp);
                 for (int i = 0; i < bp; ++i) {
                     double m = cp.get(i);
@@ -409,7 +415,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
         int q = orders.getQ();
         if (q > 0) {
             DoubleSeq cp = pall.extract(ip, q);
-            if (vTheta) {
+            if (spec.isVTheta()) {
                 DoubleSeq dp = pall.extract(istep, q);
                 for (int i = 0; i < q; ++i) {
                     double m = cp.get(i);
@@ -427,7 +433,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
         int bq = orders.getBq();
         if (bq > 0) {
             DoubleSeq cp = pall.extract(ip, bq);
-            if (vBtheta) {
+            if (spec.isVBtheta()) {
                 DoubleSeq dp = pall.extract(istep, bq);
                 for (int i = 0; i < bq; ++i) {
                     double m = cp.get(i);
@@ -440,7 +446,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
                 cp.copyTo(pm, ip + np);
             }
         }
-        if (vVar) {
+        if (spec.isVVar()) {
             double e = 1 + pall.get(pall.length() - 1);
             pm[2 * np] = e * e;
         } else {
@@ -449,76 +455,15 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
         return pm;
     }
 
-    // p in mean-delta, meam+delta
-    private DoubleSeq mean(DoubleSeq pall) {
-        return pall.range(0, orders.getParametersCount());
-    }
-
-    private DoubleSeq delta(DoubleSeq pall) {
-        int np = orders.getParametersCount();
-        int nd = deltaParamsCount();
-        if (np == nd) {
-            return pall.range(np, 2 * np);
-        }
-        double[] dm = new double[np];
-        int ip = 0, istep = np;
-        int p = orders.getP();
-        if (p > 0) {
-            if (vPhi) {
-                DoubleSeq dp = pall.extract(istep, p);
-                for (int i = 0; i < p; ++i) {
-                    double d = dp.get(i) / 2;
-                    dm[ip + i] = d;
-                }
-                istep += p;
-            }
-            ip += p;
-        }
-        int bp = orders.getBp();
-        if (bp > 0) {
-            if (vBphi) {
-                DoubleSeq dp = pall.extract(istep, bp);
-                for (int i = 0; i < bp; ++i) {
-                    double d = dp.get(i) / 2;
-                    dm[ip + i] = d;
-                }
-                istep += bp;
-            }
-            ip += bp;
-        }
-        int q = orders.getQ();
-        if (q > 0) {
-            if (vTheta) {
-                DoubleSeq dp = pall.extract(istep, q);
-                for (int i = 0; i < q; ++i) {
-                    double d = dp.get(i) / 2;
-                    dm[ip + i] = d;
-                }
-                istep += q;
-            }
-            ip += q;
-        }
-        int bq = orders.getBq();
-        if (bq > 0) {
-            if (vBtheta) {
-                DoubleSeq dp = pall.extract(istep, bq);
-                for (int i = 0; i < bq; ++i) {
-                    double d = dp.get(i) / 2;
-                    dm[ip + i] = d;
-                }
-            }
-        }
-        return DoubleSeq.of(dm);
-    }
-
     private void setDelta(DataBlock pdelta, IntToDoubleFunction delta) {
+        Orders orders = spec.getOrders();
         if (pdelta.isEmpty()) {
             return;
         }
         int ip = 0, idelta = 0;
         int p = orders.getP();
         if (p > 0) {
-            if (vPhi) {
+            if (spec.isVPhi()) {
                 int start = ip;
                 pdelta.extract(idelta, p).set(i -> delta.applyAsDouble(start + i));
                 idelta += p;
@@ -527,7 +472,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
         }
         int bp = orders.getBp();
         if (bp > 0) {
-            if (vBphi) {
+            if (spec.isVBphi()) {
                 int start = ip;
                 pdelta.extract(idelta, bp).set(i -> delta.applyAsDouble(start + i));
                 idelta += bp;
@@ -536,7 +481,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
         }
         int q = orders.getQ();
         if (q > 0) {
-            if (vTheta) {
+            if (spec.isVTheta()) {
                 int start = ip;
                 pdelta.extract(idelta, q).set(i -> delta.applyAsDouble(start + i));
                 idelta += q;
@@ -545,7 +490,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
         }
         int bq = orders.getBq();
         if (bq > 0) {
-            if (vBtheta) {
+            if (spec.isVBtheta()) {
                 int start = ip;
                 pdelta.extract(idelta, bq).set(i -> delta.applyAsDouble(start + i));
             }
@@ -554,7 +499,8 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
 
     @Override
     public DoubleSeq parametersOf(TdSarimaModel model) {
-        int np = orders.getParametersCount(), nd = deltaParamsCount(), nv = vVar ? 1 : 0;
+        Orders orders = spec.getOrders();
+        int np = orders.getParametersCount(), nd = deltaParamsCount(), nv = spec.isVVar() ? 1 : 0;
         double[] p = new double[np + nd + nv];
         DoubleSeq p0 = model.getP0();
         DoubleSeq p1 = model.getP1();
@@ -564,7 +510,7 @@ public class TdSarimaMapping1 implements TdSarimaMapping {
         }
         DataBlock P = DataBlock.of(p, np, np + nd, 1);
         setDelta(P, i -> (p1.get(i) - p0.get(i)));
-        if (vVar) {
+        if (spec.isVVar()) {
             p[np + nd] = Math.sqrt(model.getVar1()) - 1;
         }
         return DoubleSeq.of(p);

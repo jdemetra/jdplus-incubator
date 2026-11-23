@@ -18,9 +18,12 @@ package jdplus.tdarima.desktop.plugin.html;
 import java.io.IOException;
 import jdplus.advancedsa.base.core.tdarima.SarimaResults;
 import jdplus.advancedsa.base.core.tdarima.TdResults;
+import jdplus.advancedsa.base.core.tdarima.TdSarimaResults;
+import jdplus.toolkit.base.api.stats.StatisticalTest;
+import jdplus.toolkit.base.core.stats.likelihood.LikelihoodStatistics;
 import jdplus.toolkit.desktop.plugin.html.HtmlStream;
+import jdplus.toolkit.desktop.plugin.html.HtmlStyle;
 import jdplus.toolkit.desktop.plugin.html.HtmlTag;
-import jdplus.toolkit.desktop.plugin.html.modelling.HtmlLikelihood;
 
 /**
  *
@@ -47,16 +50,53 @@ public class HtmlTdArimaSelection extends HtmlTdArima {
         stream.write(HtmlTag.HEADER1, "Initial model");
         stream.newLine();
         stream.write(HtmlTag.HEADER2, "Likelihood statistics");
-        stream.write(new HtmlLikelihood(start.getLikelihood()));
+        writeLikelihoodSummary(stream, start.getLikelihood());
         stream.write(HtmlTag.HEADER2, "Arima model");
-        writeArima(stream, start, summary);
+        writeArima(stream, start, true);
         stream.write(HtmlTag.LINEBREAK);
-        if (!results.isTimeVarying()) {
-            stream.write("No significant time dependent effect detected");
-            return;
+        for (TdSarimaResults cur : results.getTdResults()) {
+            stream.write(HtmlTag.HEADER1, "Model " + cur.getModel().spec().model())
+                    .newLine();
+            writeLikelihoodSummary(stream, cur.getLikelihood());
+            HtmlTdArima.writeTdArima(stream, cur, true);
+            stream.newLine();
+            writeSimplificationTests(stream, cur);
+            stream.write(HtmlTag.LINEBREAK);
         }
-        stream.write(HtmlTag.HEADER1, "Final model");
-        writeTdArima(stream, results.finalResults(), true);
-        stream.write(HtmlTag.LINEBREAK);
+        if (!results.isTimeVarying()) {
+            stream.write("No significant time dependent effect detected", HtmlStyle.Red, HtmlStyle.Bold);
+        }
+        //        TdSarimaResults finalResults = results.finalResults();
+        //        stream.write(HtmlTag.HEADER1, "Final model");
+        //        writeLikelihoodSummary(stream, finalResults.getLikelihood());
+    }
+
+    private void writeLikelihoodSummary(HtmlStream stream, LikelihoodStatistics stats) throws IOException {
+        stream.write("Number of estimated parameters = ")
+                .write(stats.getEstimatedParametersCount())
+                .newLines(2);
+        stream.write("Loglikelihood = ")
+                .write(df6.format(stats.getLogLikelihood()))
+                .newLine();
+        stream.write("AIC = ").write(df6.format(stats.getAIC())).newLine();
+        stream.write("BIC (corrected for length) = ")
+                .write(df6.format(stats.getBICC()))
+                .newLine();
+    }
+
+    private void writeSimplificationTests(HtmlStream stream, TdSarimaResults results) throws IOException {
+        stream.write(HtmlTag.HEADER2, "Tests");
+        StatisticalTest lr = results.getLikelihoodRatioTest();
+        stream.write(HtmlTag.HEADER3, "Likelihood ratio test against the standard ARIMA model");
+        stream.write("Distribution: " + lr.getDescription()).newLine();
+        stream.write("Value: " + df4.format(lr.getValue())).newLine();
+        stream.write("PValue: " + df4.format(lr.getPvalue())).newLines(2);
+        StatisticalTest st = results.getStationarityTest();
+        if (st != null && st.isValid()) {
+            stream.write(HtmlTag.HEADER3, "Stationarity test");
+            stream.write("Distribution: " + st.getDescription()).newLine();
+            stream.write("Value: " + df4.format(st.getValue())).newLine();
+            stream.write("PValue: " + df4.format(st.getPvalue())).newLines(2);
+        }
     }
 }

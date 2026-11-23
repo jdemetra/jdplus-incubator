@@ -94,11 +94,38 @@ public class TdModellingKernel {
                 orders = Orders.of(preprocessing.specification());
             }
             TdEstimationSpec tdspec = spec.getTdarima();
+            TdEstimationSpec.Builder tdbuilder = tdspec.toBuilder();
+
             if (spec.isUsingPreprocessing()) {
-                tdspec = tdspec.withOrders(orders);
+                tdbuilder.tdspec(tdspec.getTdspec().toBuilder().orders(orders).build());
             } else {
-                tdspec = tdspec.withOrders(spec.getTdarima().getTdspec().getOrders());
+                tdbuilder.tdspec(tdspec.getTdspec().toBuilder()
+                        .orders(spec.getTdarima().getTdspec().getOrders())
+                        .build());
             }
+            int n = s.length(), p0 = 0, p1 = n - 1, v0 = 0, v1 = n - 1;
+            if (spec.getStartArimaRamp() != null) {
+                p0 = s.getDomain().indexOf(spec.getStartArimaRamp().atStartOfDay());
+                p0 = Math.max(Math.min(p0, p1), 0);
+            }
+            if (spec.getStartVarianceRamp() != null) {
+                v0 = s.getDomain().indexOf(spec.getStartVarianceRamp().atStartOfDay());
+                v0 = Math.max(Math.min(v0, v1), 0);
+            }
+            if (spec.getEndArimaRamp() != null) {
+                p1 = s.getDomain().indexOf(spec.getEndArimaRamp().atStartOfDay());
+                p1 = Math.min(Math.max(p0, p1), n - 1);
+            }
+            if (spec.getEndVarianceRamp() != null) {
+                v1 = s.getDomain().indexOf(spec.getEndVarianceRamp().atStartOfDay());
+                v1 = Math.min(Math.max(v0, v1), n - 1);
+            }
+            tdspec = tdbuilder
+                    .startArimaRamp(p0)
+                    .endArimaRamp(p1)
+                    .startVarianceRamp(v0)
+                    .endVarianceRamp(v1)
+                    .build();
 
             TdKernel tdkernel = TdKernel.of(tdspec);
             TdResults drslt = tdkernel.process(y, period, false, X, log);

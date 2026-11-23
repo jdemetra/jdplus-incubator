@@ -17,13 +17,16 @@ package jdplus.tdarima.desktop.plugin.ui;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import jdplus.advancedsa.base.api.tdarima.Orders;
 import jdplus.advancedsa.base.api.tdarima.TdModelSpec;
 import jdplus.advancedsa.base.api.tdarima.TdSarimaSpec;
+import jdplus.toolkit.base.api.timeseries.TsDomain;
 import jdplus.toolkit.desktop.plugin.descriptors.EnhancedPropertyDescriptor;
 import jdplus.toolkit.desktop.plugin.descriptors.IPropertyDescriptors;
+import jdplus.toolkit.desktop.plugin.ui.properties.l2fprod.UserInterfaceContext;
 import org.openide.util.NbBundle;
 
 /**
@@ -93,6 +96,30 @@ public class TdSarimaSpecUI implements IPropertyDescriptors {
         if (desc != null) {
             descs.add(desc);
         }
+        desc = userDefinedArimaRampDesc();
+        if (desc != null) {
+            descs.add(desc);
+        }
+        desc = arimaRampStartDesc();
+        if (desc != null) {
+            descs.add(desc);
+        }
+        desc = arimaRampEndDesc();
+        if (desc != null) {
+            descs.add(desc);
+        }
+        desc = userDefinedVarRampDesc();
+        if (desc != null) {
+            descs.add(desc);
+        }
+        desc = varRampStartDesc();
+        if (desc != null) {
+            descs.add(desc);
+        }
+        desc = varRampEndDesc();
+        if (desc != null) {
+            descs.add(desc);
+        }
         return descs;
     }
 
@@ -103,6 +130,124 @@ public class TdSarimaSpecUI implements IPropertyDescriptors {
     public void setPreprocessing(boolean p) {
         if (p != root.isUsingPreprocessing()) {
             root.setUsingPreprocessing(p);
+        }
+    }
+
+    public LocalDate getStartArimaRamp() {
+        LocalDate date = root.getStartArimaRamp();
+        if (date == null) {
+            TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
+            if (domain != null) {
+                date = domain.start().toLocalDate();
+            }
+        }
+        return date;
+    }
+
+    public void setStartArimaRamp(LocalDate date) {
+        TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
+        if (domain == null || !date.equals(domain.start().toLocalDate())) {
+            root.setStartArimaRamp(date);
+        }
+    }
+
+    public LocalDate getEndArimaRamp() {
+        LocalDate date = root.getEndArimaRamp();
+        if (date == null) {
+            TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
+            if (domain != null) {
+                date = domain.getLastPeriod().start().toLocalDate();
+            }
+        }
+        return date;
+    }
+
+    public void setEndArimaRamp(LocalDate date) {
+        TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
+        if (domain == null || !date.equals(domain.getLastPeriod().start().toLocalDate())) {
+            root.setEndArimaRamp(date);
+        }
+    }
+
+    public LocalDate getStartVarianceRamp() {
+        LocalDate date = root.getStartVarianceRamp();
+        if (date == null) {
+            TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
+            if (domain != null) {
+                date = domain.start().toLocalDate();
+            }
+        }
+        return date;
+    }
+
+    public void setStartVarianceRamp(LocalDate date) {
+        TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
+        if (domain == null || !date.equals(domain.start().toLocalDate())) {
+            root.setStartVarianceRamp(date);
+        }
+    }
+
+    public LocalDate getEndVarianceRamp() {
+        LocalDate date = root.getEndArimaRamp();
+        if (date == null) {
+            TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
+            if (domain != null) {
+                date = domain.getLastPeriod().start().toLocalDate();
+            }
+        }
+        return date;
+    }
+
+    public void setEndVarianceRamp(LocalDate date) {
+        TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
+        if (domain == null || !date.equals(domain.getLastPeriod().start().toLocalDate())) {
+            root.setEndVarianceRamp(date);
+        }
+    }
+
+    public boolean isUserDefinedArimaRamp() {
+        LocalDate d0 = root.getStartArimaRamp();
+        LocalDate d1 = root.getEndArimaRamp();
+        return d0 != null || d1 != null;
+    }
+
+    public void setUserDefinedArimaRamp(boolean ramp) {
+        if (!ramp) {
+            root.setStartArimaRamp(null);
+            root.setEndArimaRamp(null);
+        } else {
+            TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
+            if (domain != null) {
+                if (root.getStartArimaRamp() == null) {
+                    root.setStartArimaRamp(domain.start().toLocalDate());
+                }
+                if (root.getEndArimaRamp() == null) {
+                    root.setEndArimaRamp(domain.getLastPeriod().start().toLocalDate());
+                }
+            }
+        }
+    }
+
+    public boolean isUserDefinedVarianceRamp() {
+        LocalDate d0 = root.getStartVarianceRamp();
+        LocalDate d1 = root.getEndVarianceRamp();
+        return d0 != null || d1 != null;
+    }
+
+    public void setUserDefinedVarianceRamp(boolean ramp) {
+        if (!ramp) {
+            root.setStartVarianceRamp(null);
+            root.setEndVarianceRamp(null);
+        } else {
+            TsDomain domain = UserInterfaceContext.INSTANCE.getDomain();
+            if (domain != null) {
+                if (root.getStartVarianceRamp() == null) {
+                    root.setStartVarianceRamp(domain.start().toLocalDate());
+                }
+                if (root.getEndVarianceRamp() == null) {
+                    root.setEndVarianceRamp(domain.getLastPeriod().start().toLocalDate());
+                }
+            }
         }
     }
 
@@ -437,6 +582,93 @@ public class TdSarimaSpecUI implements IPropertyDescriptors {
         }
     }
 
+    private EnhancedPropertyDescriptor userDefinedArimaRampDesc() {
+        try {
+            PropertyDescriptor desc = new PropertyDescriptor("userDefinedArimaRamp", this.getClass());
+            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, ARIMA_RAMP_ID);
+            desc.setDisplayName(ARIMA_RAMP_NAME);
+            desc.setShortDescription(ARIMA_RAMP_DESC);
+            return edesc;
+        } catch (IntrospectionException ex) {
+            return null;
+        }
+    }
+
+    private EnhancedPropertyDescriptor arimaRampStartDesc() {
+        if (!isUserDefinedArimaRamp()) {
+            return null;
+        }
+        try {
+            PropertyDescriptor desc = new PropertyDescriptor("startArimaRamp", this.getClass());
+            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, ARIMA_RSTART_ID);
+            desc.setDisplayName(ARIMA_RSTART_NAME);
+            desc.setShortDescription(ARIMA_RSTART_DESC);
+            return edesc;
+        } catch (IntrospectionException ex) {
+            return null;
+        }
+    }
+
+    private EnhancedPropertyDescriptor arimaRampEndDesc() {
+        if (!isUserDefinedArimaRamp()) {
+            return null;
+        }
+        try {
+            PropertyDescriptor desc = new PropertyDescriptor("endArimaRamp", this.getClass());
+            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, ARIMA_REND_ID);
+            desc.setDisplayName(ARIMA_REND_NAME);
+            desc.setShortDescription(ARIMA_REND_DESC);
+            return edesc;
+        } catch (IntrospectionException ex) {
+            return null;
+        }
+    }
+
+    private EnhancedPropertyDescriptor userDefinedVarRampDesc() {
+        if (!isInnovation()) {
+            return null;
+        }
+        try {
+            PropertyDescriptor desc = new PropertyDescriptor("userDefinedVarianceRamp", this.getClass());
+            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, VAR_RAMP_ID);
+            desc.setDisplayName(VAR_RAMP_NAME);
+            desc.setShortDescription(VAR_RAMP_DESC);
+            return edesc;
+        } catch (IntrospectionException ex) {
+            return null;
+        }
+    }
+
+    private EnhancedPropertyDescriptor varRampStartDesc() {
+        if (!isUserDefinedVarianceRamp()) {
+            return null;
+        }
+        try {
+            PropertyDescriptor desc = new PropertyDescriptor("startVarianceRamp", this.getClass());
+            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, VAR_RSTART_ID);
+            desc.setDisplayName(VAR_RSTART_NAME);
+            desc.setShortDescription(VAR_RSTART_DESC);
+            return edesc;
+        } catch (IntrospectionException ex) {
+            return null;
+        }
+    }
+
+    private EnhancedPropertyDescriptor varRampEndDesc() {
+        if (!isUserDefinedVarianceRamp()) {
+            return null;
+        }
+        try {
+            PropertyDescriptor desc = new PropertyDescriptor("endVarianceRamp", this.getClass());
+            EnhancedPropertyDescriptor edesc = new EnhancedPropertyDescriptor(desc, VAR_REND_ID);
+            desc.setDisplayName(VAR_REND_NAME);
+            desc.setShortDescription(VAR_REND_DESC);
+            return edesc;
+        } catch (IntrospectionException ex) {
+            return null;
+        }
+    }
+
     private static final int PR_ID = 0,
             IVAR_ID = 1,
             THETAVAR_ID = 2,
@@ -448,7 +680,13 @@ public class TdSarimaSpecUI implements IPropertyDescriptors {
             Q_ID = 12,
             BP_ID = 13,
             BD_ID = 14,
-            BQ_ID = 15;
+            BQ_ID = 15,
+            ARIMA_RAMP_ID = 20,
+            ARIMA_RSTART_ID = 21,
+            ARIMA_REND_ID = 22,
+            VAR_RAMP_ID = 30,
+            VAR_RSTART_ID = 31,
+            VAR_REND_ID = 32;
     private static final String PR_NAME = "Use preprocessing",
             IVAR_NAME = "TD innovation",
             THETAVAR_NAME = "TD Q",
@@ -460,7 +698,13 @@ public class TdSarimaSpecUI implements IPropertyDescriptors {
             Q_NAME = "Q",
             BP_NAME = "BP",
             BD_NAME = "BD",
-            BQ_NAME = "BQ";
+            BQ_NAME = "BQ",
+            ARIMA_RAMP_NAME = "User-Defined Arima Ramp",
+            ARIMA_RSTART_NAME = "Arima Ramp Start",
+            ARIMA_REND_NAME = "Arima Ramp End",
+            VAR_RAMP_NAME = "User-Defined Var Ramp",
+            VAR_RSTART_NAME = "Var Ramp Start",
+            VAR_REND_NAME = "Var Ramp End";
     private static final String PR_DESC = "Use preprocessing",
             IVAR_DESC = "Time dependent innovation",
             THETAVAR_DESC = "Time dependent Q",
@@ -472,6 +716,12 @@ public class TdSarimaSpecUI implements IPropertyDescriptors {
             Q_DESC = "Q",
             BP_DESC = "BP",
             BD_DESC = "BD",
-            BQ_DESC = "BQ";
+            BQ_DESC = "BQ",
+            ARIMA_RAMP_DESC = "User-Defined Arima Ramp",
+            ARIMA_RSTART_DESC = "Start of the ramp for the arima parameters",
+            ARIMA_REND_DESC = "End of the ramp for the arima parameters",
+            VAR_RAMP_DESC = "User-Defined Var Ramp",
+            VAR_RSTART_DESC = "Start of the ramp for the innovation variance",
+            VAR_REND_DESC = "End of the ramp for the innovation variance";
     ;
 }

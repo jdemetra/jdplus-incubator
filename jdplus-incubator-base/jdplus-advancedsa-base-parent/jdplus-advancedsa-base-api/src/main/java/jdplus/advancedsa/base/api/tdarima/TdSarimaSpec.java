@@ -77,4 +77,35 @@ public class TdSarimaSpec {
         }
         return n;
     }
+
+    private static final String TD = "-td";
+
+    public String model() {
+        StringBuilder builder = new StringBuilder();
+        builder.append('(');
+        append(builder, orders.getP(), vPhi);
+        builder.append(' ');
+        append(builder, orders.getD(), false);
+        builder.append(' ');
+        append(builder, orders.getQ(), vTheta);
+        builder.append(')');
+        builder.append('(');
+        append(builder, orders.getBp(), vBphi);
+        builder.append(' ');
+        append(builder, orders.getBd(), false);
+        builder.append(' ');
+        append(builder, orders.getBq(), vBtheta);
+        builder.append(')');
+        if (vVar) {
+            builder.append("var-td");
+        }
+        return builder.toString();
+    }
+
+    private void append(StringBuilder builder, int q, boolean td) {
+        builder.append(q);
+        if (q > 0 && td) {
+            builder.append(TD);
+        }
+    }
 }

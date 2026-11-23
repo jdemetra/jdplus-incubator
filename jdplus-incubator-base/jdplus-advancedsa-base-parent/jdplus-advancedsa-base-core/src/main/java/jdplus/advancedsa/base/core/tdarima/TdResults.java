@@ -26,6 +26,7 @@ import jdplus.toolkit.base.api.information.GenericExplorable;
 public class TdResults implements GenericExplorable {
 
     SarimaResults start;
+    SarimaResults left, right;
 
     @lombok.Singular
     List<TdSarimaResults> tdResults;

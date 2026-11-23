@@ -17,6 +17,7 @@ package jdplus.advancedsa.base.core.tdarima;
 
 import jdplus.advancedsa.base.api.tdarima.Orders;
 import jdplus.advancedsa.base.api.tdarima.TdEstimationSpec;
+import jdplus.advancedsa.base.api.tdarima.TdSarimaSpec;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.core.data.DataBlock;
 import jdplus.toolkit.base.core.math.functions.levmar.LevenbergMarquardtMinimizer;
@@ -45,15 +46,17 @@ public class TdArimaModelTest {
         DoubleSeq S = DataBlock.of(s).log();
 
         Orders orders = Orders.airline();
+        TdSarimaSpec spec =
+                TdSarimaSpec.builder().orders(orders).vTheta(true).vTheta(true).build();
         //        orders.setP(3);
         TdSarimaMapping mapping = TdSarimaMapping1.builder()
                 .period(12)
-                .orders(orders)
                 .n(s.length)
+                .spec(spec)
+                .startArimaRamp(0)
+                .endArimaRamp(s.length - 1)
                 .fn(TdEstimationSpec.Transformation.CUBIC)
                 //                .vPhi(true)
-                .vTheta(true)
-                .vBtheta(true)
                 //                .vVar(true)
                 .build();
         SsfFunction fn = SsfFunction.builder(new SsfData(S), mapping, (TdSarimaModel model) -> model.ssf())

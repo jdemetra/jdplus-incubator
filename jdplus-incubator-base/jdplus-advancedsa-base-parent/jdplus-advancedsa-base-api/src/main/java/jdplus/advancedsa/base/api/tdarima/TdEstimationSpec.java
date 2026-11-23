@@ -57,6 +57,8 @@ public class TdEstimationSpec {
     @lombok.With
     @lombok.NonNull private Transformation transformation;
 
+    private final int startArimaRamp, endArimaRamp, startVarianceRamp, endVarianceRamp;
+
     @lombok.With
     private double simplificationThreshold;
 

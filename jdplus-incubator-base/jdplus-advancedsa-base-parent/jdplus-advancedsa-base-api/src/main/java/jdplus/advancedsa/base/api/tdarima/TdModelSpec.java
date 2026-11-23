@@ -15,6 +15,7 @@
  */
 package jdplus.advancedsa.base.api.tdarima;
 
+import java.time.LocalDate;
 import jdplus.sa.base.api.SaSpecification;
 import jdplus.sa.base.api.benchmarking.SaBenchmarkingSpec;
 import jdplus.toolkit.base.api.modelling.regular.ModellingSpec;
@@ -38,7 +39,13 @@ public class TdModelSpec implements SaSpecification {
     @lombok.NonNull private ModellingSpec preprocessing;
 
     @lombok.With
+    private boolean separatePreprocessing;
+
+    @lombok.With
     private boolean usingPreprocessing;
+
+    private final LocalDate startArimaRamp, endArimaRamp;
+    private final LocalDate startVarianceRamp, endVarianceRamp;
 
     @lombok.NonNull private TdEstimationSpec tdarima;
 
@@ -60,11 +67,18 @@ public class TdModelSpec implements SaSpecification {
     public static final TdModelSpec FULL = new Builder()
             .preprocessing(ModellingSpec.FULL)
             .usingPreprocessing(true)
+            .separatePreprocessing(false)
             .tdarima(TdEstimationSpec.FULL)
             .benchmarking(SaBenchmarkingSpec.DEFAULT_DISABLED)
             .build();
 
-    public static final TdModelSpec DEFAULT = builder().build();
+    public static final TdModelSpec DEFAULT = new Builder()
+            .preprocessing(ModellingSpec.FULL)
+            .usingPreprocessing(true)
+            .separatePreprocessing(false)
+            .tdarima(TdEstimationSpec.DEFAULT)
+            .benchmarking(SaBenchmarkingSpec.DEFAULT_DISABLED)
+            .build();
 
     @Override
     public int getFrequency() {

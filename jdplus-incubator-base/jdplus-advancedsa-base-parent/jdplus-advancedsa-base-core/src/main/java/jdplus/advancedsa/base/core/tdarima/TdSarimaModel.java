@@ -35,10 +35,11 @@ import jdplus.toolkit.base.core.ssf.univariate.Ssf;
 public class TdSarimaModel {
 
     private int period;
-    private final Orders spec;
+    private final Orders orders;
     private final TdEstimationSpec.Transformation fn;
     private final DoubleSeq p0, p1;
     private final double var0, var1;
+    private final int startArimaRamp, endArimaRamp, startVarianceRamp, endVarianceRamp;
     private final int n;
 
     public static Builder builder() {
@@ -46,37 +47,72 @@ public class TdSarimaModel {
     }
 
     public static TdSarimaModel of(int period, Orders spec, DoubleSeq p, int n) {
-        return new TdSarimaModel(period, spec, TdEstimationSpec.Transformation.LINEAR, p, p, 1, 1, n);
+        return new TdSarimaModel(
+                period, spec, TdEstimationSpec.Transformation.LINEAR, p, p, 1, 1, n, 0, n - 1, 0, n - 1);
+    }
+
+    public static TdSarimaModel of(
+            int period,
+            Orders spec,
+            DoubleSeq p,
+            int n,
+            int startArimaRamp,
+            int endArimaRamp,
+            int startVarianceRamp,
+            int endVarianceRamp) {
+        return new TdSarimaModel(
+                period,
+                spec,
+                TdEstimationSpec.Transformation.LINEAR,
+                p,
+                p,
+                1,
+                1,
+                n,
+                startArimaRamp,
+                endArimaRamp,
+                startVarianceRamp,
+                endVarianceRamp);
     }
 
     public IntFunction<IArimaModel> models() {
         DoubleSeq delta = DoublesMath.subtract(p1, p0);
-        double r = 1.0 / (n - 1);
-        if (fn == TdEstimationSpec.Transformation.LINEAR) {
-            return i -> {
-                DataBlock q = DataBlock.of(p0);
-                q.addAY(i * r, delta);
-                SarimaModel sarima = SarimaModel.builder(spec.asSarimaOrders(period))
-                        .parameters(q)
-                        .build();
-                double e0 = var0 == 1 ? 1 : Math.sqrt(var0), e1 = var1 == 1 ? 1 : Math.sqrt(var1);
-                double et = e0 + (i * r) * (e1 - e0);
-                return new ArimaModel(sarima.getStationaryAr(), sarima.getNonStationaryAr(), sarima.getMa(), et * et);
-            };
-        } else {
-            return i -> {
-                double x = i * r, x2 = x * x, x3 = x * x2;
-                DataBlock q = DataBlock.of(p0);
-                q.addAY(3 * x2, delta);
-                q.addAY(-2 * x3, delta);
-                SarimaModel sarima = SarimaModel.builder(spec.asSarimaOrders(period))
-                        .parameters(q)
-                        .build();
-                double e0 = var0 == 1 ? 1 : Math.sqrt(var0), e1 = var1 == 1 ? 1 : Math.sqrt(var1);
-                double et = e0 + (i * r) * (e1 - e0);
-                return new ArimaModel(sarima.getStationaryAr(), sarima.getNonStationaryAr(), sarima.getMa(), et * et);
-            };
-        }
+        return i -> {
+            DataBlock q;
+            if (i >= endArimaRamp) {
+                q = DataBlock.of(p1);
+            } else {
+                q = DataBlock.of(p0);
+                if (i > startArimaRamp) {
+                    int ic = i - startArimaRamp;
+                    double rp = 1.0 / (endArimaRamp - startArimaRamp);
+                    if (fn == TdEstimationSpec.Transformation.LINEAR) {
+                        q.addAY(ic * rp, delta);
+                    } else {
+                        double x = ic * rp, x2 = x * x, x3 = x * x2;
+                        q = DataBlock.of(p0);
+                        q.addAY(3 * x2, delta);
+                        q.addAY(-2 * x3, delta);
+                    }
+                }
+            }
+            SarimaModel sarima = SarimaModel.builder(orders.asSarimaOrders(period))
+                    .parameters(q)
+                    .build();
+            double e = var1 == 1 ? 1 : Math.sqrt(var1);
+            if (var0 != var1) {
+                if (i < endVarianceRamp) {
+                    double e1 = e;
+                    e = var0 == 1 ? 1 : Math.sqrt(var0);
+                    if (i >= startVarianceRamp) {
+                        int ic = i - startVarianceRamp;
+                        double rv = 1.0 / (endVarianceRamp - startVarianceRamp);
+                        e += (ic * rv) * (e1 - e);
+                    }
+                }
+            }
+            return new ArimaModel(sarima.getStationaryAr(), sarima.getNonStationaryAr(), sarima.getMa(), e * e);
+        };
     }
 
     public Ssf ssf() {
@@ -94,29 +130,29 @@ public class TdSarimaModel {
     }
 
     public Orders getStationaryOrders() {
-        return spec.doStationary();
+        return orders.doStationary();
     }
 
     public TdSarimaSpec spec() {
 
         TdSarimaSpec.Builder builder = TdSarimaSpec.builder();
-        builder.orders(spec);
-        int j = 0, p = spec.getP();
+        builder.orders(orders);
+        int j = 0, p = orders.getP();
         if (p > 0) {
             builder.vPhi(!p0.range(j, j + p).hasSameContentAs(p1.range(j, j + p)));
             j += p;
         }
-        p = spec.getBp();
+        p = orders.getBp();
         if (p > 0) {
             builder.vBphi(!p0.range(j, j + p).hasSameContentAs(p1.range(j, j + p)));
             j += p;
         }
-        p = spec.getQ();
+        p = orders.getQ();
         if (p > 0) {
             builder.vTheta(!p0.range(j, j + p).hasSameContentAs(p1.range(j, j + p)));
             j += p;
         }
-        p = spec.getBq();
+        p = orders.getBq();
         if (p > 0) {
             builder.vBtheta(!p0.range(j, j + p).hasSameContentAs(p1.range(j, j + p)));
         }
