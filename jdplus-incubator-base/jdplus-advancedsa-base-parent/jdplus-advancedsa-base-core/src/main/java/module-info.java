@@ -1,13 +1,10 @@
-
 import jdplus.toolkit.base.api.information.InformationExtractor;
 
 module jdplus.advancedsa.base.core {
-
     requires static lombok;
     requires static nbbrd.design;
     requires static nbbrd.service;
     requires static org.jspecify;
-
     requires jdplus.toolkit.base.api;
     requires jdplus.advancedsa.base.api;
     requires jdplus.toolkit.base.core;
@@ -17,10 +14,12 @@ module jdplus.advancedsa.base.core {
     exports jdplus.advancedsa.base.core.movingtd;
     exports jdplus.advancedsa.base.core.tdarima;
     exports jdplus.advancedsa.base.core.tdarima.extractors;
-    
-        provides InformationExtractor with
-            jdplus.advancedsa.base.core.tdarima.extractors.SarimaResultsExtractor,
-            jdplus.advancedsa.base.core.tdarima.extractors.LtdSarimaResultsExtractor,
-            jdplus.advancedsa.base.core.tdarima.extractors.LtdResultsExtractor;
 
+    provides InformationExtractor with
+            jdplus.advancedsa.base.core.extractors.SeriesDecompositionExtractor,
+            jdplus.advancedsa.base.core.tdarima.extractors.SarimaResultsExtractor,
+            jdplus.advancedsa.base.core.tdarima.extractors.TdSarimaResultsExtractor,
+            jdplus.advancedsa.base.core.tdarima.extractors.TdModellingExtractor,
+            jdplus.advancedsa.base.core.tdarima.extractors.TdResultsExtractor,
+            jdplus.advancedsa.base.core.tdarima.extractors.TdDecompositionExtractor;
 }

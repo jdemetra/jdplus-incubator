@@ -16,20 +16,32 @@
  */
 package jdplus.highfreq.base.core.extendedairline;
 
-import jdplus.toolkit.base.api.data.DoubleSeq;
-import jdplus.toolkit.base.api.data.Parameter;
-import jdplus.toolkit.base.api.modelling.highfreq.EasterSpec;
+import static jdplus.sa.base.core.PreliminaryChecks.MAX_MISSING_COUNT;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import jdplus.highfreq.base.api.ExtendedAirline;
 import jdplus.highfreq.base.api.ExtendedAirlineModellingSpec;
 import jdplus.highfreq.base.api.ExtendedAirlineSpec;
+import jdplus.highfreq.base.core.regarima.HighFreqRegArimaModel;
+import jdplus.highfreq.base.core.regarima.ModelDescription;
+import jdplus.sa.base.api.ComponentType;
+import jdplus.sa.base.api.SaException;
+import jdplus.sa.base.api.SaVariable;
+import jdplus.toolkit.base.api.data.DoubleSeq;
+import jdplus.toolkit.base.api.data.DoubleSeqCursor;
+import jdplus.toolkit.base.api.data.Parameter;
+import jdplus.toolkit.base.api.math.matrices.Matrix;
+import jdplus.toolkit.base.api.modelling.OutlierDescriptor;
+import jdplus.toolkit.base.api.modelling.highfreq.EasterSpec;
 import jdplus.toolkit.base.api.modelling.highfreq.HolidaysSpec;
 import jdplus.toolkit.base.api.modelling.highfreq.OutlierSpec;
 import jdplus.toolkit.base.api.modelling.highfreq.RegressionSpec;
-import jdplus.toolkit.base.api.math.matrices.Matrix;
-import jdplus.toolkit.base.api.modelling.OutlierDescriptor;
 import jdplus.toolkit.base.api.processing.ProcessingLog;
-import jdplus.sa.base.api.ComponentType;
-import jdplus.sa.base.api.SaVariable;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.api.timeseries.TsDomain;
 import jdplus.toolkit.base.api.timeseries.TsPeriod;
@@ -39,31 +51,21 @@ import jdplus.toolkit.base.api.timeseries.regression.HolidaysVariable;
 import jdplus.toolkit.base.api.timeseries.regression.IEasterVariable;
 import jdplus.toolkit.base.api.timeseries.regression.IOutlier;
 import jdplus.toolkit.base.api.timeseries.regression.ITsVariable;
+import jdplus.toolkit.base.api.timeseries.regression.IUserVariable;
 import jdplus.toolkit.base.api.timeseries.regression.InterventionVariable;
 import jdplus.toolkit.base.api.timeseries.regression.JulianEasterVariable;
 import jdplus.toolkit.base.api.timeseries.regression.LevelShift;
 import jdplus.toolkit.base.api.timeseries.regression.ModellingContext;
 import jdplus.toolkit.base.api.timeseries.regression.ModellingUtility;
 import jdplus.toolkit.base.api.timeseries.regression.SwitchOutlier;
-import jdplus.toolkit.base.api.timeseries.regression.TsContextVariable;
+import jdplus.toolkit.base.api.timeseries.regression.UserVariableSpec;
 import jdplus.toolkit.base.api.timeseries.regression.Variable;
-import jdplus.toolkit.base.core.math.functions.levmar.LevenbergMarquardtMinimizer;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import jdplus.toolkit.base.api.util.IntList;
 import jdplus.toolkit.base.core.arima.ArimaModel;
 import jdplus.toolkit.base.core.data.DataBlock;
-import jdplus.highfreq.base.core.regarima.HighFreqRegArimaModel;
-import jdplus.highfreq.base.core.regarima.ModelDescription;
-import jdplus.sa.base.api.SaException;
-import static jdplus.sa.base.core.PreliminaryChecks.MAX_MISSING_COUNT;
-import jdplus.toolkit.base.api.data.DoubleSeqCursor;
-import jdplus.toolkit.base.api.util.IntList;
 import jdplus.toolkit.base.core.data.interpolation.AverageInterpolator;
 import jdplus.toolkit.base.core.data.interpolation.DataInterpolator;
+import jdplus.toolkit.base.core.math.functions.levmar.LevenbergMarquardtMinimizer;
 import jdplus.toolkit.base.core.math.matrices.FastMatrix;
 import jdplus.toolkit.base.core.modelling.regression.AdditiveOutlierFactory;
 import jdplus.toolkit.base.core.modelling.regression.IOutlierFactory;
@@ -122,14 +124,15 @@ public class ExtendedAirlineKernel {
 
     private ModelDescription<ArimaModel, ExtendedAirlineDescription> build(TsData originalTs, ProcessingLog log) {
         TsData y = originalTs.select(spec.getSeries().getSpan());
-        ModelDescription<ArimaModel, ExtendedAirlineDescription> desc = new ModelDescription(y, y.getDomain().select(spec.getEstimate().getSpan()));
+        ModelDescription<ArimaModel, ExtendedAirlineDescription> desc =
+                new ModelDescription(y, y.getDomain().select(spec.getEstimate().getSpan()));
         // regression variables
         desc.setMean(spec.getStochastic().isMean());
         // calendar
         buildCalendar(desc);
         buildOutliers(desc);
         buildInterventionVariables(desc);
-        buildUsers(desc);
+        buildUsers(desc, log);
 
         desc.setStochasticSpec(new ExtendedAirlineDescription(spec.getStochastic()));
         return desc;
@@ -139,8 +142,12 @@ public class ExtendedAirlineKernel {
         RegressionSpec regression = spec.getRegression();
         HolidaysSpec calendar = regression.getHolidays();
         if (calendar.isUsed()) {
-            HolidaysVariable hvar = HolidaysVariable.of(calendar.getHolidays(),
-                    calendar.getHolidaysOption(), calendar.getNonWorkingDays(), calendar.isSingle(), modellingContext);
+            HolidaysVariable hvar = HolidaysVariable.of(
+                    calendar.getHolidays(),
+                    calendar.getHolidaysOption(),
+                    calendar.getNonWorkingDays(),
+                    calendar.isSingle(),
+                    modellingContext);
             add(desc, hvar, "holidays", ComponentType.CalendarEffect, calendar.getCoefficients());
         }
         EasterSpec easter = regression.getEaster();
@@ -156,7 +163,7 @@ public class ExtendedAirlineKernel {
                         .build();
             }
             Parameter ec = easter.getCoefficient();
-            add(desc, ev, "easter", ComponentType.CalendarEffect, ec == null ? null : new Parameter[]{ec});
+            add(desc, ev, "easter", ComponentType.CalendarEffect, ec == null ? null : new Parameter[] {ec});
         }
     }
 
@@ -213,11 +220,14 @@ public class ExtendedAirlineKernel {
         }
     }
 
-    private void buildUsers(ModelDescription desc) {
-        for (Variable<TsContextVariable> user : spec.getRegression().getUserDefinedVariables()) {
-            String name = user.getName();
-            ITsVariable var = user.getCore().instantiateFrom(modellingContext, name);
-            desc.addVariable(user.withCore(var));
+    private void buildUsers(ModelDescription desc, ProcessingLog log) {
+        for (UserVariableSpec user : spec.getRegression().getUserDefinedVariables()) {
+            Variable<IUserVariable> s = SaVariable.instantiateFrom(user, modellingContext);
+            if (s != null) {
+                desc.addVariable(s);
+            } else {
+                log.warning(user.getName() + ": not found (removed from the model)");
+            }
         }
     }
 
@@ -230,7 +240,6 @@ public class ExtendedAirlineKernel {
                 modelling.estimate(1e-5);
             }
             execOutliers(modelling, log);
-
         }
         // step 3: final estimation
         modelling.estimate(spec.getEstimate().getPrecision());
@@ -238,7 +247,12 @@ public class ExtendedAirlineKernel {
         return HighFreqRegArimaModel.of(modelling.getDescription(), modelling.getEstimation(), log);
     }
 
-    private void add(@NonNull ModelDescription model, ITsVariable v, @NonNull String name, @NonNull ComponentType cmp, Parameter[] c) {
+    private void add(
+            @NonNull ModelDescription model,
+            ITsVariable v,
+            @NonNull String name,
+            @NonNull ComponentType cmp,
+            Parameter[] c) {
         if (v == null) {
             return;
         }
@@ -251,13 +265,32 @@ public class ExtendedAirlineKernel {
         model.addVariable(var);
     }
 
-    public static ExtendedAirlineEstimation fastProcess(DoubleSeq y, boolean log, Matrix X, boolean mean, String[] outliers, double cv, ExtendedAirlineSpec spec, double eps, double deps) {
+    public static ExtendedAirlineEstimation fastProcess(
+            DoubleSeq y,
+            boolean log,
+            Matrix X,
+            boolean mean,
+            String[] outliers,
+            double cv,
+            ExtendedAirlineSpec spec,
+            double eps,
+            double deps) {
         return fastProcess(y, log, X, mean, outliers, cv, spec, 0, eps, deps);
     }
 
-    public static ExtendedAirlineEstimation fastProcess(DoubleSeq y, boolean log, Matrix X, boolean mean, String[] outliers, double cv, ExtendedAirlineSpec spec, int nfcasts, double eps, double deps) {
+    public static ExtendedAirlineEstimation fastProcess(
+            DoubleSeq y,
+            boolean log,
+            Matrix X,
+            boolean mean,
+            String[] outliers,
+            double cv,
+            ExtendedAirlineSpec spec,
+            int nfcasts,
+            double eps,
+            double deps) {
 
-//Missing
+        // Missing
         int nz = y.length();
         int nm = y.count(z -> !Double.isFinite(z));
         if (nm > MAX_MISSING_COUNT * nz / 100) {
@@ -291,8 +324,7 @@ public class ExtendedAirlineKernel {
         }
 
         Matrix X_withoutFcast;
-        if (nfcasts > 0 && X
-                != null) {
+        if (nfcasts > 0 && X != null) {
             X_withoutFcast = X.extract(0, X.getRowsCount() - nfcasts, 0, X.getColumnsCount());
         } else {
             X_withoutFcast = X;
@@ -308,9 +340,8 @@ public class ExtendedAirlineKernel {
                 .missing(missing);
         OutlierDescriptor[] o;
         if (outliers != null && outliers.length > 0) {
-            GlsArimaProcessor<ArimaModel> processor = GlsArimaProcessor.builder(ArimaModel.class)
-                    .precision(1e-5)
-                    .build();
+            GlsArimaProcessor<ArimaModel> processor =
+                    GlsArimaProcessor.builder(ArimaModel.class).precision(1e-5).build();
             IOutlierFactory[] factories = factories(outliers);
             OutliersDetectionModule od = OutliersDetectionModule.build(ArimaModel.class)
                     .maxOutliers(100)
@@ -345,21 +376,19 @@ public class ExtendedAirlineKernel {
         LogLikelihoodFunction.Point max = rslt.getMax();
         DoubleSeq parameters = max.getParameters();
 
-        ExtendedAirline ea = ExtendedAirline.of(spec)
-                .toBuilder()
-                .p(parameters)
-                .build();
+        ExtendedAirline ea = ExtendedAirline.of(spec).toBuilder().p(parameters).build();
 
-        //Ausgabe anpassen
+        // Ausgabe anpassen
         RegArimaModel model = rslt.getModel();
 
         DoubleSeq y_fcasts;
 
         if (nfcasts > 0) {
             ExactArimaForecasts fcasts = new ExactArimaForecasts();
-            fcasts.prepare(model.arima(), false); //Jean said mean should not be used
+            fcasts.prepare(model.arima(), false); // Jean said mean should not be used
             double[] detAll = new double[y.length()];
-            DoubleSeqCursor coeff = rslt.getConcentratedLikelihood().coefficients().cursor();
+            DoubleSeqCursor coeff =
+                    rslt.getConcentratedLikelihood().coefficients().cursor();
             FastMatrix variables = regarima.variables();
             for (int j = 0; j < variables.getColumnsCount(); ++j) {
                 double c = coeff.getAndNext();
@@ -371,7 +400,7 @@ public class ExtendedAirlineKernel {
                 }
             }
 
-            //lin series is the original series y minus coeff*variables
+            // lin series is the original series y minus coeff*variables
             double[] y_lin_a = new double[y.length()];
             for (int i = 0; i < y.length(); i++) {
                 y_lin_a[i] = y.get(i) - detAll[i];
@@ -399,31 +428,36 @@ public class ExtendedAirlineKernel {
         //
         int xNumberRows = 0;
         int xNumberColumns = 0;
-        if (X
-                != null) {
+        if (X != null) {
             xNumberColumns = X.getColumnsCount();
             xNumberRows = X.getRowsCount();
         }
 
         Matrix regVariables;
-        if (nfcasts
-                > 0) {
-            double[] data = new double[(regarima.variables().getRowsCount() + nfcasts) * regarima.variables().getColumnsCount()];
+        if (nfcasts > 0) {
+            double[] data = new double
+                    [(regarima.variables().getRowsCount() + nfcasts)
+                            * regarima.variables().getColumnsCount()];
             for (int i = 0; i < regarima.variables().getRowsCount(); i++) {
                 for (int j = 0; j < regarima.variables().getColumnsCount(); j++) {
-                    data[i + j * (regarima.variables().getRowsCount() + nfcasts)] = regarima.variables().get(i, j);
+                    data[i + j * (regarima.variables().getRowsCount() + nfcasts)] =
+                            regarima.variables().get(i, j);
                 }
             }
 
             // Regression Variable in the future
-            for (int i = regarima.variables().getRowsCount(); i < regarima.variables().getRowsCount() + nfcasts; i++) {
+            for (int i = regarima.variables().getRowsCount();
+                    i < regarima.variables().getRowsCount() + nfcasts;
+                    i++) {
                 for (int j = 0; j < xNumberColumns; j++) {
                     data[(i + j * (regarima.variables().getRowsCount() + nfcasts))] = X.get(i, j);
                 }
             }
 
-            //zeros for the other variables
-            for (int i = regarima.variables().getRowsCount(); i < regarima.variables().getRowsCount() + nfcasts; i++) {
+            // zeros for the other variables
+            for (int i = regarima.variables().getRowsCount();
+                    i < regarima.variables().getRowsCount() + nfcasts;
+                    i++) {
                 for (int j = xNumberColumns; j < regarima.variables().getColumnsCount(); j++) {
                     data[(i + j * (regarima.variables().getRowsCount() + nfcasts))] = 0;
                 }
@@ -437,13 +471,11 @@ public class ExtendedAirlineKernel {
 
         DoubleSeq y_f = regarima.getY().extend(0, nfcasts);
         double[] y_inclFcasts = y_f.toArray();
-        for (int i = 0;
-                i < nfcasts;
-                i++) {
+        for (int i = 0; i < nfcasts; i++) {
             y_inclFcasts[regarima.getY().length() + i] = y_fcasts.get(i);
         }
 
-        //Missing values are still replaced
+        // Missing values are still replaced
         return ExtendedAirlineEstimation.builder()
                 .y(y_inclFcasts)
                 .x(regVariables)
@@ -471,8 +503,8 @@ public class ExtendedAirlineKernel {
                         .build();
 
                 ll.process(modelling);
-            //    log.warning("not implemented yet. log used");
-break;
+                //    log.warning("not implemented yet. log used");
+                break;
             case Log:
                 if (modelling.getDescription().getSeries().getValues().allMatch(x -> x > 0)) {
                     modelling.getDescription().setLogTransformation(true);
@@ -480,7 +512,6 @@ break;
                     log.warning("non positive values; log disabled");
                 }
                 break;
-
         }
         log.pop();
     }
@@ -489,15 +520,14 @@ break;
         log.push("outliers");
         OutlierSpec ospec = spec.getOutlier();
         String[] outliers = ospec.allOutliers();
-        LevenbergMarquardtMinimizer.LmBuilder min = LevenbergMarquardtMinimizer.builder().maxIter(5);
-        GlsArimaProcessor<ArimaModel> processor = GlsArimaProcessor.builder(ArimaModel.class
-        )
+        LevenbergMarquardtMinimizer.LmBuilder min =
+                LevenbergMarquardtMinimizer.builder().maxIter(5);
+        GlsArimaProcessor<ArimaModel> processor = GlsArimaProcessor.builder(ArimaModel.class)
                 .minimizer(min)
                 .precision(1e-5)
                 .build();
         IOutlierFactory[] factories = factories(outliers);
-        OutliersDetectionModule od = OutliersDetectionModule.build(ArimaModel.class
-        )
+        OutliersDetectionModule od = OutliersDetectionModule.build(ArimaModel.class)
                 .maxOutliers(spec.getOutlier().getMaxOutliers())
                 .maxRound(spec.getOutlier().getMaxRound())
                 .addFactories(factories)
@@ -523,12 +553,15 @@ break;
             }
         }
         // current outliers ([fixed], pre-specified, identified)
-        modelling.getDescription().variables()
+        modelling
+                .getDescription()
+                .variables()
                 .filter(var -> var.getCore() instanceof IOutlier)
-                .map(var -> (IOutlier) var.getCore()).forEach(
-                o -> od.exclude(edom.indexOf(o.getPosition()), outlierType(outliers, o.getCode())));
+                .map(var -> (IOutlier) var.getCore())
+                .forEach(o -> od.exclude(edom.indexOf(o.getPosition()), outlierType(outliers, o.getCode())));
 
-        ExtendedAirlineMapping mapping = (ExtendedAirlineMapping) modelling.getDescription().mapping();
+        ExtendedAirlineMapping mapping =
+                (ExtendedAirlineMapping) modelling.getDescription().mapping();
 
         od.process(regarima, mapping);
         int[][] io = od.getOutliers();
@@ -552,12 +585,9 @@ break;
         List<IOutlierFactory> fac = new ArrayList<>();
         for (int i = 0; i < code.length; ++i) {
             switch (code[i]) {
-                case "ao", "AO" ->
-                    fac.add(AdditiveOutlierFactory.FACTORY);
-                case "wo", "WO" ->
-                    fac.add(SwitchOutlierFactory.FACTORY);
-                case "ls", "LS" ->
-                    fac.add(LevelShiftFactory.FACTORY_ZEROENDED);
+                case "ao", "AO" -> fac.add(AdditiveOutlierFactory.FACTORY);
+                case "wo", "WO" -> fac.add(SwitchOutlierFactory.FACTORY);
+                case "ls", "LS" -> fac.add(LevelShiftFactory.FACTORY_ZEROENDED);
             }
         }
 
@@ -567,43 +597,35 @@ break;
     public static IOutlier outlier(String code, TsPeriod p) {
         LocalDateTime pos = p.start();
         return switch (code) {
-            case "ao", "AO" ->
-                AdditiveOutlierFactory.FACTORY.make(pos);
-            case "wo", "WO" ->
-                SwitchOutlierFactory.FACTORY.make(pos);
-            case "ls", "LS" ->
-                LevelShiftFactory.FACTORY_ZEROENDED.make(pos);
-            default ->
-                null;
+            case "ao", "AO" -> AdditiveOutlierFactory.FACTORY.make(pos);
+            case "wo", "WO" -> SwitchOutlierFactory.FACTORY.make(pos);
+            case "ls", "LS" -> LevelShiftFactory.FACTORY_ZEROENDED.make(pos);
+            default -> null;
         };
     }
 
     private Map<String, String> attributes(IOutlier o) {
         HashMap<String, String> attributes = new HashMap<>();
         attributes.put(ModellingUtility.AMI, "tramo");
-        attributes.put(SaVariable.REGEFFECT, SaVariable.defaultComponentTypeOf(o).name());
+        attributes.put(
+                SaVariable.REGEFFECT, SaVariable.defaultComponentTypeOf(o).name());
         return attributes;
     }
 
     public static ArimaModel estimate(DoubleSeq s, double period) {
-        ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(new double[]{period}, ExtendedAirlineMapping.EPS);
+        ExtendedAirlineMapping mapping = new ExtendedAirlineMapping(new double[] {period}, ExtendedAirlineMapping.EPS);
 
-        GlsArimaProcessor.Builder<ArimaModel> builder = GlsArimaProcessor.builder(ArimaModel.class
-        );
+        GlsArimaProcessor.Builder<ArimaModel> builder = GlsArimaProcessor.builder(ArimaModel.class);
         builder.minimizer(LevenbergMarquardtMinimizer.builder())
                 .precision(1e-12)
                 .useMaximumLikelihood(true)
                 .useParallelProcessing(true)
                 .build();
         ArimaModel arima = mapping.getDefault();
-        RegArimaModel<ArimaModel> regarima
-                = RegArimaModel.<ArimaModel>builder()
-                        .y(s)
-                        .arima(arima)
-                        .build();
+        RegArimaModel<ArimaModel> regarima =
+                RegArimaModel.<ArimaModel>builder().y(s).arima(arima).build();
         GlsArimaProcessor<ArimaModel> monitor = builder.build();
         RegArimaEstimation<ArimaModel> rslt = monitor.process(regarima, mapping);
         return rslt.getModel().arima();
     }
-
 }

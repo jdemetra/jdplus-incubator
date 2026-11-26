@@ -17,7 +17,7 @@ package jdplus.advancedsa.base.r;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import jdplus.advancedsa.base.core.tdarima.LtdResults;
+import jdplus.advancedsa.base.core.tdarima.TdResults;
 import jdplus.toolkit.base.api.data.DoubleSeq;
 import jdplus.toolkit.base.api.data.DoublesMath;
 import jdplus.toolkit.base.api.timeseries.TsData;
@@ -42,7 +42,7 @@ public class TimeVaryingArimaModelsTest {
         int[] seasonal = new int[] {0, 1, 1};
         for (int i = 0; i < s.length; ++i) {
 
-            LtdResults result = TimeVaryingArimaModels.estimate(
+            TdResults result = TimeVaryingArimaModels.estimate(
                     s[i].log().getValues().toArray(),
                     s[i].getAnnualFrequency(),
                     true,
@@ -74,7 +74,7 @@ public class TimeVaryingArimaModelsTest {
         int[] regular = new int[] {0, 1, 1};
         int[] seasonal = new int[] {0, 1, 1};
         boolean vvar = false;
-        LtdResults result = TimeVaryingArimaModels.estimate(
+        TdResults result = TimeVaryingArimaModels.estimate(
                 s.getValues().toArray(),
                 s.getAnnualFrequency(),
                 false,

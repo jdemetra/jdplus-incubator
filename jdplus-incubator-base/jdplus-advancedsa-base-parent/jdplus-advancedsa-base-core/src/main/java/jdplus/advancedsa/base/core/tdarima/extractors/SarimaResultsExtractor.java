@@ -15,7 +15,7 @@
  */
 package jdplus.advancedsa.base.core.tdarima.extractors;
 
-import jdplus.advancedsa.base.api.tdarima.LtdDictionaries;
+import jdplus.advancedsa.base.api.tdarima.TdArimaDictionaries;
 import jdplus.advancedsa.base.core.tdarima.SarimaResults;
 import jdplus.toolkit.base.api.dictionaries.Dictionary;
 import jdplus.toolkit.base.api.information.InformationExtractor;
@@ -40,34 +40,31 @@ public class SarimaResultsExtractor extends InformationMapping<SarimaResults> {
 
     public SarimaResultsExtractor() {
         set(
-                modelItem(LtdDictionaries.PARAMETERS),
+                modelItem(TdArimaDictionaries.PARAMETERS),
                 double[].class,
                 s -> s.getParameters().toArray());
-        //        set(modelItem(LtdDictionaries.PARAMETERS_NAMES), String[].class, s ->
+        //        set(modelItem(TdArimaDictionaries.PARAMETERS_NAMES), String[].class, s ->
         // s.getParametersNames());
-        set(
-                modelItem(LtdDictionaries.PARAMETERS_COV),
-                Matrix.class,
-                source -> source.getParametersCovariance());
-        delegate(
-                LtdDictionaries.LIKELIHOOD,
-                LikelihoodStatistics.class,
-                source -> source.getLikelihood());
-        delegate(LtdDictionaries.RESIDUALS, TsResiduals.class, source -> source.getResiduals());
+        set(modelItem(TdArimaDictionaries.PARAMETERS_COV), Matrix.class, source -> source.getParametersCovariance());
+        delegate(TdArimaDictionaries.LIKELIHOOD, LikelihoodStatistics.class, source -> source.getLikelihood());
+        delegate(TdArimaDictionaries.RESIDUALS, TsResiduals.class, source -> source.getResiduals());
 
         set(
-                regItem(LtdDictionaries.REGS_C),
+                regItem(TdArimaDictionaries.REGS_C),
                 double[].class,
                 s -> s.getCoefficients().isEmpty() ? null : s.getCoefficients().toArray());
         set(
-                regItem(LtdDictionaries.REGS_COV),
+                regItem(TdArimaDictionaries.REGS_COV),
                 Matrix.class,
                 s -> s.getCovariance().isEmpty() ? null : s.getCovariance());
         set(
-                regItem(LtdDictionaries.REGS_EFFECT),
+                regItem(TdArimaDictionaries.REGS_EFFECT),
                 double[].class,
                 s -> s.getRegsEffect().isEmpty() ? null : s.getRegsEffect().toArray());
-        set(regItem(LtdDictionaries.Y_LIN), double[].class, s -> s.getLinearizedSeries().toArray());
+        set(
+                regItem(TdArimaDictionaries.Y_LIN),
+                double[].class,
+                s -> s.getLinearizedSeries().toArray());
     }
 
     //    private String mlItem(String key) {
@@ -75,10 +72,10 @@ public class SarimaResultsExtractor extends InformationMapping<SarimaResults> {
     //    }
     //
     private String regItem(String key) {
-        return Dictionary.concatenate(LtdDictionaries.REGRESSION, key);
+        return Dictionary.concatenate(TdArimaDictionaries.REGRESSION, key);
     }
 
     private String modelItem(String key) {
-        return Dictionary.concatenate(LtdDictionaries.MODEL, key);
+        return Dictionary.concatenate(TdArimaDictionaries.MODEL, key);
     }
 }

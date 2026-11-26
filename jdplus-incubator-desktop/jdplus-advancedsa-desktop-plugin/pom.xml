@@ -193,7 +193,7 @@
                 <groupId>org.apache.netbeans.utilities</groupId>
                 <artifactId>nbm-maven-plugin</artifactId>
                 <extensions>true</extensions>
-                <configuration>
+                 <configuration>
                     <publicPackages>
                         <publicPackage>jdplus.advancedsa.*</publicPackage>
                         <publicPackage>jdplus.highfreq.*</publicPackage>

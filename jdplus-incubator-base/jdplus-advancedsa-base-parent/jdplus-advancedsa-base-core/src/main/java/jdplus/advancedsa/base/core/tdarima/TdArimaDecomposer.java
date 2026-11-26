@@ -16,6 +16,7 @@
 package jdplus.advancedsa.base.core.tdarima;
 
 import java.util.function.IntFunction;
+import jdplus.toolkit.base.api.processing.ProcessingLog;
 import jdplus.toolkit.base.core.arima.ArimaModel;
 import jdplus.toolkit.base.core.arima.IArimaModel;
 import jdplus.toolkit.base.core.ssf.univariate.Ssf;
@@ -31,14 +32,12 @@ import jdplus.toolkit.base.core.ucarima.UcarimaModel;
  */
 public class TdArimaDecomposer {
 
-    private final int period;
     private final ArimaModel[] arima;
     private final UcarimaModel[] ucms;
 
     private boolean modified;
 
-    public TdArimaDecomposer(int period, int n, IntFunction<IArimaModel> fn) {
-        this.period = period;
+    public TdArimaDecomposer(int period, int n, IntFunction<IArimaModel> fn, ProcessingLog log) {
         arima = new ArimaModel[n];
         ucms = new UcarimaModel[n];
         int first = -1, last = -1;
@@ -46,7 +45,7 @@ public class TdArimaDecomposer {
             ArimaModel m = ArimaModel.of(fn.apply(i));
             m = m.simplifyAr();
             arima[i] = m;
-            UcarimaModel ucm = ucm(m);
+            UcarimaModel ucm = ucm(m, period);
             ucms[i] = ucm;
             if (ucm != null) {
                 if (first == -1) {
@@ -57,7 +56,6 @@ public class TdArimaDecomposer {
         }
         if (first == -1) {
             throw new UcarimaException();
-
         }
         if (first != 0) {
             modified = true;
@@ -81,7 +79,7 @@ public class TdArimaDecomposer {
         return TdSsfArima.ssf(arima.length, i -> arima[i]);
     }
 
-    private UcarimaModel ucm(IArimaModel model) {
+    public static UcarimaModel ucm(IArimaModel model, int period) {
         TrendCycleSelector tsel = new TrendCycleSelector();
         SeasonalSelector ssel = new SeasonalSelector(period);
 
@@ -91,7 +89,7 @@ public class TdArimaDecomposer {
 
         UcarimaModel ucm = decomposer.decompose(model);
         ucm = ucm.setVarianceMax(2, false);
-//        ucm = ucm.setVarianceMax(-1, false);
+        //        ucm = ucm.setVarianceMax(-1, false);
         return ucm;
     }
 
