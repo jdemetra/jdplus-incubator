@@ -79,6 +79,7 @@ public class TdDecompositionKernel {
         }
 
         UcarimaModel ucm = TdArimaDecomposer.ucm(model.arima(), series.getAnnualFrequency());
+        dbuilder.initialModel(ucm);
         CompositeSsf ssf = SsfUcarima.of(ucm);
 
         DefaultSmoothingResults srslts =

@@ -16,10 +16,13 @@
 package jdplus.advancedsa.base.api.tdarima;
 
 import java.time.LocalDate;
+import java.util.List;
+import jdplus.sa.base.api.ComponentDescriptor;
 import jdplus.sa.base.api.SaSpecification;
 import jdplus.sa.base.api.benchmarking.SaBenchmarkingSpec;
 import jdplus.toolkit.base.api.modelling.regular.ModellingSpec;
 import jdplus.toolkit.base.api.processing.AlgorithmDescriptor;
+import jdplus.toolkit.base.api.util.Arrays2;
 
 /**
  *
@@ -28,6 +31,13 @@ import jdplus.toolkit.base.api.processing.AlgorithmDescriptor;
 @lombok.Builder(toBuilder = true, builderClassName = "Builder")
 @lombok.Value
 public class TdModelSpec implements SaSpecification {
+
+    public static final ComponentDescriptor SeasonallyAdjusted = new ComponentDescriptor("sa", 1, false, true);
+    public static final ComponentDescriptor Trend = new ComponentDescriptor("trend", 0, true, true);
+    public static final ComponentDescriptor Seasonal = new ComponentDescriptor("seasonal", 1, true, false);
+    public static final ComponentDescriptor Irregular = new ComponentDescriptor("irregular", 2, true, false);
+    public static final List<ComponentDescriptor> COMPONENTDESCRIPTORS =
+            Arrays2.unmodifiableList(SeasonallyAdjusted, Trend, Seasonal, Irregular);
 
     public static final String METHOD = "tdarima";
     public static final String VERSION_V3 = "1.0.0";

@@ -16,8 +16,15 @@
 package jdplus.advancedsa.base.core.tdarima;
 
 import java.util.List;
+import jdplus.advancedsa.base.core.ssf.SsfWeights;
+import jdplus.sa.base.api.ComponentType;
 import jdplus.sa.base.api.SeriesDecomposition;
 import jdplus.toolkit.base.api.information.GenericExplorable;
+import jdplus.toolkit.base.api.modelling.ComponentInformation;
+import jdplus.toolkit.base.api.timeseries.TsData;
+import jdplus.toolkit.base.core.math.matrices.MatrixStorage;
+import jdplus.toolkit.base.core.ssf.arima.SsfUcarima;
+import jdplus.toolkit.base.core.ssf.composite.CompositeSsf;
 import jdplus.toolkit.base.core.ucarima.UcarimaModel;
 
 /**
@@ -30,6 +37,9 @@ public class TdDecompositionResults implements GenericExplorable {
 
     private UcarimaModel initialModel;
     private SeriesDecomposition stochasticSeries, components;
+    @lombok.experimental.NonFinal
+    @lombok.Getter(lombok.AccessLevel.PRIVATE)
+    private volatile MatrixStorage ucmWeights, tdUcmWeights;
 
     @lombok.Singular
     List<UcarimaModel> models;
@@ -38,5 +48,39 @@ public class TdDecompositionResults implements GenericExplorable {
 
     public boolean isTimeVarying() {
         return !models.isEmpty();
+    }
+
+    public MatrixStorage weights() {
+        MatrixStorage w = ucmWeights;
+        if (w != null) return w;
+        TsData s = stochasticSeries.getSeries(ComponentType.Series, ComponentInformation.Value);
+        int n = s == null ? 0 : s.length();
+        if (n > 0) {
+            synchronized (this) {
+                CompositeSsf ssf = SsfUcarima.of(initialModel);
+                w = SsfWeights.weights(ssf, n);
+                ucmWeights = w;
+            }
+        }
+        return ucmWeights;
+    }
+
+    public MatrixStorage tdWeights() {
+        MatrixStorage w = tdUcmWeights;
+        if (w != null) {
+            return w;
+        }
+        if (!models.isEmpty()) {
+            synchronized (this) {
+                try {
+                    int n = models.size();
+                    CompositeSsf ssf = TdSsfUcarima.of(n, i -> models.get(i));
+                    w = SsfWeights.weights(ssf, n);
+                    tdUcmWeights = w;
+                } catch (Exception err) {
+                }
+            }
+        }
+        return tdUcmWeights;
     }
 }

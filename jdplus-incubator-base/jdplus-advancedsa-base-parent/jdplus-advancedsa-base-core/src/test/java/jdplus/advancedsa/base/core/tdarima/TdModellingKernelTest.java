@@ -63,6 +63,16 @@ public class TdModellingKernelTest {
                 TsData esa = result.getData("decomposition.tdsarima.sastochastics.sa_e", TsData.class);
                 TsData et = result.getData("decomposition.tdsarima.sastochastics.t_e", TsData.class);
                 TsData ei = result.getData("decomposition.tdsarima.sastochastics.i_e", TsData.class);
+                //                                MatrixStorage weights = result.getDecomposition().weights();
+                //                                if (weights != null) {
+                //                                    DataBlock w0 = weights.matrix(1).column(0);
+                //                                    System.out.println(w0);
+                //                                }
+                //                                weights = result.getDecomposition().tdWeights();
+                //                                if (weights != null) {
+                //                                    DataBlock w0 = weights.matrix(1).column(0);
+                //                                    System.out.println(w0);
+                //                                }
                 //                System.out.println(decomp.getSeries(ComponentType.Series, ComponentInformation.Value)
                 //                        .getValues());
                 //                System.out.println(decomp.getSeries(ComponentType.Trend, ComponentInformation.Value)

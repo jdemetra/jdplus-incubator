@@ -15,26 +15,36 @@
  */
 package jdplus.tdarima.desktop.plugin;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import jdplus.advancedsa.base.api.tdarima.TdArimaDictionaries;
+import jdplus.advancedsa.base.api.tdarima.TdModelSpec;
 import jdplus.advancedsa.base.core.tdarima.TdArimaDocument;
 import jdplus.advancedsa.base.core.tdarima.TdDecompositionResults;
 import jdplus.advancedsa.base.core.tdarima.TdModellingResults;
 import jdplus.advancedsa.base.core.tdarima.TdResults;
 import jdplus.advancedsa.base.core.tdarima.TdSarimaResults;
 import jdplus.advancedsa.base.core.tdarima.extractors.TdDecompositionExtractor;
+import jdplus.sa.base.api.ComponentDescriptor;
 import jdplus.sa.base.api.SaDictionaries;
 import jdplus.sa.desktop.plugin.processing.SIFactory;
 import jdplus.sa.desktop.plugin.ui.SaViews;
 import jdplus.tdarima.desktop.plugin.html.HtmlTdArimaModel;
 import jdplus.tdarima.desktop.plugin.html.HtmlTdArimaSelection;
+import jdplus.tdarima.desktop.plugin.ui.KfSquaredGainsUI;
+import jdplus.tdarima.desktop.plugin.ui.KfWeightsUI;
 import jdplus.toolkit.base.api.dictionaries.Dictionary;
 import jdplus.toolkit.base.api.dictionaries.RegressionDictionaries;
 import jdplus.toolkit.base.api.timeseries.TsData;
 import jdplus.toolkit.base.api.timeseries.TsDocument;
+import jdplus.toolkit.base.api.timeseries.TsDomain;
 import jdplus.toolkit.base.api.util.Id;
+import jdplus.toolkit.base.api.util.IntList;
 import jdplus.toolkit.base.api.util.LinearId;
+import jdplus.toolkit.base.core.math.matrices.MatrixStorage;
 import jdplus.toolkit.base.core.regsarima.regular.RegSarimaModel;
 import jdplus.toolkit.desktop.plugin.TsDynamicProvider;
 import jdplus.toolkit.desktop.plugin.html.HtmlElement;
@@ -70,11 +80,10 @@ public class TdArimaViewFactory extends ProcDocumentViewFactory<TdArimaDocument>
             STOCHASTIC = "Stochastic series",
             COMPONENTS = "Components",
             MODELBASED = "Model-based tests",
-            WKANALYSIS = "WK analysis",
-            WK_COMPONENTS = "Components",
-            WK_FINALS = "Final estimators",
-            WK_PRELIMINARY = "Preliminary estimators",
-            WK_ERRORS = "Errors analysis",
+            KF_ANALYSIS = "Kalman filter",
+            KF_FILTERS = "Filters",
+            KF_GAINS = "Squared gains",
+            KF_PHASE = "Preliminary estimators",
             SEAS_IRR = "Seas., irr.",
             STDERR = "Stde of the innovations";
     public static final Id DECOMPOSITION_SUMMARY = new LinearId(SaViews.DECOMPOSITION);
@@ -101,8 +110,14 @@ public class TdArimaViewFactory extends ProcDocumentViewFactory<TdArimaDocument>
             new LinearId(SaViews.DECOMPOSITION, TDARIMA, COMPONENTS, SEAS_IRR);
     public static final Id DECOMPOSITION_TDARIMA_SI = new LinearId(SaViews.DECOMPOSITION, TDARIMA, SaViews.SI_RATIO);
     public static final Id DECOMPOSITION_TDARIMA_VARS = new LinearId(SaViews.DECOMPOSITION, TDARIMA, STDERR);
-    public static final Id DECOMPOSITION_WK_COMPONENTS = new LinearId(SaViews.DECOMPOSITION, WKANALYSIS, WK_COMPONENTS);
-    public static final Id DECOMPOSITION_WK_FINALS = new LinearId(SaViews.DECOMPOSITION, WKANALYSIS, WK_FINALS);
+    public static final Id DECOMPOSITION_SARIMA_KF_FILTERS =
+            new LinearId(SaViews.DECOMPOSITION, SARIMA, KF_ANALYSIS, KF_FILTERS);
+    public static final Id DECOMPOSITION_SARIMA_KF_GAINS =
+            new LinearId(SaViews.DECOMPOSITION, SARIMA, KF_ANALYSIS, KF_GAINS);
+    public static final Id DECOMPOSITION_TDARIMA_KF_FILTERS =
+            new LinearId(SaViews.DECOMPOSITION, TDARIMA, KF_ANALYSIS, KF_FILTERS);
+    public static final Id DECOMPOSITION_TDARIMA_KF_GAINS =
+            new LinearId(SaViews.DECOMPOSITION, TDARIMA, KF_ANALYSIS, KF_GAINS);
     public static final Id DECOMPOSITION_TESTS = new LinearId(SaViews.DECOMPOSITION, MODELBASED);
     public static final Id MODEL_SELECTION = new LinearId(TDARIMA, SELECTION);
     public static final Id MODEL_ESTIMATION = new LinearId(TDARIMA, ESTIMATION);
@@ -688,6 +703,77 @@ public class TdArimaViewFactory extends ProcDocumentViewFactory<TdArimaDocument>
         }
     }
 
+    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 6400)
+    public static class DecompositionSarimaFilters
+            extends ProcDocumentItemFactory<TdArimaDocument, KfWeightsUI.Information> {
+
+        public DecompositionSarimaFilters() {
+            super(
+                    TdArimaDocument.class,
+                    DECOMPOSITION_SARIMA_KF_FILTERS,
+                    (TdArimaDocument doc) -> {
+                        TdModellingResults result = doc.getResult();
+                        if (result == null || !result.isValid()) {
+                            return null;
+                        }
+                        MatrixStorage w = result.getDecomposition().weights();
+
+                        TsDomain domain = doc.getInput().getData().getDomain();
+                        IntList items = new IntList();
+                        List<String> names = new ArrayList<>();
+                        filtersPosition(doc.getSpecification(), domain, items, names);
+
+                        return new KfWeightsUI.Information(
+                                w,
+                                TdModelSpec.COMPONENTDESCRIPTORS.toArray(ComponentDescriptor[]::new),
+                                items.toArray(),
+                                names.toArray(String[]::new));
+                    },
+                    new KfWeightsUI());
+        }
+
+        @Override
+        public int getPosition() {
+            return 6400;
+        }
+    }
+
+    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 6410)
+    public static class DecompositionSarimaFiltersGain
+            extends ProcDocumentItemFactory<TdArimaDocument, KfSquaredGainsUI.Information> {
+
+        public DecompositionSarimaFiltersGain() {
+            super(
+                    TdArimaDocument.class,
+                    DECOMPOSITION_SARIMA_KF_GAINS,
+                    (TdArimaDocument doc) -> {
+                        TdModellingResults result = doc.getResult();
+                        if (result == null || !result.isValid()) {
+                            return null;
+                        }
+                        MatrixStorage w = result.getDecomposition().weights();
+
+                        TsDomain domain = doc.getInput().getData().getDomain();
+                        IntList items = new IntList();
+                        List<String> names = new ArrayList<>();
+                        filtersPosition(doc.getSpecification(), domain, items, names);
+
+                        return new KfSquaredGainsUI.Information(
+                                domain.getAnnualFrequency(),
+                                w,
+                                TdModelSpec.COMPONENTDESCRIPTORS.toArray(ComponentDescriptor[]::new),
+                                items.toArray(),
+                                names.toArray(String[]::new));
+                    },
+                    new KfSquaredGainsUI());
+        }
+
+        @Override
+        public int getPosition() {
+            return 6410;
+        }
+    }
+
     @ServiceProvider(service = IProcDocumentItemFactory.class, position = 7000)
     public static class DecompositionTdArimaSeries extends ProcDocumentItemFactory<TdArimaDocument, TdArimaDocument> {
 
@@ -835,6 +921,125 @@ public class TdArimaViewFactory extends ProcDocumentViewFactory<TdArimaDocument>
             generateId("Seasonal", Dictionary.concatenate(prefix, SaDictionaries.S)),
             generateId("Irregular", Dictionary.concatenate(prefix, SaDictionaries.I))
         };
+    }
+
+    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 7400)
+    public static class DecompositionTdArimaFilters
+            extends ProcDocumentItemFactory<TdArimaDocument, KfWeightsUI.Information> {
+
+        public DecompositionTdArimaFilters() {
+            super(
+                    TdArimaDocument.class,
+                    DECOMPOSITION_TDARIMA_KF_FILTERS,
+                    (TdArimaDocument doc) -> {
+                        TdModellingResults result = doc.getResult();
+                        if (result == null
+                                || !result.isValid()
+                                || !result.getDecomposition().isTimeVarying()) {
+                            return null;
+                        }
+                        MatrixStorage w = result.getDecomposition().tdWeights();
+
+                        TsDomain domain = doc.getInput().getData().getDomain();
+                        IntList items = new IntList();
+                        List<String> names = new ArrayList<>();
+                        filtersPosition(doc.getSpecification(), domain, items, names);
+
+                        return new KfWeightsUI.Information(
+                                w,
+                                TdModelSpec.COMPONENTDESCRIPTORS.toArray(ComponentDescriptor[]::new),
+                                items.toArray(),
+                                names.toArray(String[]::new));
+                    },
+                    new KfWeightsUI());
+        }
+
+        @Override
+        public int getPosition() {
+            return 7400;
+        }
+    }
+
+    private static void filtersPosition(TdModelSpec spec, TsDomain domain, IntList items, List<String> names) {
+        int n = domain.length();
+
+        int idx = 0;
+        int im = n / 2;
+        items.add(idx);
+        names.add("Start of the series");
+        LocalDate start = spec.getStartArimaRamp();
+        if (start != null) {
+            idx = domain.indexOf(start.atStartOfDay());
+            if (idx == im) {
+                im = -1;
+            } else if (im < idx) {
+                items.add(im);
+                names.add("Middle of the series");
+                im = -1;
+            }
+            if (idx > 0 && idx < n - 1) {
+                items.add(idx);
+                names.add("Start of the ramp");
+            }
+        }
+        LocalDate end = spec.getEndArimaRamp();
+        if (end != null) {
+            idx = domain.indexOf(end.atStartOfDay());
+            if (im >= 0 && im < idx) {
+                items.add(im);
+                names.add("Middle of the series");
+                im = -1;
+            }
+            if (idx > 0 && idx < n - 1) {
+                items.add(idx);
+                names.add("End of the ramp");
+            }
+        }
+        idx = n - 1;
+        if (im >= 0 && im < idx) {
+            items.add(im);
+            names.add("Middle of the series");
+        }
+        items.add(idx);
+        names.add("End of the series");
+    }
+
+    @ServiceProvider(service = IProcDocumentItemFactory.class, position = 7410)
+    public static class DecompositionTdArimaFiltersGain
+            extends ProcDocumentItemFactory<TdArimaDocument, KfSquaredGainsUI.Information> {
+
+        public DecompositionTdArimaFiltersGain() {
+            super(
+                    TdArimaDocument.class,
+                    DECOMPOSITION_TDARIMA_KF_GAINS,
+                    (TdArimaDocument doc) -> {
+                        TdModellingResults result = doc.getResult();
+                        if (result == null
+                                || !result.isValid()
+                                || !result.getDecomposition().isTimeVarying()) {
+                            return null;
+                        }
+                        MatrixStorage w = result.getDecomposition().tdWeights();
+
+                        TsDomain domain = doc.getInput().getData().getDomain();
+                        IntList items = new IntList();
+                        List<String> names = new ArrayList<>();
+                        filtersPosition(doc.getSpecification(), domain, items, names);
+
+                        return new KfSquaredGainsUI.Information(
+                                domain.getAnnualFrequency(),
+                                w,
+                                TdModelSpec.COMPONENTDESCRIPTORS.toArray(ComponentDescriptor[]::new),
+                                items.toArray(),
+                                names.toArray(String[]::new));
+                    },
+                    new KfSquaredGainsUI());
+        }
+
+        @Override
+        public int getPosition() {
+            return 7410;
+        }
     }
 
     //// <editor-fold defaultstate="collapsed" desc="REGISTER FORECASTS">
